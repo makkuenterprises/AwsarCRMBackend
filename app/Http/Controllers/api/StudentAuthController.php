@@ -72,6 +72,8 @@ class StudentAuthController extends Controller
     }
     return response()->json($data, $code);
 } 
+
+
     public function studentAuthLogout(Request $request)
     {
        $admin = Auth::guard('student')->user();
@@ -83,12 +85,15 @@ class StudentAuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
+
+
+
     public function StudentCreate(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:students',
-            'phone' => ['required', 'string', 'min:1', 'max:250', 'unique:students'],
+           'phone' => 'required|numeric|phone_number|size:10',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -109,7 +114,7 @@ class StudentAuthController extends Controller
         $student = Student::create([
             'name' => $request->name,
             'email' => $request->email,
-            'email' => $request->phone,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
         ]);
 
