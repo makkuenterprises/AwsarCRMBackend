@@ -16,3 +16,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('clear',function() {
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('event:clear');
+    Artisan::call('optimize:clear');
+    Artisan::call('queue:clear');
+    dd('Application Cache Cleared');
+});
+
+Route::get('setup',function() {
+    Artisan::call('migrate');
+    Artisan::call('db:seed');
+    Artisan::call('storage:link');
+    dd('Application Setup Completed');
+});

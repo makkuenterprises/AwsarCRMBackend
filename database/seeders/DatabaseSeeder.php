@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
 
          $student=[
             'name'=> 'student',
+            'phone'=>'1234567890',
             'email'=>'student@gmail.com',
             'password'=>bcrypt(123456),
 

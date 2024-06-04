@@ -93,14 +93,19 @@ class StudentAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:students',
-           'phone' => 'required|numeric|phone_number|size:10',
+            'phone' => 'required|numeric|digits:10||unique:students',
+            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'postal_code' => ['nullable', 'numeric', 'digits:6'],
+            'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'state' => ['nullable', 'string', 'min:1', 'max:250'],
+            'image' => 'nullable',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-
+try{
          if($request->image!=''){
         $uploadedImg=$request->image;
         $fileName=time().'.'.$request->image->extension();          
@@ -109,41 +114,87 @@ class StudentAuthController extends Controller
         $img->resize(200,null, function($constraint){
         $constraint->aspectRatio();
         })->save($destinationpath.'/'.$fileName);
-        $doctor->signImg =  $fileName;}
-
-        $student = Student::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-        ]);
-
+       }else{
+        $fileName='';
+       }
+            $student = new Student();
+            $student->name = $request->input('name');
+            $student->email = $request->input('email');
+            $student->phone = $request->input('phone');
+             $student->street = $request->input('street');
+            $student->postal_code = $request->input('postal_code');
+            $student->postal_code = $request->input('postal_code');
+            $student->city = $request->input('city');
+            $student->state = $request->input('state');
+            $student->image = $fileName;
+            $student->password =Hash::make($request->password);
+            $student->save();
         return response()->json(['message' => 'Student registered successfully', 'student' => $student], 201);
+    }catch (Exception $e) {
+        $data = ['error' => $e->getMessage()];
     }
+    }
+
+  public function StudentList(){
+   $students = Student::all();
+    return response()->json($students);
+  }
+  
+  public function UpdateView($id){
+   $student = Student::find($id);
+   if($student){
+   return response()->json($student);
+
+   }else{
+     return response()->json(['message' => 'Student not found'], 404);
+   }
+  }
 
     public function updateStudent(Request $request, $id)
     {
+        dd($request->all());
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:students,email,' . $id,
-            'password' => 'sometimes|required|string|min:8|confirmed',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:students',
+            'phone' => 'required|numeric|digits:10||unique:students',
+            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'postal_code' => ['nullable', 'numeric', 'digits:6'],
+            'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'state' => ['nullable', 'string', 'min:1', 'max:250'],
+            'image' => 'nullable',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $student = Student::find($id);
-
+      if($request->image!=''){
+        $uploadedImg=$request->image;
+        $fileName=time().'.'.$request->image->extension();          
+        $destinationpath=public_path('/Student');
+        $img=Image::make($uploadedImg->path());     
+        $img->resize(200,null, function($constraint){
+        $constraint->aspectRatio();
+        })->save($destinationpath.'/'.$fileName);
+       }else{
+        $fileName='';
+       }
+            $student = Student::find($id);
+            $student->name = $request->input('name');
+            $student->email = $request->input('email');
+            $student->phone = $request->input('phone');
+            $student->street = $request->input('street');
+            $student->postal_code = $request->input('postal_code');
+            $student->postal_code = $request->input('postal_code');
+            $student->city = $request->input('city');
+            $student->state = $request->input('state');
+            $student->image = $fileName;
+            $student->password =Hash::make($request->password);
+            $student->save();
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
         }
-
-        $student->update([
-            'name' => $request->name ?? $student->name,
-            'email' => $request->email ?? $student->email,
-            'password' => $request->password ? Hash::make($request->password) : $student->password,
-        ]);
 
         return response()->json(['message' => 'Student updated successfully', 'student' => $student], 200);
     }
