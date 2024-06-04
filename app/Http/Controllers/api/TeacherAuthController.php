@@ -62,6 +62,7 @@ class TeacherAuthController extends Controller
             $data = [
                 'user' => $user,
                 'token' => $token,
+                'message' => 'Login Successfully'
             ];
         }
     } catch (Exception $e) {

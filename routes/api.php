@@ -37,13 +37,13 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 });
 
-// Route::middleware(['auth:admin'])->group(function () {
+Route::middleware(['auth:admin'])->group(function () {
  Route::prefix('student')->group(function () {
         Route::post('/register', [StudentAuthController::class, 'StudentCreate']);
         Route::put('/{id}', [StudentAuthController::class, 'updateStudent']);
         Route::delete('/{id}', [StudentAuthController::class, 'deleteStudent']);
     });
-// });
+});
 
 
 

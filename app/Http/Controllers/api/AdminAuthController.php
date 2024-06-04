@@ -42,7 +42,7 @@ class AdminAuthController extends Controller
     // }
     // }
     // }
-    
+
     public function adminAuthLogin(Request $request){
      $login = $request->validate([
         'email' => 'required|email',
@@ -61,6 +61,7 @@ class AdminAuthController extends Controller
             $data = [
                 'user' => $user,
                 'token' => $token,
+                 'message' => 'Login Successfully'
             ];
         }
     } catch (Exception $e) {

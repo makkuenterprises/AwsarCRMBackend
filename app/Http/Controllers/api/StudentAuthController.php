@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Image;
 use App\Models\Student;
 
 class StudentAuthController extends Controller
@@ -45,6 +45,7 @@ class StudentAuthController extends Controller
     // }
     // }
     // }
+
     public function studentAuthLogin(Request $request){
      $login = $request->validate([
         'email' => 'required|email',
@@ -63,6 +64,7 @@ class StudentAuthController extends Controller
             $data = [
                 'user' => $user,
                 'token' => $token,
+                'message' => 'Login Successfully'
             ];
         }
     } catch (Exception $e) {
@@ -86,16 +88,28 @@ class StudentAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:students',
-            'password' => 'required|string|min:8|confirmed',
+            'phone' => ['required', 'string', 'min:1', 'max:250', 'unique:students'],
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
+         if($request->image!=''){
+        $uploadedImg=$request->image;
+        $fileName=time().'.'.$request->image->extension();          
+        $destinationpath=public_path('/Student');
+        $img=Image::make($uploadedImg->path());     
+        $img->resize(200,null, function($constraint){
+        $constraint->aspectRatio();
+        })->save($destinationpath.'/'.$fileName);
+        $doctor->signImg =  $fileName;}
+
         $student = Student::create([
             'name' => $request->name,
             'email' => $request->email,
+            'email' => $request->phone,
             'password' => Hash::make($request->password),
         ]);
 
