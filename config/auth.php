@@ -37,22 +37,28 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+
+    'api' => [
+        'driver' => 'passport',
+        'provider' => 'users',
+        // 'hash' => false,
+    ],
 
         'admin' => [
-        'driver' => 'session',
+        'driver' => 'sanctum',
         'provider' => 'admins',
         ],
 
          'student' => [
-        'driver' => 'session',
+        'driver' => 'sanctum',
         'provider' => 'students',
         ],
 
          'teacher' => [
-        'driver' => 'session',
+        'driver' => 'sanctum',
         'provider' => 'teachers',
         ],
 

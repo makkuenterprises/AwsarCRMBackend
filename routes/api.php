@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AdminAuthController;
-use App\Http\Controllers\api\StudentAuthController;
+use App\Http\Controllers\api\StudentAuthController; 
 use App\Http\Controllers\api\TeacherAuthController;
 
 
@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('admin')->group(function () {
 Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
 Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
+
 });
 
 Route::prefix('student')->group(function () {
@@ -36,7 +37,24 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 });
 
+// Route::middleware(['auth:admin'])->group(function () {
+ Route::prefix('student')->group(function () {
+        Route::post('/register', [StudentAuthController::class, 'StudentCreate']);
+        Route::put('/{id}', [StudentAuthController::class, 'updateStudent']);
+        Route::delete('/{id}', [StudentAuthController::class, 'deleteStudent']);
+    });
+// });
+
+
+
 Route::prefix('teacher')->group(function () {
+
 Route::post('/login',[TeacherAuthController::class,'teacherAuthLogin']);
 Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
-});
+
+      Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
+      Route::put('/{id}', [TeacherAuthController::class, 'updateTeacher']);
+      Route::delete('/{id}', [TeacherAuthController::class, 'deleteTeacher']);
+
+});      
+
