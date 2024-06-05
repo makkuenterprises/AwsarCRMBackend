@@ -8,13 +8,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Teacher extends Authenticatable   
+class StaffModel extends Authenticatable   
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $guard='teacher'; 
+    protected $guard='staff'; 
 
-    protected $table='teachers';
+    protected $table='staff_models';
     
     protected $primarykey='id';
     // protected $table_name = ""

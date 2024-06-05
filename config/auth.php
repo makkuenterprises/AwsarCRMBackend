@@ -62,6 +62,11 @@ return [
         'provider' => 'teachers',
         ],
 
+         'staff' => [
+        'driver' => 'sanctum',
+        'provider' => 'staffs',
+        ],
+
     ],
 
    
@@ -107,6 +112,11 @@ return [
         'teachers' => [
         'driver' => 'eloquent',
         'model' => App\Models\Teacher::class,
+         ],
+
+        'staffs' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\StaffModel::class,
          ],
 
     ],

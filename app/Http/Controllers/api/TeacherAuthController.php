@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Teacher;
+use Image;
 
 class TeacherAuthController extends Controller
 {
@@ -44,6 +45,7 @@ class TeacherAuthController extends Controller
     // }
     // }
     // }
+
     public function teacherAuthLogin(Request $request){
      $login = $request->validate([
         'email' => 'required|email',
@@ -65,11 +67,27 @@ class TeacherAuthController extends Controller
                 'message' => 'Login Successfully'
             ];
         }
-    } catch (Exception $e) {
+     } catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
     }
     return response()->json($data, $code);
 } 
+
+public function teacherList(){
+    $teacher = Teacher::all();
+    return response()->json($teacher);
+}
+
+ public function UpdateView($id){
+   $teacher = Teacher::find($id);
+   if($teacher){
+   return response()->json($teacher);
+
+   }else{
+     return response()->json(['message' => 'Student not found'], 404);
+   }
+  }
+
     public function teacherAuthLogout(Request $request)
     {
        $admin = Auth::guard('teacher')->user();
@@ -87,48 +105,100 @@ class TeacherAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:teachers',
-            'password' => 'required|string|min:8|confirmed',
+            'phone' => 'required|numeric|digits:10|unique:teachers',
+            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'postal_code' => ['nullable', 'numeric', 'digits:6'],
+            'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'state' => ['nullable', 'string', 'min:1', 'max:250'],
+            'classes' => 'required|array',
+            'image' => 'nullable',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $teacher = Teacher::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        return response()->json(['message' => 'Teacher registered successfully', 'teacher' => $teacher], 201);
+        try{
+            if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Teachers');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
+          }else{
+           $fileName='';
+          }
+            $teacher = new Teacher();
+            $teacher->name = $request->input('name');
+            $teacher->email = $request->input('email');
+            $teacher->phone = $request->input('phone');
+            $teacher->street = $request->input('street');
+            $teacher->postal_code = $request->input('postal_code');
+            $teacher->city = $request->input('city');
+            $teacher->state = $request->input('state');
+            $teacher->image = $fileName;
+            $teacher->password =Hash::make($request->password);
+            $teacher->classes =$request->input('classes');
+            $teacher->save();
+          return response()->json(['message' => 'Teacher registered successfully', 'teacher' => $teacher], 201);
+        }catch (Exception $e) {
+         $data = ['error' => $e->getMessage()];
+        }
     }
-
-
+    
     public function updateTeacher(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:teachers,email,' . $id,
-            'password' => 'sometimes|required|string|min:8|confirmed',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'phone' => 'required|numeric|digits:10',
+            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'postal_code' => ['nullable', 'numeric', 'digits:6'],
+            'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'state' => ['nullable', 'string', 'min:1', 'max:250'],
+            'classes' => 'required|array',
+            'image' => 'nullable',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $teacher = Teacher::find($id);
-
-        if (!$teacher) {
+        try{
+            if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Teachers');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
+          }else{
+           $fileName='';
+          }
+            $teacher = Teacher::find($id);
+            $teacher->name = $request->input('name');
+            $teacher->email = $request->input('email');
+            $teacher->phone = $request->input('phone');
+            $teacher->street = $request->input('street');
+            $teacher->postal_code = $request->input('postal_code');
+            $teacher->city = $request->input('city');
+            $teacher->state = $request->input('state');
+            $teacher->image = $fileName;
+            $teacher->password =Hash::make($request->password);
+            $teacher->classes =$request->input('classes');
+            $teacher->save();
+            if (!$teacher) {
             return response()->json(['message' => 'Teacher not found'], 404);
-        }
-
-        $teacher->update([
-            'name' => $request->name ?? $teacher->name,
-            'email' => $request->email ?? $teacher->email,
-            'password' => $request->password ? Hash::make($request->password) : $teacher->password,
-        ]);
-
+            }
         return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
+         }catch (Exception $e) {
+         $data = ['error' => $e->getMessage()];
+        }
     }
 
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Admin;
 use App\Models\Teacher;
 use App\Models\Student;
+use App\Models\StaffModel;
 
 class DatabaseSeeder extends Seeder
 {
@@ -33,6 +34,7 @@ class DatabaseSeeder extends Seeder
          $techer=[
             'name'=> 'teacher',
             'email'=>'teacher@gmail.com',
+            'phone'=>'1234567890',
             'password'=>bcrypt(123456),
 
         ];
@@ -47,5 +49,16 @@ class DatabaseSeeder extends Seeder
 
         ];
         Student::create($student);
+
+         $staff=[
+            'name'=> 'staff',
+            'phone'=>'1234567890',
+            'email'=>'staff@gmail.com',
+            'password'=>bcrypt(123456),
+
+        ];
+        StaffModel::create($staff);
+
+        
     }
 }

@@ -6,8 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class TeacherMiddleware
-{
+class StaffMiddleware
+{ 
     /**
      * Handle an incoming request.
      *
@@ -15,8 +15,8 @@ class TeacherMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::guard('teacher')->check()) {
-            return response()->json(['message' => 'Unauthorized, please log in as Teacher'], 401);
+        if (!Auth::guard('staff')->check()) {
+            return response()->json(['message' => 'Unauthorized, please log in as staff'], 401);
         }
 
         return $next($request);

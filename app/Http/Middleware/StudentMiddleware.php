@@ -15,6 +15,10 @@ class StudentMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!Auth::guard('student')->check()) {
+            return response()->json(['message' => 'Unauthorized, please log in as student'], 401);
+        }
+
         return $next($request);
     }
 }
