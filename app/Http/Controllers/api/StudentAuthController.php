@@ -93,13 +93,17 @@ class StudentAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:students',
-            'phone' => 'required|numeric|digits:10||unique:students',
+            'phone' => 'required|numeric|digits:10|unique:students',
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
             'password' => 'required|string|min:6|confirmed',
+             'fname' => ['required', 'string', 'min:1', 'max:250'],
+            'femail' => ['nullable', 'string', 'min:1', 'max:250'],
+              'fphone' => 'required|numeric|digits:10',
+            'paymentType' => ['required', 'string', 'min:1', 'max:250'],
         ]);
 
         if ($validator->fails()) {
@@ -128,6 +132,10 @@ try{
             $student->state = $request->input('state');
             $student->image = $fileName;
             $student->password =Hash::make($request->password);
+            $student->fname = $request->input('fname');
+            $student->femail = $request->input('femail');
+            $student->fphone = $request->input('fphone');
+            $student->paymentType = $request->input('paymentType');
             $student->save();
         return response()->json(['message' => 'Student registered successfully', 'student' => $student], 201);
     }catch (Exception $e) {
@@ -136,8 +144,8 @@ try{
     }
 
   public function StudentList(){
-   $students = Student::all();
-    return response()->json($students);
+     $students = Student::all();
+        return response()->json($students);
   }
   
   public function UpdateView($id){
@@ -157,9 +165,13 @@ try{
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'phone' => 'required|numeric|digits:10',
-            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'street' => ['nullable','string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'fname' => ['required', 'string', 'min:1', 'max:250'],
+            'femail' => ['nullable', 'string', 'min:1', 'max:250'],
+            'fphone' => 'required|numeric|digits:10',
+            'paymentType' => ['required', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
             'password' => 'required|string|min:6|confirmed',
@@ -191,6 +203,10 @@ try{
             $student->state = $request->input('state');
             $student->image = $fileName;
             $student->password =Hash::make($request->password);
+            $student->fname = $request->input('fname');
+            $student->femail = $request->input('femail');
+            $student->fphone = $request->input('fphone');
+            $student->paymentType = $request->input('paymentType');
             $student->save();
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
