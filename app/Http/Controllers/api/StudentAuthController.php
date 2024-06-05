@@ -152,11 +152,11 @@ try{
 
     public function updateStudent(Request $request, $id)
     {
-        dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:students',
-            'phone' => 'required|numeric|digits:10||unique:students',
+            'email' => 'required|string|email|max:255',
+            'phone' => 'required|numeric|digits:10',
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],

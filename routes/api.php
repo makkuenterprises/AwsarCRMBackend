@@ -37,12 +37,13 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 });
 
-// Route::middleware(['auth:admin'])->group(function () {
+// Route::middleware(['admin'])->group(function () {
  Route::prefix('student')->group(function () {
         Route::post('/register', [StudentAuthController::class, 'StudentCreate']);
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
-        Route::get('update/{id}', [StudentAuthController::class, 'UpdateView']);
-        Route::put('update/{id}', [StudentAuthController::class, 'updateStudent']);
+        Route::get('view/update/{id}/', [StudentAuthController::class, 'UpdateView']);
+        Route::post('update/{id}', [StudentAuthController::class, 'updateStudent']);
+        // Route::put('update/{id}', [StudentAuthController::class, 'updateStudent']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
     });
 // });
