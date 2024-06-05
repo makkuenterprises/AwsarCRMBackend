@@ -35,3 +35,7 @@ Route::get('setup',function() {
     Artisan::call('storage:link');
     dd('Application Setup Completed');
 });
+Route::get('migrate',function() {
+    Artisan::call('migrate');
+    dd('Application Migration Completed');
+});
