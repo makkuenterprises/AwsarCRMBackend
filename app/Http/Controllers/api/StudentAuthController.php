@@ -69,6 +69,7 @@ class StudentAuthController extends Controller
         }
     } catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
+        
     }
     return response()->json($data, $code);
 } 
@@ -103,6 +104,8 @@ class StudentAuthController extends Controller
              'fname' => ['required', 'string', 'min:1', 'max:250'],
             'femail' => ['nullable', 'string', 'min:1', 'max:250'],
               'fphone' => 'required|numeric|digits:10',
+            'dob' => ['nullable', 'date', 'max:250'],
+
             'paymentType' => ['required', 'string', 'min:1', 'max:250'],
         ]);
 
@@ -130,6 +133,7 @@ try{
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
+            $student->dob = $request->input('dob');
             $student->image = $fileName;
             $student->password =Hash::make($request->password);
             $student->fname = $request->input('fname');
@@ -140,11 +144,13 @@ try{
         return response()->json(['message' => 'Student registered successfully', 'student' => $student], 201);
     }catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
+          return response()->json(['message' => 'An error occurred while registering students', 'data' => $data], 500);
+         
     }
     }
 
   public function StudentList(){
-     $students = Student::all();
+     $students = Student::orderByDesc('id')->get();
         return response()->json($students);
   }
   
@@ -163,8 +169,8 @@ try{
         // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'phone' => 'required|numeric|digits:10',
+            'email' => 'required|string|email|max:255|unique:students,email,' . $id,
+            'phone' => 'required|numeric|digits:10,|unique:students,phone,' . $id,
             'street' => ['nullable','string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
@@ -174,6 +180,7 @@ try{
             'paymentType' => ['required', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
+             'dob' => ['nullable', 'date', 'max:250'],
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -193,6 +200,9 @@ try{
         $fileName='';
        }
             $student = Student::find($id);
+             if (!$student) {
+            return response()->json(['message' => 'Student not found'], 404);
+        }
             $student->name = $request->input('name');
             $student->email = $request->input('email');
             $student->phone = $request->input('phone');
@@ -201,6 +211,7 @@ try{
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
+            $student->dob = $request->input('dob');
             $student->image = $fileName;
             $student->password =Hash::make($request->password);
             $student->fname = $request->input('fname');
@@ -208,9 +219,7 @@ try{
             $student->fphone = $request->input('fphone');
             $student->paymentType = $request->input('paymentType');
             $student->save();
-        if (!$student) {
-            return response()->json(['message' => 'Student not found'], 404);
-        }
+       
 
         return response()->json(['message' => 'Student updated successfully', 'student' => $student], 200);
     }

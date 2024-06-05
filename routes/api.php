@@ -6,6 +6,7 @@ use App\Http\Controllers\api\AdminAuthController;
 use App\Http\Controllers\api\StudentAuthController; 
 use App\Http\Controllers\api\TeacherAuthController;
 use App\Http\Controllers\api\StaffAuthController;
+use App\Http\Controllers\api\CourseController;
 
 
 /*
@@ -64,8 +65,8 @@ Route::prefix('teacher')->group(function () {
 });      
 
 Route::prefix('staff')->group(function () {
-    Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
-    Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']);
+      Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
+      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']);
 });  
 
 Route::prefix('staff')->group(function () {
@@ -76,3 +77,10 @@ Route::prefix('staff')->group(function () {
       Route::delete('delete/{id}', [StaffAuthController::class, 'deleteStaff']);
 }); 
 
+Route::prefix('course')->group(function () {
+      Route::post('/create', [CourseController::class, 'courseCreate']);
+      Route::get('/list', [CourseController::class, 'courseList']);
+      Route::get('view/update/{id}/', [CourseController::class, 'UpdateView']);
+      Route::post('update/{id}', [CourseController::class, 'updateCourse']);
+      Route::delete('delete/{id}', [CourseController::class, 'deleteCourse']);
+}); 

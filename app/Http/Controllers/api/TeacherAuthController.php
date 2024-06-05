@@ -74,7 +74,7 @@ class TeacherAuthController extends Controller
 } 
 
 public function teacherList(){
-    $teacher = Teacher::all();
+    $teacher = Teacher::orderByDesc('id')->get();
     return response()->json($teacher);
 }
 
@@ -146,6 +146,8 @@ public function teacherList(){
           return response()->json(['message' => 'Teacher registered successfully', 'teacher' => $teacher], 201);
         }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
+          return response()->json(['message' => 'An error occurred while registering Teacher', 'data' => $data], 500);
+
         }
     }
     
@@ -153,8 +155,8 @@ public function teacherList(){
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'phone' => 'required|numeric|digits:10',
+            'email' => 'required|string|email|max:255|unique:teachers,email,' . $id,
+            'phone' => 'required|numeric|digits:10|unique:teachers,phone,' . $id,
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
@@ -181,6 +183,9 @@ public function teacherList(){
            $fileName='';
           }
             $teacher = Teacher::find($id);
+             if (!$teacher) {
+            return response()->json(['message' => 'Teacher not found'], 404);
+            }
             $teacher->name = $request->input('name');
             $teacher->email = $request->input('email');
             $teacher->phone = $request->input('phone');
@@ -192,12 +197,12 @@ public function teacherList(){
             $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
             $teacher->save();
-            if (!$teacher) {
-            return response()->json(['message' => 'Teacher not found'], 404);
-            }
+           
         return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
          }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
+          return response()->json(['message' => 'An error occurred while Updating Teacher', 'data' => $data], 500);
+
         }
     }
 

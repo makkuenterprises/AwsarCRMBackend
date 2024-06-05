@@ -42,11 +42,11 @@ class StaffAuthController extends Controller
 } 
 
 public function staffList(){
-    $staff = StaffModel::all();
+ $staff = StaffModel::orderByDesc('id')->get();
     return response()->json($staff);
 }
 
- public function UpdateView($id){
+public function UpdateView($id){
    $staffs = StaffModel::find($id);
    if($staffs){
    return response()->json($staffs);
@@ -54,10 +54,10 @@ public function staffList(){
    }else{
      return response()->json(['message' => 'Staff not found'], 404);
    }
-  }
+}
 
-    public function staffAuthLogout(Request $request)
-    {
+public function staffAuthLogout(Request $request)
+{
        $staff = Auth::guard('staff')->user();
         
         if ($staff) {
@@ -112,6 +112,8 @@ public function staffList(){
           return response()->json(['message' => 'Staff registered successfully', 'staff' => $staff], 201);
         }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
+           return response()->json(['message' => 'An error occurred while Creating staff', 'data' => $data], 500);
+         
         }
     }
     
@@ -119,8 +121,8 @@ public function staffList(){
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-             'email' => 'required|string|email|max:255|unique:staff_models,email,' . $id,
-              'phone' => 'required|numeric|digits:10|unique:staff_models,phone,' . $id,
+            'email' => 'required|string|email|max:255|unique:staff_models,email,' . $id,
+            'phone' => 'required|numeric|digits:10|unique:staff_models,phone,' . $id,
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
@@ -162,8 +164,9 @@ public function staffList(){
            
         return response()->json(['message' => 'Staff updated successfully', 'staff' => $staff], 200);
          }catch (Exception $e) {
-         $data = ['error' => $e->getMessage()];
-        }
+        $data = ['error' => $e->getMessage()];
+       return response()->json(['message' => 'An error occurred while updating staff', 'data' => $data], 500);
+         }
     }
 
 
