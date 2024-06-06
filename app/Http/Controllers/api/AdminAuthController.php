@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
 use Hash;
+use Image;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -82,5 +83,51 @@ class AdminAuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
     
+    public function profileUpdateView($id){
+
+        $admin = Admin::find($id);
+        if($admin){
+        return response()->json($admin);
+        }else{
+        return response()->json(['message' => 'Admin not found'], 404);
+        }
+    }
+
+    public function profileUpdate(Request $request,$id){
+
+      $validator = Validator::make($request->all(), [
+         'name' => 'required|string|max:255',
+         'email' => 'required|string|email|max:255|unique:admins,email,' . $id,
+         'phone' => 'required|numeric|digits:10|unique:admins,phone,' . $id,
+         'image' => 'nullable',
+        ]);
+        if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+        }
+
+    try{
+         if($request->image!=''){
+          $uploadedImg=$request->image;
+          $fileName=time().'.'.$request->image->extension();          
+          $destinationpath=public_path('/Admin');
+          $img=Image::make($uploadedImg->path());     
+          $img->resize(200,null, function($constraint){
+          $constraint->aspectRatio();
+          })->save($destinationpath.'/'.$fileName);
+          }else{
+          $fileName='';
+           }
+            $admin = Admin::find($id);
+            $admin->name = $request->input('name');
+            $admin->email = $request->input('email');
+            $admin->phone = $request->input('phone');
+            $admin->image = $fileName;
+            $admin->save();
+            return response()->json(['message' => 'Profile Updated Successfully', 'admin' => $admin], 201);
+        }catch (Exception $e) {
+        $data = ['error' => $e->getMessage()];
+        return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+        }
+    }
 }
     

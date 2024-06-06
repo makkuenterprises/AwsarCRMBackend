@@ -7,6 +7,7 @@ use App\Http\Controllers\api\StudentAuthController;
 use App\Http\Controllers\api\TeacherAuthController;
 use App\Http\Controllers\api\StaffAuthController;
 use App\Http\Controllers\api\CourseController;
+use App\Http\Controllers\api\NotificationController;
 
 
 /*
@@ -24,13 +25,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::get('/',function(){
-//     return response()->json(["status"=>true, 'code'=>200, "data"=>"Hello Simran"]);
-// });
-
 Route::prefix('admin')->group(function () {
+
 Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
 Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
+Route::get('/view/profile/update/{id}', [AdminAuthController::class, 'profileUpdateView']);
+Route::post('/profile/update/{id}', [AdminAuthController::class, 'profileUpdate']);
 
 });
 
@@ -81,6 +81,11 @@ Route::prefix('course')->group(function () {
       Route::post('/create', [CourseController::class, 'courseCreate']);
       Route::get('/list', [CourseController::class, 'courseList']);
       Route::get('view/update/{id}/', [CourseController::class, 'UpdateView']);
-      Route::post('update/{id}', [CourseController::class, 'updateCourse']);
+      Route::post('update/{id}', [CourseController::class, 'courseUpdate']);
       Route::delete('delete/{id}', [CourseController::class, 'deleteCourse']);
+}); 
+
+Route::prefix('notification')->group(function () {
+      Route::post('/create', [NotificationController::class, 'create']);
+      Route::get('/list', [NotificationController::class, 'List']);
 }); 
