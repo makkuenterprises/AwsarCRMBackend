@@ -22,6 +22,15 @@ class StaffAuthController extends Controller
     try {
         $user = StaffModel::whereEmail($login['email'])->first();
 
+        if (!$user) {
+          return response()->json(['message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+        }
+
+        if (!Hash::check($request->input('password'), $user->password)) {
+        // Return error response for incorrect password
+        return response()->json(['message' => 'The password you entered is incorrect. Please try again.'], 401);
+        }
+
         if (!$user || !Hash::check($login['password'], $user->password)) {
             $data = 'Invalid Login Credentials';
             $code = 401;
@@ -181,5 +190,96 @@ public function staffAuthLogout(Request $request)
         $staff->delete();
 
         return response()->json(['message' => 'Staff deleted successfully'], 200);
+    }
+
+
+     public function profileUpdateView($id){
+
+        $staff = StaffModel::find($id);
+        if($staff){
+        return response()->json($staff);
+        }else{
+        return response()->json(['message' => 'Staff not found'], 404);
+        }
+    }
+
+    public function profileUpdate(Request $request,$id){
+
+       $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:staff_models,email,' . $id,
+            'phone' => 'required|numeric|digits:10|unique:staff_models,phone,' . $id,
+            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'postal_code' => ['nullable', 'numeric', 'digits:6'],
+            'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'state' => ['nullable', 'string', 'min:1', 'max:250'],
+            'image' => 'nullable',
+           
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        try{
+           if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Staffs');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
+          }else{
+           $fileName='';
+          }
+            $staff = StaffModel::find($id);
+             if (!$staff) {
+            return response()->json(['message' => 'Staff not found'], 404);
+            }
+            $staff->name = $request->input('name');
+            $staff->email = $request->input('email');
+            $staff->phone = $request->input('phone');
+            $staff->street = $request->input('street');
+            $staff->postal_code = $request->input('postal_code');
+            $staff->city = $request->input('city');
+            $staff->state = $request->input('state');
+            $staff->image = $fileName;
+            $staff->password =Hash::make($request->password);
+            $staff->save();
+            return response()->json(['message' => 'Profile Updated Successfully', 'staff' => $staff], 201);
+        }catch (Exception $e) {
+            $data = ['error' => $e->getMessage()];
+            return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+        }
+    }
+
+    public function passwordUpdate(Request $request){
+
+        $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'password' => 'required|string',
+        'new_password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $staff = StaffModel::where('email',$request->input('email'))->first();
+        
+        if($staff){
+
+            if (Hash::check($request->input('password'), $staff->password)) {
+                $staff->password = Hash::make($request->new_password);
+                $staff->save();
+                return response()->json(['message' => 'Your password has been updated successfully.'], 200);
+            }else{
+            return response()->json(['message' => 'The password you entered is incorrect'], 404);
+            }
+        }else{
+        return response()->json(['message' => 'We could not find an account with that email address. Please check and try again.'], 404);
+        }
+
+        
     }
 }

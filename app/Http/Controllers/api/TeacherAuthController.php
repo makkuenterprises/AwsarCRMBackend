@@ -53,6 +53,14 @@ class TeacherAuthController extends Controller
     ]);
     try {
         $user = Teacher::whereEmail($login['email'])->first();
+        if (!$user) {
+          return response()->json(['message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+        }
+
+        if (!Hash::check($request->input('password'), $user->password)) {
+        // Return error response for incorrect password
+        return response()->json(['message' => 'The password you entered is incorrect. Please try again.'], 401);
+        }
 
         if (!$user || !Hash::check($login['password'], $user->password)) {
             $data = 'Invalid Login Credentials';
@@ -84,7 +92,7 @@ public function teacherList(){
    return response()->json($teacher);
 
    }else{
-     return response()->json(['message' => 'Student not found'], 404);
+     return response()->json(['message' => 'Teacher not found'], 404);
    }
   }
 
@@ -100,7 +108,7 @@ public function teacherList(){
     }
 
 
-     public function teacherCreate(Request $request)
+    public function teacherCreate(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -171,7 +179,7 @@ public function teacherList(){
         }
 
         try{
-            if($request->image!=''){
+           if($request->image!=''){
            $uploadedImg=$request->image;
            $fileName=time().'.'.$request->image->extension();          
            $destinationpath=public_path('/Teachers');
@@ -218,5 +226,98 @@ public function teacherList(){
         $teacher->delete();
 
         return response()->json(['message' => 'Teacher deleted successfully'], 200);
+    }
+
+    public function profileUpdateView($id){
+
+        $teacher = Teacher::find($id);
+        if($teacher){
+        return response()->json($teacher);
+        }else{
+        return response()->json(['message' => 'Teacher not found'], 404);
+        }
+    }
+
+    public function profileUpdate(Request $request,$id){
+
+       $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:teachers,email,' . $id,
+            'phone' => 'required|numeric|digits:10|unique:teachers,phone,' . $id,
+            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'postal_code' => ['nullable', 'numeric', 'digits:6'],
+            'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'state' => ['nullable', 'string', 'min:1', 'max:250'],
+            'classes' => 'required|array',
+            'image' => 'nullable',
+           
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        try{
+
+        if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Teachers');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
+          }else{
+           $fileName='';
+          }
+            $teacher = Teacher::find($id);
+             if (!$teacher) {
+            return response()->json(['message' => 'Teacher not found'], 404);
+            }
+            $teacher->name = $request->input('name');
+            $teacher->email = $request->input('email');
+            $teacher->phone = $request->input('phone');
+            $teacher->street = $request->input('street');
+            $teacher->postal_code = $request->input('postal_code');
+            $teacher->city = $request->input('city');
+            $teacher->state = $request->input('state');
+            $teacher->image = $fileName;
+            $teacher->classes =$request->input('classes');
+            $teacher->save();
+            return response()->json(['message' => 'Profile Updated Successfully', 'teacher' => $teacher], 201);
+        }catch (Exception $e) {
+            $data = ['error' => $e->getMessage()];
+            return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+        }
+    }
+
+    public function passwordUpdate(Request $request){
+
+        $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'password' => 'required|string',
+        'new_password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $teacher = Teacher::where('email',$request->input('email'))->first();
+        
+        if($teacher){
+
+            if (Hash::check($request->input('password'), $teacher->password)) {
+                $teacher->password = Hash::make($request->new_password);
+                $teacher->save();
+                return response()->json(['message' => 'Your password has been updated successfully.'], 200);
+            }else{
+            return response()->json(['message' => 'The password you entered is incorrect'], 404);
+            }
+        }else{
+        return response()->json(['message' => 'We could not find an account with that email address. Please check and try again.'], 404);
+        }
+
+        
     }
 }

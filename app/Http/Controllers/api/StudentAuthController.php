@@ -54,18 +54,51 @@ class StudentAuthController extends Controller
     try {
         $user = Student::whereEmail($login['email'])->first();
 
+        if (!$user) {
+          return response()->json(['message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+        }
+
+        if (!Hash::check($request->input('password'), $user->password)) {
+        // Return error response for incorrect password
+        return response()->json(['message' => 'The password you entered is incorrect. Please try again.'], 401);
+        }
+
         if (!$user || !Hash::check($login['password'], $user->password)) {
             $data = 'Invalid Login Credentials';
             $code = 401;
         } else {
 
+             $imagePath = url('/Student/' . $user->image);
+
            $token = $user->createToken('AwsarClass')->plainTextToken;
             $code = 200;
+            // $data = [
+            //     'user' => $user,
+            //     'token' => $token,
+            //     'message' => 'Login Successfully',
+            //     'image' => $imagePath           
+            // ];
             $data = [
-                'user' => $user,
-                'token' => $token,
-                'message' => 'Login Successfully'
+            'student' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'street' => $user->street,
+            'postal_code' => $user->postal_code,
+            'city' => $user->city,
+            'state' => $user->state,
+            'image' => $imagePath, // Include the full image URL
+            'fname' => $user->fname,
+            'femail' => $user->femail,
+            'fphone' => $user->fphone,
+            'paymentType' => $user->paymentType,
+            'dob' => $user->dob,
+            ],
+            'token' => $token,
+             'message' => 'Login Successfully',
             ];
+
         }
     } catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
@@ -105,6 +138,10 @@ class StudentAuthController extends Controller
             'femail' => ['nullable', 'string', 'min:1', 'max:250'],
               'fphone' => 'required|numeric|digits:10',
             'dob' => ['nullable', 'date', 'max:250'],
+            'fstreet' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
+            'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
+            'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
 
             'paymentType' => ['required', 'string', 'min:1', 'max:250'],
         ]);
@@ -112,8 +149,8 @@ class StudentAuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-try{
-         if($request->image!=''){
+     try{
+        if($request->image!=''){
         $uploadedImg=$request->image;
         $fileName=time().'.'.$request->image->extension();          
         $destinationpath=public_path('/Student');
@@ -128,8 +165,7 @@ try{
             $student->name = $request->input('name');
             $student->email = $request->input('email');
             $student->phone = $request->input('phone');
-             $student->street = $request->input('street');
-            $student->postal_code = $request->input('postal_code');
+            $student->street = $request->input('street');
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
@@ -140,11 +176,15 @@ try{
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
             $student->paymentType = $request->input('paymentType');
+             $student->fstreet = $request->input('fstreet');
+            $student->fpostal_code = $request->input('fpostal_code');
+            $student->fcity = $request->input('fcity');
+            $student->fstate = $request->input('fstate');
             $student->save();
-        return response()->json(['message' => 'Student registered successfully', 'student' => $student], 201);
-    }catch (Exception $e) {
+            return response()->json(['message' => 'Student registered successfully', 'student' => $student], 201);
+        }catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
-          return response()->json(['message' => 'An error occurred while registering students', 'data' => $data], 500);
+        return response()->json(['message' => 'An error occurred while registering students', 'data' => $data], 500);
          
     }
     }
@@ -180,8 +220,12 @@ try{
             'paymentType' => ['required', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
-             'dob' => ['nullable', 'date', 'max:250'],
+            'dob' => ['nullable', 'date', 'max:250'],
             'password' => 'required|string|min:6|confirmed',
+            'fstreet' => ['nullable', 'string', 'min:1', 'max:250'], 
+            'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
+            'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
+            'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
         ]);
 
         if ($validator->fails()) {
@@ -208,7 +252,6 @@ try{
             $student->phone = $request->input('phone');
             $student->street = $request->input('street');
             $student->postal_code = $request->input('postal_code');
-            $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
             $student->dob = $request->input('dob');
@@ -218,6 +261,10 @@ try{
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
             $student->paymentType = $request->input('paymentType');
+             $student->fstreet = $request->input('fstreet');
+            $student->fpostal_code = $request->input('fpostal_code');
+            $student->fcity = $request->input('fcity');
+            $student->fstate = $request->input('fstate');
             $student->save();
        
 
@@ -236,5 +283,99 @@ try{
         $student->delete();
 
         return response()->json(['message' => 'Student deleted successfully'], 200);
+    }
+
+    public function profileUpdateView($id){
+
+        $student = Student::find($id);
+        if($student){
+        return response()->json($student);
+        }else{
+        return response()->json(['message' => 'Student not found'], 404);
+        }
+    }
+
+    public function profileUpdate(Request $request,$id){
+
+       $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:students,email,' . $id,
+            'phone' => 'required|numeric|digits:10,|unique:students,phone,' . $id,
+            'street' => ['nullable','string', 'min:1', 'max:250'], 
+            'postal_code' => ['nullable', 'numeric', 'digits:6'],
+            'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'fname' => ['required', 'string', 'min:1', 'max:250'],
+            'femail' => ['nullable', 'string', 'min:1', 'max:250'],
+            'fphone' => 'required|numeric|digits:10',
+            'state' => ['nullable', 'string', 'min:1', 'max:250'],
+            'dob' => ['nullable', 'date', 'max:250'],
+           
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        try{
+
+        if($request->image!=''){
+        $uploadedImg=$request->image;
+        $fileName=time().'.'.$request->image->extension();          
+        $destinationpath=public_path('/Student');
+        $img=Image::make($uploadedImg->path());     
+        $img->resize(200,null, function($constraint){
+        $constraint->aspectRatio();
+        })->save($destinationpath.'/'.$fileName);
+        }else{
+        $fileName='';
+        }
+            $student = Student::find($id);
+            $student->name = $request->input('name');
+            $student->email = $request->input('email');
+            $student->phone = $request->input('phone');
+            $student->street = $request->input('street');
+            $student->postal_code = $request->input('postal_code');
+            $student->city = $request->input('city');
+            $student->state = $request->input('state');
+            $student->dob = $request->input('dob');
+            $student->image = $fileName;
+            $student->fname = $request->input('fname');
+            $student->femail = $request->input('femail');
+            $student->fphone = $request->input('fphone');
+            $student->save();
+            return response()->json(['message' => 'Profile Updated Successfully', 'student' => $student], 201);
+        }catch (Exception $e) {
+            $data = ['error' => $e->getMessage()];
+            return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+        }
+    }
+
+    public function passwordUpdate(Request $request){
+
+        $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'password' => 'required|string',
+        'new_password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $student = Student::where('email',$request->input('email'))->first();
+        
+        if($student){
+
+            if (Hash::check($request->input('password'), $student->password)) {
+                $student->password = Hash::make($request->new_password);
+                $student->save();
+                return response()->json(['message' => 'Your password has been updated successfully.'], 200);
+            }else{
+            return response()->json(['message' => 'The password you entered is incorrect'], 404);
+            }
+        }else{
+        return response()->json(['message' => 'We could not find an account with that email address. Please check and try again.'], 404);
+        }
+
+        
     }
 }

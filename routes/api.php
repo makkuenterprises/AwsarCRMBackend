@@ -31,12 +31,14 @@ Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
 Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
 Route::get('/view/profile/update/{id}', [AdminAuthController::class, 'profileUpdateView']);
 Route::post('/profile/update/{id}', [AdminAuthController::class, 'profileUpdate']);
+Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
+
+
 
 });
 
 Route::prefix('student')->group(function () {
 Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
-Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 });
 
 // Route::middleware(['admin'])->group(function () {
@@ -50,13 +52,23 @@ Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 // });
 
 
+Route::prefix('student')->group(function () {
+
+      Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
+      Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
+      Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
+      Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
+
+}); 
  
 Route::prefix('teacher')->group(function () {
-    Route::post('/login',[TeacherAuthController::class,'teacherAuthLogin']);
-    Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
+
+      Route::post('/login',[TeacherAuthController::class,'teacherAuthLogin']);
+
 });  
 
 Route::prefix('teacher')->group(function () {
+
       Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
       Route::get('/list', [TeacherAuthController::class, 'teacherList']);
       Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
@@ -64,28 +76,57 @@ Route::prefix('teacher')->group(function () {
       Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
 });      
 
+Route::prefix('teacher')->group(function () {
+
+      Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
+      Route::get('/view/profile/update/{id}', [TeacherAuthController::class, 'profileUpdateView']);
+      Route::post('/profile/update/{id}', [TeacherAuthController::class, 'profileUpdate']);
+      Route::post('/password/update', [TeacherAuthController::class, 'passwordUpdate']);
+
+
+}); 
+
 Route::prefix('staff')->group(function () {
+
       Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
-      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']);
+     
+
 });  
 
 Route::prefix('staff')->group(function () {
+
       Route::post('/register', [StaffAuthController::class, 'staffCreate']);
       Route::get('/list', [StaffAuthController::class, 'staffList']);
       Route::get('view/update/{id}/', [StaffAuthController::class, 'UpdateView']);
       Route::post('update/{id}', [StaffAuthController::class, 'updateStaff']);
       Route::delete('delete/{id}', [StaffAuthController::class, 'deleteStaff']);
+
+}); 
+
+Route::prefix('staff')->group(function () {
+
+      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']);
+      Route::get('/view/profile/update/{id}', [StaffAuthController::class, 'profileUpdateView']);
+      Route::post('/profile/update/{id}', [StaffAuthController::class, 'profileUpdate']);
+      Route::post('/password/update', [StaffAuthController::class, 'passwordUpdate']);
+
 }); 
 
 Route::prefix('course')->group(function () {
+
       Route::post('/create', [CourseController::class, 'courseCreate']);
       Route::get('/list', [CourseController::class, 'courseList']);
       Route::get('view/update/{id}/', [CourseController::class, 'UpdateView']);
       Route::post('update/{id}', [CourseController::class, 'courseUpdate']);
       Route::delete('delete/{id}', [CourseController::class, 'deleteCourse']);
+
 }); 
 
 Route::prefix('notification')->group(function () {
+
       Route::post('/create', [NotificationController::class, 'create']);
       Route::get('/list', [NotificationController::class, 'List']);
+
 }); 
+
+
