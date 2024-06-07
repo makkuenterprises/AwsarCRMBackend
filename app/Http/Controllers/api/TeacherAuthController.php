@@ -68,9 +68,22 @@ class TeacherAuthController extends Controller
         } else {
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
-            $code = 200;
+           $code = 200;
+           $imagePath = url('/Teachers/' . $user->image);
+            
             $data = [
-                'user' => $user,
+            'teacher' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'street' => $user->street,
+            'postal_code' => $user->postal_code,
+            'city' => $user->city,
+            'state' => $user->state,
+            'image' => $imagePath, // Include the full image URL
+           'classes' => $user->classes,
+            ],
                 'token' => $token,
                 'message' => 'Login Successfully'
             ];

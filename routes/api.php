@@ -60,7 +60,7 @@ Route::prefix('student')->group(function () {
       Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
 
 }); 
- 
+
 Route::prefix('teacher')->group(function () {
 
       Route::post('/login',[TeacherAuthController::class,'teacherAuthLogin']);

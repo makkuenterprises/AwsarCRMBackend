@@ -38,8 +38,20 @@ class StaffAuthController extends Controller
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
             $code = 200;
+            $imagePath = url('/Staffs/' . $user->image);
+            
             $data = [
-                'user' => $user,
+            'staff' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'street' => $user->street,
+            'postal_code' => $user->postal_code,
+            'city' => $user->city,
+            'state' => $user->state,
+            'image' => $imagePath, // Include the full image URL
+            ],
                 'token' => $token,
                 'message' => 'Login Successfully'
             ];

@@ -69,9 +69,17 @@ class AdminAuthController extends Controller
         } else {
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
+            $imagePath = url('/Admin/' . $user->image);
             $code = 200;
+
             $data = [
-                'user' => $user,
+            'admin' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'image' => $imagePath, // Include the full image URL
+            ],
                 'token' => $token,
                  'message' => 'Login Successfully'
             ];

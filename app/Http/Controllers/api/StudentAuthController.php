@@ -92,6 +92,10 @@ class StudentAuthController extends Controller
             'fname' => $user->fname,
             'femail' => $user->femail,
             'fphone' => $user->fphone,
+            'fstreet' => $user->fstreet,
+            'fpostal_code' => $user->postal_code,
+            'fcity' => $user->fcity,
+            'fstate' => $user->fstate,
             'paymentType' => $user->paymentType,
             'dob' => $user->dob,
             ],
@@ -261,7 +265,7 @@ class StudentAuthController extends Controller
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
             $student->paymentType = $request->input('paymentType');
-             $student->fstreet = $request->input('fstreet');
+            $student->fstreet = $request->input('fstreet');
             $student->fpostal_code = $request->input('fpostal_code');
             $student->fcity = $request->input('fcity');
             $student->fstate = $request->input('fstate');
