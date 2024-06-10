@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Image;
 use App\Models\Student;
+use App\Models\Course;
+use DB;
 
 class StudentAuthController extends Controller
 {
@@ -153,6 +155,7 @@ class StudentAuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+         DB::beginTransaction();
      try{
         if($request->image!=''){
         $uploadedImg=$request->image;
@@ -180,33 +183,34 @@ class StudentAuthController extends Controller
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
             $student->paymentType = $request->input('paymentType');
-             $student->fstreet = $request->input('fstreet');
+            $student->fstreet = $request->input('fstreet');
             $student->fpostal_code = $request->input('fpostal_code');
             $student->fcity = $request->input('fcity');
             $student->fstate = $request->input('fstate');
             $student->save();
+            DB::commit();
             return response()->json(['message' => 'Student registered successfully', 'student' => $student], 201);
         }catch (Exception $e) {
+            DB::rollBack();
         $data = ['error' => $e->getMessage()];
         return response()->json(['message' => 'An error occurred while registering students', 'data' => $data], 500);
          
     }
     }
 
-  public function StudentList(){
+    public function StudentList(){
      $students = Student::orderByDesc('id')->get();
-        return response()->json($students);
-  }
+     return response()->json($students);
+    }
   
-  public function UpdateView($id){
-   $student = Student::find($id);
-   if($student){
-   return response()->json($student);
-
-   }else{
-     return response()->json(['message' => 'Student not found'], 404);
-   }
-  }
+    public function UpdateView($id){
+      $student = Student::find($id);
+      if($student){
+      return response()->json($student);
+       }else{
+      return response()->json(['message' => 'Student not found'], 404);
+       }
+    }
 
     public function updateStudent(Request $request, $id)
     {
@@ -381,5 +385,20 @@ class StudentAuthController extends Controller
         }
 
         
+    }
+
+
+    public function courseList(){
+      $courses = Course::where('status', 'active')->orderByDesc('id')->get();
+
+      $data = [];
+
+      foreach ($courses as $course) {
+      $data[] = [
+        'id' => $course->id,
+        'name' => $course->name,
+        ];
+        }
+       return response()->json($data);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Course;
+use Illuminate\Support\Str;
 
 class CourseController extends Controller
 {
@@ -28,6 +29,14 @@ class CourseController extends Controller
             $course->startDate = $request->input('startDate');
             $course->endDate = $request->input('endDate');
             $course->modeType = $request->input('modeType');
+            
+
+            $timestamp = time(); // Get the current Unix timestamp
+            sleep(1);
+            $randomString = Str::random(10);
+            $courseId = $timestamp . $randomString;
+
+            $course->Course_id = $courseId;
             $course->save();
              return response()->json(['message' => 'Course created successfully', 'course' => $course], 201);
               }catch (Exception $e) {
@@ -38,8 +47,8 @@ class CourseController extends Controller
     }
 
     public function courseList(){
-       $course = Course::orderByDesc('id')->get();
-       return response()->json($course);
+         $courses = Course::where('status', 'active')->orderByDesc('id')->get();
+         return response()->json($courses);
     }
 
     public function UpdateView($id){

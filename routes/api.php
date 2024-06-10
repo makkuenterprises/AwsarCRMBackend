@@ -8,7 +8,9 @@ use App\Http\Controllers\api\TeacherAuthController;
 use App\Http\Controllers\api\StaffAuthController;
 use App\Http\Controllers\api\CourseController;
 use App\Http\Controllers\api\NotificationController;
-
+use App\Http\Controllers\api\MeetingCreateController;
+use App\Http\Controllers\api\AttendanceController;
+use App\Http\Controllers\api\CourseEnrollementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +50,7 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
         Route::get('view/update/{id}/', [StudentAuthController::class, 'UpdateView']);
         Route::post('update/{id}', [StudentAuthController::class, 'updateStudent']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
+        Route::get('course/list', [StudentAuthController::class, 'courseList']);
     });
 // });
 
@@ -120,6 +123,9 @@ Route::prefix('course')->group(function () {
       Route::post('update/{id}', [CourseController::class, 'courseUpdate']);
       Route::delete('delete/{id}', [CourseController::class, 'deleteCourse']);
 
+      Route::post('/enroll', [CourseEnrollementController::class, 'enrollCourse']);
+
+
 }); 
 
 Route::prefix('notification')->group(function () {
@@ -130,3 +136,15 @@ Route::prefix('notification')->group(function () {
 }); 
 
 
+Route::prefix('meeting')->group(function () {
+
+      Route::post('/create', [MeetingCreateController::class, 'create']);
+     
+});
+ 
+Route::prefix('attedence')->group(function () {
+
+      Route::get('/student-list/{course-id}', [AttendanceController::class, 'getStudents']);
+      Route::post('/submit-attendance', [AttendanceController::class, 'create']);
+     
+});
