@@ -144,7 +144,7 @@ Route::prefix('meeting')->group(function () {
  
 Route::prefix('attedence')->group(function () {
 
-      Route::get('/student-list/{course-id}', [AttendanceController::class, 'getStudents']);
+      Route::get('/list/{id}', [AttendanceController::class, 'getStudents']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
 
       Route::get('/list', [AttendanceController::class, 'alllist']);
