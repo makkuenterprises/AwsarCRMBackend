@@ -14,20 +14,21 @@ class AttendanceController extends Controller
     public function getStudents($id)
     {
         $course = CoursesEnrollement::where('course_id',$id)->get();
+        $data = CoursesEnrollement::get();
 
-        $students = DB::table('students')
-            ->join('courses_enrollements', 'courses_enrollements.student_id', '=', 'students.id')
-            ->where('courses_enrollements.course_id', $id)
-            ->select('students.*', 'courses_enrollements.course_id')
-            ->get();
+        // $students = DB::table('students')
+        //     ->join('courses_enrollements', 'courses_enrollements.student_id', '=', 'students.id')
+        //     ->where('courses_enrollements.course_id', $id)
+        //     ->select('students.*', 'courses_enrollements.course_id')
+        //     ->get();
 
-            foreach ($students as $student) {
-            $data[] = [
-            'id' => $student->id,
-            'name' => $student->name,
-            'course-id' => $student->course_id,
-            ];
-        }
+        //     foreach ($students as $student) {
+        //     $data[] = [
+        //     'id' => $student->id,
+        //     'name' => $student->name,
+        //     'course-id' => $student->course_id,
+        //     ];
+        // }
         return response()->json(['data' => $data]);
     }
 

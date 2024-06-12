@@ -137,7 +137,7 @@ Route::prefix('notification')->group(function () {
 
 
 Route::prefix('meeting')->group(function () {
-
+ 
       Route::post('/create', [MeetingCreateController::class, 'create']);
      
 });
@@ -146,5 +146,8 @@ Route::prefix('attedence')->group(function () {
 
       Route::get('/student-list/{course-id}', [AttendanceController::class, 'getStudents']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
+
+      Route::get('/list', [AttendanceController::class, 'getStudents']);
+
      
 });

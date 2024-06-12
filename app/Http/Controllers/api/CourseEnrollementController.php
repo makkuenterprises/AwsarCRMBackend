@@ -27,7 +27,7 @@ class CourseEnrollementController extends Controller
     if ($validator->fails()) {
         return response()->json($validator->errors(), 422);
     }
-
+ 
 
     try {
         // Find the student and course
