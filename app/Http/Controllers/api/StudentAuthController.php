@@ -153,7 +153,11 @@ class StudentAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+             'status' => false,
+               'code'=>422,
+              'errors' => $validator->errors()
+              ], 422);
         }
          DB::beginTransaction();
      try{
@@ -189,7 +193,7 @@ class StudentAuthController extends Controller
             $student->fstate = $request->input('fstate');
             $student->save();
             DB::commit();
-            return response()->json(['message' => 'Student registered successfully', 'student' => $student], 201);
+            return response()->json(['status' => true,'code' => 201,'message' => 'Student registered successfully', 'student' => $student]);
         }catch (Exception $e) {
             DB::rollBack();
         $data = ['error' => $e->getMessage()];
