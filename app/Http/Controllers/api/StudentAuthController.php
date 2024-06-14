@@ -200,7 +200,8 @@ class StudentAuthController extends Controller
 
     public function StudentList(){
      $students = Student::orderByDesc('id')->get();
-     return response()->json($students);
+     
+     return response()->json(['status' => true  , 'code' => 200 , 'data'=>$students]);
     }
   
     public function UpdateView($id){
