@@ -216,7 +216,7 @@ class StudentAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
-            'image' => url('/Student/' . $user->image), // Assuming $user->imagePath contains the relative path
+             'image' => $user->image ? url('/Student/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
             'fname' => $user->fname,
             'femail' => $user->femail,
             'fphone' => $user->fphone,
