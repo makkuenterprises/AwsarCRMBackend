@@ -168,7 +168,9 @@ public function teacherList(){
             $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
             $teacher->save();
-          return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher registered successfully', 'teacher' => $teacher], 200);
+             $imagePath = url('/Teachers/' . $teacher->image);
+
+          return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher registered successfully', 'teacher' => $teacher,'image'=>$imagePath], 200);
         }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
           return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while registering Teacher', 'data' => $data], 500);
