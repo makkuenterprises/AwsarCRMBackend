@@ -392,7 +392,8 @@ class StudentAuthController extends Controller
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
             $student->save();
-            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'student' => $student], 200);
+               $imagePath = url('/Student/' . $student->image);
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'student' => $student,'profileImage'=>$imagePath], 200);
         }catch (Exception $e) {
             $data = ['error' => $e->getMessage()];
             return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating profile', 'data' => $data], 500);
