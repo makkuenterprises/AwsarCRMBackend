@@ -57,15 +57,16 @@ class StudentAuthController extends Controller
         $user = Student::whereEmail($login['email'])->first();
 
         if (!$user) {
-          return response()->json(['message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+          return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
         }
 
         if (!Hash::check($request->input('password'), $user->password)) {
         // Return error response for incorrect password
-        return response()->json(['message' => 'The password you entered is incorrect. Please try again.'], 401);
+        return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
         }
 
         if (!$user || !Hash::check($login['password'], $user->password)) {
+            
             $data = 'Invalid Login Credentials';
             $code = 401;
         } else {
@@ -122,7 +123,7 @@ class StudentAuthController extends Controller
             $admin->tokens()->where('student', 'AwsarClass')->delete();
         }
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
     }
 
 
@@ -155,9 +156,9 @@ class StudentAuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
              'status' => false,
-               'code'=>422,
+               'code'=>400,
               'errors' => $validator->errors()
-              ], 422);
+              ], 400);
         }
          DB::beginTransaction();
      try{
@@ -193,11 +194,11 @@ class StudentAuthController extends Controller
             $student->fstate = $request->input('fstate');
             $student->save();
             DB::commit();
-            return response()->json(['status' => true,'code' => 201,'message' => 'Student registered successfully', 'student' => $student]);
+            return response()->json(['status' => true,'code' => 200,'message' => 'Student registered successfully', 'student' => $student]);
         }catch (Exception $e) {
             DB::rollBack();
         $data = ['error' => $e->getMessage()];
-        return response()->json(['message' => 'An error occurred while registering students', 'data' => $data], 500);
+        return response()->json(['status'=> false,'code'=>500,'message' => 'An error occurred while registering students','data' => $data,], 500);
          
     }
     }
@@ -213,7 +214,7 @@ class StudentAuthController extends Controller
       if($student){
       return response()->json($student);
        }else{
-      return response()->json(['message' => 'Student not found'], 404);
+      return response()->json(['status'=> false,'code'=>404,'message' => 'Student not found'], 404);
        }
     }
 
@@ -241,10 +242,13 @@ class StudentAuthController extends Controller
             'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
-
       if($request->image!=''){
         $uploadedImg=$request->image;
         $fileName=time().'.'.$request->image->extension();          
@@ -258,7 +262,7 @@ class StudentAuthController extends Controller
        }
             $student = Student::find($id);
              if (!$student) {
-            return response()->json(['message' => 'Student not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Student not found'], 404);
         }
             $student->name = $request->input('name');
             $student->email = $request->input('email');
@@ -281,7 +285,7 @@ class StudentAuthController extends Controller
             $student->save();
        
 
-        return response()->json(['message' => 'Student updated successfully', 'student' => $student], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Student updated successfully', 'student' => $student], 200);
     }
 
 
@@ -290,21 +294,21 @@ class StudentAuthController extends Controller
         $student = Student::find($id);
 
         if (!$student) {
-            return response()->json(['message' => 'Student not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Student not found'], 404);
         }
 
         $student->delete();
 
-        return response()->json(['message' => 'Student deleted successfully'], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Student deleted successfully'], 200);
     }
 
     public function profileUpdateView($id){
 
         $student = Student::find($id);
         if($student){
-        return response()->json($student);
+        return response()->json(['status'=>true,'code'=>200,'data'=>$student]);
         }else{
-        return response()->json(['message' => 'Student not found'], 404);
+        return response()->json(['status'=>false,'code'=>404,'message' => 'Student not found'], 404);
         }
     }
 
@@ -325,8 +329,12 @@ class StudentAuthController extends Controller
            
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
         try{
 
@@ -355,10 +363,10 @@ class StudentAuthController extends Controller
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
             $student->save();
-            return response()->json(['message' => 'Profile Updated Successfully', 'student' => $student], 201);
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'student' => $student], 200);
         }catch (Exception $e) {
             $data = ['error' => $e->getMessage()];
-            return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+            return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating profile', 'data' => $data], 500);
         }
     }
 
@@ -371,9 +379,12 @@ class StudentAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
-
         $student = Student::where('email',$request->input('email'))->first();
         
         if($student){
@@ -381,12 +392,12 @@ class StudentAuthController extends Controller
             if (Hash::check($request->input('password'), $student->password)) {
                 $student->password = Hash::make($request->new_password);
                 $student->save();
-                return response()->json(['message' => 'Your password has been updated successfully.'], 200);
+                return response()->json(['status'=>true,'code'=>200,'message' => 'Your password has been updated successfully.'], 200);
             }else{
-            return response()->json(['message' => 'The password you entered is incorrect'], 404);
+            return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect'], 401);
             }
         }else{
-        return response()->json(['message' => 'We could not find an account with that email address. Please check and try again.'], 404);
+        return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address. Please check and try again.'], 404);
         }
 
         
@@ -399,11 +410,12 @@ class StudentAuthController extends Controller
       $data = [];
 
       foreach ($courses as $course) {
+        
       $data[] = [
         'id' => $course->id,
         'name' => $course->name,
         ];
         }
-       return response()->json($data);
+       return response()->json(['status'=>true,'code'=>200,'data'=>$data]);
     }
 }

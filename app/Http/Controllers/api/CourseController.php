@@ -20,7 +20,11 @@ class CourseController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
         try{
             $course = new Course();
@@ -38,25 +42,25 @@ class CourseController extends Controller
 
             $course->Course_id = $courseId;
             $course->save();
-             return response()->json(['message' => 'Course created successfully', 'course' => $course], 201);
+             return response()->json(['status'=>true,'code'=>200,'message' => 'Course created successfully', 'course' => $course], 200);
               }catch (Exception $e) {
           $data = ['error' => $e->getMessage()];
-         return response()->json(['message' => 'An error occurred while Created Course', 'data' => $data], 500);
+         return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Created Course', 'data' => $data], 500);
         }
          
     }
 
     public function courseList(){
          $courses = Course::where('status', 'active')->orderByDesc('id')->get();
-         return response()->json($courses);
+         return response()->json(['status'=>true,'code'=>200,'data'=>$courses]);
     }
 
     public function UpdateView($id){
       $course = Course::find($id);
       if($course){
-      return response()->json($course);
+      return response()->json(['status'=>true,'code'=>200,'data'=>$course]);
       }else{
-     return response()->json(['message' => 'Course not found'], 404);
+     return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
       }
     }
 
@@ -65,10 +69,10 @@ class CourseController extends Controller
         $course = Course::find($id);
 
         if (!$course) {
-            return response()->json(['message' => 'Course not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
         }
         $course->delete();
-        return response()->json(['message' => 'Course deleted successfully'], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Course deleted successfully'], 200);
     }
 
     public function courseUpdate(Request $request,$id){
@@ -81,12 +85,16 @@ class CourseController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
         try{
             $course = Course::find($id);
             if (!$course) {
-            return response()->json(['message' => 'Course not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
             }
             $course->name = $request->input('name');
             $course->fee = $request->input('fee');
@@ -94,10 +102,10 @@ class CourseController extends Controller
             $course->endDate = $request->input('endDate');
             $course->modeType = $request->input('modeType');
             $course->save();
-            return response()->json(['message' => 'Course Updated successfully', 'course' => $course], 201);
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Course Updated successfully', 'course' => $course], 200);
             }catch (Exception $e) {
           $data = ['error' => $e->getMessage()];
-         return response()->json(['message' => 'An error occurred while Updating Course', 'data' => $data], 500);
+         return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Updating Course', 'data' => $data], 500);
         }
          
     }

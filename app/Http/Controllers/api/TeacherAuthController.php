@@ -54,12 +54,12 @@ class TeacherAuthController extends Controller
     try {
         $user = Teacher::whereEmail($login['email'])->first();
         if (!$user) {
-          return response()->json(['message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+          return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
         }
 
         if (!Hash::check($request->input('password'), $user->password)) {
         // Return error response for incorrect password
-        return response()->json(['message' => 'The password you entered is incorrect. Please try again.'], 401);
+        return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
         }
 
         if (!$user || !Hash::check($login['password'], $user->password)) {
@@ -96,16 +96,16 @@ class TeacherAuthController extends Controller
 
 public function teacherList(){
     $teacher = Teacher::orderByDesc('id')->get();
-    return response()->json($teacher);
+    return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 }
 
  public function UpdateView($id){
    $teacher = Teacher::find($id);
    if($teacher){
-   return response()->json($teacher);
+   return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 
    }else{
-     return response()->json(['message' => 'Teacher not found'], 404);
+     return response()->json(['status'=>false,'code'=>404,'message' => 'Teacher not found'], 404);
    }
   }
 
@@ -117,7 +117,7 @@ public function teacherList(){
             $admin->tokens()->where('name', 'AwsarClass')->delete();
         }
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
     }
 
 
@@ -136,8 +136,12 @@ public function teacherList(){
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
         try{
@@ -164,10 +168,10 @@ public function teacherList(){
             $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
             $teacher->save();
-          return response()->json(['message' => 'Teacher registered successfully', 'teacher' => $teacher], 201);
+          return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher registered successfully', 'teacher' => $teacher], 200);
         }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
-          return response()->json(['message' => 'An error occurred while registering Teacher', 'data' => $data], 500);
+          return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while registering Teacher', 'data' => $data], 500);
 
         }
     }
@@ -187,8 +191,12 @@ public function teacherList(){
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
         try{
@@ -219,10 +227,10 @@ public function teacherList(){
             $teacher->classes =$request->input('classes');
             $teacher->save();
            
-        return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
          }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
-          return response()->json(['message' => 'An error occurred while Updating Teacher', 'data' => $data], 500);
+          return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Updating Teacher', 'data' => $data], 500);
 
         }
     }
@@ -233,21 +241,21 @@ public function teacherList(){
         $teacher = Teacher::find($id);
 
         if (!$teacher) {
-            return response()->json(['message' => 'Teacher not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Teacher not found'], 404);
         }
 
         $teacher->delete();
 
-        return response()->json(['message' => 'Teacher deleted successfully'], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher deleted successfully'], 200);
     }
 
     public function profileUpdateView($id){
 
         $teacher = Teacher::find($id);
         if($teacher){
-        return response()->json($teacher);
+        return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
         }else{
-        return response()->json(['message' => 'Teacher not found'], 404);
+        return response()->json(['status'=>false,'code'=>404,'message' => 'Teacher not found'], 404);
         }
     }
 
@@ -266,8 +274,12 @@ public function teacherList(){
            
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
         try{
@@ -285,7 +297,7 @@ public function teacherList(){
           }
             $teacher = Teacher::find($id);
              if (!$teacher) {
-            return response()->json(['message' => 'Teacher not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Teacher not found'], 404);
             }
             $teacher->name = $request->input('name');
             $teacher->email = $request->input('email');
@@ -297,10 +309,10 @@ public function teacherList(){
             $teacher->image = $fileName;
             $teacher->classes =$request->input('classes');
             $teacher->save();
-            return response()->json(['message' => 'Profile Updated Successfully', 'teacher' => $teacher], 201);
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'teacher' => $teacher], 200);
         }catch (Exception $e) {
             $data = ['error' => $e->getMessage()];
-            return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+            return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating profile', 'data' => $data], 500);
         }
     }
 
@@ -312,10 +324,13 @@ public function teacherList(){
         'new_password' => 'required|string',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
-
         $teacher = Teacher::where('email',$request->input('email'))->first();
         
         if($teacher){
@@ -323,12 +338,12 @@ public function teacherList(){
             if (Hash::check($request->input('password'), $teacher->password)) {
                 $teacher->password = Hash::make($request->new_password);
                 $teacher->save();
-                return response()->json(['message' => 'Your password has been updated successfully.'], 200);
+                return response()->json(['status'=>true,'code'=>200,'message' => 'Your password has been updated successfully.'], 200);
             }else{
-            return response()->json(['message' => 'The password you entered is incorrect'], 404);
+            return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect'], 401);
             }
         }else{
-        return response()->json(['message' => 'We could not find an account with that email address. Please check and try again.'], 404);
+        return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address. Please check and try again.'], 404);
         }
 
         

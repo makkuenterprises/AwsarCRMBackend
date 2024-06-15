@@ -54,12 +54,12 @@ class AdminAuthController extends Controller
         $user = Admin::whereEmail($login['email'])->first();
 
         if (!$user) {
-          return response()->json(['message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+          return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
         }
 
         if (!Hash::check($request->input('password'), $user->password)) {
         // Return error response for incorrect password
-        return response()->json(['message' => 'The password you entered is incorrect. Please try again.'], 401);
+        return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
         }
 
 
@@ -99,16 +99,16 @@ class AdminAuthController extends Controller
             $admin->tokens()->where('name', 'AwsarClass')->delete();
         }
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
     }
     
     public function profileUpdateView($id){
 
         $admin = Admin::find($id);
         if($admin){
-        return response()->json($admin);
+        return response()->json(['status'=>true,'code'=>200,'data'=>$admin]);
         }else{
-        return response()->json(['message' => 'Admin not found'], 404);
+        return response()->json(['status'=>false,'code'=>404,'message' => 'Admin not found'], 404);
         }
     }
 
@@ -120,8 +120,12 @@ class AdminAuthController extends Controller
          'phone' => 'required|numeric|digits:10|unique:admins,phone,' . $id,
          'image' => 'nullable',
         ]);
-        if ($validator->fails()) {
-        return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
     try{
@@ -142,10 +146,10 @@ class AdminAuthController extends Controller
             $admin->phone = $request->input('phone');
             $admin->image = $fileName;
             $admin->save();
-            return response()->json(['message' => 'Profile Updated Successfully', 'admin' => $admin], 201);
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'admin' => $admin], 200);
         }catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
-        return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+        return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating profile', 'data' => $data], 500);
         }
     }
 
@@ -158,7 +162,11 @@ class AdminAuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
         $admin = Admin::where('email',$request->input('email'))->first();
@@ -168,12 +176,12 @@ class AdminAuthController extends Controller
             if (Hash::check($request->input('password'), $admin->password)) {
                 $admin->password = Hash::make($request->new_password);
                 $admin->save();
-                return response()->json(['message' => 'Your password has been updated successfully.'], 200);
+                return response()->json(['status'=>true,'code'=>200,'message' => 'Your password has been updated successfully.'], 200);
             }else{
-            return response()->json(['message' => 'The password you entered is incorrect'], 404);
+            return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect'], 401);
             }
         }else{
-        return response()->json(['message' => 'We could not find an account with that email address. Please check and try again.'], 404);
+        return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address. Please check and try again.'], 404);
         }
 
         

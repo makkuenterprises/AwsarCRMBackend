@@ -23,12 +23,12 @@ class StaffAuthController extends Controller
         $user = StaffModel::whereEmail($login['email'])->first();
 
         if (!$user) {
-          return response()->json(['message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+          return response()->json(['status'=>true,'code'=>200,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
         }
 
         if (!Hash::check($request->input('password'), $user->password)) {
         // Return error response for incorrect password
-        return response()->json(['message' => 'The password you entered is incorrect. Please try again.'], 401);
+        return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
         }
 
         if (!$user || !Hash::check($login['password'], $user->password)) {
@@ -64,16 +64,16 @@ class StaffAuthController extends Controller
 
 public function staffList(){
  $staff = StaffModel::orderByDesc('id')->get();
-    return response()->json($staff);
+    return response()->json(['status'=>true,'code'=>200,'data'=>$staff]);
 }
 
 public function UpdateView($id){
    $staffs = StaffModel::find($id);
    if($staffs){
-   return response()->json($staffs);
+   return response()->json(['status'=>true,'code'=>200,'data'=>$staffs]);
 
    }else{
-     return response()->json(['message' => 'Staff not found'], 404);
+     return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
    }
 }
 
@@ -85,7 +85,7 @@ public function staffAuthLogout(Request $request)
             $staff->tokens()->where('name', 'AwsarClass')->delete();
         }
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
     }
 
 
@@ -103,8 +103,12 @@ public function staffAuthLogout(Request $request)
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
         try{
@@ -130,10 +134,10 @@ public function staffAuthLogout(Request $request)
             $staff->image = $fileName;
             $staff->password =Hash::make($request->password);
             $staff->save();
-          return response()->json(['message' => 'Staff registered successfully', 'staff' => $staff], 201);
+          return response()->json(['status'=>true,'code'=>200,'message' => 'Staff registered successfully', 'staff' => $staff], 200);
         }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
-           return response()->json(['message' => 'An error occurred while Creating staff', 'data' => $data], 500);
+           return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Creating staff', 'data' => $data], 500);
          
         }
     }
@@ -152,8 +156,12 @@ public function staffAuthLogout(Request $request)
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
         try{
@@ -170,7 +178,7 @@ public function staffAuthLogout(Request $request)
           }
             $staff = StaffModel::find($id);
              if (!$staff) {
-            return response()->json(['message' => 'Staff not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
             }
             $staff->name = $request->input('name');
             $staff->email = $request->input('email');
@@ -183,10 +191,10 @@ public function staffAuthLogout(Request $request)
             $staff->password =Hash::make($request->password);
             $staff->save();
            
-        return response()->json(['message' => 'Staff updated successfully', 'staff' => $staff], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Staff updated successfully', 'staff' => $staff], 200);
          }catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
-       return response()->json(['message' => 'An error occurred while updating staff', 'data' => $data], 500);
+       return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating staff', 'data' => $data], 500);
          }
     }
 
@@ -196,12 +204,12 @@ public function staffAuthLogout(Request $request)
         $staff = StaffModel::find($id);
 
         if (!$staff) {
-            return response()->json(['message' => 'Staff not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
         }
 
         $staff->delete();
 
-        return response()->json(['message' => 'Staff deleted successfully'], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Staff deleted successfully'], 200);
     }
 
 
@@ -209,9 +217,9 @@ public function staffAuthLogout(Request $request)
 
         $staff = StaffModel::find($id);
         if($staff){
-        return response()->json($staff);
+        return response()->json(['status'=>true,'code'=>200,'data'=>$staff]);
         }else{
-        return response()->json(['message' => 'Staff not found'], 404);
+        return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
         }
     }
 
@@ -230,7 +238,11 @@ public function staffAuthLogout(Request $request)
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
         try{
            if($request->image!=''){
@@ -246,7 +258,7 @@ public function staffAuthLogout(Request $request)
           }
             $staff = StaffModel::find($id);
              if (!$staff) {
-            return response()->json(['message' => 'Staff not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
             }
             $staff->name = $request->input('name');
             $staff->email = $request->input('email');
@@ -258,10 +270,10 @@ public function staffAuthLogout(Request $request)
             $staff->image = $fileName;
             $staff->password =Hash::make($request->password);
             $staff->save();
-            return response()->json(['message' => 'Profile Updated Successfully', 'staff' => $staff], 201);
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'staff' => $staff], 200);
         }catch (Exception $e) {
             $data = ['error' => $e->getMessage()];
-            return response()->json(['message' => 'An error occurred while updating profile', 'data' => $data], 500);
+            return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating profile', 'data' => $data], 500);
         }
     }
 
@@ -273,8 +285,12 @@ public function staffAuthLogout(Request $request)
         'new_password' => 'required|string',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+         if ($validator->fails()) {
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
         }
 
         $staff = StaffModel::where('email',$request->input('email'))->first();
@@ -284,12 +300,12 @@ public function staffAuthLogout(Request $request)
             if (Hash::check($request->input('password'), $staff->password)) {
                 $staff->password = Hash::make($request->new_password);
                 $staff->save();
-                return response()->json(['message' => 'Your password has been updated successfully.'], 200);
+                return response()->json(['status'=>true,'code'=>200,'message' => 'Your password has been updated successfully.'], 200);
             }else{
-            return response()->json(['message' => 'The password you entered is incorrect'], 404);
+            return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect'], 401);
             }
         }else{
-        return response()->json(['message' => 'We could not find an account with that email address. Please check and try again.'], 404);
+        return response()->json(['status'=>false,'code'=>500,'message' => 'We could not find an account with that email address. Please check and try again.'], 404);
         }
 
         

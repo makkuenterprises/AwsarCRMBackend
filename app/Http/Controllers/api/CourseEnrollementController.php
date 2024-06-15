@@ -25,8 +25,12 @@ class CourseEnrollementController extends Controller
 
     // Check if validation fails
     if ($validator->fails()) {
-        return response()->json($validator->errors(), 422);
-    }
+            return response()->json([
+             'status' => false,
+               'code'=>400,
+              'errors' => $validator->errors()
+              ], 400);
+        }
  
 
     try {
@@ -34,12 +38,12 @@ class CourseEnrollementController extends Controller
 
         $student = Student::find($request->student_id);
              if (!$student) {
-            return response()->json(['message' => 'Student not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Student not found'], 404);
         }
 
          $course = Course::find($request->course_id);
              if (!$course) {
-            return response()->json(['message' => 'Course not found'], 404);
+            return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
         }
 
          $enrollcourse = new CoursesEnrollement();
@@ -59,9 +63,9 @@ class CourseEnrollementController extends Controller
             $enrollcourse->save();
         
 
-        return response()->json(['message' => 'Student enrolled in the course successfully'], 201);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Student enrolled in the course successfully'], 200);
     } catch (\Exception $e) {
-        return response()->json(['message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
+        return response()->json(['status'=>false,'code'=>500,'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
     }
     }
 
