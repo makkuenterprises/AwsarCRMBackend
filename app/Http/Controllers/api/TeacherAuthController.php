@@ -254,8 +254,9 @@ public function teacherList(){
     public function profileUpdateView($id){
 
         $teacher = Teacher::find($id);
+         $imagePath = url('/Teachers/' . $teacher->image);
         if($teacher){
-        return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
+        return response()->json(['status'=>true,'code'=>200,'data'=>$teacher,'image'=>$imagePath]);
         }else{
         return response()->json(['status'=>false,'code'=>404,'message' => 'Teacher not found'], 404);
         }

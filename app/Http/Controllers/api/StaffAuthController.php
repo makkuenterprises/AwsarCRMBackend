@@ -216,8 +216,9 @@ public function staffAuthLogout(Request $request)
      public function profileUpdateView($id){
 
         $staff = StaffModel::find($id);
+        $imagePath = url('/Staffs/' . $staff->image);
         if($staff){
-        return response()->json(['status'=>true,'code'=>200,'data'=>$staff]);
+        return response()->json(['status'=>true,'code'=>200,'data'=>$staff,'image'=>$imagePath]);
         }else{
         return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
         }

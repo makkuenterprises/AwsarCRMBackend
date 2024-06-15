@@ -240,8 +240,9 @@ class StudentAuthController extends Controller
 
     public function UpdateView($id){
       $student = Student::find($id);
+       $imagePath = url('/Student/' . $student->image);
       if($student){
-      return response()->json(['status' => true  , 'code' => 200 ,'data'=>$student]);
+      return response()->json(['status' => true  , 'code' => 200 ,'data'=>$student ,'image'=>$imagePath]);
        }else{
       return response()->json(['status'=> false,'code'=>404,'message' => 'Student not found'], 404);
        }
