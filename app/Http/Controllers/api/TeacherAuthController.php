@@ -228,8 +228,9 @@ public function teacherList(){
             $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
             $teacher->save();
+             $imagePath = url('/Teachers/' . $teacher->image);
            
-        return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher updated successfully', 'teacher' => $teacher], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher updated successfully', 'teacher' => $teacher , 'image' =>$imagePath], 200);
          }catch (Exception $e) {
          $data = ['error' => $e->getMessage()];
           return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Updating Teacher', 'data' => $data], 500);
