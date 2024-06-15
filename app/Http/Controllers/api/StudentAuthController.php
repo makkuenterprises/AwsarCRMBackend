@@ -194,7 +194,8 @@ class StudentAuthController extends Controller
             $student->fstate = $request->input('fstate');
             $student->save();
             DB::commit();
-            return response()->json(['status' => true,'code' => 200,'message' => 'Student registered successfully', 'student' => $student]);
+             $imagePath = url('/Student/' . $student->image);
+            return response()->json(['status' => true,'code' => 200,'message' => 'Student registered successfully', 'student' => $student,'profileImage'=>$imagePath]);
         }catch (Exception $e) {
             DB::rollBack();
         $data = ['error' => $e->getMessage()];
@@ -205,10 +206,38 @@ class StudentAuthController extends Controller
 
     public function StudentList(){
      $students = Student::orderByDesc('id')->get();
-     
-     return response()->json(['status' => true  , 'code' => 200 , 'data'=>$students]);
+       $studentList = $students->map(function ($user) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'street' => $user->street,
+            'postal_code' => $user->postal_code,
+            'city' => $user->city,
+            'state' => $user->state,
+            'image' => url('/Student/' . $user->image), // Assuming $user->imagePath contains the relative path
+            'fname' => $user->fname,
+            'femail' => $user->femail,
+            'fphone' => $user->fphone,
+            'fstreet' => $user->fstreet,
+            'fpostal_code' => $user->fpostal_code,
+            'fcity' => $user->fcity,
+            'fstate' => $user->fstate,
+            'paymentType' => $user->paymentType,
+            'dob' => $user->dob,
+        ];
+    });
+
+    return response()->json([
+        'status' => true,
+        'code' => 200,
+        'data' => $studentList
+    ]);
+    //  return response()->json(['status' => true  , 'code' => 200 , 'data'=>$students]);
     }
-  
+     
+
     public function UpdateView($id){
       $student = Student::find($id);
       if($student){
