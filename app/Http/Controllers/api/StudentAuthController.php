@@ -194,7 +194,7 @@ class StudentAuthController extends Controller
             $student->fstate = $request->input('fstate');
             $student->save();
             DB::commit();
-             $imagePath = url('/Student/' . $student->image);
+            $imagePath = $student->image ? url('/Student/' . $student->image) : null;
             return response()->json(['status' => true,'code' => 200,'message' => 'Student registered successfully', 'student' => $student,'profileImage'=>$imagePath]);
         }catch (Exception $e) {
             DB::rollBack();
@@ -240,7 +240,7 @@ class StudentAuthController extends Controller
 
     public function UpdateView($id){
       $student = Student::find($id);
-       $imagePath = url('/Student/' . $student->image);
+      $imagePath = $student->image ? url('/Student/' . $student->image) : null;
       if($student){
       return response()->json(['status' => true  , 'code' => 200 ,'data'=>$student ,'image'=>$imagePath]);
        }else{
@@ -313,7 +313,7 @@ class StudentAuthController extends Controller
             $student->fcity = $request->input('fcity');
             $student->fstate = $request->input('fstate');
             $student->save();
-        $imagePath = url('/Student/' . $student->image);
+      $imagePath = $student->image ? url('/Student/' . $student->image) : null;
 
         return response()->json(['status'=>true,'code'=>200,'message' => 'Student updated successfully', 'student' => $student , 'image'=>$imagePath], 200);
     }
@@ -393,7 +393,7 @@ class StudentAuthController extends Controller
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
             $student->save();
-               $imagePath = url('/Student/' . $student->image);
+              $imagePath = $student->image ? url('/Student/' . $student->image) : null;
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'student' => $student,'profileImage'=>$imagePath], 200);
         }catch (Exception $e) {
             $data = ['error' => $e->getMessage()];
