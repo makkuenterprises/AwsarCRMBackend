@@ -69,8 +69,10 @@ public function staffList(){
 
 public function UpdateView($id){
    $staffs = StaffModel::find($id);
+       $imagePath = url('/Staffs/' . $staffs->image);
+
    if($staffs){
-   return response()->json(['status'=>true,'code'=>200,'data'=>$staffs]);
+   return response()->json(['status'=>true,'code'=>200,'data'=>$staffs , 'image'=>$imagePath]);
 
    }else{
      return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
