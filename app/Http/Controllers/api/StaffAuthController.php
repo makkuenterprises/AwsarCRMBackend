@@ -50,7 +50,9 @@ class StaffAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
-            'image' => $imagePath, // Include the full image URL
+            // 'image' => $imagePath, // Include the full image URL
+            'image' => $user->image ? url('/Staffs/' . $user->image) : null,
+
             ],
                 'token' => $token,
                 'message' => 'Login Successfully'

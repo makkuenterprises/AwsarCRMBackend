@@ -81,7 +81,8 @@ class TeacherAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
-            'image' => $imagePath, // Include the full image URL
+            'image' => $user->image ? url('/Teachers/' . $user->image) : null,
+            // 'image' => $imagePath, // Include the full image URL
            'classes' => $user->classes,
             ],
                 'token' => $token,
