@@ -190,8 +190,10 @@ public function staffAuthLogout(Request $request)
             $staff->image = $fileName;
             $staff->password =Hash::make($request->password);
             $staff->save();
+        $imagePath = url('/Staffs/' . $staff->image);
+
            
-        return response()->json(['status'=>true,'code'=>200,'message' => 'Staff updated successfully', 'staff' => $staff], 200);
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Staff updated successfully', 'staff' => $staff,'image'=>$imagePath], 200);
          }catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
        return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating staff', 'data' => $data], 500);
