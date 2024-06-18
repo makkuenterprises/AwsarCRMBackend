@@ -12,7 +12,7 @@ class CourseController extends Controller
 {
     public function courseCreate(Request $request){
           $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+             'name' => 'required|string|max:255|exists:courses,name',
             'fee' => 'required|string|max:255|',
             'startDate' => ['required', 'date', 'max:250'],
             'endDate' => ['required', 'date', 'max:250'],
