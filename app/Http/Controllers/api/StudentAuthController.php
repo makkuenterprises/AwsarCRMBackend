@@ -257,25 +257,38 @@ class StudentAuthController extends Controller
     public function updateStudent(Request $request, $id)
     {
         // dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:students,email,' . $id,
-            'phone' => 'required|numeric|digits:10,|unique:students,phone,' . $id,
-            'street' => ['nullable','string', 'min:1', 'max:250'], 
-            'postal_code' => ['nullable', 'numeric', 'digits:6'],
-            'city' => ['nullable', 'string', 'min:1', 'max:250'],
-            'fname' => ['required', 'string', 'min:1', 'max:250'],
-            'femail' => ['nullable', 'string', 'min:1', 'max:250'],
-            'fphone' => 'required|numeric|digits:10',
-            'paymentType' => ['required', 'string', 'min:1', 'max:250'],
-            'state' => ['nullable', 'string', 'min:1', 'max:250'],
-            'image' => 'nullable',
-            'dob' => ['nullable', 'date', 'max:250'],
-            'fstreet' => ['nullable', 'string', 'min:1', 'max:250'], 
-            'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
-            'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
-            'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
-        ]);
+          $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+       'email' => [
+            'required',
+            'string',
+            'email',
+            'max:255',
+            Rule::unique('students')->ignore($id),
+        ],
+       'phone' => [
+            'required',
+            'numeric',
+            'digits:10',
+            Rule::unique('students')->ignore($id),
+        ],
+        'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+        'postal_code' => ['nullable', 'numeric', 'digits:6'],
+        'city' => ['nullable', 'string', 'min:1', 'max:250'],
+        'state' => ['nullable', 'string', 'min:1', 'max:250'],
+        'image' => 'nullable',
+        'fname' => ['required', 'string', 'min:1', 'max:250'],
+        'femail' => ['nullable', 'string', 'min:1', 'max:250'],
+        'fphone' => 'required|numeric|digits:10',
+        'dob' => ['nullable', 'regex:/^(\d{2})\/(\d{2})\/(\d{4})$/'],
+        'fstreet' => ['nullable', 'string', 'min:1', 'max:250'], 
+        'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
+        'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
+        'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
+        'paymentType' => ['required', 'string', 'min:1', 'max:250'],
+    ], [
+        'dob.regex' => 'The dob field format is invalid. The correct format is dd/mm/yyyy.',
+    ]);
 
          if ($validator->fails()) {
             return response()->json([
@@ -306,9 +319,11 @@ class StudentAuthController extends Controller
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
-            $student->dob = $request->input('dob');
+            // $student->dob = $request->input('dob');
             $student->image = $fileName;
-            $student->password =Hash::make($request->password);
+             $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
+              $student->dob =  $dob;
+            // $student->password =Hash::make($request->password);
             $student->fname = $request->input('fname');
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
