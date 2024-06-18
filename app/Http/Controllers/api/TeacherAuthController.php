@@ -160,7 +160,7 @@ public function teacherList(){
            $fileName='';
           }
             $teacher = new Teacher();
-            $teacher->name = $request->input('name');
+            $teacher->name = $request->input('name'); 
             $teacher->email = $request->input('email');
             $teacher->phone = $request->input('phone');
             $teacher->street = $request->input('street');
@@ -171,7 +171,8 @@ public function teacherList(){
             $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
             $teacher->save();
-             $imagePath = url('/Teachers/' . $teacher->image);
+            //  $imagePath = url('/Teachers/' . $teacher->image);
+              $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
 
           return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher registered successfully', 'teacher' => $teacher,'image'=>$imagePath], 200);
         }catch (Exception $e) {
@@ -193,7 +194,7 @@ public function teacherList(){
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'classes' => 'required|array',
             'image' => 'nullable',
-            'password' => 'required|string|min:6|confirmed',
+            // 'password' => 'required|string|min:6|confirmed',
         ]);
 
          if ($validator->fails()) {
@@ -228,10 +229,10 @@ public function teacherList(){
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
             $teacher->image = $fileName;
-            $teacher->password =Hash::make($request->password);
+            // $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
             $teacher->save();
-             $imagePath = url('/Teachers/' . $teacher->image);
+               $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
            
         return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher updated successfully', 'teacher' => $teacher , 'image' =>$imagePath], 200);
          }catch (Exception $e) {
@@ -258,7 +259,7 @@ public function teacherList(){
     public function profileUpdateView($id){
 
         $teacher = Teacher::find($id);
-         $imagePath = url('/Teachers/' . $teacher->image);
+          $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
         if($teacher){
         return response()->json(['status'=>true,'code'=>200,'data'=>$teacher,'image'=>$imagePath]);
         }else{
@@ -316,7 +317,8 @@ public function teacherList(){
             $teacher->image = $fileName;
             $teacher->classes =$request->input('classes');
             $teacher->save();
-            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'teacher' => $teacher], 200);
+                $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'teacher' => $teacher, 'image' =>$imagePath], 200);
         }catch (Exception $e) {
             $data = ['error' => $e->getMessage()];
             return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while updating profile', 'data' => $data], 500);
