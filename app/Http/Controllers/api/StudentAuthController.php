@@ -12,6 +12,7 @@ use App\Models\Student;
 use App\Models\Course;
 use DB;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class StudentAuthController extends Controller
 {
