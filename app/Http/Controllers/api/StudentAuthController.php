@@ -271,7 +271,6 @@ class StudentAuthController extends Controller
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
             'dob' => ['nullable', 'date', 'max:250'],
-            'password' => 'required|string|min:6|confirmed',
             'fstreet' => ['nullable', 'string', 'min:1', 'max:250'], 
             'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
             'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
