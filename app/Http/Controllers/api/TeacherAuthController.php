@@ -124,63 +124,143 @@ public function teacherList(){
     }
 
 
+    // public function teacherCreate(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|string|email|max:255|unique:teachers',
+    //         'phone' => 'required|numeric|digits:10|unique:teachers',
+    //         'street' => ['nullable', 'string', 'min:1', 'max:250'], 
+    //         'postal_code' => ['nullable', 'numeric', 'digits:6'],
+    //         'city' => ['nullable', 'string', 'min:1', 'max:250'],
+    //         'state' => ['nullable', 'string', 'min:1', 'max:250'],
+    //         'classes' => 'required|array',
+    //         'image' => 'nullable',
+    //         'password' => 'required|string|min:6|confirmed',
+    //     ]);
+
+    //      if ($validator->fails()) {
+    //         return response()->json([
+    //          'status' => false,
+    //            'code'=>400,
+    //           'errors' => $validator->errors()
+    //           ], 400);
+    //     }
+
+    //     try{
+    //         if($request->image!=''){
+    //        $uploadedImg=$request->image;
+    //        $fileName=time().'.'.$request->image->extension();          
+    //        $destinationpath=public_path('/Teachers');
+    //        $img=Image::make($uploadedImg->path());     
+    //        $img->resize(200,null, function($constraint){
+    //        $constraint->aspectRatio();
+    //        })->save($destinationpath.'/'.$fileName);
+    //       }else{
+    //        $fileName='';
+    //       }
+    //         $teacher = new Teacher();
+    //         $teacher->name = $request->input('name'); 
+    //         $teacher->email = $request->input('email');
+    //         $teacher->phone = $request->input('phone');
+    //         $teacher->street = $request->input('street');
+    //         $teacher->postal_code = $request->input('postal_code');
+    //         $teacher->city = $request->input('city');
+    //         $teacher->state = $request->input('state');
+    //         $teacher->image = $fileName;
+    //         $teacher->password =Hash::make($request->password);
+    //         $teacher->classes =$request->input('classes');
+    //         $teacher->save();
+    //         //  $imagePath = url('/Teachers/' . $teacher->image);
+    //           $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
+
+    //       return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher registered successfully', 'teacher' => $teacher,'image'=>$imagePath], 200);
+    //     }catch (Exception $e) {
+    //      $data = ['error' => $e->getMessage()];
+    //       return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while registering Teacher', 'data' => $data], 500);
+
+    //     }
+    // }
     public function teacherCreate(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:teachers',
-            'phone' => 'required|numeric|digits:10|unique:teachers',
-            'street' => ['nullable', 'string', 'min:1', 'max:250'], 
-            'postal_code' => ['nullable', 'numeric', 'digits:6'],
-            'city' => ['nullable', 'string', 'min:1', 'max:250'],
-            'state' => ['nullable', 'string', 'min:1', 'max:250'],
-            'classes' => 'required|array',
-            'image' => 'nullable',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+{
+    // Validate request inputs
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:teachers',
+        'phone' => 'required|numeric|digits:10|unique:teachers',
+        'street' => 'nullable|string|min:1|max:250', 
+        'postal_code' => 'nullable|numeric|digits:6',
+        'city' => 'nullable|string|min:1|max:250',
+        'state' => 'nullable|string|min:1|max:250',
+        'classes' => 'required|array',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'password' => 'required|string|min:6|confirmed',
+    ]);
 
-         if ($validator->fails()) {
-            return response()->json([
-             'status' => false,
-               'code'=>400,
-              'errors' => $validator->errors()
-              ], 400);
-        }
-
-        try{
-            if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Teachers');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-          }else{
-           $fileName='';
-          }
-            $teacher = new Teacher();
-            $teacher->name = $request->input('name'); 
-            $teacher->email = $request->input('email');
-            $teacher->phone = $request->input('phone');
-            $teacher->street = $request->input('street');
-            $teacher->postal_code = $request->input('postal_code');
-            $teacher->city = $request->input('city');
-            $teacher->state = $request->input('state');
-            $teacher->image = $fileName;
-            $teacher->password =Hash::make($request->password);
-            $teacher->classes =$request->input('classes');
-            $teacher->save();
-            //  $imagePath = url('/Teachers/' . $teacher->image);
-              $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
-
-          return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher registered successfully', 'teacher' => $teacher,'image'=>$imagePath], 200);
-        }catch (Exception $e) {
-         $data = ['error' => $e->getMessage()];
-          return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while registering Teacher', 'data' => $data], 500);
-
-        }
+    // If validation fails, return errors
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'code' => 400,
+            'errors' => $validator->errors()
+        ], 400);
     }
+
+    try {
+        // Start transaction
+        DB::beginTransaction();
+
+        // Handle image upload if present
+        $fileName = '';
+        if ($request->hasFile('image')) {
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();          
+            $destinationPath = public_path('/Teachers');
+            $img = Image::make($uploadedImg->path());     
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+
+        // Create new Teacher
+        $teacher = new Teacher();
+        $teacher->name = $request->input('name'); 
+        $teacher->email = $request->input('email');
+        $teacher->phone = $request->input('phone');
+        $teacher->street = $request->input('street');
+        $teacher->postal_code = $request->input('postal_code');
+        $teacher->city = $request->input('city');
+        $teacher->state = $request->input('state');
+        $teacher->image = $fileName;
+        $teacher->password = Hash::make($request->input('password'));
+        $teacher->classes = $request->input('classes');
+        $teacher->save();
+
+        // Commit transaction
+        DB::commit();
+
+        $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Teacher registered successfully',
+            'teacher' => $teacher,
+            'image' => $imagePath
+        ], 200);
+    } catch (\Exception $e) {
+        // Rollback transaction if any error occurs
+        DB::rollBack();
+
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while registering Teacher',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
     
     public function updateTeacher(Request $request, $id)
     {
