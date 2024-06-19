@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Teacher;
 use Image;
+use DB;
 
 class TeacherAuthController extends Controller
 {
