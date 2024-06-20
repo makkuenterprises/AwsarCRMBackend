@@ -22,8 +22,8 @@ class CourseController extends Controller
         'startDate' => ['required', new DateFormat('d/m/Y')],
         'endDate' => ['required', new DateFormat('d/m/Y')],
         'modeType' => ['required', 'string', 'min:1', 'max:250'],
-        'summary' => ['nullable', 'string', 'min:1', 'max:250'],
-        'image' => ['nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'],
+        'summary' => 'nullable', 'string', 'min:1', 'max:250',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
         ]);
 
@@ -115,8 +115,8 @@ class CourseController extends Controller
         'startDate' => ['required', new DateFormat('d/m/Y')],
         'endDate' => ['required', new DateFormat('d/m/Y')],
         'modeType' => ['required', 'string', 'min:1', 'max:250'],
-        'summary' => ['nullable', 'string', 'min:1', 'max:250'],
-        'image' => ['nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'],
+        'summary' => 'nullable', 'string', 'min:1', 'max:250',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
