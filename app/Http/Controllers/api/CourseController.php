@@ -9,7 +9,7 @@ use App\Models\Course;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
-
+use Image;
 use App\Rules\DateFormat;
 
 class CourseController extends Controller
@@ -22,6 +22,9 @@ class CourseController extends Controller
         'startDate' => ['required', new DateFormat('d/m/Y')],
         'endDate' => ['required', new DateFormat('d/m/Y')],
         'modeType' => ['required', 'string', 'min:1', 'max:250'],
+        'summary' => ['nullable', 'string', 'min:1', 'max:250'],
+        'image' => ['nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'],
+
         ]);
 
         if ($validator->fails()) {
@@ -40,6 +43,21 @@ class CourseController extends Controller
             $course->startDate = $startDate;
             $course->endDate = $endDate;
             $course->modeType = $request->input('modeType');
+            $course->summary = $request->input('summary');
+
+             // Handle image upload if present
+        $fileName = '';
+        if ($request->hasFile('image')) {
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();          
+            $destinationPath = public_path('/Courses');
+            $img = Image::make($uploadedImg->path());     
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+            $course->image = $fileName;
+
             
 
             $timestamp = time(); // Get the current Unix timestamp
@@ -49,14 +67,16 @@ class CourseController extends Controller
 
             $course->Course_id = $courseId;
             $course->save();
-             return response()->json(['status'=>true,'code'=>200,'message' => 'Course created successfully', 'course' => $course], 200);
+            $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
+
+             return response()->json(['status'=>true,'code'=>200,'message' => 'Course created successfully', 'course' => $course,'image'=>$imagePath], 200);
               }catch (Exception $e) {
           $data = ['error' => $e->getMessage()];
          return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Created Course', 'data' => $data], 500);
         }
          
     }
-
+ 
     public function courseList(){
          $courses = Course::where('status', 'active')->orderByDesc('id')->get();
          return response()->json(['status'=>true,'code'=>200,'data'=>$courses]);
@@ -64,8 +84,9 @@ class CourseController extends Controller
 
     public function UpdateView($id){
       $course = Course::find($id);
+      $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
       if($course){
-      return response()->json(['status'=>true,'code'=>200,'data'=>$course]);
+      return response()->json(['status'=>true,'code'=>200,'data'=>$course,'image'=>$imagePath]);
       }else{
      return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
       }
@@ -94,6 +115,8 @@ class CourseController extends Controller
         'startDate' => ['required', new DateFormat('d/m/Y')],
         'endDate' => ['required', new DateFormat('d/m/Y')],
         'modeType' => ['required', 'string', 'min:1', 'max:250'],
+        'summary' => ['nullable', 'string', 'min:1', 'max:250'],
+        'image' => ['nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'],
         ]);
 
         if ($validator->fails()) {
@@ -110,13 +133,28 @@ class CourseController extends Controller
             }
             $course->name = $request->input('name');
             $course->fee = $request->input('fee');
-             $startDate = Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->format('Y-m-d');
-             $endDate = Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->format('Y-m-d');
+            $startDate = Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->format('Y-m-d');
+            $endDate = Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->format('Y-m-d');
             $course->startDate = $startDate;
             $course->endDate = $endDate;
             $course->modeType = $request->input('modeType');
+            $course->summary = $request->input('summary');
+
+            // Handle image upload if present
+        $fileName = '';
+        if ($request->hasFile('image')) {
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();          
+            $destinationPath = public_path('/Courses');
+            $img = Image::make($uploadedImg->path());     
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+            $course->image = $fileName;
             $course->save();
-            return response()->json(['status'=>true,'code'=>200,'message' => 'Course Updated successfully', 'course' => $course], 200);
+              $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
+            return response()->json(['status'=>true,'code'=>200,'message' => 'Course Updated successfully', 'course' => $course,'image'=>$imagePath], 200);
             }catch (Exception $e) {
           $data = ['error' => $e->getMessage()];
          return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Updating Course', 'data' => $data], 500);
