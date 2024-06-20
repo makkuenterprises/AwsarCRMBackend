@@ -79,7 +79,26 @@ class CourseController extends Controller
  
     public function courseList(){
          $courses = Course::where('status', 'active')->orderByDesc('id')->get();
-         return response()->json(['status'=>true,'code'=>200,'data'=>$courses]);
+         $coursesList = $courses->map(function ($user) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'fee' => $user->fee,
+            'startDate' => $user->startDate,
+            'endDate' => $user->endDate,
+            'modeType' => $user->modeType,
+            'summary' => $user->summary,
+            'Course_id' => $user->Course_id,
+            'image' => $user->image ? url('/Courses/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
+           
+        ];
+    });
+        //  return response()->json(['status'=>true,'code'=>200,'data'=>$courses]);
+        return response()->json([
+        'status' => true,
+        'code' => 200,
+        'data' => $coursesList
+    ]);
     }
 
     public function UpdateView($id){
