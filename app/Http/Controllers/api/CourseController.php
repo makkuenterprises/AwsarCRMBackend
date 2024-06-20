@@ -7,16 +7,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Course;
 use Illuminate\Support\Str;
+use App\Rules\DateFormat;
 
 class CourseController extends Controller
 {
     public function courseCreate(Request $request){
-          $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:courses',
-            'fee' => 'required|string|max:255|',
-            'startDate' => ['required', 'date', 'max:250'],
-            'endDate' => ['required', 'date', 'max:250'],
-            'modeType' => ['required', 'string', 'min:1', 'max:250'],
+        
+         $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255|unique:courses',
+        'fee' => 'required|string|max:255|',
+        'startDate' => ['required', new DateFormat('d/m/Y')],
+        'endDate' => ['required', new DateFormat('d/m/Y')],
+        'modeType' => ['required', 'string', 'min:1', 'max:250'],
         ]);
 
         if ($validator->fails()) {
