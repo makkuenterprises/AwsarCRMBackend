@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Course;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
+
 use App\Rules\DateFormat;
 
 class CourseController extends Controller
@@ -32,8 +35,10 @@ class CourseController extends Controller
             $course = new Course();
             $course->name = $request->input('name');
             $course->fee = $request->input('fee');
-            $course->startDate = $request->input('startDate');
-            $course->endDate = $request->input('endDate');
+             $startDate = Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->format('Y-m-d');
+             $endDate = Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->format('Y-m-d');
+            $course->startDate = $startDate;
+            $course->endDate = $endDate;
             $course->modeType = $request->input('modeType');
             
 
@@ -78,12 +83,17 @@ class CourseController extends Controller
     }
 
     public function courseUpdate(Request $request,$id){
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'fee' => 'required|string|max:255|',
-            'startDate' => ['required', 'date', 'max:250'],
-            'endDate' => ['required', 'date', 'max:250'],
-            'modeType' => ['required', 'string', 'min:1', 'max:250'],
+         $validator = Validator::make($request->all(), [
+         'name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('courses')->ignore($id),
+        ],
+        'fee' => 'required|string|max:255|',
+        'startDate' => ['required', new DateFormat('d/m/Y')],
+        'endDate' => ['required', new DateFormat('d/m/Y')],
+        'modeType' => ['required', 'string', 'min:1', 'max:250'],
         ]);
 
         if ($validator->fails()) {
@@ -100,8 +110,10 @@ class CourseController extends Controller
             }
             $course->name = $request->input('name');
             $course->fee = $request->input('fee');
-            $course->startDate = $request->input('startDate');
-            $course->endDate = $request->input('endDate');
+             $startDate = Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->format('Y-m-d');
+             $endDate = Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->format('Y-m-d');
+            $course->startDate = $startDate;
+            $course->endDate = $endDate;
             $course->modeType = $request->input('modeType');
             $course->save();
             return response()->json(['status'=>true,'code'=>200,'message' => 'Course Updated successfully', 'course' => $course], 200);
