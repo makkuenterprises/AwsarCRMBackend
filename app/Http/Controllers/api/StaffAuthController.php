@@ -157,7 +157,6 @@ public function staffAuthLogout(Request $request)
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
-            'password' => 'required|string|min:6|confirmed',
         ]);
 
          if ($validator->fails()) {
@@ -192,7 +191,6 @@ public function staffAuthLogout(Request $request)
             $staff->city = $request->input('city');
             $staff->state = $request->input('state');
             $staff->image = $fileName;
-            $staff->password =Hash::make($request->password);
             $staff->save();
         $imagePath = url('/Staffs/' . $staff->image);
 
