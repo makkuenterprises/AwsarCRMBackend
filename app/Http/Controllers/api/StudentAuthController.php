@@ -341,7 +341,7 @@ class StudentAuthController extends Controller
             $student->fcity = $request->input('fcity');
             $student->fstate = $request->input('fstate');
             $student->save();
-      $imagePath = $student->image ? url('/Student/' . $student->image) : null;
+            $imagePath = $student->image ? url('/Student/' . $student->image) : null;
 
         return response()->json(['status'=>true,'code'=>200,'message' => 'Student updated successfully', 'student' => $student , 'image'=>$imagePath], 200);
     }
