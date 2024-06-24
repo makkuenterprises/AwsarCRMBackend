@@ -184,6 +184,13 @@ class StudentAuthController extends Controller
             $student->city = $request->input('city');
             $student->state = $request->input('state');
             // $student->dob = $request->input('dob');
+            if ($request->input('dob')) {
+              $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
+
+            } else {
+               $dom='';
+            }
+            
              $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
               $student->dob =  $dob;
             $student->image = $fileName;
