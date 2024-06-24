@@ -186,13 +186,10 @@ class StudentAuthController extends Controller
             // $student->dob = $request->input('dob');
             if ($request->input('dob')) {
               $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
-
-            } else {
-               $dob='';
-            }
-            
-            //  $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
               $student->dob =  $dob;
+
+            }
+            //  $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
             $student->image = $fileName;
             $student->password =Hash::make($request->password);
             $student->fname = $request->input('fname');
