@@ -101,7 +101,6 @@ class StudentAuthController extends Controller
             'fpostal_code' => $user->postal_code,
             'fcity' => $user->fcity,
             'fstate' => $user->fstate,
-            'paymentType' => $user->paymentType,
             'dob' => $user->dob,
             ],
             'token' => $token,
@@ -151,7 +150,6 @@ class StudentAuthController extends Controller
         'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
         'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
         'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
-        'paymentType' => ['required', 'string', 'min:1', 'max:250'],
     ], [
         'dob.regex' => 'The dob field format is invalid. The correct format is dd/mm/yyyy.',
     ]);
@@ -193,7 +191,7 @@ class StudentAuthController extends Controller
             $student->fname = $request->input('fname');
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
-            $student->paymentType = $request->input('paymentType');
+            $student->paymentType = 'deactive';
             $student->fstreet = $request->input('fstreet');
             $student->fpostal_code = $request->input('fpostal_code');
             $student->fcity = $request->input('fcity');
@@ -230,7 +228,7 @@ class StudentAuthController extends Controller
             'fpostal_code' => $user->fpostal_code,
             'fcity' => $user->fcity,
             'fstate' => $user->fstate,
-            'paymentType' => $user->paymentType,
+            // 'paymentType' => $user->paymentType,
             'dob' => $user->dob,
         ];
     });
@@ -286,7 +284,7 @@ class StudentAuthController extends Controller
         'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
         'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
         'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
-        'paymentType' => ['required', 'string', 'min:1', 'max:250'],
+        'nullable' => ['required', 'string', 'min:1', 'max:250'],
     ], [
         'dob.regex' => 'The dob field format is invalid. The correct format is dd/mm/yyyy.',
     ]);
@@ -328,7 +326,7 @@ class StudentAuthController extends Controller
             $student->fname = $request->input('fname');
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
-            $student->paymentType = $request->input('paymentType');
+            // $student->paymentType = $request->input('paymentType');
             $student->fstreet = $request->input('fstreet');
             $student->fpostal_code = $request->input('fpostal_code');
             $student->fcity = $request->input('fcity');
