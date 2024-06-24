@@ -288,7 +288,7 @@ class StudentAuthController extends Controller
         'fpostal_code' => ['nullable', 'numeric', 'digits:6'],
         'fcity' => ['nullable', 'string', 'min:1', 'max:250'],
         'fstate' => ['nullable', 'string', 'min:1', 'max:250'],
-        'nullable' => ['required', 'string', 'min:1', 'max:250'],
+        // 'nullable' => ['required', 'string', 'min:1', 'max:250'],
     ], [
         'dob.regex' => 'The dob field format is invalid. The correct format is dd/mm/yyyy.',
     ]);
