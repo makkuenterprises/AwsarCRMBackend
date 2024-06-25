@@ -56,9 +56,8 @@ class CourseEnrollementController extends Controller
         // Student is already enrolled in the course
         return response()->json(['message' => 'Student is already enrolled in the course.']);
     } else {
-        // Student is not enrolled in the course
-        return response()->json(['message' => 'Student is not enrolled in the course.']);
-    }
+       
+   
 
 
          $enrollcourse = new CoursesEnrollement();
@@ -78,7 +77,7 @@ class CourseEnrollementController extends Controller
 
             $enrollcourse->save();
         
-
+ }
         return response()->json(['status'=>true,'code'=>200,'message' => 'Student enrolled in the course successfully'], 200);
     } catch (\Exception $e) {
         return response()->json(['status'=>false,'code'=>500,'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
