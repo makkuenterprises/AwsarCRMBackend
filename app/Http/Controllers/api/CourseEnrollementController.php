@@ -48,6 +48,19 @@ class CourseEnrollementController extends Controller
             return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
         }
 
+         // Check if the student is already enrolled in the course
+    $enrollCourse = CoursesEnrollement::where('student_id', $student_id)
+                                      ->where('course_id', $request->input('course_id'))
+                                      ->first();
+    if ($enrollCourse) {
+        // Student is already enrolled in the course
+        return response()->json(['message' => 'Student is already enrolled in the course.']);
+    } else {
+        // Student is not enrolled in the course
+        return response()->json(['message' => 'Student is not enrolled in the course.']);
+    }
+
+
          $enrollcourse = new CoursesEnrollement();
          $enrollcourse->student_id = $request->input('student_id');
          $enrollcourse->course_id = $request->input('course_id');
