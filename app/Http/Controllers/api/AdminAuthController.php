@@ -152,23 +152,23 @@ class AdminAuthController extends Controller
            
                         ],
                 ],
-                [
-                    'title' => 'Reports',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        ' content'=> [
-                        [
-                            'title'=> 'Live Classes',
-                            'to'=> 'live-classes',					
-                        ],
-                        [
-                            'title'=> 'Create Live Class',
-                            'to'=> 'page-lock-screen',
-                        ],
+                // [
+                //     'title' => 'Reports',
+                //      'classsChange' => 'mm-collapse',
+                //      'iconStyle' => '<i className="merial-icons">article</i>',
+                //         ' content'=> [
+                //         [
+                //             'title'=> 'Live Classes',
+                //             'to'=> 'live-classes',					
+                //         ],
+                //         [
+                //             'title'=> 'Create Live Class',
+                //             'to'=> 'page-lock-screen',
+                //         ],
                       
            
-                        ],
-                ],
+                //         ],
+                // ],
                  [
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
@@ -197,6 +197,57 @@ class AdminAuthController extends Controller
                         ],
                         [
                             'title'=> 'Todays Attendance',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                 [
+                    'title' => 'Exams',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'View Exam',
+                            'to'=> 'page-lock-screen',					
+                        ],
+                        [
+                            'title'=> 'Create Exam',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                 [
+                    'title' => 'Class Routine',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'View Routine',
+                            'to'=> 'page-lock-screen',					
+                        ],
+                        [
+                            'title'=> 'Create Routine',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                 [
+                    'title' => 'Notice',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'View Notice',
+                            'to'=> 'page-lock-screen',					
+                        ],
+                        [
+                            'title'=> 'Create Notice',
                             'to'=> 'page-lock-screen',
                         ],
                       

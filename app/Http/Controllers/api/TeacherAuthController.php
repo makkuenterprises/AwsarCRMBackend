@@ -86,36 +86,7 @@ class TeacherAuthController extends Controller
                         [
                             'title'=> 'Student',
                             'to'=> 'student',					
-                        ],
-                        [
-                            'title'=> 'Student Detail',
-                            'to'=> 'student-detail',
-                        ],
-                        [
-                            'title'=> 'Add New Student',
-                            'to'=> 'add-student',
-                        ],
-           
-                        ],
-                ],
-                [
-                    'title' => 'Teacher',
-                    'classsChange' => 'mm-collapse',	
-                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
-                        ' content'=> [
-                        [
-                            'title'=> 'Teacher',
-                            'to'=> 'teacher',					
-                        ],
-                        [
-                            'title'=> 'Teacher Detail',
-                            'to'=> 'teacher-detail',
-                        ],
-                        [
-                            'title'=> 'Add New Teacher',
-                            'to'=> 'add-teacher',
-                        ],
-           
+                        ],           
                         ],
                 ],
                 [
@@ -127,48 +98,9 @@ class TeacherAuthController extends Controller
                             'title'=> 'Batch',
                             'to'=> 'batch',					
                         ],
-                        [
-                            'title'=> 'Add New Batch',
-                            'to'=> 'add-batch',
-                        ],
-                      
-           
                         ],
                 ],
-                [
-                    'title' => 'Staff',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        ' content'=> [
-                        [
-                            'title'=> 'Staff',
-                            'to'=> 'staff',					
-                        ],
-                        [
-                            'title'=> 'Add New staff',
-                            'to'=> 'add-staff',
-                        ],
-                      
-           
-                        ],
-                ],
-                [
-                    'title' => 'Reports',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        ' content'=> [
-                        [
-                            'title'=> 'Live Classes',
-                            'to'=> 'live-classes',					
-                        ],
-                        [
-                            'title'=> 'Create Live Class',
-                            'to'=> 'page-lock-screen',
-                        ],
-                      
-           
-                        ],
-                ],
+               
                  [
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
@@ -193,7 +125,7 @@ class TeacherAuthController extends Controller
                         ' content'=> [
                         [
                             'title'=> 'Attendance',
-                            'to'=> 'page-lock-screen',					
+                            'to'=> 'page-lock-screen',			 		
                         ],
                         [
                             'title'=> 'Todays Attendance',
@@ -202,6 +134,62 @@ class TeacherAuthController extends Controller
                       
            
                         ],
+                ],
+                 [
+                    'title' => 'Exams',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'View Exam',
+                            'to'=> 'page-lock-screen',					
+                        ],
+                        [
+                            'title'=> 'Create Exam',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                 [
+                    'title' => 'Class Routine',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'View Routine',
+                            'to'=> 'page-lock-screen',					
+                        ],
+                        [
+                            'title'=> 'Create Routine',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                 [
+                    'title' => 'Notice',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'View Notice',
+                            'to'=> 'page-lock-screen',					
+                        ],
+                        [
+                            'title'=> 'Create Notice',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                [
+                    'title' => 'Leave Request',
+                    'iconStyle' => '<i className="material-icons">settings</i>',
+                    'to' => 'settings',
                 ],
                 [
                     'title' => 'Settings',
