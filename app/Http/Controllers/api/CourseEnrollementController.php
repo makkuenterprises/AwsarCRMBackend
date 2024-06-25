@@ -21,6 +21,8 @@ class CourseEnrollementController extends Controller
         'student_id' => 'required',
         'course_id' => 'required',
         'payment_type' => ['required', 'string', 'min:1', 'max:250'],
+        'payment_status' => ['required', 'string', 'min:1', 'max:250'],
+        
     ]);
 
     // Check if validation fails
@@ -51,6 +53,7 @@ class CourseEnrollementController extends Controller
          $enrollcourse->course_id = $request->input('course_id');
          $enrollcourse->enrollment_date = Carbon::now()->toDateString();
          $enrollcourse->payment_type = $request->input('payment_type');
+         $enrollcourse->payment_status = $request->input('payment_status');
 
          $timestamp = time(); // Get the current Unix timestamp
             sleep(1);
