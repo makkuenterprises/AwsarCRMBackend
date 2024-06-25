@@ -87,7 +87,7 @@ class StudentAuthController extends Controller
                     'title' => 'Teacher',
                     'classsChange' => 'mm-collapse',	
                     'iconStyle' => '<i className="material-symbols-outlined">person</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'Teacher',
                             'to'=> 'teacher',					
@@ -98,7 +98,7 @@ class StudentAuthController extends Controller
                     'title' => 'Courses (Batch)',
                     'classsChange' => 'mm-collapse',
                     'iconStyle' => '<i className="merial-icons">article</i>',
-                                            ' content'=> [
+                                            'content'=> [
                         [
                             'title'=> 'Batch',
                             'to'=> 'batch',					
@@ -109,7 +109,7 @@ class StudentAuthController extends Controller
                 //     'title' => 'Reports',
                 //      'classsChange' => 'mm-collapse',
                 //      'iconStyle' => '<i className="merial-icons">article</i>',
-                //         ' content'=> [
+                //         'content'=> [
                 //         [
                 //             'title'=> 'Live Classes',
                 //             'to'=> 'live-classes',					
@@ -126,7 +126,7 @@ class StudentAuthController extends Controller
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">article</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'Live Classes',
                             'to'=> 'live-classes',					
@@ -148,7 +148,7 @@ class StudentAuthController extends Controller
                     'title' => 'Institute',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'Notice',
                             'to'=> 'page-lock-screen',					

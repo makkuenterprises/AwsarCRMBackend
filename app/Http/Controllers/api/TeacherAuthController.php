@@ -82,7 +82,7 @@ class TeacherAuthController extends Controller
                     'title' => 'Student',
                     'classsChange'=> 'mm-collapse',
                     'iconStyle' => '<i className="material-symbols-outlined">school</i>',
-                            ' content'=> [
+                            'content'=> [
                         [
                             'title'=> 'Student',
                             'to'=> 'student',					
@@ -93,7 +93,7 @@ class TeacherAuthController extends Controller
                     'title' => 'Courses (Batch)',
                     'classsChange' => 'mm-collapse',
                     'iconStyle' => '<i className="merial-icons">article</i>',
-                                            ' content'=> [
+                                            'content'=> [
                         [
                             'title'=> 'Batch',
                             'to'=> 'batch',					
@@ -105,7 +105,7 @@ class TeacherAuthController extends Controller
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">article</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'Live Classes',
                             'to'=> 'live-classes',					
@@ -122,7 +122,7 @@ class TeacherAuthController extends Controller
                     'title' => 'Attendance',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">article</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'Attendance',
                             'to'=> 'page-lock-screen',			 		
@@ -139,7 +139,7 @@ class TeacherAuthController extends Controller
                     'title' => 'Exams',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'View Exam',
                             'to'=> 'page-lock-screen',					
@@ -156,7 +156,7 @@ class TeacherAuthController extends Controller
                     'title' => 'Class Routine',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'View Routine',
                             'to'=> 'page-lock-screen',					
@@ -173,7 +173,7 @@ class TeacherAuthController extends Controller
                     'title' => 'Notice',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
-                        ' content'=> [
+                        'content'=> [
                         [
                             'title'=> 'View Notice',
                             'to'=> 'page-lock-screen',					
