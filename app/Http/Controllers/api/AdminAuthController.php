@@ -203,7 +203,7 @@ class AdminAuthController extends Controller
             ],
                 'token' => $token,
                  'message' => 'Login Successfully',
-                  'menuList' => $menuList
+                  'role' => $menuList
             ];
         }
     } catch (Exception $e) {
