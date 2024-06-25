@@ -169,6 +169,23 @@ class AdminAuthController extends Controller
            
                         ],
                 ],
+                 [
+                    'title' => 'Live Classes',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">article</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'Live Classes',
+                            'to'=> 'live-classes',					
+                        ],
+                        [
+                            'title'=> 'Create Live Class',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
                 [
                     'title' => 'Attendance',
                      'classsChange' => 'mm-collapse',
