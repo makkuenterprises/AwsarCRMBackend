@@ -18,8 +18,8 @@ class CourseEnrollementController extends Controller
          // Validate the request data
     // Validate the request data
     $validator = Validator::make($request->all(), [
-        'student_id' => 'required',
-        'course_id' => 'required',
+        'student_id' => 'required|exists:students,id', // Example validation for student_id
+        'course_id' => 'required|exists:courses,id', // Example validation for course_id
         'payment_type' => ['required', 'string', 'min:1', 'max:250'],
         'payment_status' => ['required', 'string', 'min:1', 'max:250'],
         
