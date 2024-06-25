@@ -49,7 +49,7 @@ class CourseEnrollementController extends Controller
         }
 
          // Check if the student is already enrolled in the course
-    $enrollCourse = CoursesEnrollement::where('student_id', $student_id)
+    $enrollCourse = CoursesEnrollement::where('student_id', $request->input('student_id'))
                                       ->where('course_id', $request->input('course_id'))
                                       ->first();
     if ($enrollCourse) {
