@@ -219,8 +219,8 @@ class AdminAuthController extends Controller
             'image' => $imagePath, // Include the full image URL
             ],
                 'token' => $token,
-                 'message' => 'Login Successfully',
-                  'role' => $menuList
+                'message' => 'Login Successfully',
+                'role' => $menuList
             ];
         }
     } catch (Exception $e) {

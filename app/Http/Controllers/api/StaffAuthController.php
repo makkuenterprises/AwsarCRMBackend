@@ -39,6 +39,144 @@ class StaffAuthController extends Controller
            $token = $user->createToken('AwsarClass')->plainTextToken;
             $code = 200;
             $imagePath = url('/Staffs/' . $user->image);
+                            $menuList = [
+                [
+                    'title' => 'Dashboard',
+                    'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
+                    'to' => 'dashboard',
+                ],
+                [
+                    'title' => 'Student',
+                    'classsChange'=> 'mm-collapse',
+                    'iconStyle' => '<i className="material-symbols-outlined">school</i>',
+                            ' content'=> [
+                        [
+                            'title'=> 'Student',
+                            'to'=> 'student',					
+                        ],
+                        [
+                            'title'=> 'Student Detail',
+                            'to'=> 'student-detail',
+                        ],
+                        [
+                            'title'=> 'Add New Student',
+                            'to'=> 'add-student',
+                        ],
+           
+                        ],
+                ],
+                [
+                    'title' => 'Teacher',
+                    'classsChange' => 'mm-collapse',	
+                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'Teacher',
+                            'to'=> 'teacher',					
+                        ],
+                        [
+                            'title'=> 'Teacher Detail',
+                            'to'=> 'teacher-detail',
+                        ],
+                        [
+                            'title'=> 'Add New Teacher',
+                            'to'=> 'add-teacher',
+                        ],
+           
+                        ],
+                ],
+                [
+                    'title' => 'Courses (Batch)',
+                    'classsChange' => 'mm-collapse',
+                    'iconStyle' => '<i className="merial-icons">article</i>',
+                                            ' content'=> [
+                        [
+                            'title'=> 'Batch',
+                            'to'=> 'batch',					
+                        ],
+                        [
+                            'title'=> 'Add New Batch',
+                            'to'=> 'add-batch',
+                        ],
+                      
+           
+                        ],
+                ],
+                [
+                    'title' => 'Staff',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">article</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'Staff',
+                            'to'=> 'staff',					
+                        ],
+                        [
+                            'title'=> 'Add New staff',
+                            'to'=> 'add-staff',
+                        ],
+                      
+           
+                        ],
+                ],
+                [
+                    'title' => 'Reports',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">article</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'Live Classes',
+                            'to'=> 'live-classes',					
+                        ],
+                        [
+                            'title'=> 'Create Live Class',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                 [
+                    'title' => 'Live Classes',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">article</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'Live Classes',
+                            'to'=> 'live-classes',					
+                        ],
+                        [
+                            'title'=> 'Create Live Class',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                [
+                    'title' => 'Attendance',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">article</i>',
+                        ' content'=> [
+                        [
+                            'title'=> 'Attendance',
+                            'to'=> 'page-lock-screen',					
+                        ],
+                        [
+                            'title'=> 'Todays Attendance',
+                            'to'=> 'page-lock-screen',
+                        ],
+                      
+           
+                        ],
+                ],
+                [
+                    'title' => 'Settings',
+                    'iconStyle' => '<i className="material-icons">settings</i>',
+                    'to' => 'settings',
+                ],
+            ];
+
             
             $data = [
             'staff' => [
@@ -50,12 +188,12 @@ class StaffAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
-            // 'image' => $imagePath, // Include the full image URL
             'image' => $user->image ? url('/Staffs/' . $user->image) : null,
 
             ],
                 'token' => $token,
-                'message' => 'Login Successfully'
+                'message' => 'Login Successfully',
+                'role' => $menuList
             ];
         }
      } catch (Exception $e) {
