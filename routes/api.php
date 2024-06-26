@@ -11,6 +11,7 @@ use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\MeetingCreateController;
 use App\Http\Controllers\api\AttendanceController;
 use App\Http\Controllers\api\CourseEnrollementController;
+use App\Http\Controllers\api\StudyMaterialsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,8 +147,12 @@ Route::prefix('attedence')->group(function () {
 
       Route::get('/list/{id}', [AttendanceController::class, 'getStudents']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
-
       Route::get('/list', [AttendanceController::class, 'alllist']);
-
-     
 });
+
+
+// Route::middleware('cors')->group(function () {
+
+      Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+      
+// });
