@@ -153,8 +153,12 @@ class CourseEnrollementController extends Controller
 
         if($request->input('payment_status') == 'partial'){
             $student->payment_status = 'partial';
+            $student->course_id = $request->input('course_id');
+            
         } else {
             $student->payment_status = 'full';
+            $student->course_id = $request->input('course_id');
+
         }
         $student->save();
 
