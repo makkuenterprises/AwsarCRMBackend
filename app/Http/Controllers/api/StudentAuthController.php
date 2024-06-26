@@ -73,7 +73,13 @@ class StudentAuthController extends Controller
             $code = 401;
         } else {
 
-            $email = $login['email'];
+            
+
+
+             $imagePath = url('/Student/' . $user->image);
+
+           $token = $user->createToken('AwsarClass')->plainTextToken;
+           $email = $login['email'];
             $user = DB::table('students')
            ->where('students.email', $email)
            ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
@@ -81,10 +87,6 @@ class StudentAuthController extends Controller
            ->select('students.*', 'courses.name as course_name')
            ->first();
 
-
-             $imagePath = url('/Student/' . $user->image);
-
-           $token = $user->createToken('AwsarClass')->plainTextToken;
             $code = 200;
                             $menuList = [
                 [
