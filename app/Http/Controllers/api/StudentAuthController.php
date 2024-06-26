@@ -73,6 +73,15 @@ class StudentAuthController extends Controller
             $code = 401;
         } else {
 
+            $email = $login['email'];
+            $user = DB::table('students')
+           ->where('students.email', $email)
+           ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+           ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+           ->select('students.*', 'courses.name as course_name')
+           ->first();
+
+
              $imagePath = url('/Student/' . $user->image);
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
@@ -200,6 +209,7 @@ class StudentAuthController extends Controller
             'fstate' => $user->fstate, 
             'dob' => $user->dob,
             'payment_status' => $user->payment_status,
+            'course' => $user->course_name ?? 'Not Enrolled',
             ],
             'token' => $token,
              'message' => 'Login Successfully',
@@ -312,8 +322,15 @@ class StudentAuthController extends Controller
     }
 
     public function StudentList(){
-     $students = Student::orderByDesc('id')->get();
-    //    $students = Student::with('courses')->orderByDesc('id')->get();
+    //  $students = Student::orderByDesc('id')->get();
+    
+    $students = DB::table('students')
+    ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+    ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+    ->select('students.*', 'courses.name as course_name')
+    ->orderByDesc('students.id')
+    ->get();
+
        $studentList = $students->map(function ($user) {
         return [
             'id' => $user->id,
@@ -335,6 +352,8 @@ class StudentAuthController extends Controller
             // 'paymentType' => $user->paymentType,
             'dob' => $user->dob,
             'payment_status' => $user->payment_status,
+            'course' =>$user->course_name ?? 'Not Enrolled'
+
 
         ];
     });
