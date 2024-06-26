@@ -197,8 +197,9 @@ class StudentAuthController extends Controller
             'fstreet' => $user->fstreet,
             'fpostal_code' => $user->postal_code,
             'fcity' => $user->fcity,
-            'fstate' => $user->fstate,
+            'fstate' => $user->fstate, 
             'dob' => $user->dob,
+            'payment_status' => $user->payment_status,
             ],
             'token' => $token,
              'message' => 'Login Successfully',
@@ -398,17 +399,7 @@ class StudentAuthController extends Controller
               'errors' => $validator->errors()
               ], 400);
         }
-      if($request->image!=''){
-        $uploadedImg=$request->image;
-        $fileName=time().'.'.$request->image->extension();          
-        $destinationpath=public_path('/Student');
-        $img=Image::make($uploadedImg->path());     
-        $img->resize(200,null, function($constraint){
-        $constraint->aspectRatio();
-        })->save($destinationpath.'/'.$fileName);
-       }else{
-        $fileName='';
-       }
+     
             $student = Student::find($id);
              if (!$student) {
             return response()->json(['status'=>false,'code'=>404,'message' => 'Student not found'], 404);
@@ -420,8 +411,16 @@ class StudentAuthController extends Controller
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
-            // $student->dob = $request->input('dob');
+             if($request->image!=''){
+        $uploadedImg=$request->image;
+        $fileName=time().'.'.$request->image->extension();          
+        $destinationpath=public_path('/Student');
+        $img=Image::make($uploadedImg->path());     
+        $img->resize(200,null, function($constraint){
+        $constraint->aspectRatio();
+        })->save($destinationpath.'/'.$fileName);
             $student->image = $fileName;
+       }
 
             if ($request->input('dob')) {
                  $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');

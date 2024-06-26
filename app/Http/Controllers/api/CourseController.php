@@ -160,7 +160,6 @@ class CourseController extends Controller
             $course->summary = $request->input('summary');
 
             // Handle image upload if present
-        $fileName = '';
         if ($request->hasFile('image')) {
             $uploadedImg = $request->file('image');
             $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();          
@@ -169,8 +168,9 @@ class CourseController extends Controller
             $img->resize(200, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($destinationPath . '/' . $fileName);
-        }
             $course->image = $fileName;
+
+        }
             $course->save();
               $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
             return response()->json(['status'=>true,'code'=>200,'message' => 'Course Updated successfully', 'course' => $course,'image'=>$imagePath], 200);
