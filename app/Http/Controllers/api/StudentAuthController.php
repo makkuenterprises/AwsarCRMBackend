@@ -312,8 +312,8 @@ class StudentAuthController extends Controller
     }
 
     public function StudentList(){
-    //  $students = Student::orderByDesc('id')->get();
-       $students = Student::with('courses')->orderByDesc('id')->get();
+     $students = Student::orderByDesc('id')->get();
+    //    $students = Student::with('courses')->orderByDesc('id')->get();
        $studentList = $students->map(function ($user) {
         return [
             'id' => $user->id,
