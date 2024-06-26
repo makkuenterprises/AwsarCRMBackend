@@ -351,7 +351,7 @@ class StudentAuthController extends Controller
             'fpostal_code' => $user->fpostal_code,
             'fcity' => $user->fcity,
             'fstate' => $user->fstate,
-            // 'paymentType' => $user->paymentType,
+            'paymentType' => $user->paymentType,
             'dob' => $user->dob,
             'payment_status' => $user->payment_status,
             'course' =>$user->course_name ?? 'Not Enrolled'
