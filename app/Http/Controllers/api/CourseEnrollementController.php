@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Student;
 use App\Models\Course;
 use Illuminate\Support\Str;
+use DB;
 
 class CourseEnrollementController extends Controller
 {
