@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use App\Models\StudyMaterials;
 use App\Models\Course;
 use Illuminate\Support\Facades\Validator;
-use DB;
+use DB; 
 
 
 class StudyMaterialsController extends Controller

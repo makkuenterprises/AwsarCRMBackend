@@ -23,12 +23,12 @@ public function index(Request $request){
     $validator = $request->validate([
         'logo' => 'required|file|mimes:jpeg,png,svg,webp,jpg|max:2048', // File upload validation for logo
         'side_logo' => 'required|file|mimes:jpeg,png,svg,webp,jpg|max:2048', // File upload validation for side logo
-        'favicon_icon' => 'required|file|mimes:jpeg,png|max:2048', // File upload validation for favicon icon
+        'favicon_icon' => 'required|file|mimes:jpeg,png,svg,webp,jpg|max:2048', // File upload validation for favicon icon
         'business_name' => 'required|string|max:255', // Validation for business name as a string up to 255 characters
         'email' => 'required|email|max:255', // Validation for email format and maximum length
         'smtp_host' => 'required|string|max:255', // Validation for SMTP host as a string up to 255 characters
-        'smtp_ports' => 'required|array', // Validation for SMTP ports as an array (optional)
-        'smtp_ports.*' => 'required|integer', // Validation for each element in the SMTP ports array as an integer (optional)
+        'smtp_ports' => 'nullable|array', // Validate smtp_ports as an array
+        'smtp_ports.*' => 'integer', // Ensure each port is an integer
         'smtp_username' => 'required|string|max:255', // Validation for SMTP username as a string up to 255 characters
         'smtp_password' => 'required|string|max:255', // Validation for SMTP password as a string up to 255 characters
   
@@ -42,11 +42,9 @@ public function index(Request $request){
                 $filePaths[$field] = $filePath;
             }
         }
-
-        // Handle smtp_ports conversion to array if provided as a comma-separated string
+        // Convert smtp_ports array to JSON for storage
         if ($request->has('smtp_ports')) {
-            $smtpPortsArray = explode(',', $validator['smtp_ports']);
-            $validator['smtp_ports'] = $smtpPortsArray;
+            $validator['smtp_ports'] = json_encode($validator['smtp_ports']);
         }
 
         // Create a new Details model instance
