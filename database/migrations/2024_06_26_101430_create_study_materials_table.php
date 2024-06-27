@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('study_materials', function (Blueprint $table) {
             $table->id();
-            $table->text('title');
-            $table->text('batch_id');
+            $table->string('title');
+            $table->string('batch_id');
             $table->text('description')->nullable();
              $table->string('material_path')->nullable();
             $table->string('status')->default('active'); 
