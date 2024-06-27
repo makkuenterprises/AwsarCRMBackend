@@ -4,11 +4,13 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use App\Models\StudyMaterials;
 use App\Models\Course;
 use Illuminate\Support\Facades\Validator;
+use DB;
 
 
 class StudyMaterialsController extends Controller

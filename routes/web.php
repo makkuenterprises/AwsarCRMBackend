@@ -43,5 +43,7 @@ Route::get('migrate',function() {
 });
 Route::get('rollback',function() {
   Artisan::call('migrate:rollback', ['--step' => 1]);
+    dd('Application rollback Completed');
+
 
 });
