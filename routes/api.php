@@ -44,7 +44,15 @@ Route::prefix('student')->group(function () {
 Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 });
 
+// Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
+// Route::controller(AdminAuthController::class)->group(function(){
+
+//       Route::get('adminnnnn','Admin')->name('get');
+// });
+// });
+
 // Route::middleware(['admin'])->group(function () {
+
  Route::prefix('student')->group(function () {
         Route::post('/register', [StudentAuthController::class, 'StudentCreate']);
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
@@ -53,7 +61,49 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
         Route::get('course/list', [StudentAuthController::class, 'courseList']);
     });
+
+    Route::prefix('teacher')->group(function () {
+
+      Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
+      Route::get('/list', [TeacherAuthController::class, 'teacherList']);
+      Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
+      Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
+      Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
+   });  
+
+   Route::prefix('staff')->group(function () {
+
+      Route::post('/register', [StaffAuthController::class, 'staffCreate']);
+      Route::get('/list', [StaffAuthController::class, 'staffList']);
+      Route::get('view/update/{id}/', [StaffAuthController::class, 'UpdateView']);
+      Route::post('update/{id}', [StaffAuthController::class, 'updateStaff']);
+      Route::delete('delete/{id}', [StaffAuthController::class, 'deleteStaff']);
+
+}); 
+
+Route::prefix('course')->group(function () {
+
+      Route::post('/create', [CourseController::class, 'courseCreate']);
+      Route::get('/list', [CourseController::class, 'courseList']);
+      Route::get('view/update/{id}/', [CourseController::class, 'UpdateView']);
+      Route::post('update/{id}', [CourseController::class, 'courseUpdate']);
+      Route::delete('delete/{id}', [CourseController::class, 'deleteCourse']);
+
+
+
+}); 
+
+Route::prefix('notification')->group(function () {
+
+      Route::post('/create', [NotificationController::class, 'create']);
+      Route::get('/list', [NotificationController::class, 'List']);
+
+}); 
+
 // });
+
+      Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
+
 
 
 Route::prefix('student')->group(function () {
@@ -71,14 +121,7 @@ Route::prefix('teacher')->group(function () {
 
 });  
 
-Route::prefix('teacher')->group(function () {
-
-      Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
-      Route::get('/list', [TeacherAuthController::class, 'teacherList']);
-      Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
-      Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
-      Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
-});      
+    
 
 Route::prefix('teacher')->group(function () {
 
@@ -97,15 +140,7 @@ Route::prefix('staff')->group(function () {
 
 });  
 
-Route::prefix('staff')->group(function () {
 
-      Route::post('/register', [StaffAuthController::class, 'staffCreate']);
-      Route::get('/list', [StaffAuthController::class, 'staffList']);
-      Route::get('view/update/{id}/', [StaffAuthController::class, 'UpdateView']);
-      Route::post('update/{id}', [StaffAuthController::class, 'updateStaff']);
-      Route::delete('delete/{id}', [StaffAuthController::class, 'deleteStaff']);
-
-}); 
 
 Route::prefix('staff')->group(function () {
 
@@ -116,25 +151,9 @@ Route::prefix('staff')->group(function () {
 
 }); 
 
-Route::prefix('course')->group(function () {
-
-      Route::post('/create', [CourseController::class, 'courseCreate']);
-      Route::get('/list', [CourseController::class, 'courseList']);
-      Route::get('view/update/{id}/', [CourseController::class, 'UpdateView']);
-      Route::post('update/{id}', [CourseController::class, 'courseUpdate']);
-      Route::delete('delete/{id}', [CourseController::class, 'deleteCourse']);
-
-      Route::post('/enroll', [CourseEnrollementController::class, 'enrollCourse']);
 
 
-}); 
 
-Route::prefix('notification')->group(function () {
-
-      Route::post('/create', [NotificationController::class, 'create']);
-      Route::get('/list', [NotificationController::class, 'List']);
-
-}); 
 
 
 Route::prefix('meeting')->group(function () {
@@ -146,13 +165,18 @@ Route::prefix('meeting')->group(function () {
 Route::prefix('attedence')->group(function () {
 
       Route::get('/list/{id}', [AttendanceController::class, 'getStudents']);
+      // Route::post('/submit-attendance', [StudyMaterialsController::class, 'store']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
       Route::get('/list', [AttendanceController::class, 'alllist']);
 });
 
 
-// Route::middleware('cors')->group(function () {
+// ------------------------------------------------------------------------------------------------
+// STUDY MATERIALS UPLOAD
+// ------------------------------------------------------------------------------------------------
 
-      Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+Route::get('study-material/download/{id}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::get('study-materials', [StudyMaterialsController::class, 'index']);
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
       
-// });

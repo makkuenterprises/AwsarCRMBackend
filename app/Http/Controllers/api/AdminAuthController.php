@@ -328,9 +328,7 @@ class AdminAuthController extends Controller
           $img->resize(200,null, function($constraint){
           $constraint->aspectRatio();
           })->save($destinationpath.'/'.$fileName);
-          }else{ 
-          $fileName='';
-           }
+          }
             $admin = Admin::find($id);
             $admin->name = $request->input('name');
             $admin->email = $request->input('email');
