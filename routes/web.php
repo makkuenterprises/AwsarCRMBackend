@@ -36,7 +36,12 @@ Route::get('setup',function() {
     dd('Application Setup Completed');
 });
 Route::get('migrate',function() {
-     Artisan::call('storage:link');
+    
+    Artisan::call('storage:link');
     Artisan::call('migrate');
     dd('Application Migration Completed');
+});
+Route::get('rollback',function() {
+  Artisan::call('migrate:rollback', ['--step' => 1]);
+
 });
