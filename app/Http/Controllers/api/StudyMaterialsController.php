@@ -110,44 +110,9 @@ public function store(Request $request)
 // DOWNLOADS STUDY MATERIALS-------------------------------------------------------------
 // -------------------------------------------------------------------------------
 
-public function downloadMateriall($id)
-{
-
-    // Find the study material by ID
-    $studyMaterial = StudyMaterials::find($id);
-
-    if (!$studyMaterial) {
-        return response()->json([
-            'status' => 'error',
-            'code' => 404,
-            'message' => 'Study material not found.',
-        ], 404);
-    }
-
-    $materialPath = $studyMaterial->material_path;
-
-    // Check if the material is a URL
-    if (filter_var($materialPath, FILTER_VALIDATE_URL)) {
-        return redirect()->away($materialPath);
-    } 
-
-
-    // Check if the file exists in storage
-    if (Storage::exists($materialPath)) {
-    $response = Storage::download($materialPath, $studyMaterial->title);
-    $response->headers->set('Content-Type', 'application/pdf'); // set any additional headers
-    return $response;
-    }
-
-    return response()->json([
-        'status' => 'error',
-        'code' => 404,
-        'message' => 'File not found in storage.',
-    ], 404);
-}
-
 public function downloadMaterial($id, $filePath)
 {
+    dd($id);
     // Decode the file path from URL encoding
     $filePath = urldecode($filePath);
 
