@@ -216,12 +216,12 @@ public function index()
 
         // Decode JSON data for each study material and encode file paths
         $studyMaterials->transform(function ($studyMaterial) {
-            $materialPaths = json_decode($studyMaterial->material_paths);
+            $materialPaths = json_decode($studyMaterial->material_path);
 
             if (is_array($materialPaths)) {
-                $studyMaterial->material_paths = array_map('urlencode', $materialPaths);
+                $studyMaterial->material_path = array_map('urlencode', $materialPaths);
             } else {
-                $studyMaterial->material_paths = [];
+                $studyMaterial->material_path = [];
             }
 
             return $studyMaterial;
