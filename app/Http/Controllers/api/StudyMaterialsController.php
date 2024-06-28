@@ -27,8 +27,8 @@ public function store(Request $request)
         'title' => 'required|string|max:255',
         'batch_id' => 'required|exists:courses,id',
         'description' => 'nullable|string',
-        'materials.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx|max:2048',
-        'material_urls.*' => 'nullable|url',
+        'material.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx|max:2048',
+        'material_url.*' => 'nullable|url',
     ]);
 
     if ($validator->fails()) {
@@ -40,7 +40,7 @@ public function store(Request $request)
     }
 
     // Ensure either materials or material_urls are provided, but not both
-    if (!$request->hasFile('materials') && !$request->input('material_urls')) {
+    if (!$request->hasFile('material') && !$request->input('material_url')) {
         return response()->json([
             'status' => 'error',
             'code' => 400,
@@ -48,7 +48,7 @@ public function store(Request $request)
         ], 400);
     }
 
-    if ($request->hasFile('materials') && $request->input('material_urls')) {
+    if ($request->hasFile('material') && $request->input('material_url')) {
         return response()->json([
             'status' => 'error',
             'code' => 400,
@@ -67,16 +67,16 @@ public function store(Request $request)
         $materialPaths = [];
 
         // Handle multiple file uploads
-        if ($request->hasFile('materials')) {
-            foreach ($request->file('materials') as $file) {
-                $path = $file->store('study_materials');
+        if ($request->hasFile('material')) {
+            foreach ($request->file('material') as $file) {
+                $path = $file->store('study_material');
                 $materialPaths[] = $path;
             }
         }
 
         // Handle multiple URLs
-        if ($request->input('material_urls')) {
-            foreach ($request->input('material_urls') as $url) {
+        if ($request->input('material_url')) {
+            foreach ($request->input('material_url') as $url) {
                 $materialPaths[] = $url;
             }
         }
