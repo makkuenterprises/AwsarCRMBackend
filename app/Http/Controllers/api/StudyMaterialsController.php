@@ -148,6 +148,9 @@ public function downloadMateriall($id)
 
 public function downloadMaterial($id, $filePath)
 {
+    // Decode the file path from URL encoding
+    $filePath = urldecode($filePath);
+
     // Find the study material by ID
     $studyMaterial = StudyMaterials::find($id);
 
@@ -202,6 +205,7 @@ public function downloadMaterial($id, $filePath)
         'message' => 'File not found in storage: ' . $filePath,
     ], 404);
 }
+
 
 
 // --------------------------------------------------------------------------------------
