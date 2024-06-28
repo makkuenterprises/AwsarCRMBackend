@@ -112,7 +112,9 @@ public function store(Request $request)
 
 public function downloadMaterial($id, $filePath)
 {
-    // dd('test');
+    echo $id. "<br>";
+    echo $filePath;
+    die;
     // Log the incoming request for debugging
     \Log::info("Download requested for ID: $id, File Path: $filePath");
 
