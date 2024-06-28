@@ -240,7 +240,7 @@ public function studentMaterials(Request $request,$course_id)
         }
 
         // Retrieve all study materials for the given batch ID, sorted by created_at in descending order
-        $studyMaterials = StudyMaterials::where('batch_id', $batch_id)
+        $studyMaterials = StudyMaterials::where('batch_id', $course_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
