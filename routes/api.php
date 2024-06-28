@@ -237,9 +237,11 @@ Route::prefix('attedence')->group(function () {
 // ------------------------------------------------------------------------------------------------
 
 Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
-Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::get('study-materials', [StudyMaterialsController::class, 'index']);
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial'])->where('filePath', '.*');
+
       
 
 
