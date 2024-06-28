@@ -145,50 +145,64 @@ public function downloadMateriall($id)
         'message' => 'File not found in storage.',
     ], 404);
 }
-  public function downloadMaterial($id, $filePath)
-    {
-        // Find the study material by ID
-        $studyMaterial = StudyMaterials::find($id);
 
-        if (!$studyMaterial) {
-            return response()->json([
-                'status' => 'error',
-                'code' => 404,
-                'message' => 'Study material not found.',
-            ], 404);
-        }
+public function downloadMaterial($id, $filePath)
+{
+    // Find the study material by ID
+    $studyMaterial = StudyMaterials::find($id);
 
-        // Check if the file path exists in the material_paths JSON
-        $materialPath = json_decode($studyMaterial->material_path, true);
-        if (!in_array($filePath, $materialPath)) {
-            return response()->json([
-                'status' => 'error',
-                'code' => 404,
-                'message' => 'File not found in study material paths.',
-            ], 404);
-        }
-
-       // Check if the material is a URL
-    if (filter_var($materialPath, FILTER_VALIDATE_URL)) {
-        return redirect()->away($materialPath);
-    } 
-
-
-    // Check if the file exists in storage
-    if (Storage::exists($materialPath)) {
-    $response = Storage::download($materialPath, $studyMaterial->title);
-    $response->headers->set('Content-Type', 'application/pdf'); // set any additional headers
-    return $response;
-    }
-
-
+    if (!$studyMaterial) {
         return response()->json([
             'status' => 'error',
             'code' => 404,
-            'message' => 'File not found in storage.',
+            'message' => 'Study material not found.',
         ], 404);
-    
+    }
+
+    // Decode the material paths from JSON
+    $materialPaths = json_decode($studyMaterial->material_path, true);
+
+    if (empty($materialPaths)) {
+        return response()->json([
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'No files found for download.',
+        ], 404);
+    }
+
+    // Check if the file path exists in the material_paths JSON
+    if (!in_array($filePath, $materialPaths)) {
+        return response()->json([
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'File not found in study material paths.',
+        ], 404);
+    }
+
+    // Check if the material is a URL
+    if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+        return redirect()->away($filePath);
+    }
+
+    // Construct the full file path based on storage configuration
+    $fullFilePath = storage_path('app/' . $filePath);
+
+    // Check if the file exists in storage
+    if (Storage::exists($filePath)) {
+        // Determine the MIME type based on the file extension
+        $mimeType = Storage::mimeType($filePath);
+
+        // Download the file
+        return response()->download($fullFilePath, basename($filePath), ['Content-Type' => $mimeType]);
+    }
+
+    return response()->json([
+        'status' => 'error',
+        'code' => 404,
+        'message' => 'File not found in storage: ' . $filePath,
+    ], 404);
 }
+
 
 // --------------------------------------------------------------------------------------
 // LISTS OF  STUDY MATERIALS-------------------------------------------------------------
@@ -200,9 +214,16 @@ public function index()
         // Retrieve all study materials, sorted by created_at in descending order
         $studyMaterials = StudyMaterials::orderBy('created_at', 'desc')->get();
 
-        // Decode JSON data for each study material
+        // Decode JSON data for each study material and encode file paths
         $studyMaterials->transform(function ($studyMaterial) {
-            $studyMaterial->material_paths = json_decode($studyMaterial->material_paths);
+            $materialPaths = json_decode($studyMaterial->material_paths);
+
+            if (is_array($materialPaths)) {
+                $studyMaterial->material_paths = array_map('urlencode', $materialPaths);
+            } else {
+                $studyMaterial->material_paths = [];
+            }
+
             return $studyMaterial;
         });
 
@@ -223,6 +244,7 @@ public function index()
         ], 500);
     }
 }
+
 
 // --------------------------------------------------------------------------------------
 // LISTS OF  STUDY MATERIALS FOR STUDENT FILTER BY COURSE --------------------------------
