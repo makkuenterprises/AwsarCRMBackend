@@ -110,11 +110,9 @@ public function store(Request $request)
 // DOWNLOADS STUDY MATERIALS-------------------------------------------------------------
 // -------------------------------------------------------------------------------
 
-public function downloadMaterial($id, $filePath)
+public function downloadMaterial(Request $request)
 {
-    echo $id. "<br>";
-    echo $filePath;
-    die;
+    dd($request->all());
     // Log the incoming request for debugging
     \Log::info("Download requested for ID: $id, File Path: $filePath");
 
