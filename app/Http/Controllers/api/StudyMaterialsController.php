@@ -23,35 +23,36 @@ class StudyMaterialsController extends Controller
 public function store(Request $request)
 {
     // Validate the request data
-     $validator = Validator::make($request->all(), [
+    $validator = Validator::make($request->all(), [
         'title' => 'required|string|max:255',
         'batch_id' => 'required|exists:courses,id',
         'description' => 'nullable|string',
-        'material' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx|max:2048',
-        'material_url' => 'nullable|url',
+        'materials.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx|max:2048',
+        'material_urls.*' => 'nullable|url',
     ]);
-     if ($validator->fails()) {
-            return response()->json([
-             'status' => false,
-               'code'=>400,
-              'errors' => $validator->errors()
-              ], 400);
-        }
 
-    // Ensure either material or material_url is provided, but not both
-    if (!$request->hasFile('material') && !$request->input('material_url')) {
+    if ($validator->fails()) {
         return response()->json([
-            'status' => 'error',
+            'status' => false,
             'code' => 400,
-            'message' => 'Please provide either a file or a URL for the study material.',
+            'errors' => $validator->errors()
         ], 400);
     }
 
-    if ($request->hasFile('material') && $request->input('material_url')) {
+    // Ensure either materials or material_urls are provided, but not both
+    if (!$request->hasFile('materials') && !$request->input('material_urls')) {
         return response()->json([
             'status' => 'error',
             'code' => 400,
-            'message' => 'Please provide only one of either a file or a URL for the study material.',
+            'message' => 'Please provide either files or URLs for the study materials.',
+        ], 400);
+    }
+
+    if ($request->hasFile('materials') && $request->input('material_urls')) {
+        return response()->json([
+            'status' => 'error',
+            'code' => 400,
+            'message' => 'Please provide only one of either files or URLs for the study materials.',
         ], 400);
     }
 
@@ -63,15 +64,25 @@ public function store(Request $request)
         $studyMaterial->description = $request['description'];
         $studyMaterial->uploadedDate = Carbon::now('Asia/Kolkata')->format('d-m-y');
 
+        $materialPaths = [];
 
-        // Handle file upload
-        if ($request->hasFile('material')) {
-            $path = $request->file('material')->store('study_materials');
-            $studyMaterial->material_path = $path;
-        } elseif ($request->input('material_url')) {
-            // Store the URL if provided
-            $studyMaterial->material_path = $request->input('material_url');
+        // Handle multiple file uploads
+        if ($request->hasFile('materials')) {
+            foreach ($request->file('materials') as $file) {
+                $path = $file->store('study_materials');
+                $materialPaths[] = $path;
+            }
         }
+
+        // Handle multiple URLs
+        if ($request->input('material_urls')) {
+            foreach ($request->input('material_urls') as $url) {
+                $materialPaths[] = $url;
+            }
+        }
+
+        // Store the file paths and URLs as JSON in the material_paths column
+        $studyMaterial->material_paths = json_encode($materialPaths);
 
         // Save the study material
         $studyMaterial->save();
@@ -93,6 +104,7 @@ public function store(Request $request)
         ], 500);
     }
 }
+
 
 // -------------------------------------------------------------------------------
 // DOWNLOADS STUDY MATERIALS-------------------------------------------------------------
