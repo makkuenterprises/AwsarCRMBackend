@@ -336,7 +336,12 @@ class AdminAuthController extends Controller
         }
 
     try{
-         if($request->image!=''){
+        
+            $admin = Admin::find($id);
+            $admin->name = $request->input('name');
+            $admin->email = $request->input('email');
+            $admin->phone = $request->input('phone');
+             if($request->image!=''){
           $uploadedImg=$request->image;
           $fileName=time().'.'.$request->image->extension();          
           $destinationpath=public_path('/Admin');
@@ -344,12 +349,9 @@ class AdminAuthController extends Controller
           $img->resize(200,null, function($constraint){
           $constraint->aspectRatio();
           })->save($destinationpath.'/'.$fileName);
-          }
-            $admin = Admin::find($id);
-            $admin->name = $request->input('name');
-            $admin->email = $request->input('email');
-            $admin->phone = $request->input('phone');
             $admin->image = $fileName;
+
+          }
             $admin->save();
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'admin' => $admin], 200);
         }catch (Exception $e) {
