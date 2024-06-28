@@ -82,7 +82,7 @@ public function store(Request $request)
         }
 
         // Store the file paths and URLs as JSON in the material_paths column
-        $studyMaterial->material_paths = json_encode($materialPaths);
+        $studyMaterial->material_path  = json_encode($materialPaths);
 
         // Save the study material
         $studyMaterial->save();
