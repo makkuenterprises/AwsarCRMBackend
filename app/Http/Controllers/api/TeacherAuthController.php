@@ -210,7 +210,7 @@ class TeacherAuthController extends Controller
                 [
                     'title' => 'Settings',
                     'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'settings',
+                    'to' => 'teacher/settings',
                 ],
             ];
 

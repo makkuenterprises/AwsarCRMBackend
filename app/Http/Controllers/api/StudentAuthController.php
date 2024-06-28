@@ -187,7 +187,7 @@ class StudentAuthController extends Controller
                 [
                     'title' => 'Settings',
                     'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'settings',
+                    'to' => 'student/settings',
                 ],
             ];
 
