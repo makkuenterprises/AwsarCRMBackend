@@ -136,6 +136,22 @@ class TeacherAuthController extends Controller
                         ],
                 ],
                  [
+                    'title' => 'Study Material',
+                    'classsChange' => 'mm-collapse',	
+                    'iconStyle' => '<i className="material-symbols-outlined">article</i>',
+                        'content'=> [
+                        [
+                            'title'=> 'Study Materials',
+                            'to'=> 'study-materials',					
+                        ],
+                        [
+                            'title'=> 'Upload Study Material',
+                            'to'=> 'add-study-material',
+                        ],
+           
+                        ],
+                ],
+                 [
                     'title' => 'Exams',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',

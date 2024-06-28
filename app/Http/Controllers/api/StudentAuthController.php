@@ -166,7 +166,7 @@ class StudentAuthController extends Controller
                         ],
                         [
                             'title'=> 'Study Materials',
-                            'to'=> 'page-lock-screen',
+                            'to'=> 'view-study-materials',
                         ],
                          [
                             'title'=> 'Home Work',
