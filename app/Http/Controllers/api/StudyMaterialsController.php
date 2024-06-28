@@ -154,8 +154,14 @@ public function downloadMaterial($id)
 public function index()
 {
     try {
-        // Retrieve all study materials
-        $studyMaterials = StudyMaterials::all();
+        // Retrieve all study materials, sorted by created_at in descending order
+        $studyMaterials = StudyMaterials::orderBy('created_at', 'desc')->get();
+
+        // Decode JSON data for each study material
+        $studyMaterials->transform(function ($studyMaterial) {
+            $studyMaterial->material_paths = json_decode($studyMaterial->material_paths);
+            return $studyMaterial;
+        });
 
         // Return success response with study materials data
         return response()->json([
