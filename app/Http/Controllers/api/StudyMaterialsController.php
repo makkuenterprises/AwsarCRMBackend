@@ -110,7 +110,7 @@ public function store(Request $request)
 // DOWNLOADS STUDY MATERIALS-------------------------------------------------------------
 // -------------------------------------------------------------------------------
 
-public function downloadMaterial($id)
+public function downloadMateriall($id)
 {
 
     // Find the study material by ID
@@ -145,7 +145,50 @@ public function downloadMaterial($id)
         'message' => 'File not found in storage.',
     ], 404);
 }
+  public function downloadMaterial($id, $filePath)
+    {
+        // Find the study material by ID
+        $studyMaterial = StudyMaterials::find($id);
 
+        if (!$studyMaterial) {
+            return response()->json([
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'Study material not found.',
+            ], 404);
+        }
+
+        // Check if the file path exists in the material_paths JSON
+        $materialPath = json_decode($studyMaterial->material_path, true);
+        if (!in_array($filePath, $materialPath)) {
+            return response()->json([
+                'status' => 'error',
+                'code' => 404,
+                'message' => 'File not found in study material paths.',
+            ], 404);
+        }
+
+       // Check if the material is a URL
+    if (filter_var($materialPath, FILTER_VALIDATE_URL)) {
+        return redirect()->away($materialPath);
+    } 
+
+
+    // Check if the file exists in storage
+    if (Storage::exists($materialPath)) {
+    $response = Storage::download($materialPath, $studyMaterial->title);
+    $response->headers->set('Content-Type', 'application/pdf'); // set any additional headers
+    return $response;
+    }
+
+
+        return response()->json([
+            'status' => 'error',
+            'code' => 404,
+            'message' => 'File not found in storage.',
+        ], 404);
+    
+}
 
 // --------------------------------------------------------------------------------------
 // LISTS OF  STUDY MATERIALS-------------------------------------------------------------
@@ -196,8 +239,17 @@ public function studentMaterials(Request $request,$course_id)
             return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
         }
 
-        // Retrieve study materials for the specified batch_id
-        $studyMaterials = StudyMaterials::where('batch_id', $course_id)->get();
+        // Retrieve all study materials for the given batch ID, sorted by created_at in descending order
+        $studyMaterials = StudyMaterials::where('batch_id', $batch_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+          // Decode JSON data for each study material
+        $studyMaterials->transform(function ($studyMaterial) {
+            $studyMaterial->material_paths = json_decode($studyMaterial->material_paths);
+            return $studyMaterial;
+        });
+
 
         // Return success response with study materials data
         return response()->json([
