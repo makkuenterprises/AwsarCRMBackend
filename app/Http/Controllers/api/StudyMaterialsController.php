@@ -235,7 +235,10 @@ public function downloadMaterial(Request $request)
         $mimeType = mime_content_type($fullFilePath);
 
         // Download the file
-        return response()->download($fullFilePath, basename($filePath), ['Content-Type' => $mimeType]);
+        return response()->download($fullFilePath, basename($filePath), [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'attachment; filename="'.basename($filePath).'"'
+        ]);
     }
 
     return response()->json([
@@ -244,6 +247,7 @@ public function downloadMaterial(Request $request)
         'message' => 'File not found in storage: ' . $filePath,
     ], 404);
 }
+
 
 // --------------------------------------------------------------------------------------
 // LISTS OF  STUDY MATERIALS-------------------------------------------------------------
