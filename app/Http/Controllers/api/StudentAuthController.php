@@ -106,15 +106,10 @@ class StudentAuthController extends Controller
                         ],
                 ],
                 [
-                    'title' => 'Courses (Batch)',
+                    'title' => 'Enroll Batch',
                     'classsChange' => 'mm-collapse',
-                    'iconStyle' => '<i className="merial-icons">article</i>',
-                                            'content'=> [
-                        [
-                            'title'=> 'Batch',
-                            'to'=> 'batch',					
-                        ],
-                        ],
+                    'to' => 'batch',
+
                 ],
                 // [
                 //     'title' => 'Reports',
@@ -168,10 +163,6 @@ class StudentAuthController extends Controller
                             'title'=> 'Study Materials',
                             'to'=> 'view-study-materials',
                         ],
-                         [
-                            'title'=> 'Home Work',
-                            'to'=> 'page-lock-screen',
-                        ],
                         [
                             'title'=> 'Attendance',
                             'to'=> 'page-lock-screen',					
@@ -180,8 +171,6 @@ class StudentAuthController extends Controller
                             'title'=> 'Class Routine',
                             'to'=> 'page-lock-screen',					
                         ],
-                      
-           
                         ],
                 ],
                 [
