@@ -108,6 +108,7 @@ class StudentAuthController extends Controller
                 [
                     'title' => 'Enrolled Batch',
                     'classsChange' => 'mm-collapse',
+                    'iconStyle' => '<i className="merial-icons">article</i>',
                     'to' => 'batch',
 
                 ],
