@@ -11,6 +11,7 @@ use App\Models\StudyMaterials;
 use App\Models\Course;
 use Illuminate\Support\Facades\Validator;
 use DB; 
+use Crypt;
 
 
 class StudyMaterialsController extends Controller
@@ -110,19 +111,82 @@ public function store(Request $request)
 // DOWNLOADS STUDY MATERIALS-------------------------------------------------------------
 // -------------------------------------------------------------------------------
 
+// public function downloadMaterial(Request $request)
+// {
+    
+//     $id=$request->id;
+//     $filePath=$request->url;
+    
+
+//     // Decode the file path from URL encoding
+//     $filePath = urldecode($filePath);
+
+
+//     // Find the study material by ID
+//     $studyMaterial = StudyMaterials::find($id);
+
+//     if (!$studyMaterial) {
+//         \Log::error("Study material not found for ID: $id");
+//         return response()->json([
+//             'status' => 'error',
+//             'code' => 404,
+//             'message' => 'Study material not found.',
+//         ], 404);
+//     }
+
+//     // Decode the material paths from JSON
+//     $materialPaths = json_decode($studyMaterial->material_path, true);
+
+//     if (empty($materialPaths)) {
+//         \Log::error("No files found for download in study material ID: $id");
+//         return response()->json([
+//             'status' => 'error',
+//             'code' => 404,
+//             'message' => 'No files found for download.',
+//         ], 404);
+//     }
+
+//     // Check if the file path exists in the material_paths JSON
+//     if (!in_array($filePath, $materialPaths)) {
+//         return response()->json([
+//             'status' => 'error',
+//             'code' => 404,
+//             'message' => 'File not found in study material paths.',
+//         ], 404);
+//     }
+
+//     // Check if the material is a URL
+//     if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+//         return redirect()->away($filePath);
+//     }
+
+//     // Construct the full file path based on storage configuration
+//     $fullFilePath = storage_path('app/' . $filePath);
+
+//     // Check if the file exists in storage
+//     if (Storage::exists($filePath)) {
+//         // Determine the MIME type based on the file extension
+//         $mimeType = Storage::mimeType($filePath);
+
+
+//         // Download the file
+//         return response()->download($fullFilePath, basename($filePath), ['Content-Type' => $mimeType]);
+//     }
+
+//     return response()->json([
+//         'status' => 'error',
+//         'code' => 404,
+//         'message' => 'File not found in storage: ' . $filePath,
+//     ], 404);
+// }
+
 public function downloadMaterial(Request $request)
 {
-    // dd($request->all());
-    $id=$request->id;
-    $filePath=$request->url;
-    // Log the incoming request for debugging
-    \Log::info("Download requested for ID: $id, File Path: $filePath");
+    $id = $request->id;
+    $filePath = $request->url;
 
     // Decode the file path from URL encoding
     $filePath = urldecode($filePath);
-
-    // Log the decoded file path
-    \Log::info("Decoded File Path: $filePath");
 
     // Find the study material by ID
     $studyMaterial = StudyMaterials::find($id);
@@ -139,9 +203,6 @@ public function downloadMaterial(Request $request)
     // Decode the material paths from JSON
     $materialPaths = json_decode($studyMaterial->material_path, true);
 
-    // Log the material paths
-    \Log::info("Material Paths: " . print_r($materialPaths, true));
-
     if (empty($materialPaths)) {
         \Log::error("No files found for download in study material ID: $id");
         return response()->json([
@@ -153,7 +214,6 @@ public function downloadMaterial(Request $request)
 
     // Check if the file path exists in the material_paths JSON
     if (!in_array($filePath, $materialPaths)) {
-        \Log::error("File path $filePath not found in study material paths for ID: $id");
         return response()->json([
             'status' => 'error',
             'code' => 404,
@@ -163,36 +223,27 @@ public function downloadMaterial(Request $request)
 
     // Check if the material is a URL
     if (filter_var($filePath, FILTER_VALIDATE_URL)) {
-        \Log::info("Redirecting to URL: $filePath");
         return redirect()->away($filePath);
     }
 
     // Construct the full file path based on storage configuration
     $fullFilePath = storage_path('app/' . $filePath);
 
-    // Log the full file path
-    \Log::info("Full File Path: $fullFilePath");
-
     // Check if the file exists in storage
-    if (Storage::exists($filePath)) {
+    if (file_exists($fullFilePath)) {
         // Determine the MIME type based on the file extension
-        $mimeType = Storage::mimeType($filePath);
-
-        // Log the mime type
-        \Log::info("MIME Type: $mimeType");
+        $mimeType = mime_content_type($fullFilePath);
 
         // Download the file
         return response()->download($fullFilePath, basename($filePath), ['Content-Type' => $mimeType]);
     }
 
-    \Log::error("File not found in storage: $filePath");
     return response()->json([
         'status' => 'error',
         'code' => 404,
         'message' => 'File not found in storage: ' . $filePath,
     ], 404);
 }
-
 
 // --------------------------------------------------------------------------------------
 // LISTS OF  STUDY MATERIALS-------------------------------------------------------------
