@@ -106,7 +106,7 @@ class StudentAuthController extends Controller
                         ],
                 ],
                 [
-                    'title' => 'Enroll Batch',
+                    'title' => 'Enrolled Batch',
                     'classsChange' => 'mm-collapse',
                     'to' => 'batch',
 
