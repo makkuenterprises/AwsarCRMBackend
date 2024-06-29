@@ -219,7 +219,7 @@ public function index()
 
 
 // --------------------------------------------------------------------------------------
-// LISTS OF  STUDY MATERIALS FOR STUDENT FILTER BY COURSE --------------------------------
+// LISTS OF  STUDY MATERIALS FOR STUDENT FILTER BY COURSE -------------------------------
 // --------------------------------------------------------------------------------------
 
 public function studentMaterials(Request $request,$course_id)
@@ -238,9 +238,16 @@ public function studentMaterials(Request $request,$course_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-          // Decode JSON data for each study material
+        // Decode JSON data for each study material and encode file paths
         $studyMaterials->transform(function ($studyMaterial) {
-            $studyMaterial->material_paths = json_decode($studyMaterial->material_paths);
+            $materialPaths = json_decode($studyMaterial->material_path);
+
+            if (is_array($materialPaths)) {
+                $studyMaterial->material_path = array_map('urlencode', $materialPaths);
+            } else {
+                $studyMaterial->material_path = [];
+            }
+
             return $studyMaterial;
         });
 
