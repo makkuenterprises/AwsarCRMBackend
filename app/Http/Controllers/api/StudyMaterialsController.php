@@ -231,14 +231,8 @@ public function downloadMaterial(Request $request)
 
     // Check if the file exists in storage
     if (file_exists($fullFilePath)) {
-        // Determine the MIME type based on the file extension
-        $mimeType = mime_content_type($fullFilePath);
-
         // Download the file
-        return response()->download($fullFilePath, basename($filePath), [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'attachment; filename="'.basename($filePath).'"'
-        ]);
+        return response()->download($fullFilePath);
     }
 
     return response()->json([
@@ -247,6 +241,7 @@ public function downloadMaterial(Request $request)
         'message' => 'File not found in storage: ' . $filePath,
     ], 404);
 }
+
 
 
 // --------------------------------------------------------------------------------------
