@@ -424,7 +424,7 @@ class StudentAuthController extends Controller
             $student->street = $request->input('street');
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
-            $student->state = $request->input('state');
+            $student->state = $request->input('state'); 
 
             if($request->image!=''){
         $uploadedImg=$request->image;
