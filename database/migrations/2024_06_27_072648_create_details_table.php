@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('business_name')->nullable();
             $table->string('email')->nullable();
             $table->string('smtp_host')->nullable();
-            $table->json('smtp_ports')->nullable(); // JSON column for storing multiple SMTP ports
+            $table->string('smtp_ports')->nullable(); // JSON column for storing multiple SMTP ports
             $table->string('smtp_username')->nullable();
             $table->string('smtp_password')->nullable();
             $table->timestamps();
