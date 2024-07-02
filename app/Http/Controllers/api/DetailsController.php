@@ -134,10 +134,22 @@ public function update(Request $request, $id)
             'business_name' => 'required|string|max:255', // Validation for business name as a string up to 255 characters
             'email' => 'required|email|max:255', // Validation for email format and maximum length
             'smtp_host' => 'required|string|max:255', // Validation for SMTP host as a string up to 255 characters
-            'smtp_ports' => 'required|array', // Validate smtp_ports as an array
-            'smtp_ports.*' => 'integer', // Ensure each port is an integer
+            'smtp_ports' => 'required|integer', // Validate smtp_ports as an array
             'smtp_username' => 'required|string|max:255', // Validation for SMTP username as a string up to 255 characters
-            'smtp_password' => 'required|string|max:255', // Validation for SMTP password as a string up to 255 characters
+            'smtp_password' => 'required|string|max:255',
+
+            'base_url' => 'required|string|max:255',
+            'method' => 'required|string|max:255',
+            'gst_number' => ['required', 'string', 'max:255', 'regex:/^([0-9]){2}([A-Za-z]){5}([0-9]){4}([A-Za-z]){1}([0-9]{1})([A-Za-z]){2}?$/'], // GST number validation
+            'gst_percentage' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^\d+(\.\d{1,2})?%?$/', // Matches digits with optional decimal up to 2 places and optional percent sign
+                'gte:0', // Greater than or equal to 0 (optional, adjust as needed)
+                'lte:100', // Less than or equal to 100 (optional, adjust as needed)
+            ],
+
         ]);
 
         // Find the existing Details model instance by ID
@@ -166,11 +178,17 @@ public function update(Request $request, $id)
         $details->business_name = $validator['business_name'];
         $details->email = $validator['email'];
         $details->smtp_host = $validator['smtp_host'];
+        $details->smtp_ports = $validator['smtp_ports'];
 
-        // Convert smtp_ports array to JSON for storage
-        if ($request->has('smtp_ports')) {
-            $details->smtp_ports = json_encode($validator['smtp_ports']);
-        }
+        $details->base_url = $validator['base_url'];
+        $details->method = $validator['method'];
+        $details->gst_number = $validator['gst_number'];
+        $details->gst_percentage = $validator['gst_percentage'];
+
+        // // Convert smtp_ports array to JSON for storage
+        // if ($request->has('smtp_ports')) {
+        //     $details->smtp_ports = json_encode($validator['smtp_ports']);
+        // }
 
         $details->smtp_username = $validator['smtp_username'];
         $details->smtp_password = $validator['smtp_password'];
