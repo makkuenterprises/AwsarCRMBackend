@@ -329,17 +329,7 @@ public function staffAuthLogout(Request $request)
         }
 
         try{
-            if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Staffs');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-          }else{
-           $fileName='';
-          }
+           
             $staff = StaffModel::find($id);
              if (!$staff) {
             return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
@@ -351,7 +341,17 @@ public function staffAuthLogout(Request $request)
             $staff->postal_code = $request->input('postal_code');
             $staff->city = $request->input('city');
             $staff->state = $request->input('state');
+             if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Staffs');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
             $staff->image = $fileName;
+
+          }
             $staff->save();
         $imagePath = url('/Staffs/' . $staff->image);
 
@@ -411,17 +411,7 @@ public function staffAuthLogout(Request $request)
               ], 400);
         }
         try{
-           if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Staffs');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-          }else{
-           $fileName='';
-          }
+           
             $staff = StaffModel::find($id);
              if (!$staff) {
             return response()->json(['status'=>false,'code'=>404,'message' => 'Staff not found'], 404);
@@ -433,8 +423,18 @@ public function staffAuthLogout(Request $request)
             $staff->postal_code = $request->input('postal_code');
             $staff->city = $request->input('city');
             $staff->state = $request->input('state');
-            $staff->image = $fileName;
             $staff->password =Hash::make($request->password);
+            if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Staffs');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
+            $staff->image = $fileName;
+
+          }
             $staff->save();
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'staff' => $staff], 200);
         }catch (Exception $e) {
