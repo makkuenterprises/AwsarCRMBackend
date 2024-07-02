@@ -184,9 +184,6 @@ public function update(Request $request, $id)
         $details->method = $validator['method'];
         $details->gst_number = $validator['gst_number'];
         $details->gst_percentage = $validator['gst_percentage'];
-
-     
-
         $details->smtp_username = $validator['smtp_username'];
         $details->smtp_password = $validator['smtp_password'];
         $details->save();
