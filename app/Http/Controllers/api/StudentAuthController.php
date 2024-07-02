@@ -158,7 +158,7 @@ class StudentAuthController extends Controller
                         'content'=> [
                         [
                             'title'=> 'Notice',
-                            'to'=> 'page-lock-screen',					
+                            'to'=> 'view-notice',					
                         ],
                         [
                             'title'=> 'Study Materials',
