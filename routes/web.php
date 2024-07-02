@@ -42,7 +42,7 @@ Route::get('migrate',function() {
     dd('Application Migration Completed');
 });
 Route::get('rollback',function() {
-  Artisan::call('migrate:rollback', ['--step' => 1]);
+  Artisan::call('migrate:rollback', ['--step' => 2]);
     dd('Application rollback Completed');
 
 
