@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('details', function (Blueprint $table) {
             //
-              $table->string('smtp_ports')->change();
+              $table->string('smtp_ports')->nullable();
         });
     }
 
