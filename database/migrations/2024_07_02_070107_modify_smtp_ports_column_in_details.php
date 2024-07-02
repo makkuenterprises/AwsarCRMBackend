@@ -12,11 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('details', function (Blueprint $table) {
-            // Drop existing column
-            $table->dropColumn('smtp_ports');
-
-            // Add new column with string data type
-            $table->string('smtp_ports')->nullable(); // Modify as per your requirements
+            //
+              $table->string('smtp_ports')->change();
         });
     }
 
@@ -26,11 +23,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('details', function (Blueprint $table) {
-            // Drop the string column
-            $table->dropColumn('smtp_ports');
+            //
+         $table->json('smtp_ports')->change(); // JSON column for storing multiple SMTP ports
 
-            // Add new column with JSON data type
-            $table->json('smtp_ports')->nullable(); // Modify as per your requirements
+
         });
     }
 };
