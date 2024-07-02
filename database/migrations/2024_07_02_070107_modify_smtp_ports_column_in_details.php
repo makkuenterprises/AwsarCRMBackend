@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('details', function (Blueprint $table) {
             //
-              $table->string('smtp_ports')->nullable();
+              $table->string('smtp_ports')->change();
         });
     }
 
@@ -24,7 +24,6 @@ return new class extends Migration
     {
         Schema::table('details', function (Blueprint $table) {
             //
-         $table->json('smtp_ports')->change(); // JSON column for storing multiple SMTP ports
 
 
         });
