@@ -134,7 +134,7 @@ public function update(Request $request, $id)
             'business_name' => 'required|string|max:255', // Validation for business name as a string up to 255 characters
             'email' => 'required|email|max:255', // Validation for email format and maximum length
             'smtp_host' => 'required|string|max:255', // Validation for SMTP host as a string up to 255 characters
-            'smtp_ports' => 'required|integer', // Validate smtp_ports as an array
+            'smtp_ports' => 'required|integer', 
             'smtp_username' => 'required|string|max:255', // Validation for SMTP username as a string up to 255 characters
             'smtp_password' => 'required|string|max:255',
 
@@ -185,10 +185,7 @@ public function update(Request $request, $id)
         $details->gst_number = $validator['gst_number'];
         $details->gst_percentage = $validator['gst_percentage'];
 
-        // // Convert smtp_ports array to JSON for storage
-        // if ($request->has('smtp_ports')) {
-        //     $details->smtp_ports = json_encode($validator['smtp_ports']);
-        // }
+     
 
         $details->smtp_username = $validator['smtp_username'];
         $details->smtp_password = $validator['smtp_password'];

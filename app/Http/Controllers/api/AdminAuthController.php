@@ -260,11 +260,11 @@ class AdminAuthController extends Controller
                         'content'=> [
                         [
                             'title'=> 'View Notice',
-                            'to'=> 'page-lock-screen',					
+                            'to'=> 'view-notice',					
                         ],
                         [
                             'title'=> 'Create Notice',
-                            'to'=> 'page-lock-screen',
+                            'to'=> 'create-notice',
                         ],
                       
            
