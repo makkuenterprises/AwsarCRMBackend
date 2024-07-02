@@ -34,7 +34,7 @@ public function index(Request $request){
   
             'base_url' => 'required|string|max:255',
             'method' => 'required|string|max:255',
-            'gst_number' => ['required', 'string', 'max:255', 'regex:/^([0-9]){2}([A-Za-z]){5}([0-9]){4}([A-Za-z]){1}([0-9]{1})([A-Za-z]){2}?$/'], // GST number validation
+            'gst_number' => ['required', 'string', 'max:255', 'regex:/\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/'], // GST number validation
             'gst_percentage' => [
                 'required',
                 'string',
@@ -75,9 +75,7 @@ public function index(Request $request){
         $details->smtp_username = $validator['smtp_username'];
         $details->smtp_password = $validator['smtp_password'];
         $details->save();
-        $details->smtp_username = $validator['smtp_username'];
-        $details->smtp_password = $validator['smtp_password'];
-        $details->save();
+     
 
      // Return success response with HTTP status code 201 (Created)
         return response()->json(['message' => 'Details saved successfully'], Response::HTTP_CREATED);
