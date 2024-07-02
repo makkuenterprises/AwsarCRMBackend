@@ -120,7 +120,7 @@ Route::prefix('course')->group(function () {
 // NOTIFICATION ROUTES
 // ------------------------------------------------------------------------------------------------
 
-Route::prefix('notification')->group(function () {
+Route::prefix('notice')->group(function () {
 
       Route::post('/create', [NotificationController::class, 'create']);
       Route::get('/list', [NotificationController::class, 'List']);
