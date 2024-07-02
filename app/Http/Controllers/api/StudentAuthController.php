@@ -425,7 +425,8 @@ class StudentAuthController extends Controller
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
-             if($request->image!=''){
+
+            if($request->image!=''){
         $uploadedImg=$request->image;
         $fileName=time().'.'.$request->image->extension();          
         $destinationpath=public_path('/Student');
@@ -507,17 +508,7 @@ class StudentAuthController extends Controller
         }
         try{
 
-        if($request->image!=''){
-        $uploadedImg=$request->image;
-        $fileName=time().'.'.$request->image->extension();          
-        $destinationpath=public_path('/Student');
-        $img=Image::make($uploadedImg->path());     
-        $img->resize(200,null, function($constraint){
-        $constraint->aspectRatio();
-        })->save($destinationpath.'/'.$fileName);
-        }else{
-        $fileName='';
-        }
+       
             $student = Student::find($id);
             $student->name = $request->input('name');
             $student->email = $request->input('email');
@@ -527,10 +518,20 @@ class StudentAuthController extends Controller
             $student->city = $request->input('city');
             $student->state = $request->input('state');
             $student->dob = $request->input('dob');
-            $student->image = $fileName;
             $student->fname = $request->input('fname');
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
+             if($request->image!=''){
+        $uploadedImg=$request->image;
+        $fileName=time().'.'.$request->image->extension();          
+        $destinationpath=public_path('/Student');
+        $img=Image::make($uploadedImg->path());     
+        $img->resize(200,null, function($constraint){
+        $constraint->aspectRatio();
+        })->save($destinationpath.'/'.$fileName);
+            $student->image = $fileName;
+
+        }
             $student->save();
               $imagePath = $student->image ? url('/Student/' . $student->image) : null;
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'student' => $student,'profileImage'=>$imagePath], 200);

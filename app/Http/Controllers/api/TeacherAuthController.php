@@ -430,17 +430,7 @@ public function teacherList(){
         }
 
         try{
-           if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Teachers');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-          }else{
-           $fileName='';
-          }
+          
             $teacher = Teacher::find($id);
              if (!$teacher) {
             return response()->json(['message' => 'Teacher not found'], 404);
@@ -452,9 +442,19 @@ public function teacherList(){
             $teacher->postal_code = $request->input('postal_code');
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
-            $teacher->image = $fileName;
             // $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
+             if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Teachers');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
+            $teacher->image = $fileName;
+
+          }
             $teacher->save();
                $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
            
@@ -516,17 +516,7 @@ public function teacherList(){
 
         try{
 
-        if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Teachers');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-          }else{
-           $fileName='';
-          }
+        
             $teacher = Teacher::find($id);
              if (!$teacher) {
             return response()->json(['status'=>false,'code'=>404,'message' => 'Teacher not found'], 404);
@@ -538,8 +528,18 @@ public function teacherList(){
             $teacher->postal_code = $request->input('postal_code');
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
-            $teacher->image = $fileName;
             $teacher->classes =$request->input('classes');
+            if($request->image!=''){
+           $uploadedImg=$request->image;
+           $fileName=time().'.'.$request->image->extension();          
+           $destinationpath=public_path('/Teachers');
+           $img=Image::make($uploadedImg->path());     
+           $img->resize(200,null, function($constraint){
+           $constraint->aspectRatio();
+           })->save($destinationpath.'/'.$fileName);
+            $teacher->image = $fileName;
+
+          }
             $teacher->save();
                 $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'teacher' => $teacher, 'image' =>$imagePath], 200);
