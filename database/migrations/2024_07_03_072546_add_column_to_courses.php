@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('courses', function (Blueprint $table) {
             //
-            // $table->string('payment_status')->nullable();
-            $table->string('course_id')->nullable();
-
+             $table->text('summary')->nullable();
+             $table->string('image')->nullable();
         });
     }
 
@@ -24,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
+        Schema::table('courses', function (Blueprint $table) {
             //
         });
     }
