@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('courses', function (Blueprint $table) {
             //
-            //  $table->text('summary')->nullable();
-            //  $table->string('image')->nullable();
+             $table->text('summary')->nullable();
+             $table->string('image')->nullable();
         });
     }
 
