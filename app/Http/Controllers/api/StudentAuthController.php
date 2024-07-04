@@ -76,7 +76,7 @@ class StudentAuthController extends Controller
             
 
 
-             $imagePath = url('/Student/' . $user->image);
+            $imagePath = url('/Student/' . $user->image);
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
            $email = $login['email'];

@@ -326,3 +326,5 @@ Route::prefix('meeting')->group(function () {
       Route::post('/create', [MeetingCreateController::class, 'create']);
      
 });
+
+

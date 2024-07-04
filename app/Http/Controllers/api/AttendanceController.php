@@ -41,9 +41,17 @@ class AttendanceController extends Controller
 
 public function create(Request $request)
 {
-    // Validate request data
+    // Validate request data 
     $request->validate([
-        'date' => 'required|date',
+         'date' => [
+            'required',
+            function ($attribute, $value, $fail) {
+                $d = \DateTime::createFromFormat('d/m/Y', $value);
+                if (!$d || $d->format('d/m/Y') !== $value) {
+                    $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
+                }
+            }
+        ],
         'course_id' => 'required|exists:courses,id', // Validate course_id
         'attendance' => 'required|array',
         'attendance.*.student_id' => 'required|exists:students,id',
@@ -51,7 +59,7 @@ public function create(Request $request)
     ]);
 
     // Retrieve attendance data from the request
-    $date = $request->input('date');
+  $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
     $courseId = $request->input('course_id'); // Retrieve course_id
     $attendanceData = $request->input('attendance');
 
