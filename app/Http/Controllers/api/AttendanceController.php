@@ -169,9 +169,6 @@ public function create(Request $request)
         return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
     }
 }
-use Illuminate\Http\Request;
-use App\Models\Student;
-use App\Models\CoursesEnrollement;
 
 public function getStudentBatchDetails(Request $request)
 {
