@@ -125,12 +125,20 @@ public function create(Request $request)
 {
     // Validate request query parameters
     $request->validate([
-        'date' => 'required|date',
+         'date' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $d = \DateTime::createFromFormat('d/m/Y', $value);
+                    if (!$d || $d->format('d/m/Y') !== $value) {
+                        $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
+                    }
+                }
+            ],
         'course_id' => 'required|exists:courses,id', // Validate course_id
     ]);
 
     // Retrieve validated data from the query string
-    $date = $request->query('date');
+    $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
     $courseId = $request->query('course_id');
 
      $course = Course::find($courseId);
