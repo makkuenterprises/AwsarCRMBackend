@@ -148,8 +148,6 @@ Route::get('student/study-materials/{course_id}', [StudyMaterialsController::cla
 // Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
-}); 
-
 
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
@@ -162,8 +160,6 @@ Route::prefix('notice')->group(function () {
 
 }); 
 
-// });
-
 // ------------------------------------------------------------------------------------------------
 // COURSE ENROLL ROUTES
 // ------------------------------------------------------------------------------------------------
@@ -171,66 +167,16 @@ Route::prefix('notice')->group(function () {
 
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
 
-// ------------------------------------------------------------------------------------------------
-// STUDENT PANEL ROUTES
-// ------------------------------------------------------------------------------------------------
-
-Route::prefix('student')->group(function () {
-Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
-});
-Route::middleware(['student'])->group(function () {
-
-Route::prefix('student')->group(function () {
-
-      Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
-      Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
-      Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
-      Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
-
-}); 
-Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
-Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
-
-
 }); 
 
 
 
- // ------------------------------------------------------------------------------------------------
-// TEACHER PANEL ROUTES
-// ------------------------------------------------------------------------------------------------   
 
-Route::prefix('teacher')->group(function () {
-
-      Route::post('/login',[TeacherAuthController::class,'teacherAuthLogin']);
-
-});  
-
-Route::middleware(['teacher'])->group(function () {
-Route::prefix('teacher')->group(function () {
-
-      Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
-      Route::get('/view/profile/update/{id}', [TeacherAuthController::class, 'profileUpdateView']);
-      Route::post('/profile/update/{id}', [TeacherAuthController::class, 'profileUpdate']);
-      Route::post('/password/update', [TeacherAuthController::class, 'passwordUpdate']);
+// });
 
 
-}); 
-// ------------------------------------------------------------------------------------------------
-// STUDY MATERIALS UPLOAD
-// ------------------------------------------------------------------------------------------------
 
-Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
-Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
-Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
-Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
-
-
-}); 
-
- 
+//  staff===========================================================================================
 
 
 // ------------------------------------------------------------------------------------------------
@@ -255,16 +201,105 @@ Route::prefix('staff')->group(function () {
 
 
 
-// ------------------------------------------------------------------------------------------------
-// MEETING ROUTES
-// ------------------------------------------------------------------------------------------------
 
-Route::prefix('meeting')->group(function () {
- 
-      Route::post('/create', [MeetingCreateController::class, 'create']);
-     
+// teacher==============================================================================================
+
+ // ------------------------------------------------------------------------------------------------
+// TEACHER PANEL ROUTES
+// ------------------------------------------------------------------------------------------------   
+
+Route::prefix('teacher')->group(function () {
+
+      Route::post('/login',[TeacherAuthController::class,'teacherAuthLogin']);
+
+});  
+
+Route::middleware(['teacher'])->group(function () {
+Route::prefix('teacher')->group(function () {
+
+      Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
+      Route::get('/view/profile/update/{id}', [TeacherAuthController::class, 'profileUpdateView']);
+      Route::post('/profile/update/{id}', [TeacherAuthController::class, 'profileUpdate']);
+      Route::post('/password/update', [TeacherAuthController::class, 'passwordUpdate']);
+
+
+}); 
+
+
+
+Route::prefix('student')->group(function () {
+      
+        Route::get('/list', [StudentAuthController::class, 'StudentList']);
+    
 });
 
+
+// ------------------------------------------------------------------------------------------------
+// NOTIFICATION ROUTES
+// ------------------------------------------------------------------------------------------------
+
+Route::prefix('notice')->group(function () {
+
+      Route::post('/create', [NotificationController::class, 'create']);
+      Route::get('/list', [NotificationController::class, 'List']);
+
+}); 
+
+Route::prefix('course')->group(function () {
+      Route::get('/list', [CourseController::class, 'courseList']);
+}); 
+
+// ------------------------------------------------------------------------------------------------
+// STUDY MATERIALS UPLOAD
+// ------------------------------------------------------------------------------------------------
+
+Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
+
+});
+
+
+
+// ------------------------------------------------------------------------------------------------
+// STUDENT PANEL ROUTES
+// ------------------------------------------------------------------------------------------------
+
+Route::prefix('student')->group(function () {
+Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
+});
+Route::middleware(['student'])->group(function () {
+
+Route::prefix('student')->group(function () {
+
+      Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
+      Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
+      Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
+      Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
+
+}); 
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
+
+
+// ------------------------------------------------------------------------------------------------
+// COURSE ENROLL ROUTES
+// ------------------------------------------------------------------------------------------------
+Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
+
+// ------------------------------------------------------------------------------------------------
+// NOTIFICATION ROUTES
+// ------------------------------------------------------------------------------------------------
+
+Route::prefix('notice')->group(function () {
+      Route::get('/list', [NotificationController::class, 'List']);
+}); 
+
+
+});
 
 
 // ------------------------------------------------------------------------------------------------
@@ -282,10 +317,12 @@ Route::prefix('attedence')->group(function () {
 
 
 
+// ------------------------------------------------------------------------------------------------
+// MEETING ROUTES
+// ------------------------------------------------------------------------------------------------
 
-
-      
-
-
-
-
+Route::prefix('meeting')->group(function () {
+ 
+      Route::post('/create', [MeetingCreateController::class, 'create']);
+     
+});
