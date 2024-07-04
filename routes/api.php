@@ -114,7 +114,7 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 // ------------------------------------------------------------------------------------------------
 // COURSE CREATE ROUTES
 // ------------------------------------------------------------------------------------------------
-
+ 
 Route::prefix('course')->group(function () {
 
       Route::post('/create', [CourseController::class, 'courseCreate']);
