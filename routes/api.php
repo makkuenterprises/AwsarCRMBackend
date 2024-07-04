@@ -50,7 +50,7 @@ Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin
 
 });
 
-Route::group(['middleware'=>'admin'],function(){ 
+// Route::group(['middleware'=>'admin'],function(){ 
 
 Route::prefix('admin')->group(function () {
 
@@ -62,14 +62,14 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 
 });
 
-});
+// });
 
 // Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
 
 
 
 
-Route::group(['middleware' => ['admin', 'staff']], function() {
+// Route::group(['middleware' => ['admin', 'staff']], function() {
 
 // ------------------------------------------------------------------------------------------------
 // STUDENT CREATE ROUTES
@@ -167,7 +167,7 @@ Route::prefix('notice')->group(function () {
 
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
 
-}); 
+// }); 
 
 
 
@@ -186,7 +186,7 @@ Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse'
 Route::prefix('staff')->group(function () {
       Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
 }); 
-Route::middleware(['staff'])->group(function () {
+// Route::middleware(['staff'])->group(function () {
 
 Route::prefix('staff')->group(function () {
 
@@ -196,7 +196,7 @@ Route::prefix('staff')->group(function () {
       Route::post('/password/update', [StaffAuthController::class, 'passwordUpdate']);
 
 }); 
-}); 
+// }); 
 
 
 
@@ -214,7 +214,7 @@ Route::prefix('teacher')->group(function () {
 
 });  
 
-Route::middleware(['teacher'])->group(function () {
+// Route::middleware(['teacher'])->group(function () {
 Route::prefix('teacher')->group(function () {
 
       Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
@@ -259,7 +259,7 @@ Route::get('student/study-materials/{course_id}', [StudyMaterialsController::cla
 // Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
-});
+// });
 
 
 
@@ -270,7 +270,7 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 Route::prefix('student')->group(function () {
 Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 });
-Route::middleware(['student'])->group(function () {
+// Route::middleware(['student'])->group(function () {
 
 Route::prefix('student')->group(function () {
 
@@ -299,7 +299,7 @@ Route::prefix('notice')->group(function () {
 }); 
 
 
-});
+// });
 
 
 // ------------------------------------------------------------------------------------------------

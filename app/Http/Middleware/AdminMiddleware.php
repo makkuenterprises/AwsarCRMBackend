@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
+
 class AdminMiddleware
 {
     /**
@@ -18,11 +19,8 @@ class AdminMiddleware
     { 
      
         if (!Auth::guard('admin')->check()) {
-
-          return redirect()->route('admin.login')->with('message', 'Unauthorized, please log in as admin');
-          
+            return response()->json(['message' => 'Unauthorized, please log in as admin'], 401);
         }
-
 
         return $next($request);
     }
