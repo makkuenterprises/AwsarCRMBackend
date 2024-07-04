@@ -17,7 +17,7 @@ use App\Models\Course;
 
 class AttendanceController extends Controller
 {
-  public function getStudents($id)
+  public function getStudents($id) 
 {
     // Find the course by ID
     $course = Course::find($id);
@@ -27,12 +27,17 @@ class AttendanceController extends Controller
 
     try {
         // Fetch students enrolled in the specified course along with their attendance data
-        $students = DB::table('students')
-            ->join('courses_enrollements', 'courses_enrollements.student_id', '=', 'students.id')
-            ->where('courses_enrollements.course_id', $id)
-            ->select('students.*', 'courses_enrollements.course_id')
-            ->get();
+       // Fetch students enrolled in the specified course
+    $students = DB::table('students')
+        ->join('courses_enrollements', 'courses_enrollements.student_id', '=', 'students.id')
+        ->where('courses_enrollements.course_id', $id)
+        ->select('students.*', 'courses_enrollements.course_id')
+        ->get();
 
+    // Check if no students are enrolled in the course
+    if ($students->isEmpty()) {
+        return response()->json(['status' => false, 'code' => 404, 'message' => 'No students enrolled in the specified course'], 404);
+    }
         // Initialize data array to store students' details
         $data = [];
 
