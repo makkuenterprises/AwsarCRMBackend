@@ -188,23 +188,43 @@ public function getStudentBatchDetails(Request $request)
     $courseId = $request->input('course_id');
 
     try {
-        // Fetch the student details for the specific batch
-        $studentBatchDetails = Student::with(['coursesEnrollements' => function($query) use ($courseId) {
-            $query->where('course_id', $courseId);
-        }])->where('id', $studentId)->first();
+        // Fetch the student details for the specific batch using join
+        $studentBatchDetails = DB::table('students')
+            ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('students.id', $studentId)
+            ->where('courses.id', $courseId)
+            ->select('students.*', 'courses_enrollements.*', 'courses.*')
+            ->first();
 
         if (!$studentBatchDetails) {
             return response()->json(['success' => false, 'message' => 'Student not found in the specified batch'], 404);
         }
 
-        // Return success response with student batch details
-        return response()->json(['success' => true, 'data' => $studentBatchDetails]);
+        // Fetch the attendance records for the student and course
+        $attendances = DB::table('attendance')
+            ->where('student_id', $studentId)
+            ->where('course_id', $courseId)
+            ->get();
+
+        // Count the number of days the student was absent
+        $daysAbsent = $attendances->where('status', 'absent')->count();
+
+        // Return success response with student batch details and days absent
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'student' => $studentBatchDetails,
+                'days_absent' => $daysAbsent
+            ]
+        ]);
     } catch (\Exception $e) {
         // Return error response if there's an exception
         Log::error('Failed to fetch student batch details: ' . $e->getMessage());
         return response()->json(['success' => false, 'message' => 'Failed to fetch student batch details', 'error' => $e->getMessage()], 500);
     }
 }
+
 
 
 
