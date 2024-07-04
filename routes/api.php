@@ -43,9 +43,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // ADMIN LOGIN AND SETTING ROUTES ROUTES
 // ------------------------------------------------------------------------------------------------
 
+
 Route::prefix('admin')->group(function () {
 
 Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
+
+});
+
+Route::group(['middleware'=>'admin'],function(){ 
+
+Route::prefix('admin')->group(function () {
+
+// Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
 Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
 Route::get('/view/profile/update/{id}', [AdminAuthController::class, 'profileUpdateView']);
 Route::post('/profile/update/{id}', [AdminAuthController::class, 'profileUpdate']);
@@ -53,11 +62,14 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 
 });
 
+});
+
+// Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
 
 
 
 
-// Route::middleware(['admin'])->group(function () {
+Route::group(['middleware' => ['admin', 'staff']], function() {
 
 // ------------------------------------------------------------------------------------------------
 // STUDENT CREATE ROUTES
@@ -117,6 +129,29 @@ Route::prefix('course')->group(function () {
 
 
 // ------------------------------------------------------------------------------------------------
+// DETAILS ADD
+// ------------------------------------------------------------------------------------------------
+
+
+Route::post('details/add', [DetailsController::class, 'index']);
+Route::get('details/view/update/{id}', [DetailsController::class, 'show']);
+Route::post('details/update/{id}', [DetailsController::class, 'update']);
+
+// ------------------------------------------------------------------------------------------------
+// STUDY MATERIALS UPLOAD
+// ------------------------------------------------------------------------------------------------
+
+
+Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
+
+}); 
+
+
+// ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
 // ------------------------------------------------------------------------------------------------
 
@@ -143,6 +178,7 @@ Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse'
 Route::prefix('student')->group(function () {
 Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 });
+Route::middleware(['student'])->group(function () {
 
 Route::prefix('student')->group(function () {
 
@@ -150,6 +186,12 @@ Route::prefix('student')->group(function () {
       Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
       Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
+
+}); 
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
+
 
 }); 
 
@@ -165,12 +207,25 @@ Route::prefix('teacher')->group(function () {
 
 });  
 
+Route::middleware(['teacher'])->group(function () {
 Route::prefix('teacher')->group(function () {
 
       Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
       Route::get('/view/profile/update/{id}', [TeacherAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [TeacherAuthController::class, 'profileUpdate']);
       Route::post('/password/update', [TeacherAuthController::class, 'passwordUpdate']);
+
+
+}); 
+// ------------------------------------------------------------------------------------------------
+// STUDY MATERIALS UPLOAD
+// ------------------------------------------------------------------------------------------------
+
+Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
 }); 
@@ -185,6 +240,7 @@ Route::prefix('teacher')->group(function () {
 Route::prefix('staff')->group(function () {
       Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
 }); 
+Route::middleware(['staff'])->group(function () {
 
 Route::prefix('staff')->group(function () {
 
@@ -193,6 +249,7 @@ Route::prefix('staff')->group(function () {
       Route::post('/profile/update/{id}', [StaffAuthController::class, 'profileUpdate']);
       Route::post('/password/update', [StaffAuthController::class, 'passwordUpdate']);
 
+}); 
 }); 
 
 
@@ -209,15 +266,6 @@ Route::prefix('meeting')->group(function () {
 });
 
 
-// ------------------------------------------------------------------------------------------------
-// DETAILS ADD
-// ------------------------------------------------------------------------------------------------
-
-
-Route::post('details/add', [DetailsController::class, 'index']);
-Route::get('details/view/update/{id}', [DetailsController::class, 'show']);
-Route::post('details/update/{id}', [DetailsController::class, 'update']);
-
 
 // ------------------------------------------------------------------------------------------------
 // ATTENDANCE ROUTE
@@ -232,15 +280,9 @@ Route::prefix('attedence')->group(function () {
 });
 
 
-// ------------------------------------------------------------------------------------------------
-// STUDY MATERIALS UPLOAD
-// ------------------------------------------------------------------------------------------------
 
-Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
-Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
-Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
-Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
+
+
 
       
 
