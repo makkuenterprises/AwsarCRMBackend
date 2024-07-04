@@ -14,7 +14,7 @@ use App\Rules\DateFormat;
 
 class CourseController extends Controller
 {
-    public function courseCreate(Request $request){
+    public function courseCreate(Request $request){ 
         
          $validator = Validator::make($request->all(), [
         'name' => 'required|string|max:255|unique:courses',

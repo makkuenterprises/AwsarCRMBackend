@@ -315,6 +315,7 @@ Route::prefix('attendance')->group(function () {
       Route::get('/list/{course_id}', [AttendanceController::class, 'getStudents']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
       Route::get('/list', [AttendanceController::class, 'alllist']);
+      Route::get('course/list', [AttendanceController::class, 'alllist']);
       
 }); 
 
