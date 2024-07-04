@@ -195,7 +195,7 @@ $studentBatchDetails = DB::table('students')
     ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
     ->where('students.id', $studentId)
     ->where('courses.id', $courseId)
-    ->select('students.id.*', 'students.name as student_name', 'courses_enrollements.*', 'courses.*')
+    ->select('students.*', 'students.name as student_name', 'courses_enrollements.*', 'courses.*')
     ->first();
 
 
