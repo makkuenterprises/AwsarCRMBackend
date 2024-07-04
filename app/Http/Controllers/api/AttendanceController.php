@@ -211,7 +211,7 @@ public function getStudentBatchDetails(Request $request)
         $daysAbsent = $attendances->where('status', 'absent')->count();
 
         // Get the current month
-        $currentMonth = date('m'); 
+        $currentMonth = date('m');
         $currentYear = date('Y');
 
         // Count the number of days the student was absent for the current month
@@ -221,19 +221,11 @@ public function getStudentBatchDetails(Request $request)
         })->count();
 
         // Return success response with student batch details and days absent
-       return response()->json([
-            'code'=>200,
-            'success' => true, 
+        return response()->json([
+            'code'=> 200,
+            'success' => true,
             'data' => [
-                'student' => [
-                    'id' => $studentBatchDetails->id,
-                    'name' => $studentBatchDetails->name,
-                    'email' => $studentBatchDetails->email,
-                    'course' => [
-                        'id' => $studentBatchDetails->course_id,
-                        'name' => $studentBatchDetails->name
-                    ]
-                ],
+                'student' => $studentBatchDetails,
                 'days_absent' => $daysAbsent,
                 'days_absent_current_month' => $daysAbsentCurrentMonth
             ]
@@ -244,5 +236,9 @@ public function getStudentBatchDetails(Request $request)
         return response()->json(['success' => false, 'message' => 'Failed to fetch student batch details', 'error' => $e->getMessage()], 500);
     }
 }
+
+
+
+
 
 }
