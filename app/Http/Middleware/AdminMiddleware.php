@@ -18,8 +18,11 @@ class AdminMiddleware
     { 
      
         if (!Auth::guard('admin')->check()) {
-            return response()->json(['message' => 'Unauthorized, please log in as admin'], 401);
+
+          return redirect()->route('admin.login')->with('message', 'Unauthorized, please log in as admin');
+          
         }
+
 
         return $next($request);
     }
