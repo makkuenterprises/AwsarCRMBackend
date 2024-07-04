@@ -221,10 +221,19 @@ public function getStudentBatchDetails(Request $request)
         })->count();
 
         // Return success response with student batch details and days absent
-        return response()->json([
+       return response()->json([
+            'code'=>200,
             'success' => true,
             'data' => [
-                'student' => $studentBatchDetails,
+                'student' => [
+                    'id' => $studentBatchDetails->id,
+                    'name' => $studentBatchDetails->name,
+                    'email' => $studentBatchDetails->email,
+                    'course' => [
+                        'id' => $studentBatchDetails->course_id,
+                        'name' => $studentBatchDetails->course_name
+                    ]
+                ],
                 'days_absent' => $daysAbsent,
                 'days_absent_current_month' => $daysAbsentCurrentMonth
             ]
