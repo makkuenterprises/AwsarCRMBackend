@@ -34,6 +34,10 @@ class AttendanceController extends Controller
             'id' => $student->id,
             'name' => $student->name,
             'course-id' => $student->course_id,
+            'email' => $student->email,
+            'phone' => $student->phone,
+            'fname' => $student->fname,
+            'fphone' => $student->fphone,
             ];
         }
         return response()->json(['status'=>'success','code'=>200,'data' => $data]);
@@ -159,6 +163,45 @@ public function create(Request $request)
         // Return error response if there's an exception
         Log::error('Failed to fetch attendance: ' . $e->getMessage());
         return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
+    }
+}
+use Illuminate\Http\Request;
+use App\Models\Student;
+use App\Models\CoursesEnrollement;
+
+public function getStudentBatchDetails(Request $request)
+{
+    // Validate request data
+    $request->validate([
+        'student_id' => 'required|exists:students,id',
+        'course_id' => 'required|exists:courses,id',
+    ], [
+        'student_id.required' => 'The student ID field is required.',
+        'student_id.exists' => 'The selected student ID is invalid.',
+        'course_id.required' => 'The course ID field is required.',
+        'course_id.exists' => 'The selected course ID is invalid.',
+    ]);
+
+    // Retrieve validated data from the request
+    $studentId = $request->input('student_id');
+    $courseId = $request->input('course_id');
+
+    try {
+        // Fetch the student details for the specific batch
+        $studentBatchDetails = Student::with(['coursesEnrollements' => function($query) use ($courseId) {
+            $query->where('course_id', $courseId);
+        }])->where('id', $studentId)->first();
+
+        if (!$studentBatchDetails) {
+            return response()->json(['success' => false, 'message' => 'Student not found in the specified batch'], 404);
+        }
+
+        // Return success response with student batch details
+        return response()->json(['success' => true, 'data' => $studentBatchDetails]);
+    } catch (\Exception $e) {
+        // Return error response if there's an exception
+        Log::error('Failed to fetch student batch details: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Failed to fetch student batch details', 'error' => $e->getMessage()], 500);
     }
 }
 
