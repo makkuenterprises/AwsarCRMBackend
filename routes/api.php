@@ -305,7 +305,7 @@ Route::prefix('notice')->group(function () {
 // ATTENDANCE ROUTE
 // ------------------------------------------------------------------------------------------------
 
-      Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
+Route::get('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
  
 Route::prefix('attendance')->group(function () {
 

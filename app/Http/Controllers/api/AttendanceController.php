@@ -98,17 +98,17 @@ public function create(Request $request)
     }
 
 
-    public function getAttendanceByDate(Request $request)
+ public function getAttendanceByDate(Request $request)
 {
-    // Validate request data
+    // Validate request query parameters
     $request->validate([
         'date' => 'required|date',
         'course_id' => 'required|exists:courses,id', // Validate course_id
     ]);
 
-    // Retrieve validated data from the request
-    $date = $request->input('date');
-    $courseId = $request->input('course_id');
+    // Retrieve validated data from the query string
+    $date = $request->query('date');
+    $courseId = $request->query('course_id');
 
     try {
         // Retrieve attendance records for the specified date and course
@@ -125,6 +125,7 @@ public function create(Request $request)
         return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
     }
 }
+
 
 
 }
