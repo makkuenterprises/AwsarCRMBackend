@@ -13,7 +13,12 @@ class AttendanceController extends Controller
 {
     public function getStudents($id)
     {
-        $course = CoursesEnrollement::where('course_id',$id)->get();
+        // $course = CoursesEnrollement::where('course_id',$id)->get();
+        $course = Course::find($id);
+        if (!$course) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+        }
     
 
         $students = DB::table('students')
@@ -32,49 +37,60 @@ class AttendanceController extends Controller
         return response()->json(['status'=>'success','code'=>200,'data' => $data]);
     }
 
-    public function submitAttendance(Request $request)
-    {
-        // Validate request data
-        $request->validate([
-            'date' => 'required|date',
-            'attendance' => 'required|array',
-            'attendance.*.student_id' => 'required|exists:students,id',
-            'attendance.*.status' => 'required|in:present,absent',
-        ]);
+public function submitAttendance(Request $request)
+{
+    // Validate request data
+    $request->validate([
+        'date' => 'required|date',
+        'course_id' => 'required|exists:courses,id', // Validate course_id
+        'attendance' => 'required|array',
+        'attendance.*.student_id' => 'required|exists:students,id',
+        'attendance.*.status' => 'required|in:present,absent',
+    ]);
 
-        // Retrieve attendance data from the request
-        $date = $request->input('date');
-        $attendanceData = $request->input('attendance');
+    // Retrieve attendance data from the request
+    $date = $request->input('date');
+    $courseId = $request->input('course_id'); // Retrieve course_id
+    $attendanceData = $request->input('attendance');
 
-        try {
-            // Start a database transaction
-            DB::beginTransaction();
-
-            // Save attendance records
-            foreach ($attendanceData as $data) {
-                Attendance::create([
-                    'student_id' => $data['student_id'],
-                    'date' => $date,
-                    'status' => $data['status'],
-                ]);
-            }
-
-            // Commit the transaction
-            DB::commit();
-
-            // Return success response
-            return response()->json(['success' => true, 'message' => 'Attendance submitted successfully']);
-        } catch (\Exception $e) {
-            // Rollback the transaction in case of an error
-            DB::rollback();
-
-            // Return error response
-            Log::error('Failed to submit attendance: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Failed to submit attendance', 'error' => $e->getMessage()], 500);
+     $course = Course::find($courseId);
+        if (!$course) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
         }
+    
+
+    try {
+        // Start a database transaction
+        DB::beginTransaction();
+
+        // Save attendance records
+        foreach ($attendanceData as $data) {
+            Attendance::create([
+                'student_id' => $data['student_id'],
+                'date' => $date,
+                'status' => $data['status'],
+                'course_id' => $courseId, // Include course_id
+            ]);
+        }
+
+        // Commit the transaction
+        DB::commit();
+
+        // Return success response
+        return response()->json(['success' => true, 'message' => 'Attendance submitted successfully']);
+    } catch (\Exception $e) {
+        // Rollback the transaction in case of an error
+        DB::rollback();
+
+        // Return error response
+        Log::error('Failed to submit attendance: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Failed to submit attendance', 'error' => $e->getMessage()], 500);
+    }
 }
 
- public function alllist(){
+
+    public function alllist(){
             $data = CoursesEnrollement::get();
              return response()->json(['data' => $data]);
     }
