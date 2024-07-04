@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\api;
+
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\Attendance;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\CoursesEnrollement;
 use App\Models\Course;
+
+
+
 
 
 class AttendanceController extends Controller
