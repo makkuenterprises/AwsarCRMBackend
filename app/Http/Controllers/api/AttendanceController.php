@@ -21,7 +21,7 @@ class AttendanceController extends Controller
             ->where('courses_enrollements.course_id', $id)
             ->select('students.*', 'courses_enrollements.course_id')
             ->get();
-
+          $data = []; // Initialize the $data array
             foreach ($students as $student) {
             $data[] = [
             'id' => $student->id,
@@ -29,7 +29,7 @@ class AttendanceController extends Controller
             'course-id' => $student->course_id,
             ];
         }
-        return response()->json(['data' => $data]);
+        return response()->json(['status'=>'success','code'=>200,'data' => $data]);
     }
 
     public function submitAttendance(Request $request)

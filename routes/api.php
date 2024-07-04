@@ -281,7 +281,6 @@ Route::prefix('student')->group(function () {
 
 }); 
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
