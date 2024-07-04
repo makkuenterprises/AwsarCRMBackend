@@ -79,26 +79,14 @@ class TeacherAuthController extends Controller
                     'to' => 'dashboard',
                 ],
                 [
-                    'title' => 'Student',
-                    'classsChange'=> 'mm-collapse',
+                    'title' => 'Students',
                     'iconStyle' => '<i className="material-symbols-outlined">school</i>',
-                            'content'=> [
-                        [
-                            'title'=> 'Student',
-                            'to'=> 'student',					
-                        ],           
-                        ],
+                    'to'=> 'student',	
                 ],
                 [
                     'title' => 'Courses (Batch)',
-                    'classsChange' => 'mm-collapse',
                     'iconStyle' => '<i className="merial-icons">article</i>',
-                                            'content'=> [
-                        [
-                            'title'=> 'Batch',
-                            'to'=> 'batch',					
-                        ],
-                        ],
+                        'to'=> 'batch',		
                 ],
                
                  [

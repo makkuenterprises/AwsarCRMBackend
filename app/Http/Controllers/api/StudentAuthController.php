@@ -95,19 +95,12 @@ class StudentAuthController extends Controller
                     'to' => 'dashboard',
                 ],
                 [
-                    'title' => 'Teacher',
-                    'classsChange' => 'mm-collapse',	
+                    'title' => 'Teachers',
                     'iconStyle' => '<i className="material-symbols-outlined">person</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Teacher',
-                            'to'=> 'teacher',					
-                        ],
-                        ],
+                     'to'=> 'teacher',	
                 ],
                 [
                     'title' => 'Enrolled Batch',
-                    'classsChange' => 'mm-collapse',
                     'iconStyle' => '<i className="merial-icons">article</i>',
                     'to' => 'batch',
 
@@ -133,12 +126,7 @@ class StudentAuthController extends Controller
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">article</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Live Classes',
-                            'to'=> 'live-classes',					
-                        ],
-                        ],
+                       'to'=> 'live-classes',
                 ],
                
                 [
