@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\CoursesEnrollement;
+use App\Models\Course;
+
 
 class AttendanceController extends Controller
 {
@@ -26,7 +28,7 @@ class AttendanceController extends Controller
             ->where('courses_enrollements.course_id', $id)
             ->select('students.*', 'courses_enrollements.course_id')
             ->get();
-          $data = []; // Initialize the $data array
+            $data = []; // Initialize the $data array
             foreach ($students as $student) {
             $data[] = [
             'id' => $student->id,
