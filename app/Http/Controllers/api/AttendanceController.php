@@ -97,4 +97,34 @@ public function create(Request $request)
              return response()->json(['data' => $data]);
     }
 
+
+    public function getAttendanceByDate(Request $request)
+{
+    // Validate request data
+    $request->validate([
+        'date' => 'required|date',
+        'course_id' => 'required|exists:courses,id', // Validate course_id
+    ]);
+
+    // Retrieve validated data from the request
+    $date = $request->input('date');
+    $courseId = $request->input('course_id');
+
+    try {
+        // Retrieve attendance records for the specified date and course
+        $attendances = Attendance::where('date', $date)
+            ->where('course_id', $courseId)
+            ->with('student') // Assuming 'student' is the relationship method in Attendance model
+            ->get();
+
+        // Return success response with attendance data grouped by date
+        return response()->json(['success' => true, 'data' => $attendances]);
+    } catch (\Exception $e) {
+        // Return error response if there's an exception
+        Log::error('Failed to fetch attendance: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
+    }
+}
+
+
 }
