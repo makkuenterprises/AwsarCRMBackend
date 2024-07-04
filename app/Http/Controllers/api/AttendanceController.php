@@ -202,7 +202,7 @@ public function getStudentBatchDetails(Request $request)
         }
 
         // Fetch the attendance records for the student and course
-        $attendances = DB::table('attendance')
+        $attendances = DB::table('attendances')
             ->where('student_id', $studentId)
             ->where('course_id', $courseId)
             ->get();
