@@ -305,13 +305,13 @@ Route::prefix('notice')->group(function () {
 // ATTENDANCE ROUTE
 // ------------------------------------------------------------------------------------------------
 
+      Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
  
-Route::prefix('attedence')->group(function () {
+Route::prefix('attendance')->group(function () {
 
       Route::get('/list/{id}', [AttendanceController::class, 'getStudents']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
       Route::get('/list', [AttendanceController::class, 'alllist']);
-      Route::post('/get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 });
 
 
