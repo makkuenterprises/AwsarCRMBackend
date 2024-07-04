@@ -189,13 +189,15 @@ public function getStudentBatchDetails(Request $request)
 
     try {
         // Fetch the student details for the specific batch using join
-        $studentBatchDetails = DB::table('students')
-            ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-            ->where('students.id', $studentId)
-            ->where('courses.id', $courseId)
-            ->select('students.*', 'courses_enrollements.*', 'courses.*')
-            ->first();
+       // Fetch the student details for the specific batch using join
+$studentBatchDetails = DB::table('students')
+    ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+    ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+    ->where('students.id', $studentId)
+    ->where('courses.id', $courseId)
+    ->select('students.id', 'students.name', 'students.email', 'courses_enrollements.*', 'courses.*')
+    ->first();
+
 
         if (!$studentBatchDetails) {
             return response()->json(['success' => false, 'message' => 'Student not found in the specified batch'], 404);
