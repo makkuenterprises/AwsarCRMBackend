@@ -41,34 +41,49 @@ class AttendanceController extends Controller
 
 public function create(Request $request)
 {
-    // Validate request data 
-    $request->validate([
-         'date' => [
-            'required',
-            function ($attribute, $value, $fail) {
-                $d = \DateTime::createFromFormat('d/m/Y', $value);
-                if (!$d || $d->format('d/m/Y') !== $value) {
-                    $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
-                }
-            }
-        ],
-        'course_id' => 'required|exists:courses,id', // Validate course_id
-        'attendance' => 'required|array',
-        'attendance.*.student_id' => 'required|exists:students,id',
-        'attendance.*.status' => 'required|in:present,absent',
-    ]);
+      // Custom error messages
+    $messages = [
+        'date.required' => 'The date field is required.',
+        'course_id.required' => 'The course ID field is required.',
+        'course_id.exists' => 'The selected course ID is invalid.',
+        'attendance.required' => 'The attendance field is required.',
+        'attendance.array' => 'The attendance must be an array.',
+        'attendance.*.student_id.required' => 'The student ID field is required.',
+        'attendance.*.student_id.exists' => 'The selected student ID is invalid.',
+        'attendance.*.status.required' => 'The status field is required.',
+        'attendance.*.status.in' => 'The status must be either present or absent.',
+    ];
 
-    // Retrieve attendance data from the request
-  $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
+    // Custom validation logic
+    try {
+        $request->validate([
+            'date' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $d = \DateTime::createFromFormat('d/m/Y', $value);
+                    if (!$d || $d->format('d/m/Y') !== $value) {
+                        $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
+                    }
+                }
+            ],
+            'course_id' => 'required|exists:courses,id',
+            'attendance' => 'required|array',
+            'attendance.*.student_id' => 'required|exists:students,id',
+            'attendance.*.status' => 'required|in:present,absent',
+        ], $messages);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Return validation error response
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+    }
+
+    // Retrieve validated data from the request
+    $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
     $courseId = $request->input('course_id'); // Retrieve course_id
     $attendanceData = $request->input('attendance');
-
-     $course = Course::find($courseId);
-        if (!$course) {
-            DB::rollBack(); // Rollback the transaction
-            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
-        }
-    
 
     try {
         // Start a database transaction
