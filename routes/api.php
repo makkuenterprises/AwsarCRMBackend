@@ -307,6 +307,7 @@ Route::prefix('notice')->group(function () {
 
 Route::get('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 Route::get('/student-batch-details', [AttendanceController::class, 'getStudentBatchDetails']);
+Route::get('/all-student-batch-details', [AttendanceController::class, 'getAllStudentBatchDetails']);
 
 Route::prefix('attendance')->group(function () {
 
