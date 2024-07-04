@@ -110,11 +110,16 @@ public function create(Request $request)
     $date = $request->query('date');
     $courseId = $request->query('course_id');
 
+     $course = Course::find($courseId);
+        if (!$course) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+        }
+
     try {
         // Retrieve attendance records for the specified date and course
         $attendances = Attendance::where('date', $date)
-            ->where('course_id', $courseId)
-            ->with('student') // Assuming 'student' is the relationship method in Attendance model
+            ->where('course_id', $courseId) // Assuming 'student' is the relationship method in Attendance model
             ->get();
 
         // Return success response with attendance data grouped by date
