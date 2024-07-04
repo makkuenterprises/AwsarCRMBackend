@@ -39,7 +39,7 @@ class AttendanceController extends Controller
         return response()->json(['status'=>'success','code'=>200,'data' => $data]);
     }
 
-public function submitAttendance(Request $request)
+public function create(Request $request)
 {
     // Validate request data
     $request->validate([
