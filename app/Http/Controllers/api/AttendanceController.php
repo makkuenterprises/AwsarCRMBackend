@@ -351,6 +351,51 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
     }
 }
 
+// specific date attendance for specific batch and student ==================================
+
+public function getAttendanceByDateStudent(Request $request)
+{
+    // Validate request body parameters
+    $request->validate([
+        'date' => [
+            'required',
+            function ($attribute, $value, $fail) {
+                $d = \DateTime::createFromFormat('d/m/Y', $value);
+                if (!$d || $d->format('d/m/Y') !== $value) {
+                    $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
+                }
+            }
+        ],
+        'course_id' => 'required|exists:courses,id', // Validate course_id
+        'student_id' => 'required|exists:students,id' // Validate student_id
+    ]);
+
+    // Retrieve validated data from the request body
+    $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
+    $courseId = $request->input('course_id');
+    $studentId = $request->input('student_id');
+
+    try {
+        // Retrieve attendance records for the specified date, course, and student
+        $attendance = Attendance::where('date', $date)
+            ->where('course_id', $courseId)
+            ->where('student_id', $studentId)
+            ->first();
+
+        // Check if attendance record exists
+        if (!$attendance) {
+            return response()->json(['success' => false, 'message' => 'Attendance record not found'], 404);
+        }
+
+        // Return success response with attendance data
+        return response()->json(['success' => true, 'data' => $attendance]);
+    } catch (\Exception $e) {
+        // Return error response if there's an exception
+        Log::error('Failed to fetch attendance: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
+    }
+}
+
 
 // for specific Student and Batch========================================================================================
 
