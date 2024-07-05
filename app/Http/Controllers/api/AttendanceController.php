@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 
 
 
-class AttendanceController extends Controller
+class AttendanceController extends Controller 
 {
 
 // all Course Lists===================================================================
@@ -587,6 +587,49 @@ $studentBatchDetails = DB::table('students')
 }
 
 
+// in between Date attendance details================================================
+public function getAttendanceBetweenDates(Request $request, $studentId)
+{
+    // Validate the request inputs
+    $validator = Validator::make($request->all(), [
+        'start_date' => 'required|date_format:d/m/Y',
+        'end_date' => 'required|date_format:d/m/Y|after_or_equal:start_date',
+    ]);
+
+    // Check if validation fails
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false, 
+            'code' => 400,
+            'errors' => $validator->errors()
+        ], 400);
+    }
+
+    try {
+        // Convert dates to 'Y-m-d' format
+        $startDate = \DateTime::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
+        $endDate = \DateTime::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d');
+
+        // Get the attendance records between the specified dates for the given student
+        $attendanceRecords = DB::table('attendance')
+            ->where('student_id', $studentId)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => $attendanceRecords
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'Failed to retrieve attendance records',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
 
 
