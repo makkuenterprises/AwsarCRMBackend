@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('smtp_username')->nullable();
             $table->string('smtp_password')->nullable();
             $table->timestamps();
-        });
+        }); 
     }
 
     /**
