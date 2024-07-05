@@ -319,9 +319,7 @@ Route::prefix('attendance')->group(function () {
       Route::get('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
       Route::post('/student-attendace', [AttendanceController::class, 'getAttendanceByDateStudent']);
       Route::get('student/course/list', [AttendanceController::class, 'getCoursesByStudent']);
-
-
-      
+     
 }); 
 
 
