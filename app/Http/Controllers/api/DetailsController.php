@@ -45,18 +45,27 @@ public function index(Request $request){
             ],
     ]);
 
-         // Handle file uploads if provided
-         $filePaths = [];
-        foreach (['logo', 'side_logo', 'favicon_icon'] as $field) {
-            if ($request->hasFile($field)) {
-                $file = $request->file($field);
-                $filePath = $file->store('uploads', 'public');
-                $filePaths[$field] = $filePath;
-            } else {
-                // Assign the default value if the file is not uploaded
-                $filePaths[$field] = $defaultValues[$field];
+        
+          $filePaths = [];
+    foreach (['logo', 'side_logo', 'favicon_icon'] as $field) {
+        if ($request->hasFile($field)) {
+            if (empty($filePaths)) {
+                // Initialize file paths array only if a file is being uploaded
+                $filePaths = [];
             }
+            $file = $request->file($field);
+            $filePath = $file->store('uploads', 'public');
+            $filePaths[$field] = $filePath;
+        } else {
+            // Assign the default value if the file is not uploaded
+            $defaultValues = [
+                'logo' => 'path/to/default/logo.png', // Replace with actual default file path
+                'side_logo' => 'path/to/default/side_logo.png', // Replace with actual default file path
+                'favicon_icon' => 'path/to/default/favicon_icon.png', // Replace with actual default file path
+            ];
+            $filePaths[$field] = $defaultValues[$field];
         }
+    }
 
         // Convert smtp_ports array to JSON for storage
         if ($request->has('smtp_ports')) {
