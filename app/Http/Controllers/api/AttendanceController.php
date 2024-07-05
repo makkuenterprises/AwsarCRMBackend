@@ -230,8 +230,9 @@ public function getAttendanceByDate(Request $request)
         $currentYear = date('Y');
 
         // Retrieve attendance records for the specified date and course
-        $attendances = Attendance::where('date', $date)
-            ->where('course_id', $courseId)
+        $attendances = DB::table('attendances')
+            ->where('attendances.date', $date)
+            ->where('attendances.course_id', $courseId)
             ->join('students', 'attendances.student_id', '=', 'students.id')
             ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone')
             ->get();
@@ -239,7 +240,7 @@ public function getAttendanceByDate(Request $request)
         // Check if no attendance records are found
         if ($attendances->isEmpty()) {
             return response()->json(['status' => false, 'code' => 404, 'message' => 'No attendance records found for the specified date and course'], 404);
-        }
+        } 
 
         // Initialize data array to store students' details and attendance data
         $data = [];
@@ -247,7 +248,8 @@ public function getAttendanceByDate(Request $request)
         // Iterate through each attendance record to fetch additional details
         foreach ($attendances as $attendance) {
             // Fetch all attendance records for the student in the current course
-            $studentAttendances = Attendance::where('student_id', $attendance->student_id)
+            $studentAttendances = DB::table('attendances')
+                ->where('student_id', $attendance->student_id)
                 ->where('course_id', $courseId)
                 ->get();
 
@@ -287,6 +289,7 @@ public function getAttendanceByDate(Request $request)
         return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
     }
 }
+
 
 
 // Create Attendance =======================================================================================
