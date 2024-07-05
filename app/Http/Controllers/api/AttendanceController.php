@@ -49,7 +49,7 @@ class AttendanceController extends Controller
 // Get Student By Course Id =================================================================================== 
 
 
-  public function getStudents($id) 
+public function getStudents($id) 
 {
     // Find the course by ID
     $course = Course::find($id);
@@ -58,22 +58,23 @@ class AttendanceController extends Controller
     }
 
     try {
-        // Fetch students enrolled in the specified course along with their attendance data
-       // Fetch students enrolled in the specified course
-    $students = DB::table('students')
-        ->join('courses_enrollements', 'courses_enrollements.student_id', '=', 'students.id')
-        ->where('courses_enrollements.course_id', $id)
-        ->select('students.*', 'courses_enrollements.course_id')
-        ->get();
+        // Fetch students enrolled in the specified course
+        $students = DB::table('students')
+            ->join('courses_enrollements', 'courses_enrollements.student_id', '=', 'students.id')
+            ->where('courses_enrollements.course_id', $id)
+            ->select('students.*', 'courses_enrollements.course_id')
+            ->get();
 
-    // Check if no students are enrolled in the course
-    if ($students->isEmpty()) {
-        return response()->json(['status' => false, 'code' => 404, 'message' => 'No students enrolled in the specified course'], 404);
-    }
+        // Check if no students are enrolled in the course
+        if ($students->isEmpty()) {
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'No students enrolled in the specified course'], 404);
+        }
+
         // Initialize data array to store students' details
         $data = [];
 
-        // Get the current month and year
+        // Get the current date, month, and year
+        $currentDate = date('Y-m-d');
         $currentMonth = date('m');
         $currentYear = date('Y');
 
@@ -94,19 +95,34 @@ class AttendanceController extends Controller
                 return $attendance->status === 'absent' && $attendanceDate->format('m') == $currentMonth && $attendanceDate->format('Y') == $currentYear;
             })->count();
 
-            // Prepare student data including number of absent days
+            // Get today's attendance status
+            $todayAttendance = $attendances->firstWhere('date', $currentDate);
+            $todayStatus = $todayAttendance ? $todayAttendance->status : 'no record';
+
+            // Prepare student data including number of absent days and today's status
             $data[] = [
                 'id' => $student->id,
                 'name' => $student->name,
-                'course-id' => $student->course_id,
+                'course_id' => $student->course_id,
                 'email' => $student->email,
                 'phone' => $student->phone,
                 'fname' => $student->fname,
                 'fphone' => $student->fphone,
                 'total_absent_days' => $totalAbsentDays,
                 'absent_days_current_month' => $absentDaysCurrentMonth,
+                'today_status' => $todayStatus,
             ];
         }
+
+        // Return success response with students' data
+        return response()->json(['status' => true, 'data' => $data], 200);
+    } catch (\Exception $e) {
+        // Return error response if there's an exception
+        Log::error('Failed to fetch students: ' . $e->getMessage());
+        return response()->json(['status' => false, 'message' => 'Failed to fetch students', 'error' => $e->getMessage()], 500);
+    }
+}
+
 
         // Return success response with students' details including absent days
         return response()->json(['status' => 'success', 'code' => 200, 'data' => $data]);
@@ -376,10 +392,13 @@ public function getAttendanceByDateStudent(Request $request)
     $studentId = $request->input('student_id');
 
     try {
-        // Retrieve attendance records for the specified date, course, and student
-        $attendance = Attendance::where('date', $date)
-            ->where('course_id', $courseId)
-            ->where('student_id', $studentId)
+        // Retrieve attendance record with course name and student name
+        $attendance = Attendance::where('attendances.date', $date)
+            ->where('attendances.course_id', $courseId)
+            ->where('attendances.student_id', $studentId)
+            ->join('courses', 'attendances.course_id', '=', 'courses.id')
+            ->join('students', 'attendances.student_id', '=', 'students.id')
+            ->select('attendances.*', 'courses.name as course_name', 'students.name as student_name')
             ->first();
 
         // Check if attendance record exists
