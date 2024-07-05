@@ -410,6 +410,50 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
     }
 }
 
+// course lists for specific student =================================================
+public function getCoursesByStudent($studentId)
+{
+    // Find the student by ID
+    $student = Student::find($studentId);
+    if (!$student) {
+        return response()->json(['status' => false, 'code' => 404, 'message' => 'Student not found'], 404);
+    }
+
+    try {
+        // Fetch courses the student is enrolled in
+        $courses = DB::table('courses_enrollements')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('courses_enrollements.student_id', $studentId)
+            ->select('courses.*', 'courses_enrollements.enrollment_date')
+            ->get();
+
+        // Check if the student is not enrolled in any course
+        if ($courses->isEmpty()) {
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'No courses found for the specified student'], 404);
+        }
+
+        // Initialize data array to store course details
+        $data = [];
+
+        // Iterate through each course to prepare the data array
+        foreach ($courses as $course) {
+            $data[] = [
+                'course_id' => $course->id,
+                'course_name' => $course->name,
+                'course_description' => $course->description,
+                'enrollment_date' => $course->enrollment_date,
+            ];
+        }
+
+        // Return success response with course data
+        return response()->json(['status' => true, 'data' => $data]);
+    } catch (\Exception $e) {
+        // Return error response if there's an exception
+        Log::error('Failed to fetch courses: ' . $e->getMessage());
+        return response()->json(['status' => false, 'message' => 'Failed to fetch courses', 'error' => $e->getMessage()], 500);
+    }
+}
+
 // specific date attendance for specific batch and student ==================================
 
 public function getAttendanceByDateStudent(Request $request)
