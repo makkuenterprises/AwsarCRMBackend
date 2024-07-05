@@ -124,15 +124,6 @@ public function getStudents($id)
 }
 
 
-        // Return success response with students' details including absent days
-        return response()->json(['status' => 'success', 'code' => 200, 'data' => $data]);
-    } catch (\Exception $e) {
-        // Return error response if there's an exception
-        Log::error('Failed to fetch students or attendance: ' . $e->getMessage());
-        return response()->json(['status' => false, 'message' => 'Failed to fetch students or attendance', 'error' => $e->getMessage()], 500);
-    }
-}
-
 // All Student========================================================================================// All Student Attendance ===================================================================================================
 public function getAllStudentBatchDetails(Request $request)
 {
