@@ -188,6 +188,14 @@ public function update(Request $request, $id)
             ],
     ]);
 
+     // Ensure all keys exist in the validator array, set to null if not provided
+    $fields = ['business_name', 'email', 'smtp_host', 'smtp_ports', 'base_url', 'method', 'gst_number', 'gst_percentage', 'smtp_username', 'smtp_password'];
+    foreach ($fields as $field) {
+        if (!array_key_exists($field, $validator)) {
+            $validator[$field] = null;
+        }
+    }
+
         // Find the existing Details model instance by ID
         $details = Details::findOrFail($id);
 
@@ -200,6 +208,8 @@ public function update(Request $request, $id)
                 $filePaths[$field] = $filePath;
             }
         }
+
+
 
         // Update the Details model instance with validated data and file paths
         if (isset($filePaths['logo'])) {
