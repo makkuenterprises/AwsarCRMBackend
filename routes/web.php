@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use DB;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,3 +47,11 @@ Route::get('rollback',function() {
 
 
 });
+
+Route::get('trun',function() {
+  DB::table('details')->truncate();
+    dd('Application delete Completed');
+
+
+});
+ 
