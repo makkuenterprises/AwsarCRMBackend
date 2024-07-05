@@ -44,15 +44,20 @@ public function index(Request $request){
                 'lte:100', // Less than or equal to 100 (optional, adjust as needed)
             ],
     ]);
+
          // Handle file uploads if provided
-        $filePaths = [];
+         $filePaths = [];
         foreach (['logo', 'side_logo', 'favicon_icon'] as $field) {
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
-                $filePath = $file->store('uploads', 'public'); 
+                $filePath = $file->store('uploads', 'public');
                 $filePaths[$field] = $filePath;
+            } else {
+                // Assign the default value if the file is not uploaded
+                $filePaths[$field] = $defaultValues[$field];
             }
         }
+
         // Convert smtp_ports array to JSON for storage
         if ($request->has('smtp_ports')) {
             $validator['smtp_ports'] = json_encode($validator['smtp_ports']);
@@ -153,7 +158,7 @@ public function update(Request $request, $id)
         'smtp_ports' => 'nullable|integer', // Validate smtp_ports as an array
         'smtp_username' => 'nullable|string|max:255', // Validation for SMTP username as a string up to 255 characters
         'smtp_password' => 'nullable|string|max:255', // Validation for SMTP password as a string up to 255 characters
-  
+   
             'base_url' => 'nullable|string|max:255',
             'method' => 'nullable|string|max:255',
             'gst_number' => ['nullable', 'string', 'max:255', 'regex:/\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/'], // GST number validation

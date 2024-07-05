@@ -314,14 +314,9 @@ Route::get('/all-student-batch-details', [AttendanceController::class, 'getAllSt
 Route::prefix('attendance')->group(function () { 
 
       Route::get('/list/{course_id}', [AttendanceController::class, 'getStudents']);
-      Route::post('/submit-attendance', [AttendanceController::class, 'create']);
       Route::get('/list', [AttendanceController::class, 'alllist']);
-      Route::get('course/list', [AttendanceController::class, 'alllist']);
-      Route::get('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
-      Route::post('/student-attendace', [AttendanceController::class, 'getAttendanceByDateStudent']);
-      Route::get('student/course/list/{course_id}', [AttendanceController::class, 'getCoursesByStudent']);
      
-}); 
+});  
 
 Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 
@@ -330,7 +325,11 @@ Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendan
 
 Route::prefix('attendance')->group(function () { 
 
-    
+      Route::get('course/list', [AttendanceController::class, 'alllist']);
+      Route::get('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
+      Route::post('/submit-attendance', [AttendanceController::class, 'create']);
+
+     
      
 }); 
 
@@ -338,6 +337,8 @@ Route::prefix('attendance')->group(function () {
 
 Route::prefix('attendance')->group(function () { 
 
+      Route::get('student/course/list/{student_id}', [AttendanceController::class, 'getCoursesByStudent']);
+      Route::post('/student-attendace', [AttendanceController::class, 'getAttendanceByDateStudent']);
    
      
 }); 
