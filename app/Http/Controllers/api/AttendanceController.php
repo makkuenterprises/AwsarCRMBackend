@@ -440,7 +440,7 @@ public function getCoursesByStudent($studentId)
             $data[] = [
                 'course_id' => $course->id,
                 'course_name' => $course->name,
-                'course_description' => $course->description,
+                'course_description' => $course->summary,
                 'enrollment_date' => $course->enrollment_date,
             ];
         }
