@@ -165,7 +165,7 @@ public function update(Request $request, $id)
     try {
         // Validate incoming request data
         $validator = $request->validate([
-          'logo' => 'nullable|file|mimes:jpeg,png,svg,webp,jpg|max:2048', // File upload validation for logo
+        'logo' => 'nullable|file|mimes:jpeg,png,svg,webp,jpg|max:2048', // File upload validation for logo
         'side_logo' => 'nullable|file|mimes:jpeg,png,svg,webp,jpg|max:2048', // File upload validation for side logo
         'favicon_icon' => 'nullable|file|mimes:jpeg,png,svg,webp,jpg|max:2048', // File upload validation for favicon icon
         'business_name' => 'nullable|string|max:255', // Validation for business name as a string up to 255 characters

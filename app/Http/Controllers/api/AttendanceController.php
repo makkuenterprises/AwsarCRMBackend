@@ -27,7 +27,7 @@ class AttendanceController extends Controller
         return [
             'id' => $user->id,
             'name' => $user->name,
-            'fee' => $user->fee,
+            // 'fee' => $user->fee,
             'startDate' => $user->startDate,
             'endDate' => $user->endDate,
             'modeType' => $user->modeType,
@@ -392,7 +392,7 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
         $students = DB::table('courses_enrollements')
             ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
             ->where('courses_enrollements.course_id', $courseId)
-            ->select('students.*')
+            ->select('students.id', 'students.name')
             ->get();
 
         return response()->json([
@@ -409,6 +409,7 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
         ], 500);
     }
 }
+
 
 // course lists for specific student =================================================
 public function getCoursesByStudent($studentId)
