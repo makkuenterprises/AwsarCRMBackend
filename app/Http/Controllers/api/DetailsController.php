@@ -134,7 +134,11 @@ public function show($id)
             'smtp_host' => $details->smtp_host,
             'smtp_ports' => $details->smtp_ports ? json_decode($details->smtp_ports) : [],
             'smtp_username' => $details->smtp_username,
-            'smtp_password' => $details->smtp_password
+            'smtp_password' => $details->smtp_password,
+            'base_url' => $details->base_url,
+            'method' => $details->method,
+            'gst_number' => $details->gst_number,
+            'gst_percentage' => $details->gst_percentage,
         ];
 
         // Return success response with specific details data
