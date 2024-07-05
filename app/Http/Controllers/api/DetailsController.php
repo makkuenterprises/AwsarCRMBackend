@@ -59,9 +59,9 @@ public function index(Request $request){
         } else {
             // Assign the default value if the file is not uploaded
             $defaultValues = [
-                'logo' => 'path/to/default/logo.png', // Replace with actual default file path
-                'side_logo' => 'path/to/default/side_logo.png', // Replace with actual default file path
-                'favicon_icon' => 'path/to/default/favicon_icon.png', // Replace with actual default file path
+                'logo' => '', // Replace with actual default file path
+                'side_logo' => '', // Replace with actual default file path
+                'favicon_icon' => '', // Replace with actual default file path
             ];
             $filePaths[$field] = $defaultValues[$field];
         }
@@ -71,6 +71,13 @@ public function index(Request $request){
         if ($request->has('smtp_ports')) {
             $validator['smtp_ports'] = json_encode($validator['smtp_ports']);
         }
+    // Ensure all keys exist in the validator array, set to null if not provided
+    $fields = ['business_name', 'email', 'smtp_host', 'smtp_ports', 'base_url', 'method', 'gst_number', 'gst_percentage', 'smtp_username', 'smtp_password'];
+    foreach ($fields as $field) {
+        if (!array_key_exists($field, $validator)) {
+            $validator[$field] = null;
+        }
+    }
 
         // Create a new Details model instance
         $details = new Details();
