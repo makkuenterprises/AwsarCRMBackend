@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\CoursesEnrollement;
 use App\Models\Course;
+use Illuminate\Support\Facades\Validator;
 
 
 
@@ -17,6 +18,37 @@ use App\Models\Course;
 
 class AttendanceController extends Controller
 {
+
+// all Course Lists===================================================================
+
+    public function alllist(){
+        $courses = Course::where('status', 'active')->orderByDesc('id')->get();
+        $coursesList = $courses->map(function ($user) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'fee' => $user->fee,
+            'startDate' => $user->startDate,
+            'endDate' => $user->endDate,
+            'modeType' => $user->modeType,
+            'summary' => $user->summary,
+            'Course_id' => $user->Course_id,
+            'image' => $user->image ? url('/Courses/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
+           
+        ];
+    });
+        //  return response()->json(['status'=>true,'code'=>200,'data'=>$courses]);
+        return response()->json([
+        'status' => true,
+        'code' => 200,
+        'data' => $coursesList
+    ]);
+
+    }
+    
+// Get Student By Course Id =================================================================================== 
+
+
   public function getStudents($id) 
 {
     // Find the course by ID
@@ -85,6 +117,123 @@ class AttendanceController extends Controller
     }
 }
 
+// All Student========================================================================================// All Student Attendance ===================================================================================================
+public function getAllStudentBatchDetails(Request $request)
+{
+    // Validate request data
+    $request->validate([
+        'course_id' => 'required|exists:courses,id',
+    ], [
+        'course_id.required' => 'The course ID field is required.',
+        'course_id.exists' => 'The selected course ID is invalid.',
+    ]);
+
+    // Retrieve validated data from the request
+    $courseId = $request->input('course_id');
+
+    try {
+        // Fetch all students enrolled in the course
+        $students = DB::table('students')
+            ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('courses.id', $courseId)
+            ->select('students.*', 'courses_enrollements.*', 'courses.name as course_name')
+            ->get();
+
+        // Initialize array to store results
+        $allStudentsDetails = [];
+
+        foreach ($students as $student) {
+            // Fetch attendance records for each student and course
+            $attendances = DB::table('attendances')
+                ->where('student_id', $student->id)
+                ->where('course_id', $courseId)
+                ->get();
+
+            // Count total days absent
+            $daysAbsent = $attendances->where('status', 'absent')->count();
+
+            // Count days absent for the current month
+            $currentMonth = date('m');
+            $currentYear = date('Y');
+            $daysAbsentCurrentMonth = $attendances->filter(function ($attendance) use ($currentMonth, $currentYear) {
+                $attendanceDate = \DateTime::createFromFormat('Y-m-d', $attendance->date);
+                return $attendance->status === 'absent' && $attendanceDate->format('m') == $currentMonth && $attendanceDate->format('Y') == $currentYear;
+            })->count();
+
+            // Build student details array
+            $studentDetails = [
+                'student_id' => $student->id,
+                'student_name' => $student->name,
+                'phone' => $student->phone,
+                'course_name' => $student->course_name,
+                'days_absent' => $daysAbsent,
+                'days_absent_current_month' => $daysAbsentCurrentMonth,
+            ];
+
+            // Push student details to the result array
+            $allStudentsDetails[] = $studentDetails;
+        }
+
+        // Return success response with all student batch details and attendance
+        return response()->json([
+            'code' => 200,
+            'success' => true,
+            'data' => $allStudentsDetails,
+        ]);
+    } catch (\Exception $e) {
+        // Return error response if there's an exception
+        Log::error('Failed to fetch all students batch details: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Failed to fetch all students batch details', 'error' => $e->getMessage()], 500);
+    }
+}
+
+
+// Get Attendance By Date=================================================================================
+
+ public function getAttendanceByDate(Request $request)
+{
+    // Validate request query parameters
+    $request->validate([
+         'date' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $d = \DateTime::createFromFormat('d/m/Y', $value);
+                    if (!$d || $d->format('d/m/Y') !== $value) {
+                        $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
+                    }
+                }
+            ],
+        'course_id' => 'required|exists:courses,id', // Validate course_id
+    ]);
+
+    // Retrieve validated data from the query string
+    $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
+    $courseId = $request->query('course_id');
+
+     $course = Course::find($courseId);
+        if (!$course) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+        }
+
+    try {
+        // Retrieve attendance records for the specified date and course
+        $attendances = Attendance::where('date', $date)
+            ->where('course_id', $courseId) // Assuming 'student' is the relationship method in Attendance model
+            ->get();
+
+        // Return success response with attendance data grouped by date
+        return response()->json(['success' => true, 'data' => $attendances]);
+    } catch (\Exception $e) {
+        // Return error response if there's an exception
+        Log::error('Failed to fetch attendance: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
+    }
+}
+
+
+// Create Attendance =======================================================================================
 
 public function create(Request $request)
 {
@@ -161,72 +310,52 @@ public function create(Request $request)
     }
 }
 
+// all student list for attendance============================================================================
 
-    public function alllist(){
-                $courses = Course::where('status', 'active')->orderByDesc('id')->get();
-         $coursesList = $courses->map(function ($user) {
-        return [
-            'id' => $user->id,
-            'name' => $user->name,
-            'fee' => $user->fee,
-            'startDate' => $user->startDate,
-            'endDate' => $user->endDate,
-            'modeType' => $user->modeType,
-            'summary' => $user->summary,
-            'Course_id' => $user->Course_id,
-            'image' => $user->image ? url('/Courses/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
-           
-        ];
-    });
-        //  return response()->json(['status'=>true,'code'=>200,'data'=>$courses]);
-        return response()->json([
-        'status' => true,
-        'code' => 200,
-        'data' => $coursesList
-    ]);
-    }
-
-
- public function getAttendanceByDate(Request $request)
+public function getStudentsEnrolledInCourse(Request $request, $courseId)
 {
-    // Validate request query parameters
-    $request->validate([
-         'date' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $d = \DateTime::createFromFormat('d/m/Y', $value);
-                    if (!$d || $d->format('d/m/Y') !== $value) {
-                        $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
-                    }
-                }
-            ],
-        'course_id' => 'required|exists:courses,id', // Validate course_id
+    // Validate the course ID
+    $validator = Validator::make(['course_id' => $courseId], [
+        'course_id' => 'required|exists:courses,id',
     ]);
 
-    // Retrieve validated data from the query string
-    $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
-    $courseId = $request->query('course_id');
-
-     $course = Course::find($courseId);
-        if (!$course) {
-            DB::rollBack(); // Rollback the transaction
-            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
-        }
+    // Check if validation fails
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'code' => 400,
+            'errors' => $validator->errors()
+        ], 400);
+    }
 
     try {
-        // Retrieve attendance records for the specified date and course
-        $attendances = Attendance::where('date', $date)
-            ->where('course_id', $courseId) // Assuming 'student' is the relationship method in Attendance model
+        // Get the list of students enrolled in the specific course
+        $students = DB::table('courses_enrollements')
+            ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
+            ->where('courses_enrollements.course_id', $courseId)
+            ->select('students.*')
             ->get();
 
-        // Return success response with attendance data grouped by date
-        return response()->json(['success' => true, 'data' => $attendances]);
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => $students
+        ], 200);
     } catch (\Exception $e) {
-        // Return error response if there's an exception
-        Log::error('Failed to fetch attendance: ' . $e->getMessage());
-        return response()->json(['success' => false, 'message' => 'Failed to fetch attendance', 'error' => $e->getMessage()], 500);
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'Failed to retrieve students enrolled in the course',
+            'error' => $e->getMessage()
+        ], 500);
     }
 }
+
+
+// for specific Student and Batch========================================================================================
+
+
+
 
 public function getStudentBatchDetails(Request $request)
 {
@@ -306,75 +435,6 @@ $studentBatchDetails = DB::table('students')
 }
 
 
-public function getAllStudentBatchDetails(Request $request)
-{
-    // Validate request data
-    $request->validate([
-        'course_id' => 'required|exists:courses,id',
-    ], [
-        'course_id.required' => 'The course ID field is required.',
-        'course_id.exists' => 'The selected course ID is invalid.',
-    ]);
-
-    // Retrieve validated data from the request
-    $courseId = $request->input('course_id');
-
-    try {
-        // Fetch all students enrolled in the course
-        $students = DB::table('students')
-            ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-            ->where('courses.id', $courseId)
-            ->select('students.*', 'courses_enrollements.*', 'courses.name as course_name')
-            ->get();
-
-        // Initialize array to store results
-        $allStudentsDetails = [];
-
-        foreach ($students as $student) {
-            // Fetch attendance records for each student and course
-            $attendances = DB::table('attendances')
-                ->where('student_id', $student->id)
-                ->where('course_id', $courseId)
-                ->get();
-
-            // Count total days absent
-            $daysAbsent = $attendances->where('status', 'absent')->count();
-
-            // Count days absent for the current month
-            $currentMonth = date('m');
-            $currentYear = date('Y');
-            $daysAbsentCurrentMonth = $attendances->filter(function ($attendance) use ($currentMonth, $currentYear) {
-                $attendanceDate = \DateTime::createFromFormat('Y-m-d', $attendance->date);
-                return $attendance->status === 'absent' && $attendanceDate->format('m') == $currentMonth && $attendanceDate->format('Y') == $currentYear;
-            })->count();
-
-            // Build student details array
-            $studentDetails = [
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'phone' => $student->phone,
-                'course_name' => $student->course_name,
-                'days_absent' => $daysAbsent,
-                'days_absent_current_month' => $daysAbsentCurrentMonth,
-            ];
-
-            // Push student details to the result array
-            $allStudentsDetails[] = $studentDetails;
-        }
-
-        // Return success response with all student batch details and attendance
-        return response()->json([
-            'code' => 200,
-            'success' => true,
-            'data' => $allStudentsDetails,
-        ]);
-    } catch (\Exception $e) {
-        // Return error response if there's an exception
-        Log::error('Failed to fetch all students batch details: ' . $e->getMessage());
-        return response()->json(['success' => false, 'message' => 'Failed to fetch all students batch details', 'error' => $e->getMessage()], 500);
-    }
-}
 
 
 
