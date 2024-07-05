@@ -13,6 +13,7 @@ use App\Http\Controllers\api\AttendanceController;
 use App\Http\Controllers\api\CourseEnrollementController;
 use App\Http\Controllers\api\StudyMaterialsController;
 use App\Http\Controllers\api\DetailsController;
+use App\Http\Controllers\api\LeaveRequestController;
 
 
 
@@ -305,10 +306,10 @@ Route::prefix('notice')->group(function () {
 // ATTENDANCE ROUTE
 // ------------------------------------------------------------------------------------------------
 
-Route::get('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 Route::get('/student-batch-details', [AttendanceController::class, 'getStudentBatchDetails']);
 Route::get('/all-student-batch-details', [AttendanceController::class, 'getAllStudentBatchDetails']);
 
+// ATTENDANCE ADMIN=============================================================================================
 
 Route::prefix('attendance')->group(function () { 
 
@@ -322,7 +323,24 @@ Route::prefix('attendance')->group(function () {
      
 }); 
 
+Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 
+
+// ATTENDANCE TEACHER=============================================================================================
+
+Route::prefix('attendance')->group(function () { 
+
+    
+     
+}); 
+
+// ATTENDANCE STUDENT=============================================================================================
+
+Route::prefix('attendance')->group(function () { 
+
+   
+     
+}); 
 
 
 // ------------------------------------------------------------------------------------------------
@@ -335,4 +353,24 @@ Route::prefix('meeting')->group(function () {
      
 });
 
+
+// ---------------------------------------------------------------------------------------------------------
+// LEAVE ROUTES
+// ----------------------------------------------------------------------------------------------------------
+// for staff and admin---------------------------------------------------------------------------------------
+
+Route::prefix('leave-request')->group(function () {
+ 
+      Route::get('/list', [LeaveRequestController::class, 'viewLeaveRequestList']);
+      Route::post('/update-status/{id}', [LeaveRequestController::class, 'handleLeaveRequestUpdate']);
+     
+});   
+ 
+// teacher----------------------------------------------------------------------------------------------------
+Route::prefix('leave-request')->group(function () {
+ 
+      Route::post('/create', [LeaveRequestController::class, 'handleLeaveRequestCreate']);
+      Route::get('/list/{teacher_id}', [LeaveRequestController::class, 'viewLeaveRequestListForFaculty']);
+     
+});
 

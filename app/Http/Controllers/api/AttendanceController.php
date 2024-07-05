@@ -44,7 +44,7 @@ class AttendanceController extends Controller
         'data' => $coursesList
     ]);
 
-    }
+    } 
     
 // Get Student By Course Id =================================================================================== 
 
