@@ -611,7 +611,7 @@ public function getAttendanceBetweenDates(Request $request, $studentId)
         $endDate = \DateTime::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d');
 
         // Get the attendance records between the specified dates for the given student
-        $attendanceRecords = DB::table('attendance')
+        $attendanceRecords = DB::table('attendances')
             ->where('student_id', $studentId)
             ->whereBetween('date', [$startDate, $endDate])
             ->get();
