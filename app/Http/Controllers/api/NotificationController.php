@@ -59,9 +59,9 @@ public function list()
             $batchIds = $notification->batch;
             if (!is_null($batchIds) && is_array($batchIds)) {
                 $batchNames = Course::whereIn('id', $batchIds)->pluck('name')->toArray();
-                $notification->batch_names = $batchNames;
+                $notification->batch= $batchNames;
             } else {
-                $notification->batch_names = [];
+                $notification->batch = [];
             }
             return $notification;
         });
