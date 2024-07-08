@@ -55,38 +55,11 @@ public function create(Request $request)
         ->orderByDesc('notifications.id')
         ->get();
 
-    // Group notifications by their ID and include batch details
-    $groupedNotifications = $notifications->groupBy('id')->map(function ($notificationGroup) {
-        $notification = $notificationGroup->first();
-        return [
-            'id' => $notification->id,
-            'title' => $notification->title,
-            'description' => $notification->description,
-            'sendTo' => $notification->sendTo,
-            'batches' => $notificationGroup->filter(function ($item) {
-                return !is_null($item->batch_id);
-            })->map(function ($item) {
-                return [
-                    'id' => $item->batch_id,
-                    'name' => $item->batch_name,
-                    'details' => [
-                        'description' => $item->description,
-                        'start_date' => $item->start_date,
-                        'end_date' => $item->end_date,
-                        // Add more fields as needed
-                    ]
-                ];
-            })->values(),
-            'created_at' => $notification->created_at,
-            'updated_at' => $notification->updated_at
-        ];
-    })->values();
-
-    // Return JSON response
+     // Return JSON response
     return response()->json([
         'status' => true,
         'code' => 200,
-        'data' => $groupedNotifications
+        'data' => $notifications // Return notifications directly
     ]);
 }
 
