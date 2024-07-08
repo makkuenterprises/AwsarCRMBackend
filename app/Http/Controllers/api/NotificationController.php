@@ -70,8 +70,8 @@ public function list()
                 ];
             }
             // Collect batch names
-            if ($notification->batch_name) {
-                $notificationsGrouped[$notificationId]['batch_names'][] = $notification->batch_name;
+            if ($notification->batch) {
+                $notificationsGrouped[$notificationId]['batch_names'][] = $notification->batch;
             }
         }
 
