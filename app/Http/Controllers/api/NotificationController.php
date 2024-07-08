@@ -17,7 +17,7 @@ public function create(Request $request)
         'title' => 'required|string|min:1|max:255',
         'description' => ['required', 'string', 'min:1', 'max:250'],
         'sendTo' => ['required', 'string', 'min:1', 'max:250'],
-         'batch' => 'nullable|array',
+        'batch' => 'nullable|array',
         'batch.*' => 'integer|exists:batches,id'
     ]);
 
@@ -29,18 +29,13 @@ public function create(Request $request)
         ], 400);
     }
 
-  try {
+    try {
         $notification = new Notification();
         $notification->title = $request->input('title');
         $notification->description = $request->input('description');
         $notification->sendTo = $request->input('sendTo');
+        $notification->batch = json_encode($request->input('batch')); // Store as JSON
         $notification->save();
-
-        // Attach the batches to the notification
-        if ($request->has('batch')) {
-            $notification->batches()->attach($request->input('batch'));
-        }
-
 
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Notification created successfully', 'notification' => $notification], 200);
     } catch (Exception $e) {
@@ -48,7 +43,7 @@ public function create(Request $request)
         return response()->json(['status' => false, 'code' => 500, 'message' => 'An error occurred while creating notification', 'data' => $data], 500);
     }
 }
- 
+
 
   public function list()
 {

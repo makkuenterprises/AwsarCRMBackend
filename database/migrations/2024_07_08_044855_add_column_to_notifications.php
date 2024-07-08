@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('notifications', function (Blueprint $table) {
 
-              $table->string('batch')->nullable();
+             $table->json('batch')->nullable();
 
             //
         });
