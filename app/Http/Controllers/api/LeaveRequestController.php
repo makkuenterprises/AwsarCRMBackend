@@ -23,6 +23,8 @@ public function handleLeaveRequestCreate(Request $request)
     $validation = Validator::make($request->all(), [
         'start_date' => ['required', 'string'],
         'end_date' => ['nullable', 'string'],
+        'user_id' => ['required', 'string'],
+        'role' => ['required', 'string'],
         'message' => ['required', 'string', 'min:1', 'max:1000'],
     ]);
 
@@ -38,9 +40,10 @@ public function handleLeaveRequestCreate(Request $request)
     try {
         // Create a new leave request
         $leave_request = new LeaveRequest();
-        $leave_request->teacher_id = Auth::user()->id; // Assuming teacher_id is stored based on authenticated user
+        $leave_request->teacher_id = $request->input('user_id');// Assuming teacher_id is stored based on authenticated user
         $leave_request->start_date = $request->input('start_date');
         $leave_request->end_date = $request->input('end_date');
+        $leave_request->role = $request->input('role');
         $leave_request->message = $request->input('message');
         $result = $leave_request->save();
 
