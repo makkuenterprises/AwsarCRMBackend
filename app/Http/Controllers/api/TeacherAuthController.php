@@ -13,39 +13,8 @@ use DB;
 
 class TeacherAuthController extends Controller
 {
-    //  public function teacherAuthLogin(Request $request)
-    // {
-
-    // if (Auth::guard('teacher')->check()) {
-    // // User is already authenticated via token
-    // $user = Auth::guard('teacher')->user();
-    // $token = $user->createToken('YourAppName')->plainTextToken;
-    // $name = $user->name;
-
-    // return response()->json([
-    //         'token' => $token,
-    //         'name' => $name,
-    //         'message' => 'Teacher login successfully.',
-    //     ]);
-    // } else {
-    // // Attempt to authenticate the user using email and password
-    // $credentials = $request->only('email', 'password');
-
-    // if (Auth::guard('teacher')->attempt($credentials)) {
-    //     $user = Auth::guard('teacher')->user();
-    //     $token = $user->createToken('AwsarClass')->plainTextToken;
-    //     $name = $user->name;
-
-    //   return response()->json([
-    //         'token' => $token,
-    //         'name' => $name,
-    //         'message' => 'Teacher login successfully.',
-    //     ]);
-    // } else {
-    //     return response()->json(['error' => 'Unauthorized']);
-    // }
-    // }
-    // }
+   
+    
 
     public function teacherAuthLogin(Request $request){
      $login = $request->validate([
@@ -213,6 +182,7 @@ class TeacherAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
+            'qualification' => $user->qualification,
             'image' => $user->image ? url('/Teachers/' . $user->image) : null,
             'classes' => $user->classes,
             ],
@@ -256,63 +226,6 @@ public function teacherList(){
     }
 
 
-    // public function teacherCreate(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|string|email|max:255|unique:teachers',
-    //         'phone' => 'required|numeric|digits:10|unique:teachers',
-    //         'street' => ['nullable', 'string', 'min:1', 'max:250'], 
-    //         'postal_code' => ['nullable', 'numeric', 'digits:6'],
-    //         'city' => ['nullable', 'string', 'min:1', 'max:250'],
-    //         'state' => ['nullable', 'string', 'min:1', 'max:250'],
-    //         'classes' => 'required|array',
-    //         'image' => 'nullable',
-    //         'password' => 'required|string|min:6|confirmed',
-    //     ]);
-
-    //      if ($validator->fails()) {
-    //         return response()->json([
-    //          'status' => false,
-    //            'code'=>400,
-    //           'errors' => $validator->errors()
-    //           ], 400);
-    //     }
-
-    //     try{
-    //         if($request->image!=''){
-    //        $uploadedImg=$request->image;
-    //        $fileName=time().'.'.$request->image->extension();          
-    //        $destinationpath=public_path('/Teachers');
-    //        $img=Image::make($uploadedImg->path());     
-    //        $img->resize(200,null, function($constraint){
-    //        $constraint->aspectRatio();
-    //        })->save($destinationpath.'/'.$fileName);
-    //       }else{
-    //        $fileName='';
-    //       }
-    //         $teacher = new Teacher();
-    //         $teacher->name = $request->input('name'); 
-    //         $teacher->email = $request->input('email');
-    //         $teacher->phone = $request->input('phone');
-    //         $teacher->street = $request->input('street');
-    //         $teacher->postal_code = $request->input('postal_code');
-    //         $teacher->city = $request->input('city');
-    //         $teacher->state = $request->input('state');
-    //         $teacher->image = $fileName;
-    //         $teacher->password =Hash::make($request->password);
-    //         $teacher->classes =$request->input('classes');
-    //         $teacher->save();
-    //         //  $imagePath = url('/Teachers/' . $teacher->image);
-    //           $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
-
-    //       return response()->json(['status'=>true,'code'=>200,'message' => 'Teacher registered successfully', 'teacher' => $teacher,'image'=>$imagePath], 200);
-    //     }catch (Exception $e) {
-    //      $data = ['error' => $e->getMessage()];
-    //       return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while registering Teacher', 'data' => $data], 500);
-
-    //     }
-    // }
     public function teacherCreate(Request $request)
 {
     // Validate request inputs
@@ -324,6 +237,7 @@ public function teacherList(){
         'postal_code' => 'nullable|numeric|digits:6',
         'city' => 'nullable|string|min:1|max:250',
         'state' => 'nullable|string|min:1|max:250',
+        'qualification' => 'nullable|string|min:1|max:250',
         'classes' => 'required|array',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'password' => 'required|string|min:6|confirmed',
@@ -363,6 +277,7 @@ public function teacherList(){
         $teacher->postal_code = $request->input('postal_code');
         $teacher->city = $request->input('city');
         $teacher->state = $request->input('state');
+        $teacher->qualification = $request->input('qualification');
         $teacher->image = $fileName;
         $teacher->password = Hash::make($request->input('password'));
         $teacher->classes = $request->input('classes');
@@ -403,6 +318,8 @@ public function teacherList(){
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
+        'qualification' => 'nullable|string|min:1|max:250',
+
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'classes' => 'required|array',
             'image' => 'nullable',
@@ -430,6 +347,7 @@ public function teacherList(){
             $teacher->postal_code = $request->input('postal_code');
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
+            $teacher->qualification = $request->input('qualification');
             // $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
              if($request->image!=''){
@@ -488,6 +406,7 @@ public function teacherList(){
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
+            'qualification' => ['nullable', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'classes' => 'required|array',
             'image' => 'nullable',
@@ -516,6 +435,7 @@ public function teacherList(){
             $teacher->postal_code = $request->input('postal_code');
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
+            $teacher->qualification = $request->input('qualification');
             $teacher->classes =$request->input('classes');
             if($request->image!=''){
            $uploadedImg=$request->image;
