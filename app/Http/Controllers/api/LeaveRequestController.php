@@ -115,7 +115,7 @@ public function handleLeaveRequestUpdate(Request $request)
     $role = $request->input('role');
 
     // Concatenate the guard name and user name
-    $approvedBy = $role . '-> ' . $userName;
+    $approvedBy = $role . ' -> ' . $userName;
 
         // Update leave request status
         $leave_request->status = $request->input('status');
