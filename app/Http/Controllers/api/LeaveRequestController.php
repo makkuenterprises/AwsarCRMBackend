@@ -78,11 +78,14 @@ public function handleLeaveRequestCreate(Request $request)
 // ============================================================================================================
 
 
-public function handleLeaveRequestUpdate(Request $request, $id)
+public function handleLeaveRequestUpdate(Request $request)
 {
     // Validate the request data
     $validation = Validator::make($request->all(), [
         'status' => ['required', 'string'],
+        'id' => ['required', 'string'],
+        'role' => ['required', 'string'],
+        'name' => ['required', 'string'],
     ]);
 
     // Check if validation fails
@@ -106,13 +109,13 @@ public function handleLeaveRequestUpdate(Request $request, $id)
             ], 404);
         }
 
-         $userName = Auth::user()->name;
+         $userName = $request->input('name');
 
     // Get the name of the guard being used
-    $guardName = Auth::getDefaultDriver();
+    $role = $request->input('role');
 
     // Concatenate the guard name and user name
-    $approvedBy = $guardName . ': ' . $userName;
+    $approvedBy = $role . '-> ' . $userName;
 
         // Update leave request status
         $leave_request->status = $request->input('status');
@@ -170,11 +173,29 @@ public function viewLeaveRequestList()
 // list for faculty
 
 
-public function viewLeaveRequestListForFaculty($facultyId)
+public function viewLeaveRequestListForFaculty(Request $request)
 {
     try {
+
+        $validation = Validator::make($request->all(), [
+        'user_id' => ['required', 'string'],
+        'role' => ['required', 'string'],
+    ]);
+
+    // Check if validation fails
+    if ($validation->fails()) {
+        return response()->json([ 
+            'status' => 'error',
+            'message' => 'Validation Error',
+            'errors' => $validation->errors(),
+        ], 400);
+    }
+
         // Retrieve leave requests for the specified faculty ID
-        $leave_requests = LeaveRequest::where('teacher_id', $facultyId)->get();
+       $leave_requests = LeaveRequest::where('role', $request->input('role'))
+                              ->where('teacher_id', $request->input('user_id'))
+                              ->get();
+
 
         // Check if leave requests exist
         if ($leave_requests->isEmpty()) {

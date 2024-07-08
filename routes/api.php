@@ -372,7 +372,7 @@ Route::prefix('leave-request')->group(function () {
 Route::prefix('leave-request')->group(function () {
  
       Route::post('/create', [LeaveRequestController::class, 'handleLeaveRequestCreate']);
-      Route::get('/list/{teacher_id}', [LeaveRequestController::class, 'viewLeaveRequestListForFaculty']);
+      Route::post('role/list', [LeaveRequestController::class, 'viewLeaveRequestListForFaculty']);
      
 });
 
