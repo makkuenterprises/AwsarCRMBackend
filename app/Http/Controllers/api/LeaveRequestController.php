@@ -152,7 +152,7 @@ public function viewLeaveRequestList()
 {
     try {
         // Retrieve all leave requests
-        $leave_requests = LeaveRequest::all();
+       $leave_requests = LeaveRequest::orderBy('created_at', 'asc')->get();
 
         // Return JSON response with leave requests data
         return response()->json([
@@ -194,7 +194,8 @@ public function viewLeaveRequestListForFaculty(Request $request)
         // Retrieve leave requests for the specified faculty ID
        $leave_requests = LeaveRequest::where('role', $request->input('role'))
                               ->where('teacher_id', $request->input('user_id'))
-                              ->get();
+                              ->orderBy('created_at', 'asc')->get();
+                              
 
 
         // Check if leave requests exist
