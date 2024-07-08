@@ -48,15 +48,22 @@ public function create(Request $request)
 
 public function list()
 {
-    $notifications = DB::table('notifications')
-        ->leftJoin('courses', function ($join) {
-            $join->on('notifications.batch', 'like', DB::raw("CONCAT('%\"', courses.id, '\"%')"));
-        })
-        ->select('notifications.*', DB::raw('GROUP_CONCAT(courses.name) as batch_names'))
-        ->groupBy('notifications.id')
-        ->get();
+    try {
+        $notifications = Notification::all();
 
-    return response()->json(['status' => true, 'code' => 200, 'notifications' => $notifications], 200);
+        // Iterate through each notification to fetch batch names
+        $notifications->transform(function ($notification) {
+            $batchIds = $notification->batch;
+            $batchNames = Course::whereIn('id', $batchIds)->pluck('name')->toArray();
+            $notification->batch_names = $batchNames;
+            return $notification;
+        });
+
+        return response()->json(['status' => true, 'code' => 200, 'notifications' => $notifications], 200);
+    } catch (Exception $e) {
+        $data = ['error' => $e->getMessage()];
+        return response()->json(['status' => false, 'code' => 500, 'message' => 'An error occurred while fetching notifications', 'data' => $data], 500);
+    }
 }
 
 
