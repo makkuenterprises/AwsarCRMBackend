@@ -51,7 +51,20 @@ public function create(Request $request)
     // Join the notifications and courses tables
     $notifications = DB::table('notifications')
         ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
-        ->select('notifications.*', 'courses.*') // Select all columns from courses
+          ->select(
+            'notifications.id',
+            'notifications.title',
+            'notifications.description',
+            'notifications.status',
+            'notifications.created_at',
+            'notifications.updated_at',
+            'notifications.sendTo',
+            'notifications.batch',
+            'courses.name as course_name', // Alias the name column from courses
+            'courses.id as course_id' // Alias the id column from courses
+        )
+        ->orderByDesc('notifications.id')
+        ->get();
         ->orderByDesc('notifications.id')
         ->get();
 
