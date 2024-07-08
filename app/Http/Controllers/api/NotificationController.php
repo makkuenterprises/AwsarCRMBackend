@@ -21,7 +21,7 @@ public function create(Request $request)
         'description' => ['required', 'string', 'min:1', 'max:250'],
         'sendTo' => ['required', 'string', 'min:1', 'max:250'],
         'batch' => 'nullable|array',
-        'batch.*' => 'integer|exists:courses,id'
+        'batch.*' => 'string|exists:courses,name'
     ]);
 
     if ($validator->fails()) {
@@ -52,36 +52,20 @@ public function list()
 {
     
      try {
-        $notifications = DB::table('notifications')
-            ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
-            ->select('notifications.*', 'courses.name as batch_name')
-            ->get();
+      // Retrieve all notifications including the newly created one
+        $notifications = Notification::all();
 
-        // Group notifications by their IDs and collect batch names
-        $notificationsGrouped = [];
-        foreach ($notifications as $notification) {
-            $notificationId = $notification->id;
-            if (!isset($notificationsGrouped[$notificationId])) {
-                $notificationsGrouped[$notificationId] = [
-                    'id' => $notification->id,
-                    'title' => $notification->title,
-                    'content' => $notification->description,
-                    'batch_names' => [],
-                ];
-            }
-            // Collect batch names
-            if ($notification->batch) {
-                $notificationsGrouped[$notificationId]['batch_names'][] = $notification->batch;
-            }
-        }
+        // Transform batch JSON data back to array format for each notification
+        $notifications->transform(function ($notification) {
+            $notification->batch = json_decode($notification->batch, true); // Decode JSON to array
+            return $notification;
+        });
 
-        // Convert to indexed array
-        $notificationsTransformed = array_values($notificationsGrouped);
-
+      
         return response()->json([
             'status' => true,
             'code' => 200,
-            'notifications' => $notificationsTransformed,
+            'notifications' => $notifications,
         ], 200);
     } catch (Exception $e) {
         return response()->json([
