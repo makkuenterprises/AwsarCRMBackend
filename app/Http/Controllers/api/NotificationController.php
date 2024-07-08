@@ -50,14 +50,19 @@ public function create(Request $request)
 
 public function list()
 {
+    
     try {
         $notifications = Notification::all();
 
         // Iterate through each notification to fetch batch names
         $notifications->transform(function ($notification) {
             $batchIds = $notification->batch;
-            $batchNames = Course::whereIn('id', $batchIds)->pluck('name')->toArray();
-            $notification->batch_names = $batchNames;
+            if (!is_null($batchIds) && is_array($batchIds)) {
+                $batchNames = Course::whereIn('id', $batchIds)->pluck('name')->toArray();
+                $notification->batch_names = $batchNames;
+            } else {
+                $notification->batch_names = [];
+            }
             return $notification;
         });
 
