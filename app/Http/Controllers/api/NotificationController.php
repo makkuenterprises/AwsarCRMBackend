@@ -50,7 +50,7 @@ public function create(Request $request)
 {
     // Join the notifications, notification_batch, and batches tables
     $notifications = DB::table('notifications')
-        ->leftJoin('courses', '	notifications.batch', '=', 'courses.id')
+        ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
         ->select('notifications.*', 'courses.id as batch_id', 'courses.name as batch_name')
         ->orderByDesc('notifications.id')
         ->get();
