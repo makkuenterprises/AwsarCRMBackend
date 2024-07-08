@@ -70,7 +70,7 @@ public function handleLeaveRequestCreate(Request $request)
             'message' => 'Exception Occurred',
             'error' => $e->getMessage(),
         ], 500);
-    }
+    } 
 }
 
 // ============================================================================================================
@@ -99,7 +99,7 @@ public function handleLeaveRequestUpdate(Request $request)
 
     try {
         // Find the leave request by ID
-        $leave_request = LeaveRequest::find($id);
+        $leave_request = LeaveRequest::find($request->input('id'));
 
         // Check if leave request exists
         if (!$leave_request) {
