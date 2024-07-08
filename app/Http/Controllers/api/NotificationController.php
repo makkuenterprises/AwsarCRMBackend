@@ -49,8 +49,8 @@ public function create(Request $request)
 public function list()
 {
     $notifications = DB::table('notifications')
-        ->leftJoin('batches', 'notifications.batch', '=', 'batches.id')
-        ->select('notifications.*', 'batches.name as batch_name')
+        ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
+        ->select('notifications.*', 'courses.name as batch_name')
         ->get();
 
     return response()->json(['status' => true, 'code' => 200, 'notifications' => $notifications], 200);
