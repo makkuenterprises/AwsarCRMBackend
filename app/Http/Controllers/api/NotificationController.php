@@ -46,16 +46,16 @@ public function create(Request $request)
 }
 
 
-  public function list()
+ public function list()
 {
-    // Join the notifications, notification_batch, and batches tables
+    // Join the notifications and courses tables
     $notifications = DB::table('notifications')
         ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
-        ->select('notifications.*', 'courses.*')
+        ->select('notifications.*', 'courses.*') // Select all columns from courses
         ->orderByDesc('notifications.id')
         ->get();
 
-    // Group notifications by their ID and include batch names
+    // Group notifications by their ID and include batch details
     $groupedNotifications = $notifications->groupBy('id')->map(function ($notificationGroup) {
         $notification = $notificationGroup->first();
         return [
@@ -68,7 +68,13 @@ public function create(Request $request)
             })->map(function ($item) {
                 return [
                     'id' => $item->batch_id,
-                    'name' => $item->batch_name
+                    'name' => $item->batch_name,
+                    'details' => [
+                        'description' => $item->description,
+                        'start_date' => $item->start_date,
+                        'end_date' => $item->end_date,
+                        // Add more fields as needed
+                    ]
                 ];
             })->values(),
             'created_at' => $notification->created_at,
@@ -76,11 +82,13 @@ public function create(Request $request)
         ];
     })->values();
 
+    // Return JSON response
     return response()->json([
         'status' => true,
         'code' => 200,
         'data' => $groupedNotifications
     ]);
 }
+
 
 }
