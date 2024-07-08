@@ -98,8 +98,17 @@ public function handleLeaveRequestUpdate(Request $request, $id)
             ], 404);
         }
 
+         $userName = Auth::user()->name;
+
+    // Get the name of the guard being used
+    $guardName = Auth::getDefaultDriver();
+
+    // Concatenate the guard name and user name
+    $approvedBy = $guardName . ': ' . $userName;
+
         // Update leave request status
         $leave_request->status = $request->input('status');
+        $leave_request->approved_by = $approvedBy;  
         $result = $leave_request->save();
 
         // Check if update was successful
