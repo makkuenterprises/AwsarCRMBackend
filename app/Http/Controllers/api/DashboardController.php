@@ -10,11 +10,11 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
 {
     public function counts()
-    {
+    {        
         try {
-            $teachersCount = Teacher::where('role', 'teacher')->count();
-            $studentsCount = Student::where('role', 'student')->count();
-            $staffCount = StaffModel::where('role', 'staff')->count();
+            $teachersCount = Teacher::count();
+            $studentsCount = Student::count();
+            $staffCount = StaffModel::count();
             $coursesCount = Course::count();
 
             $partialPaymentStudentsCount = Student::where('payment_status', 'partial')

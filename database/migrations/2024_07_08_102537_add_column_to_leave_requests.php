@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('courses_enrollements', function (Blueprint $table) {
+        Schema::table('leave_requests', function (Blueprint $table) {
             
-            // $table->string('payment_status')->nullable();
-            // $table->string('paid_amount')->nullable();
-
+            $table->string('approved_by')->nullable();
 
         });
     }
@@ -25,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('courses_enrollements', function (Blueprint $table) {
+        Schema::table('leave_requests', function (Blueprint $table) {
             //
         });
     }

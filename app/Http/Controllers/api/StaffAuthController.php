@@ -121,21 +121,9 @@ class StaffAuthController extends Controller
                         ],
                 ],
                 [
-                    'title' => 'Attendance',
-                     'classsChange' => 'mm-collapse',
+                 'title' => 'Attendance',
                      'iconStyle' => '<i className="merial-icons">article</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Attendance',
-                            'to'=> 'page-lock-screen',					
-                        ],
-                        [
-                            'title'=> 'Todays Attendance',
-                            'to'=> 'page-lock-screen',
-                        ],
-                      
-           
-                        ],
+                        'to' => 'attendance-list-for-staff',
                 ],
                  [
                     'title' => 'Exams',

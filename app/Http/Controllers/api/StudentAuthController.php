@@ -153,8 +153,9 @@ class StudentAuthController extends Controller
                             'to'=> 'view-study-materials',
                         ],
                         [
-                            'title'=> 'Attendance',
-                            'to'=> 'page-lock-screen',					
+                          'title' => 'Attendance',
+                 
+                        'to' => 'attendance-list-for-student',				
                         ],
                          [
                             'title'=> 'Class Routine',
