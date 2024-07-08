@@ -17,7 +17,8 @@ public function create(Request $request)
         'title' => 'required|string|min:1|max:255',
         'description' => ['required', 'string', 'min:1', 'max:250'],
         'sendTo' => ['required', 'string', 'min:1', 'max:250'],
-        'batch' => 'required|integer' // Add validation rule for batch
+         'batch' => 'nullable|array',
+        'batch.*' => 'integer|exists:batches,id'
     ]);
 
     if ($validator->fails()) {
@@ -28,13 +29,18 @@ public function create(Request $request)
         ], 400);
     }
 
-    try {
+  try {
         $notification = new Notification();
         $notification->title = $request->input('title');
         $notification->description = $request->input('description');
         $notification->sendTo = $request->input('sendTo');
-        $notification->batch = $request->input('batch'); // Set the batch value
         $notification->save();
+
+        // Attach the batches to the notification
+        if ($request->has('batch')) {
+            $notification->batches()->attach($request->input('batch'));
+        }
+
 
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Notification created successfully', 'notification' => $notification], 200);
     } catch (Exception $e) {
@@ -44,10 +50,42 @@ public function create(Request $request)
 }
  
 
-    public function list(){
+  public function list()
+{
+    // Join the notifications, notification_batch, and batches tables
+    $notifications = DB::table('notifications')
+        ->leftJoin('notification_batch', 'notifications.id', '=', 'notification_batch.notification_id')
+        ->leftJoin('batches', 'notification_batch.batch_id', '=', 'batches.id')
+        ->select('notifications.*', 'batches.id as batch_id', 'batches.name as batch_name')
+        ->orderByDesc('notifications.id')
+        ->get();
 
-       $notification = Notification::orderByDesc('id')->get();
-       return response()->json(['status'=>true,'code'=>200,'data'=>$notification]);
+    // Group notifications by their ID and include batch names
+    $groupedNotifications = $notifications->groupBy('id')->map(function ($notificationGroup) {
+        $notification = $notificationGroup->first();
+        return [
+            'id' => $notification->id,
+            'title' => $notification->title,
+            'description' => $notification->description,
+            'sendTo' => $notification->sendTo,
+            'batches' => $notificationGroup->filter(function ($item) {
+                return !is_null($item->batch_id);
+            })->map(function ($item) {
+                return [
+                    'id' => $item->batch_id,
+                    'name' => $item->batch_name
+                ];
+            })->values(),
+            'created_at' => $notification->created_at,
+            'updated_at' => $notification->updated_at
+        ];
+    })->values();
 
-    }
+    return response()->json([
+        'status' => true,
+        'code' => 200,
+        'data' => $groupedNotifications
+    ]);
+}
+
 }
