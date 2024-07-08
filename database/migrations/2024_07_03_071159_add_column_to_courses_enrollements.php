@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('courses_enrollements', function (Blueprint $table) {
             //
-            $table->string('payment_status')->nullable();
-            $table->string('paid_amount')->nullable();
+            // $table->string('payment_status')->nullable();
+            // $table->string('paid_amount')->nullable();
 
 
         });
