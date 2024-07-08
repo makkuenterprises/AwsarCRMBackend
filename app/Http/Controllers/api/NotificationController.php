@@ -18,7 +18,7 @@ public function create(Request $request)
         'description' => ['required', 'string', 'min:1', 'max:250'],
         'sendTo' => ['required', 'string', 'min:1', 'max:250'],
         'batch' => 'nullable|array',
-        'batch.*' => 'integer|exists:batches,id'
+        'batch.*' => 'integer|exists:courses,id'
     ]);
 
     if ($validator->fails()) {
@@ -50,8 +50,8 @@ public function create(Request $request)
     // Join the notifications, notification_batch, and batches tables
     $notifications = DB::table('notifications')
         ->leftJoin('notification_batch', 'notifications.id', '=', 'notification_batch.notification_id')
-        ->leftJoin('batches', 'notification_batch.batch_id', '=', 'batches.id')
-        ->select('notifications.*', 'batches.id as batch_id', 'batches.name as batch_name')
+        ->leftJoin('courses', 'notification_batch.batch_id', '=', 'courses.id')
+        ->select('notifications.*', 'courses.id as batch_id', 'courses.name as batch_name')
         ->orderByDesc('notifications.id')
         ->get();
 
