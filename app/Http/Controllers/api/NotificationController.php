@@ -49,11 +49,15 @@ public function create(Request $request)
 public function list()
 {
     $notifications = DB::table('notifications')
-        ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
-        ->select('notifications.*', 'courses.name as batch_name')
+        ->leftJoin('courses', function ($join) {
+            $join->on('notifications.batch', 'like', DB::raw("CONCAT('%\"', courses.id, '\"%')"));
+        })
+        ->select('notifications.*', DB::raw('GROUP_CONCAT(courses.name) as batch_names'))
+        ->groupBy('notifications.id')
         ->get();
 
     return response()->json(['status' => true, 'code' => 200, 'notifications' => $notifications], 200);
 }
+
 
 }
