@@ -65,7 +65,7 @@ public function list()
                 $notificationsGrouped[$notificationId] = [
                     'id' => $notification->id,
                     'title' => $notification->title,
-                    'content' => $notification->content,
+                    'content' => $notification->description,
                     'batch_names' => [],
                 ];
             }
