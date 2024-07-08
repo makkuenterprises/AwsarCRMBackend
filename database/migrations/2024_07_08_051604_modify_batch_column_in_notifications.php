@@ -12,10 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table) {
-
-             $table->string('batch')->nullable();
-
             //
+             $table->json('batch')->nullable()->change();
+
         });
     }
 
@@ -26,6 +25,9 @@ return new class extends Migration
     {
         Schema::table('notifications', function (Blueprint $table) {
             //
+             $table->string('batch')->nullable()->change();
+
+
         });
     }
 };
