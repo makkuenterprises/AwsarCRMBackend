@@ -65,8 +65,7 @@ public function create(Request $request)
         )
         ->orderByDesc('notifications.id')
         ->get();
-        ->orderByDesc('notifications.id')
-        ->get();
+     
 
      // Return JSON response
     return response()->json([
