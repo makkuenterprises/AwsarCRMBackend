@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\LeaveRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 
 class LeaveRequestController extends Controller
@@ -38,11 +39,15 @@ public function handleLeaveRequestCreate(Request $request)
     }
 
     try {
+        // Parse and format the dates
+        $startDate = Carbon::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
+        $endDate = $request->input('end_date') ? Carbon::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d') : null;
+
         // Create a new leave request
         $leave_request = new LeaveRequest();
-        $leave_request->teacher_id = $request->input('user_id');// Assuming teacher_id is stored based on authenticated user
-        $leave_request->start_date = $request->input('start_date');
-        $leave_request->end_date = $request->input('end_date');
+        $leave_request->teacher_id = $request->input('user_id'); // Assuming teacher_id is stored based on authenticated user
+        $leave_request->start_date = $startDate;
+        $leave_request->end_date = $endDate;
         $leave_request->role = $request->input('role');
         $leave_request->message = $request->input('message');
         $result = $leave_request->save();
