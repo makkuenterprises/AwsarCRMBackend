@@ -46,7 +46,7 @@ public function create(Request $request)
 }
 
 
-public function index()
+public function list()
 {
     $notifications = DB::table('notifications')
         ->leftJoin('batches', 'notifications.batch', '=', 'batches.id')
