@@ -46,34 +46,14 @@ public function create(Request $request)
 }
 
 
- public function list()
+public function index()
 {
-    // Join the notifications and courses tables
     $notifications = DB::table('notifications')
-        ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
-          ->select(
-            'notifications.id',
-            'notifications.title',
-            'notifications.description',
-            'notifications.status',
-            'notifications.created_at',
-            'notifications.updated_at',
-            'notifications.sendTo',
-            'notifications.batch',
-            'courses.name as course_name', // Alias the name column from courses
-            'courses.id as course_id' // Alias the id column from courses
-        )
-        ->orderByDesc('notifications.id')
+        ->leftJoin('batches', 'notifications.batch', '=', 'batches.id')
+        ->select('notifications.*', 'batches.name as batch_name')
         ->get();
-     
 
-     // Return JSON response
-    return response()->json([
-        'status' => true,
-        'code' => 200,
-        'data' => $notifications // Return notifications directly
-    ]);
+    return response()->json(['status' => true, 'code' => 200, 'notifications' => $notifications], 200);
 }
-
 
 }
