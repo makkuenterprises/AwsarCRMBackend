@@ -40,10 +40,23 @@ public function create(Request $request)
         $notification->batch = json_encode($request->input('batch')); // Store as JSON
         $notification->save();
 
-        return response()->json(['status' => true, 'code' => 200, 'message' => 'Notification created successfully', 'notification' => $notification], 200);
+        // Encode batch data to JSON for consistent response
+        $notification->batch = json_decode($notification->batch, true); // Decode JSON to array
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Notification created successfully',
+            'notification' => $notification
+        ], 200);
     } catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
-        return response()->json(['status' => false, 'code' => 500, 'message' => 'An error occurred while creating notification', 'data' => $data], 500);
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while creating notification',
+            'data' => $data
+        ], 500);
     }
 }
 
@@ -53,7 +66,7 @@ public function list()
     
      try {
       // Retrieve all notifications including the newly created one
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('id', 'asc')->get();
 
         // Transform batch JSON data back to array format for each notification
         $notifications->transform(function ($notification) {
