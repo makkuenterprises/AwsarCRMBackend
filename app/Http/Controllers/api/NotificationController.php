@@ -51,25 +51,45 @@ public function create(Request $request)
 public function list()
 {
     
-    try {
-        $notifications = Notification::all();
+     try {
+        $notifications = DB::table('notifications')
+            ->leftJoin('courses', 'notifications.batch', '=', 'courses.id')
+            ->select('notifications.*', 'courses.name as batch_name')
+            ->get();
 
-        // Iterate through each notification to fetch batch names
-        $notifications->transform(function ($notification) {
-            $batchIds = $notification->batch;
-            if (!is_null($batchIds) && is_array($batchIds)) {
-                $batchNames = Course::whereIn('id', $batchIds)->pluck('name')->toArray();
-                $notification->batch= $batchNames;
-            } else {
-                $notification->batch = [];
+        // Group notifications by their IDs and collect batch names
+        $notificationsGrouped = [];
+        foreach ($notifications as $notification) {
+            $notificationId = $notification->id;
+            if (!isset($notificationsGrouped[$notificationId])) {
+                $notificationsGrouped[$notificationId] = [
+                    'id' => $notification->id,
+                    'title' => $notification->title,
+                    'content' => $notification->content,
+                    'batch_names' => [],
+                ];
             }
-            return $notification;
-        });
+            // Collect batch names
+            if ($notification->batch_name) {
+                $notificationsGrouped[$notificationId]['batch_names'][] = $notification->batch_name;
+            }
+        }
 
-        return response()->json(['status' => true, 'code' => 200, 'notifications' => $notifications], 200);
+        // Convert to indexed array
+        $notificationsTransformed = array_values($notificationsGrouped);
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'notifications' => $notificationsTransformed,
+        ], 200);
     } catch (Exception $e) {
-        $data = ['error' => $e->getMessage()];
-        return response()->json(['status' => false, 'code' => 500, 'message' => 'An error occurred while fetching notifications', 'data' => $data], 500);
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while fetching notifications',
+            'error' => $e->getMessage(),
+        ], 500);
     }
 }
 
