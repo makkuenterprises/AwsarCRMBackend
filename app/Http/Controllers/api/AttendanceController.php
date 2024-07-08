@@ -588,12 +588,14 @@ $studentBatchDetails = DB::table('students')
 
 
 // in between Date attendance details================================================
-public function getAttendanceBetweenDates(Request $request, $studentId)
+public function getAttendanceBetweenDates(Request $request)
 {
     // Validate the request inputs
     $validator = Validator::make($request->all(), [
         'start_date' => 'required|date_format:d/m/Y',
         'end_date' => 'required|date_format:d/m/Y|after_or_equal:start_date',
+        'course_id' => 'required|exists:courses,id',
+        'student_id' => 'required|exists:students,id',  // Assuming student_id should exist in students table
     ]);
 
     // Check if validation fails
@@ -610,9 +612,13 @@ public function getAttendanceBetweenDates(Request $request, $studentId)
         $startDate = \DateTime::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
         $endDate = \DateTime::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d');
 
+        $studentId = $request->input('student_id');
+        $courseId = $request->input('course_id');
+
         // Get the attendance records between the specified dates for the given student
         $attendanceRecords = DB::table('attendances')
             ->where('student_id', $studentId)
+            ->where('course_id', $courseId)
             ->whereBetween('date', [$startDate, $endDate])
             ->get();
 
@@ -630,6 +636,7 @@ public function getAttendanceBetweenDates(Request $request, $studentId)
         ], 500);
     }
 }
+
 
 
 
