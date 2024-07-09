@@ -196,7 +196,7 @@ public function teacherList()
 
     // Process each teacher to include the full image URL
     $teacher->transform(function ($t) {
-        $t->image = $t->image ? url('/Teachers/' . $teacher->image) : null;
+        $t->image = $t->image ? url('/Teachers/' . $t->image) : null;
         return $t;
     });
 
