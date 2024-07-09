@@ -14,6 +14,7 @@ use App\Http\Controllers\api\CourseEnrollementController;
 use App\Http\Controllers\api\StudyMaterialsController;
 use App\Http\Controllers\api\DetailsController;
 use App\Http\Controllers\api\LeaveRequestController;
+use App\Http\Controllers\ClassRoutineController;
 
 
 
@@ -375,5 +376,14 @@ Route::prefix('leave-request')->group(function () {
       Route::post('/create', [LeaveRequestController::class, 'handleLeaveRequestCreate']);
       Route::post('role/list', [LeaveRequestController::class, 'viewLeaveRequestListForFaculty']);
      
+
 });
+
+// routine
+Route::get('class-routines', [ClassRoutineController::class, 'index']);
+Route::post('class-routines', [ClassRoutineController::class, 'store']);
+Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
+Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
+Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
+
  
