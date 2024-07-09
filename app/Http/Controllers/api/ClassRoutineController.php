@@ -133,7 +133,7 @@ public function update(Request $request, $id)
         'status' => 'success',
         'message' => 'Class routine updated successfully',
         'data' => $classRoutine->toArray(), // Convert model to array for response
-    ], 200);
+    ], 200); 
 }
 
 
