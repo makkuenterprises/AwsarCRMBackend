@@ -23,8 +23,8 @@ class ClassRoutineController extends Controller
 public function store(Request $request)
 {
     $validatedData = $request->validate([
-        'subject_id' => 'required|exists:subjects,id',
-        'batch_id' => 'nullable|exists:batches,id',
+        'subject' => 'required|string',
+        'batch_id' => 'nullable|exists:courses,id',
         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i|after:start_time',
@@ -41,7 +41,7 @@ public function store(Request $request)
         'data' => $classRoutine->toArray(), // Convert model to array for response
     ], 201);
 }
-
+ 
 
 
     public function show($id)
