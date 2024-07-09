@@ -289,6 +289,7 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 // COURSE ENROLL ROUTES
 // ------------------------------------------------------------------------------------------------
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
+Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
 
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
@@ -375,4 +376,4 @@ Route::prefix('leave-request')->group(function () {
       Route::post('role/list', [LeaveRequestController::class, 'viewLeaveRequestListForFaculty']);
      
 });
-
+ 

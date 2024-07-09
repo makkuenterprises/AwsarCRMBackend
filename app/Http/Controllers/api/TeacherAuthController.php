@@ -185,10 +185,25 @@ class TeacherAuthController extends Controller
     return response()->json($data, $code);
 } 
 
-public function teacherList(){
+// public function teacherList(){
+//     $teacher = Teacher::orderByDesc('id')->get();
+//     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
+// }
+public function teacherList()
+{
+    // Retrieve all teachers ordered by descending ID
     $teacher = Teacher::orderByDesc('id')->get();
-    return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
+
+    // Process each teacher to include the full image URL
+    $teacher->transform(function ($t) {
+        $t->image = $t->image ? url('/Teachers/' . $teacher->image) : null;
+        return $t;
+    });
+
+    // Return the response as JSON
+    return response()->json(['status' => true, 'code' => 200, 'data' => $teacher]);
 }
+
 
  public function UpdateView($id){
    $teacher = Teacher::find($id);
