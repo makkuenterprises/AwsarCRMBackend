@@ -61,9 +61,8 @@ public function show($batch_id)
 {
     try {
         // Retrieve all class routines for the given batch ID
-        $classRoutines = ClassRoutine::with('subject', 'batch')
-                                     ->where('batch_id', $batch_id)
-                                     ->get();
+        $classRoutines = ClassRoutine::where('batch_id', $batch_id)
+                                     ->get(); 
 
         // Check if any routines were found
         if ($classRoutines->isEmpty()) {
