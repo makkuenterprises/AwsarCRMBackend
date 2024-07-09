@@ -73,7 +73,7 @@ class CourseEnrollementController extends Controller
         $timestamp = time(); // Get the current Unix timestamp
         sleep(1);
         $randomString = Str::random(4);
-        $randomInteger = random_int(0, 999999);
+        $randomInteger = random_int(0,9999);
         $enrollmentno = $timestamp . $randomInteger . $randomString;
         $enrollcourse->enrollment_no = $enrollmentno;
         $enrollcourse->save();
