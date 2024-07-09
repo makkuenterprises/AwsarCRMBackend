@@ -124,18 +124,22 @@ public function getPaymentHistory(Request $request)
 
     try {
         // Retrieve the payment history for the specific course and student using join
-        $paymentHistory = DB::table('payment_histories')
+          $paymentHistory = DB::table('payment_histories')
             ->join('courses_enrollements', 'payment_histories.enrollment_id', '=', 'courses_enrollements.id')
             ->where('courses_enrollements.student_id', $request->student_id)
             ->where('courses_enrollements.course_id', $request->course_id)
-            ->select('payment_histories.*')
+            ->select('payment_histories.transaction_id', 'payment_histories.payment_type', 'payment_histories.payment_status', 'payment_histories.paid_amount', 'payment_histories.payment_date')
             ->get();
 
         if ($paymentHistory->isEmpty()) {
             return response()->json(['status' => false, 'code' => 404, 'message' => 'No payment history found for the specified course and student'], 404);
         }
 
-        return response()->json(['status' => true, 'code' => 200, 'data' => $paymentHistory], 200);
+            return response()->json([
+                'status' => true,
+                'code' => 200, 
+                'data' => $paymentHistory
+            ], 200);
     } catch (\Exception $e) {
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to retrieve payment history', 'error' => $e->getMessage()], 500);
     }

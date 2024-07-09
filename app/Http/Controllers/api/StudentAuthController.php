@@ -415,16 +415,37 @@ class StudentAuthController extends Controller
             $student->city = $request->input('city');
             $student->state = $request->input('state'); 
 
-            if($request->image!=''){
-        $uploadedImg=$request->image;
-        $fileName=time().'.'.$request->image->extension();          
-        $destinationpath=public_path('/Student');
-        $img=Image::make($uploadedImg->path());     
-        $img->resize(200,null, function($constraint){
-        $constraint->aspectRatio();
-        })->save($destinationpath.'/'.$fileName);
-            $student->image = $fileName;
-       }
+           if ($request->has('image')) {
+        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+            // Handle image URL
+            $imageUrl = $request->image;
+            $imageContent = Http::get($imageUrl)->body();
+            $fileName = time() . '.' . pathinfo($imageUrl, PATHINFO_EXTENSION);
+            $destinationPath = public_path('/Student');
+            $imagePath = $destinationPath . '/' . $fileName;
+
+            // Save the image content to the specified path
+            file_put_contents($imagePath, $imageContent);
+
+            // Resize the image
+            $img = Image::make($imagePath);
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($imagePath);
+        } else {
+            // Handle uploaded image file
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->extension();
+            $destinationPath = public_path('/Student');
+            $img = Image::make($uploadedImg->path());
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+
+        // Update student's image
+        $student->image = $fileName;
+    }
 
             if ($request->input('dob')) {
                  $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
