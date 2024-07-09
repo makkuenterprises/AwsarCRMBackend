@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Image;
+
 use App\Models\StaffModel;
 
 class StaffAuthController extends Controller
@@ -340,17 +342,39 @@ public function staffAuthLogout(Request $request)
             $staff->postal_code = $request->input('postal_code');
             $staff->city = $request->input('city');
             $staff->state = $request->input('state');
-             if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Staffs');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-            $staff->image = $fileName;
+            
+    if ($request->has('image') && $request->image != '') {
+        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+            // Handle image URL
+            $imageUrl = $request->image;
+            $imageContent = Http::get($imageUrl)->body();
+            $fileName = time() . '.' . pathinfo($imageUrl, PATHINFO_EXTENSION);
+            $destinationPath = public_path('/Staffs');
+            $imagePath = $destinationPath . '/' . $fileName;
 
-          }
+            // Save the image content to the specified path
+            file_put_contents($imagePath, $imageContent);
+
+            // Resize the image
+            $img = Image::make($imagePath);
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($imagePath);
+        } else {
+            // Handle uploaded image file
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->extension();
+            $destinationPath = public_path('/Staffs');
+            $img = Image::make($uploadedImg->path());
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+
+        // Update staff's image
+        $staff->image = $fileName;
+    }
+
             $staff->save();
         $imagePath = url('/Staffs/' . $staff->image);
 
@@ -423,17 +447,39 @@ public function staffAuthLogout(Request $request)
             $staff->city = $request->input('city');
             $staff->state = $request->input('state');
             $staff->password =Hash::make($request->password);
-            if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Staffs');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-            $staff->image = $fileName;
+         
+    if ($request->has('image') && $request->image != '') {
+        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+            // Handle image URL
+            $imageUrl = $request->image;
+            $imageContent = Http::get($imageUrl)->body();
+            $fileName = time() . '.' . pathinfo($imageUrl, PATHINFO_EXTENSION);
+            $destinationPath = public_path('/Staffs');
+            $imagePath = $destinationPath . '/' . $fileName;
 
-          }
+            // Save the image content to the specified path
+            file_put_contents($imagePath, $imageContent);
+
+            // Resize the image
+            $img = Image::make($imagePath);
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($imagePath);
+        } else {
+            // Handle uploaded image file
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->extension();
+            $destinationPath = public_path('/Staffs');
+            $img = Image::make($uploadedImg->path());
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+
+        // Update staff's image
+        $staff->image = $fileName;
+    }
+
             $staff->save();
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'staff' => $staff], 200);
         }catch (Exception $e) {

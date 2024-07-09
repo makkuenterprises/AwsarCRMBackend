@@ -5,9 +5,11 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Teacher;
+
 use Image;
 use DB;
 
@@ -353,17 +355,38 @@ public function teacherList()
             $teacher->qualification = $request->input('qualification');
             // $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
-             if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Teachers');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-            $teacher->image = $fileName;
+              if ($request->has('image')) {
+        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+            // Handle image URL
+            $imageUrl = $request->image;
+            $imageContent = Http::get($imageUrl)->body();
+            $fileName = time() . '.' . pathinfo($imageUrl, PATHINFO_EXTENSION);
+            $destinationPath = public_path('/Teachers');
+            $imagePath = $destinationPath . '/' . $fileName;
 
-          }
+            // Save the image content to the specified path
+            file_put_contents($imagePath, $imageContent);
+
+            // Resize the image
+            $img = Image::make($imagePath);
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($imagePath);
+        } else {
+            // Handle uploaded image file
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->extension();
+            $destinationPath = public_path('/Teachers');
+            $img = Image::make($uploadedImg->path());
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+
+        // Update teacher's image
+        $teacher->image = $fileName;
+    }
+
             $teacher->save();
                $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
            
@@ -411,7 +434,7 @@ public function teacherList()
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
             'qualification' => ['nullable', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
-            'classes' => 'required|array',
+            'classes' => 'required|array', 
             'image' => 'nullable',
            
         ]);
@@ -440,17 +463,38 @@ public function teacherList()
             $teacher->state = $request->input('state');
             $teacher->qualification = $request->input('qualification');
             $teacher->classes =$request->input('classes');
-            if($request->image!=''){
-           $uploadedImg=$request->image;
-           $fileName=time().'.'.$request->image->extension();          
-           $destinationpath=public_path('/Teachers');
-           $img=Image::make($uploadedImg->path());     
-           $img->resize(200,null, function($constraint){
-           $constraint->aspectRatio();
-           })->save($destinationpath.'/'.$fileName);
-            $teacher->image = $fileName;
+             if ($request->has('image')) {
+        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+            // Handle image URL
+            $imageUrl = $request->image;
+            $imageContent = Http::get($imageUrl)->body();
+            $fileName = time() . '.' . pathinfo($imageUrl, PATHINFO_EXTENSION);
+            $destinationPath = public_path('/Teachers');
+            $imagePath = $destinationPath . '/' . $fileName;
 
-          }
+            // Save the image content to the specified path
+            file_put_contents($imagePath, $imageContent);
+
+            // Resize the image
+            $img = Image::make($imagePath);
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($imagePath);
+        } else {
+            // Handle uploaded image file
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->extension();
+            $destinationPath = public_path('/Teachers');
+            $img = Image::make($uploadedImg->path());
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
+        }
+
+        // Update teacher's image
+        $teacher->image = $fileName;
+    }
+
             $teacher->save();
                 $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'teacher' => $teacher, 'image' =>$imagePath], 200);
