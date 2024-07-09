@@ -12,6 +12,7 @@ use App\Models\Student;
 use App\Models\Course;
 use DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http; 
 use Illuminate\Validation\Rule;
 
 class StudentAuthController extends Controller
@@ -431,7 +432,7 @@ class StudentAuthController extends Controller
             $img = Image::make($imagePath);
             $img->resize(200, null, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($imagePath);
+            })->save($imagePath); 
         } else {
             // Handle uploaded image file
             $uploadedImg = $request->file('image');
