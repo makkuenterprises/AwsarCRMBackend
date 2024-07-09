@@ -9,25 +9,40 @@ use Illuminate\Http\Request;
 class ClassRoutineController extends Controller
 {
     //
-      public function index()
+    public function index()
     {
-        return ClassRoutine::with('subject', 'batch')->get();
+        $classRoutines = ClassRoutine::with('subject', 'batch')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Class routines retrieved successfully',
+            'data' => $classRoutines
+        ], 200);
     }
 
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'subject_id' => 'required|exists:subjects,id',
-            'batch_id' => 'nullable|exists:batches,id',
-            'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-        ]);
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'subject_id' => 'required|exists:subjects,id',
+        'batch_id' => 'nullable|exists:batches,id',
+        'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
+        'start_time' => 'required|date_format:H:i',
+        'end_time' => 'required|date_format:H:i|after:start_time',
+    ]);
 
-        $classRoutine = ClassRoutine::create($validatedData);
+    $classRoutine = ClassRoutine::create($validatedData);
 
-        return response()->json($classRoutine, 201);
-    }
+    // Optionally load subject and batch relationships if needed
+    // $classRoutine->load('subject', 'batch');
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Class routine created successfully',
+        'data' => $classRoutine->toArray(), // Convert model to array for response
+    ], 201);
+}
+
+
 
     public function show($id)
     {
