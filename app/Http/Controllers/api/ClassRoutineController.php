@@ -22,6 +22,7 @@ class ClassRoutineController extends Controller
 
 public function store(Request $request)
 {
+    // Validate request data
     $validatedData = $request->validate([
         'subject' => 'required|string',
         'batch_id' => 'nullable|exists:courses,id',
@@ -29,11 +30,23 @@ public function store(Request $request)
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i|after:start_time',
     ]);
- 
-    $classRoutine = ClassRoutine::create($validatedData);
 
-    // Optionally load subject and batch relationships if needed
-    // $classRoutine->load('subject', 'batch');
+    // Check if there's already a routine with the same day, time, and batch
+    $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
+                                    ->where('start_time', '<', $validatedData['end_time'])
+                                    ->where('end_time', '>', $validatedData['start_time'])
+                                    ->where('batch_id', $validatedData['batch_id'])
+                                    ->exists();
+
+    if ($existingRoutine) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Another class routine already exists for the same day, time, and batch.',
+        ], 400);
+    }
+
+    // Create the class routine if validation passes
+    $classRoutine = ClassRoutine::create($validatedData);
 
     return response()->json([
         'status' => 'success',
@@ -41,7 +54,7 @@ public function store(Request $request)
         'data' => $classRoutine->toArray(), // Convert model to array for response
     ], 201);
 }
- 
+
 
 
     public function show($id)
