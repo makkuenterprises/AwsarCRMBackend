@@ -57,24 +57,38 @@ public function store(Request $request)
 
 
 
- public function show($id)
+public function show($batch_id)
 {
     try {
-        $classRoutine = ClassRoutine::with('subject', 'batch')->findOrFail($id);
+        // Retrieve all class routines for the given batch ID
+        $classRoutines = ClassRoutine::with('subject', 'batch')
+                                     ->where('batch_id', $batch_id)
+                                     ->get();
 
+        // Check if any routines were found
+        if ($classRoutines->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No class routines found for the batch',
+            ], 404);
+        }
+
+        // Return a JSON response with the routines
         return response()->json([
             'status' => 'success',
-            'message' => 'Class routine retrieved successfully',
-            'data' => $classRoutine
+            'message' => 'Class routines retrieved successfully',
+            'data' => $classRoutines,
         ], 200);
 
     } catch (\Exception $e) {
+        // Return a JSON response with an error message
         return response()->json([
             'status' => 'error',
-            'message' => 'Class routine not found'
-        ], 404);
+            'message' => 'Failed to retrieve class routines',
+        ], 500);
     }
 }
+
 
 public function update(Request $request, $id)
 {
