@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Student;
 use App\Models\Course;
 use Illuminate\Support\Str;
+use App\Models\PaymentHistory;
 use DB;
 
 class CourseEnrollementController extends Controller
@@ -90,18 +91,19 @@ class CourseEnrollementController extends Controller
     //     return response()->json(['status'=>false,'code'=>500,'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
     // }
     // }
-    public function enrollCourse(Request $request){
+   public function enrollCourse(Request $request)
+{
     // Validate the request data
     $validator = Validator::make($request->all(), [
-        'student_id' => 'required|exists:students,id', // Example validation for student_id
-        'course_id' => 'required|exists:courses,id', // Example validation for course_id
+        'student_id' => 'required|exists:students,id',
+        'course_id' => 'required|exists:courses,id',
         'payment_type' => ['required', 'string', 'min:1', 'max:250'],
         'payment_status' => ['required', 'string', 'min:1', 'max:250'],
-        'paid_amount' => ['required', 'string', 'min:1', 'max:250'],
+        'paid_amount' => ['required', 'numeric', 'min:0'],
     ]);
 
     // Check if validation fails
-    if ($validator->fails()) {
+    if ($validator->fails()) { 
         return response()->json([
             'status' => false,
             'code' => 400,
@@ -142,27 +144,32 @@ class CourseEnrollementController extends Controller
         $enrollcourse->payment_type = $request->input('payment_type');
         $enrollcourse->payment_status = $request->input('payment_status');
         $enrollcourse->paid_amount = $request->input('paid_amount');
+        
         $timestamp = time(); // Get the current Unix timestamp
         sleep(1);
         $randomString = Str::random(4);
         $randomInteger = random_int(0, 999999);
         $enrollmentno = $timestamp . $randomInteger . $randomString;
-
         $enrollcourse->enrollment_no = $enrollmentno;
         $enrollcourse->save();
 
-        if($request->input('payment_status') == 'partial'){
-            $student->payment_status = 'partial';
-            $student->course_id = $request->input('course_id');
-            $student->paymentType = $request->input('payment_type');
-            
-            
-        } else {
-            $student->payment_status = 'full';
-            $student->course_id = $request->input('course_id');
-            $student->paymentType = $request->input('payment_type');
+        // Generate transaction ID and save payment history
+        $transactionId = 'TXN' . $timestamp . $randomInteger . Str::upper(Str::random(6));
+        $paymentDate = Carbon::now('Asia/Kolkata'); // Get the current date and time in Asia/Kolkata timezone
 
-        }
+        $paymentHistory = new PaymentHistory();
+        $paymentHistory->enrollment_id = $enrollcourse->id;
+        $paymentHistory->transaction_id = $transactionId;
+        $paymentHistory->payment_type = $request->input('payment_type');
+        $paymentHistory->payment_status = $request->input('payment_status');
+        $paymentHistory->paid_amount = $request->input('paid_amount');
+        $paymentHistory->payment_date = $paymentDate;
+        $paymentHistory->save();
+
+        // Update student's payment status and course info
+        $student->payment_status = $request->input('payment_status');
+        $student->course_id = $request->input('course_id');
+        $student->paymentType = $request->input('payment_type');
         $student->save();
 
         DB::commit(); // Commit the transaction
@@ -172,6 +179,7 @@ class CourseEnrollementController extends Controller
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
     }
 }
+
 
 
    
