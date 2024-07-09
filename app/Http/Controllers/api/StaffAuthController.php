@@ -213,10 +213,21 @@ class StaffAuthController extends Controller
     return response()->json($data, $code);
 } 
 
-public function staffList(){
- $staff = StaffModel::orderByDesc('id')->get();
-    return response()->json(['status'=>true,'code'=>200,'data'=>$staff]);
+public function staffList()
+{
+    // Retrieve all staff members ordered by descending ID
+    $staff = StaffModel::orderByDesc('id')->get();
+
+    // Process each staff member to include the full image URL
+    $staff->transform(function ($staffMember) {
+        $staffMember->image = $staffMember->image ? url('/Staffs/' . $staffMember->image) : null;
+        return $staffMember;
+    });
+
+    // Return the response as JSON
+    return response()->json(['status' => true, 'code' => 200, 'data' => $staff]);
 }
+
 
 public function UpdateView($id){
    $staffs = StaffModel::find($id);
