@@ -129,7 +129,7 @@ public function getPaymentHistory(Request $request)
             ->where('courses_enrollements.student_id', $request->student_id)
             ->where('courses_enrollements.course_id', $request->course_id)
             ->select('payment_histories.transaction_id', 'payment_histories.payment_type', 'payment_histories.payment_status', 'payment_histories.paid_amount', 'payment_histories.payment_date')
-            ->get();
+            ->get(); 
 
         if ($paymentHistory->isEmpty()) {
             return response()->json(['status' => false, 'code' => 404, 'message' => 'No payment history found for the specified course and student'], 404);

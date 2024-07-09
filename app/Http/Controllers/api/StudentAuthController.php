@@ -17,40 +17,7 @@ use Illuminate\Validation\Rule;
 
 class StudentAuthController extends Controller
 {
-    // public function studentAuthLogin(Request $request)
-    // {
-
-    // if (Auth::guard('student')->check()) {
-    // // User is already authenticated via token
-    // $user = Auth::guard('student')->user();
-    // $token = $user->createToken('YourAppName')->plainTextToken;
-    // $name = $user->name;
-
-    // return response()->json([
-    //         'token' => $token,
-    //         'name' => $name,
-    //         'message' => 'Student login successfully.',
-    //     ]);
-    // } else {
-    // // Attempt to authenticate the user using email and password
-    // $credentials = $request->only('email', 'password');
-
-    // if (Auth::guard('student')->attempt($credentials)) {
-    //     $user = Auth::guard('student')->user();
-    //     $token = $user->createToken('AwsarClass')->plainTextToken;
-    //     $name = $user->name;
-
-    //   return response()->json([
-    //         'token' => $token,
-    //         'name' => $name,
-    //         'message' => 'Student login successfully.',
-    //     ]);
-    // } else {
-    //     return response()->json(['error' => 'Unauthorized']);
-    // }
-    // }
-    // }
-
+  
     public function studentAuthLogin(Request $request){
      $login = $request->validate([
         'email' => 'required|email',
@@ -218,7 +185,7 @@ class StudentAuthController extends Controller
         return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
     }
 
-
+ 
 
 
     public function StudentCreate(Request $request)
