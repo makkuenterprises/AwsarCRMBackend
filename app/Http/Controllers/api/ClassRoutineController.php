@@ -29,7 +29,7 @@ public function store(Request $request)
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i|after:start_time',
     ]);
-
+ 
     $classRoutine = ClassRoutine::create($validatedData);
 
     // Optionally load subject and batch relationships if needed
