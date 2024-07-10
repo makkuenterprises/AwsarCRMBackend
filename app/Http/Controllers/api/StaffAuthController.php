@@ -193,7 +193,7 @@ class StaffAuthController extends Controller
                         ],
                       
            
-                        ],
+                        ], 
                 ],
                 [
                     'title' => 'Settings',

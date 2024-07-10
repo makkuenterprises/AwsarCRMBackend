@@ -261,7 +261,7 @@ class AdminAuthController extends Controller
     }
     return response()->json($data, $code);
 } 
-
+ 
 
     public function adminAuthLogout(Request $request)
     {

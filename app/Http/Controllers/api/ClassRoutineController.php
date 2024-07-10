@@ -152,11 +152,11 @@ public function destroy($id)
         // Delete the class routine
         $classRoutine->delete();
 
-        // Return a JSON response with a success message and 204 status code (No Content)
+        // Return a JSON response with a success message and 200 status code (OK)
         return response()->json([
             'status' => 'success',
             'message' => 'Class routine deleted successfully',
-        ], 204);
+        ], 200);
 
     } catch (\Exception $e) {
         // Return a JSON response with an error message and 404 status code (Not Found)
@@ -166,5 +166,6 @@ public function destroy($id)
         ], 404);
     }
 }
+
 
 }
