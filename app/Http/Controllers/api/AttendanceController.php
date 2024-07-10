@@ -48,8 +48,6 @@ class AttendanceController extends Controller
     } 
     
 // Get Student By Course Id =================================================================================== 
-
-
 public function getStudents(Request $request, $id) 
 {
     // Validate the request to ensure 'current_date' is present and in the correct format
@@ -96,10 +94,10 @@ public function getStudents(Request $request, $id)
             $totalAbsentDays = $attendances->where('status', 'absent')->count();
 
             // Count the number of absent days for the current month
-            $absentDaysCurrentMonth = $attendances->filter(function ($attendance) use ($currentMonth, $currentYear) {
-                $attendanceDate = Carbon::createFromFormat('Y-m-d', $attendance->date);
-                return $attendance->status === 'absent' && $attendanceDate->format('m') == $currentMonth && $attendanceDate->format('Y') == $currentYear;
-            })->count();
+            $absentDaysCurrentMonth = $attendances->where('status', 'absent')
+                ->whereMonth('date', $currentMonth)
+                ->whereYear('date', $currentYear)
+                ->count();
 
             // Get today's attendance status
             $todayAttendance = $attendances->firstWhere('date', $currentDate);
@@ -128,6 +126,7 @@ public function getStudents(Request $request, $id)
         return response()->json(['status' => false, 'message' => 'Failed to fetch students', 'error' => $e->getMessage()], 500);
     }
 }
+
 
 
 // // All Student Attendance ===================================================================================================
