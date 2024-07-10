@@ -316,7 +316,7 @@ Route::get('/all-student-batch-details', [AttendanceController::class, 'getAllSt
 
 Route::prefix('attendance')->group(function () { 
 
-      Route::get('/list/{course_id}', [AttendanceController::class, 'getStudents']);
+      Route::post('/list/{course_id}', [AttendanceController::class, 'getStudents']);
       Route::get('/list', [AttendanceController::class, 'alllist']);
      
 });  
