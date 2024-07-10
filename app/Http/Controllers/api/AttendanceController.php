@@ -48,8 +48,8 @@ class AttendanceController extends Controller
     
 // Get Student By Course Id =================================================================================== 
 
-
-public function getStudents($id) 
+ 
+public function getStudents( Request $request,$id) 
 {
 
       $validated = $request->validate([
