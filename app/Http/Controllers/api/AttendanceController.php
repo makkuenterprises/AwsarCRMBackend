@@ -48,7 +48,7 @@ class AttendanceController extends Controller
     } 
     
 // Get Student By Course Id =================================================================================== 
-public function getStudents(Request $request, $id) 
+public function getStudents(Request $request,$id) 
 {
     // Validate the request to ensure 'current_date' is present and in the correct format
     $validated = $request->validate([
@@ -231,7 +231,7 @@ public function getAttendanceByDate(Request $request)
 
     try {
         // Get the current date, month, and year
-        $currentDate = date('Y-m-d');
+        $currentDate = $date;
         $currentMonth = date('m');
         $currentYear = date('Y');
 

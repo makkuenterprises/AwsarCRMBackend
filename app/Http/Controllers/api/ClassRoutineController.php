@@ -11,7 +11,7 @@ class ClassRoutineController extends Controller
     //
     public function index()
     {
-        $classRoutines = ClassRoutine::with('subject', 'batch')->get();
+        $classRoutines = ClassRoutine::get();
 
         return response()->json([
             'status' => 'success',
@@ -58,7 +58,7 @@ public function store(Request $request)
 
 
 public function show($batch_id)
-{
+{ 
     try {
         // Retrieve all class routines for the given batch ID
         $classRoutines = ClassRoutine::where('batch_id', $batch_id)
