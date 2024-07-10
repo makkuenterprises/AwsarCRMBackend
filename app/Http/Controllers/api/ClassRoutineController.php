@@ -100,7 +100,7 @@ public function update(Request $request, $id)
     // Validate request data
     $validatedData = $request->validate([
         'subject' => 'required|string',
-        'batch_id' => 'nullable|exists:batches,id',
+        'batch_id' => 'nullable|exists:courses,id',
         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i|after:start_time',
