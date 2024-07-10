@@ -51,7 +51,12 @@ class PaymentGatewayController extends Controller
             'success' => true,
             'code' => 200,
             'message' => $message,
-            'data' => PaymentGateway::first()
+           'data' => [
+                'name' => $gateway->name,
+                'api_key' => $gateway->api_key,
+                'api_secret' => $gateway->api_secret,
+                'description' => $gateway->description,
+            ]
         ], 200);
     }
 }
