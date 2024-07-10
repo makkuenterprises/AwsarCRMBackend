@@ -387,4 +387,7 @@ Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
 Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
 Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
 
- 
+//  payment Gateway============================================================
+
+Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
+Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
