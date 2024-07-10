@@ -163,6 +163,7 @@ class AdminAuthController extends Controller
                     'to' => 'attendance-list-for-admin',
                       
                 ],
+                
                 [
                     'title' => 'Study Material',
                     'classsChange' => 'mm-collapse',	
@@ -229,6 +230,11 @@ class AdminAuthController extends Controller
                       
            
                         ],
+                ],
+                 [
+                    'title' => 'Leave Request',
+                    'iconStyle' => '<i className="material-icons">settings</i>',
+                    'to' => 'leave-request',
                 ],
                 [
                     'title' => 'Settings',

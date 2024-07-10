@@ -178,10 +178,22 @@ class StaffAuthController extends Controller
            
                         ],
                 ],
-                [
+                   [
                     'title' => 'Leave Request',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'settings',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        'content'=> [
+                        [
+                            'title'=> 'lists Of Leave Request',
+                            'to'=> 'view-leaveRequest',					
+                        ],
+                        [
+                            'title'=> 'Create Leave Request',
+                            'to'=> 'create-leaveRequest',
+                        ],
+                      
+           
+                        ],
                 ],
                 [
                     'title' => 'Settings',
