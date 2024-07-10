@@ -51,6 +51,10 @@ class AttendanceController extends Controller
 
 public function getStudents($id) 
 {
+
+      $validated = $request->validate([
+            'current_date' => 'required|date_format:d-m-y',
+        ]);
     // Find the course by ID
     $course = Course::find($id);
     if (!$course) {
@@ -74,7 +78,7 @@ public function getStudents($id)
         $data = [];
 
         // Get the current date, month, and year
-        $currentDate = date('Y-m-d');
+        $currentDate = $validated['current_date'];
         $currentMonth = date('m');
         $currentYear = date('Y');
 

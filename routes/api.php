@@ -391,3 +391,4 @@ Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy'])
 
 Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
 Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
+ 
