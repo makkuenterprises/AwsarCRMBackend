@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\CoursesEnrollement;
+use Illuminate\Support\Carbon;
 use App\Models\Course;
 use Illuminate\Support\Facades\Validator;
 
@@ -48,13 +49,14 @@ class AttendanceController extends Controller
     
 // Get Student By Course Id =================================================================================== 
 
- 
-public function getStudents( Request $request,$id) 
-{
 
-      $validated = $request->validate([
-            'current_date' => 'required|date_format:d-m-y',
-        ]);
+public function getStudents(Request $request, $id) 
+{
+    // Validate the request to ensure 'current_date' is present and in the correct format
+    $validated = $request->validate([
+        'current_date' => 'required|date_format:d-m-y',
+    ]);
+
     // Find the course by ID
     $course = Course::find($id);
     if (!$course) {
@@ -77,10 +79,10 @@ public function getStudents( Request $request,$id)
         // Initialize data array to store students' details
         $data = [];
 
-        // Get the current date, month, and year
-        $currentDate = $validated['current_date'];
-        $currentMonth = date('m');
-        $currentYear = date('Y');
+        // Get the current date from the validated request
+        $currentDate = Carbon::createFromFormat('d-m-y', $validated['current_date'])->format('Y-m-d');
+        $currentMonth = Carbon::createFromFormat('d-m-y', $validated['current_date'])->format('m');
+        $currentYear = Carbon::createFromFormat('d-m-y', $validated['current_date'])->format('Y');
 
         // Iterate through each student to fetch attendance details
         foreach ($students as $student) {
@@ -95,7 +97,7 @@ public function getStudents( Request $request,$id)
 
             // Count the number of absent days for the current month
             $absentDaysCurrentMonth = $attendances->filter(function ($attendance) use ($currentMonth, $currentYear) {
-                $attendanceDate = \DateTime::createFromFormat('Y-m-d', $attendance->date);
+                $attendanceDate = Carbon::createFromFormat('Y-m-d', $attendance->date);
                 return $attendance->status === 'absent' && $attendanceDate->format('m') == $currentMonth && $attendanceDate->format('Y') == $currentYear;
             })->count();
 
@@ -126,6 +128,7 @@ public function getStudents( Request $request,$id)
         return response()->json(['status' => false, 'message' => 'Failed to fetch students', 'error' => $e->getMessage()], 500);
     }
 }
+
 
 // // All Student Attendance ===================================================================================================
 // public function getAllStudentBatchDetails(Request $request)
