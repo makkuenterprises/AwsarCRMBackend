@@ -11,12 +11,18 @@ class ClassRoutineController extends Controller
     //
     public function index()
     {
-        $classRoutines = ClassRoutine::get();
+       // Fetch all class routines
+$classRoutines = ClassRoutine::get();
+
+// Group the class routines by 'day_of_week' and 'batch_id'
+$groupedData = $classRoutines->groupBy(function ($routine) {
+    return $routine->day_of_week . '_' . $routine->batch_id;
+})->values()->all();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Class routines retrieved successfully',
-            'data' => $classRoutines
+            'data' => $groupedData
         ], 200);
     }
 
