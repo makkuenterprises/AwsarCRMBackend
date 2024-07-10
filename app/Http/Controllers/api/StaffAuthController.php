@@ -185,11 +185,11 @@ class StaffAuthController extends Controller
                         'content'=> [
                         [
                             'title'=> 'lists Of Leave Request',
-                            'to'=> 'view-leaveRequest',					
+                            'to'=> 'view-leave-request',					
                         ],
                         [
                             'title'=> 'Create Leave Request',
-                            'to'=> 'create-leaveRequest',
+                            'to'=> 'create-leave-request',
                         ],
                       
            

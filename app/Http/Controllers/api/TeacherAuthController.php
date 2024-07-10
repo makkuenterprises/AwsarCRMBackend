@@ -163,18 +163,18 @@ class TeacherAuthController extends Controller
                         ],
                 ],
                
-                  [
+                   [
                     'title' => 'Leave Request',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
                         'content'=> [
                         [
                             'title'=> 'lists Of Leave Request',
-                            'to'=> 'view-leaveRequest',					
+                            'to'=> 'view-leave-request',					
                         ],
                         [
                             'title'=> 'Create Leave Request',
-                            'to'=> 'create-leaveRequest',
+                            'to'=> 'create-leave-request',
                         ],
                       
            
