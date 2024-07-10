@@ -159,8 +159,8 @@ class AdminAuthController extends Controller
                 ],
                 [
                     'title' => 'Attendance',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        'to' => 'attendance-list-for-admin',
+                    'iconStyle' => '<i className="merial-icons">article</i>',
+                    'to' => 'attendance-list-for-admin',
                       
                 ],
                 [

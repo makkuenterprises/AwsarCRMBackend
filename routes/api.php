@@ -15,6 +15,7 @@ use App\Http\Controllers\api\StudyMaterialsController;
 use App\Http\Controllers\api\DetailsController;
 use App\Http\Controllers\api\LeaveRequestController;
 use App\Http\Controllers\api\ClassRoutineController;
+use App\Http\Controllers\api\PaymentGatewayController;
 
 
 

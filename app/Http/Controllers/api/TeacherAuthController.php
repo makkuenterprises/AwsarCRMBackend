@@ -77,10 +77,23 @@ class TeacherAuthController extends Controller
            
                         ],
                 ],
-                [
-                 'title' => 'Attendance',
-                 'iconStyle' => '<i className="merial-icons">article</i>',
-                 'to' => 'attendance-list-for-teacher',
+              
+                 [
+                    'title' => 'Attendance',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">article</i>',
+                        'content'=> [
+                        [
+                            'title'=> 'Attendance',
+                            'to'=> 'attendance-list-for-teacher',					
+                        ],
+                        [
+                            'title'=> 'Create Attendance',
+                            'to'=> 'create-attendance',
+                        ],
+                      
+           
+                        ],
                 ],
                  [
                     'title' => 'Study Material',
