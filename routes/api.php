@@ -394,4 +394,4 @@ Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
 Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
  
 
-Route::get('data-dashboard', [DashboardData::class, 'counts']);
+Route::get('data-dashboard', [DashboardData::class, 'dashboardaData']);

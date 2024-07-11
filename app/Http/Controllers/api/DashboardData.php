@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class DashboardData extends Controller
 {
-    public function counts()
+    public function dashboardaData()
     {        
         try {
             $teachersCount = Teacher::count();
