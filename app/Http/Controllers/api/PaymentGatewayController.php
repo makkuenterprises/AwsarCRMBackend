@@ -1,8 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\api;
-
 use App\Http\Controllers\Controller;
+
+use App\Models\Teacher;
+use App\Models\StaffModel;
+use App\Models\Student;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Models\PaymentGateway;
 
