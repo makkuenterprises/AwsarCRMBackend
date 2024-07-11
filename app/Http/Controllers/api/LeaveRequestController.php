@@ -182,7 +182,7 @@ public function handleLeaveRequestUpdate(Request $request)
         if ($result) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'Leave Request Updated',
+                'message' => 'Remark Done',
                 'data' => $leave_request, // Optionally return updated leave request data
             ], 200);
         } else {
