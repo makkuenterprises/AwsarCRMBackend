@@ -11,14 +11,14 @@ class ZoomService
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(); 
     }
 
-  private function generateJWT()
+private function generateJWT()
 {
     $key = env('ZOOM_API_KEY');
-    $secret = (string) env('ZOOM_API_SECRET'); // Explicitly cast to string
-    $algorithm = 'HS256'; // Algorithm used for encoding JWT
+    $secret = env('ZOOM_API_SECRET');
+    $algorithm = 'HS256'; 
 
     $payload = [
         'iss' => $key,
@@ -27,6 +27,7 @@ class ZoomService
 
     return JWT::encode($payload, $secret, $algorithm);
 }
+
 
 
  public function createMeeting($data)

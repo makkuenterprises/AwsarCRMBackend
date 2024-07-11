@@ -52,9 +52,9 @@ return [
         'provider' => 'admins',
         ],
 
-         'student' => [ 
+        'student' => [ 
         'driver' => 'sanctum',
-        'provider' => 'students',
+        'provider' => 'students', 
         ],
 
          'teacher' => [
