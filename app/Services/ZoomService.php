@@ -18,11 +18,12 @@ class ZoomService
     {
         $key = env('ZOOM_API_KEY');
         $secret = env('ZOOM_API_SECRET');
-        $payload = [
-            'iss' => $key,
-            'exp' => Carbon::now()->addMinute()->timestamp,
-        ];
+       
           $algorithm = 'HS256'; 
+            $payload = [
+        'iss' => $key,
+        'exp' => Carbon::now()->addMinutes(15)->timestamp, // Example: JWT valid for 15 minutes
+    ];
 
           return JWT::encode($payload, $secret, $algorithm);
     }
