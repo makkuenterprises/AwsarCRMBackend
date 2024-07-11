@@ -31,20 +31,20 @@ class ZoomController extends Controller
     return redirect()->away($authorizationUrl)->header('Authorization', $authorizationHeader);
 }
 
-
-   public function handleZoomCallback(Request $request)
+    //  'client_id' => "iG8rs9fKS5qO9nUh2xkvQ",
+    //     'client_secret' => "WjuzwgKObaToMSGPgD5APb9TZFLCSxPR"
+public function handleZoomCallback(Request $request)
 {
     $code = $request->input('code');
 
     $response = Http::asForm()->post('https://zoom.us/oauth/token', [
         'grant_type' => 'authorization_code',
         'code' => $code,
-        'redirect_uri' => "env('ZOOM_REDIRECT_URI')",
-        'client_id' => "iG8rs9fKS5qO9nUh2xkvQ",
-        'client_secret' => "WjuzwgKObaToMSGPgD5APb9TZFLCSxPR"
+        'redirect_uri' => env('ZOOM_REDIRECT_URI'),
+        'client_id' => env('ZOOM_CLIENT_ID'),
+        'client_secret' => env('ZOOM_CLIENT_SECRET')
     ]);
-// ZOOM_CLIENT_ID="iG8rs9fKS5qO9nUh2xkvQ"
-// ZOOM_CLIENT_SECRET="WjuzwgKObaToMSGPgD5APb9TZFLCSxPR"
+
     if ($response->successful()) {
         $data = $response->json();
         Session::put('zoom_access_token', $data['access_token']);
@@ -53,6 +53,7 @@ class ZoomController extends Controller
 
     return response()->json(['error' => 'Failed to authenticate with Zoom'], $response->status());
 }
+
 
     public function createMeeting(Request $request)
     {
