@@ -73,7 +73,7 @@ class PaymentGatewayController extends Controller
             $coursesCount = Course::count();
 
             $partialPaymentStudentsCount =  DB::table('students')
-    ->join('courses_enrollments', 'students.id', '=', 'courses_enrollments.student_id')
+    ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->where('students.payment_status', 'partial')
     ->distinct('students.id')
     ->count('students.id');
