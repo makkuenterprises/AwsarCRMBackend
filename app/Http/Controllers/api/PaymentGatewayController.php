@@ -84,14 +84,14 @@ class PaymentGatewayController extends Controller
         $query->select(DB::raw(1))
               ->from('courses_enrollements')
               ->whereRaw('courses_enrollements.student_id = students.id');
-    })
+    }) 
     ->count();
     $enrollStudentsCount = DB::table('students')
     ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->distinct('students.id')
     ->count('students.id');
           $fullPaymentStudentsCount = DB::table('students')
-    ->join('courses_enrollments', 'students.id', '=', 'courses_enrollments.student_id')
+    ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->where('students.payment_status', 'full')
     ->distinct('students.id')
     ->count('students.id');
