@@ -75,11 +75,13 @@ class PaymentGatewayController extends Controller
             $partialPaymentStudentsCount = Student::where('payment_status', 'partial')->count();
             // $notEnrollStudentsCount = Student::where('course_name', 'Not Enrolled')->count();
 
-           $notEnrollStudentsCount = DB::table('students')
-    ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-    ->whereNull('courses_enrollements.student_id')
-    ->distinct('students.id')
-    ->count('students.id');
+          $notEnrollStudentsCount = DB::table('students')
+    ->whereNotExists(function ($query) {
+        $query->select(DB::raw(1))
+              ->from('courses_enrollments')
+              ->whereRaw('courses_enrollments.student_id = students.id');
+    })
+    ->count();
             $fullPaymentStudentsCount = Student::where('payment_status', 'full')->count();
 
             return response()->json([ 
