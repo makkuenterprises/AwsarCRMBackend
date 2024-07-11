@@ -22,7 +22,7 @@ private function generateJWT()
         $key="cfG6uYRdQPuYqkHHfmVhAg";
        $secret="ZRKN6abp0jZ26NqbSQhQHWyNCicZGWWI";
         $algorithm = 'HS256';
-dd($key, $secret);
+// dd($key, $secret);
         if (!$key || !$secret) {
             throw new \Exception('Zoom API credentials are missing or incorrect.');
         }
