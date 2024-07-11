@@ -19,7 +19,7 @@ private function generateJWT()
         $key = env('ZOOM_API_KEY');
         $secret = env('ZOOM_API_SECRET');
         $algorithm = 'HS256';
-
+dd($key, $secret);
         if (!$key || !$secret) {
             throw new \Exception('Zoom API credentials are missing or incorrect.');
         }
@@ -30,7 +30,7 @@ private function generateJWT()
         ];
 
         $token = JWT::encode($payload, $secret, $algorithm);
-
+ 
         // Log the generated token for debugging
         \Log::info('Generated JWT token: ' . $token);
 
