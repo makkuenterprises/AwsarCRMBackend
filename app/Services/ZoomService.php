@@ -14,19 +14,20 @@ class ZoomService
         $this->client = new Client();
     }
 
-    private function generateJWT()
-    {
-        $key = env('ZOOM_API_KEY');
-        $secret = env('ZOOM_API_SECRET');
-       
-          $algorithm = 'HS256'; 
-            $payload = [
+  private function generateJWT()
+{
+    $key = env('ZOOM_API_KEY');
+    $secret = (string) env('ZOOM_API_SECRET'); // Explicitly cast to string
+    $algorithm = 'HS256'; // Algorithm used for encoding JWT
+
+    $payload = [
         'iss' => $key,
         'exp' => Carbon::now()->addMinutes(15)->timestamp, // Example: JWT valid for 15 minutes
     ];
 
-          return JWT::encode($payload, $secret, $algorithm);
-    }
+    return JWT::encode($payload, $secret, $algorithm);
+}
+
 
     public function createMeeting($data)
     {
