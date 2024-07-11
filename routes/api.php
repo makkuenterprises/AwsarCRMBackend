@@ -16,7 +16,7 @@ use App\Http\Controllers\api\DetailsController;
 use App\Http\Controllers\api\LeaveRequestController;
 use App\Http\Controllers\api\ClassRoutineController;
 use App\Http\Controllers\api\PaymentGatewayController;
-use App\Http\Controllers\api\DashboardController;
+use App\Http\Controllers\api\DashboardData;
 
 
 
@@ -394,4 +394,4 @@ Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
 Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
  
 
-Route::get('data-dashboard', [DashboardController::class, 'counts']);
+Route::get('data-dashboard', [DashboardData::class, 'counts']);
