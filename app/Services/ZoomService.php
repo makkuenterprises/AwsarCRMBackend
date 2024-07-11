@@ -14,11 +14,11 @@ class ZoomService
         $this->client = new Client(); 
     }
 
-private function generateJWT()
+private function generateJWT() 
 {
      $key = env('ZOOM_API_KEY');
     $secret = (string) env('ZOOM_API_SECRET'); // Explicitly cast to string
-    $algorithm = 'HS256';
+    $algorithm = 'HS256'; 
 
     $payload = [
         'iss' => $key,
