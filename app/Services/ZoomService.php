@@ -13,23 +13,30 @@ class ZoomService
     {
         $this->client = new Client(); 
     }
-
-private function generateJWT() 
+private function generateJWT()
 {
-    //  $key = env('ZOOM_API_KEY');
-    // $secret = (string) env('ZOOM_API_SECRET'); // Explicitly cast to string
+    try {
+        $key = env('ZOOM_API_KEY');
+        $secret = env('ZOOM_API_SECRET');
+        $algorithm = 'HS256';
 
-      $key ="cfG6uYRdQPuYqkHHfmVhAg";
- $secret = "ZRKN6abp0jZ26NqbSQhQHWyNCicZGWWI";
-    $algorithm = 'HS256'; 
+        if (!$key || !$secret) {
+            throw new \Exception('Zoom API credentials are missing.');
+        }
 
-    $payload = [
-        'iss' => $key,
-        'exp' => Carbon::now()->addMinutes(15)->timestamp, // Example: JWT valid for 15 minutes
-    ];
+        $payload = [
+            'iss' => $key,
+            'exp' => Carbon::now()->addMinutes(15)->timestamp, // Example: JWT valid for 15 minutes
+        ];
 
-    return JWT::encode($payload, $secret, $algorithm);
+        return JWT::encode($payload, $secret, $algorithm);
+    } catch (\Exception $e) {
+        // Log the error or handle it accordingly
+        \Log::error('Error generating JWT token: ' . $e->getMessage());
+        return null; // Or throw an exception depending on your error handling strategy
+    }
 }
+
 
 
 
