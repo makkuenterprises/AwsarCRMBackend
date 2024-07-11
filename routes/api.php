@@ -370,6 +370,7 @@ Route::prefix('leave-request')->group(function () {
  
       Route::get('/list', [LeaveRequestController::class, 'viewLeaveRequestList']);
       Route::post('/update-status/{id}', [LeaveRequestController::class, 'handleLeaveRequestUpdate']);
+      Route::post('/update-remark/{id}', [LeaveRequestController::class, 'handleLeaveRequestUpdateRemark']);
      
 });   
  

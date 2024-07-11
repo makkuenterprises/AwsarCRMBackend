@@ -140,6 +140,70 @@ public function handleLeaveRequestUpdate(Request $request)
 } 
 
  
+
+
+
+ public function handleLeaveRequestUpdateRemark(Request $request)
+{
+    // Validate the request data
+    $validation = Validator::make($request->all(), [
+        'remark' => ['required', 'string'], 
+        'id' => ['required', 'string'],
+        'role' => ['required', 'string'],
+        'name' => ['required', 'string'], 
+    ]);
+
+    // Check if validation fails
+    if ($validation->fails()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation Error',
+            'errors' => $validation->errors(),
+        ], 400);
+    }
+
+    try {
+        // Find the leave request by ID or fail if not found
+        $leave_request = LeaveRequest::findOrFail($request->input('id'));
+
+        // Concatenate the guard name and user name for approved_by field
+        $userName = $request->input('name');
+        $role = $request->input('role');
+        $approvedBy = $role . ' -> ' . $userName;
+
+        // Update leave request status and approved_by
+        $leave_request->remark = $request->input('remark');
+        $leave_request->approved_by = $approvedBy;
+
+        // Save the leave request
+        $result = $leave_request->save();
+
+        // Check if update was successful
+        if ($result) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Leave Request Updated',
+                'data' => $leave_request, // Optionally return updated leave request data
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Internal Server Error',
+            ], 500);
+        }
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Leave Request not found',
+        ], 404);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Exception Occurred',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+} 
 // ============================================================================================================
 // lists status-----------------------------------------------------------------------------------------------
 // ============================================================================================================
