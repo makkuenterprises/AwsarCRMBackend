@@ -22,6 +22,7 @@ class ZoomService
             'iss' => $key,
             'exp' => Carbon::now()->addMinute()->timestamp,
         ];
+          $algorithm = 'HS256'; 
 
           return JWT::encode($payload, $secret, $algorithm);
     }
