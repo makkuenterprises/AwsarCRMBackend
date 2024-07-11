@@ -13,27 +13,27 @@ class DashboardData extends Controller
     public function dashboardaData()
     {
         try {
-            $teachersCount = Teacher::count();
-            $studentsCount = Student::count();
-            $staffCount = StaffModel::count();
-            $coursesCount = Course::count();
+            // $teachersCount = Teacher::count();
+            // $studentsCount = Student::count();
+            // $staffCount = StaffModel::count();
+            // $coursesCount = Course::count();
 
-            $partialPaymentStudentsCount = Student::where('payment_status', 'partial')->count();
-            $notEnrollStudentsCount = Student::where('course', 'Not Enrolled')->count();
-            $fullPaymentStudentsCount = Student::where('payment_status', 'full')->count();
+            // $partialPaymentStudentsCount = Student::where('payment_status', 'partial')->count();
+            // $notEnrollStudentsCount = Student::where('course', 'Not Enrolled')->count();
+            // $fullPaymentStudentsCount = Student::where('payment_status', 'full')->count();
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'teachersCount' => $teachersCount,
-                    'studentsCount' => $studentsCount,
-                    'staffCount' => $staffCount,
-                    'coursesCount' => $coursesCount,
-                    'partialPaymentStudentsCount' => $partialPaymentStudentsCount,
-                    'fullPaymentStudentsCount' => $fullPaymentStudentsCount,
-                    'notEnrollStudentsCount' => $notEnrollStudentsCount,
-                ],
-            ], 200);
+            // return response()->json([
+            //     'success' => true,
+            //     'data' => [
+            //         'teachersCount' => $teachersCount,
+            //         'studentsCount' => $studentsCount,
+            //         'staffCount' => $staffCount,
+            //         'coursesCount' => $coursesCount,
+            //         'partialPaymentStudentsCount' => $partialPaymentStudentsCount,
+            //         'fullPaymentStudentsCount' => $fullPaymentStudentsCount,
+            //         'notEnrollStudentsCount' => $notEnrollStudentsCount,
+            //     ],
+            // ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
