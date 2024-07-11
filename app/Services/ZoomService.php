@@ -19,8 +19,8 @@ private function generateJWT()
         // $key = env('ZOOM_API_KEY');
         // $secret = env('ZOOM_API_SECRET');
 
-        $key="cfG6uYRdQPuYqkHHfmVhAg";
-       $secret="ZRKN6abp0jZ26NqbSQhQHWyNCicZGWWI";
+        $key="YODxZhcS7eluhFDKlzaUA";
+       $secret="kCEn3DZjNHgY4BxKV4heoeou0eUobmGT";
         $algorithm = 'HS256';
 // dd($key, $secret);
         if (!$key || !$secret) {
@@ -36,6 +36,7 @@ private function generateJWT()
  
         // Log the generated token for debugging
         \Log::info('Generated JWT token: ' . $token);
+// dd($token);
 
         return $token;
     } catch (\Exception $e) {
