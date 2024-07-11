@@ -29,8 +29,9 @@ class ZoomService
 }
 
 
-    public function createMeeting($data)
-    {
+ public function createMeeting($data)
+{
+    try {
         $token = $this->generateJWT();
         $response = $this->client->post('https://api.zoom.us/v2/users/me/meetings', [
             'headers' => [
@@ -44,13 +45,18 @@ class ZoomService
                 'duration'   => $data['duration'],  // Duration in minutes
                 'agenda'     => $data['agenda'],
                 'settings'   => [
-                    'host_video'      => false,
+                    'host_video'        => false,
                     'participant_video' => false,
-                    'waiting_room'    => true,
+                    'waiting_room'      => true,
                 ],
             ],
         ]);
 
         return json_decode($response->getBody()->getContents());
+    } catch (\Exception $e) {
+        // Handle exceptions, e.g., log error messages, retry token generation, etc.
+        return ['error' => $e->getMessage()];
     }
+}
+
 } 
