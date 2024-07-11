@@ -8,7 +8,7 @@ use App\Http\Controllers\api\TeacherAuthController;
 use App\Http\Controllers\api\StaffAuthController;
 use App\Http\Controllers\api\CourseController;
 use App\Http\Controllers\api\NotificationController;
-use App\Http\Controllers\api\MeetingCreateController;
+// use App\Http\Controllers\api\MeetingCreateController;
 use App\Http\Controllers\api\AttendanceController;
 use App\Http\Controllers\api\CourseEnrollementController;
 use App\Http\Controllers\api\StudyMaterialsController;
@@ -354,11 +354,11 @@ Route::prefix('attendance')->group(function () {
 // MEETING ROUTES
 // ------------------------------------------------------------------------------------------------
 
-Route::prefix('meeting')->group(function () {
+// Route::prefix('meeting')->group(function () {
  
-      Route::post('/create', [MeetingCreateController::class, 'create']);
+//       Route::post('/create', [MeetingCreateController::class, 'create']);
      
-});
+// });
 
 
 // ---------------------------------------------------------------------------------------------------------

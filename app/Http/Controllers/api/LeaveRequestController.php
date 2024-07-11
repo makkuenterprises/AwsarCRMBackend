@@ -77,7 +77,6 @@ public function handleLeaveRequestCreate(Request $request)
 // update status-----------------------------------------------------------------------------------------------
 // ============================================================================================================
 
-
 public function handleLeaveRequestUpdate(Request $request)
 {
     // Validate the request data
@@ -85,7 +84,7 @@ public function handleLeaveRequestUpdate(Request $request)
         'status' => ['required', 'string'],
         'id' => ['required', 'string'],
         'role' => ['required', 'string'],
-        'name' => ['required', 'string'],
+        'name' => ['required', 'string'], 
     ]);
 
     // Check if validation fails
@@ -98,28 +97,19 @@ public function handleLeaveRequestUpdate(Request $request)
     }
 
     try {
-        // Find the leave request by ID
-        $leave_request = LeaveRequest::find($request->input('id'));
+        // Find the leave request by ID or fail if not found
+        $leave_request = LeaveRequest::findOrFail($request->input('id'));
 
-        // Check if leave request exists
-        if (!$leave_request) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Leave Request not found',
-            ], 404);
-        }
+        // Concatenate the guard name and user name for approved_by field
+        $userName = $request->input('name');
+        $role = $request->input('role');
+        $approvedBy = $role . ' -> ' . $userName;
 
-         $userName = $request->input('name');
-
-    // Get the name of the guard being used
-    $role = $request->input('role');
-
-    // Concatenate the guard name and user name
-    $approvedBy = $role . ' -> ' . $userName;
-
-        // Update leave request status
+        // Update leave request status and approved_by
         $leave_request->status = $request->input('status');
-        $leave_request->approved_by = $approvedBy;  
+        $leave_request->approved_by = $approvedBy;
+
+        // Save the leave request
         $result = $leave_request->save();
 
         // Check if update was successful
@@ -135,6 +125,11 @@ public function handleLeaveRequestUpdate(Request $request)
                 'message' => 'Internal Server Error',
             ], 500);
         }
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Leave Request not found',
+        ], 404);
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
@@ -142,7 +137,8 @@ public function handleLeaveRequestUpdate(Request $request)
             'error' => $e->getMessage(),
         ], 500);
     }
-}
+} 
+
  
 // ============================================================================================================
 // lists status-----------------------------------------------------------------------------------------------
