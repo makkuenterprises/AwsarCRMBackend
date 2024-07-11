@@ -81,7 +81,7 @@ public function handleLeaveRequestUpdate(Request $request)
 {
     // Validate the request data
     $validation = Validator::make($request->all(), [
-        'status' => ['required', 'string'],
+        'status' => ['required', 'string'], 
         'id' => ['required', 'string'],
         'role' => ['required', 'string'],
         'name' => ['required', 'string'], 
