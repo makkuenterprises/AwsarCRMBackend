@@ -72,7 +72,11 @@ class PaymentGatewayController extends Controller
             $staffCount = StaffModel::count();
             $coursesCount = Course::count();
 
-            $partialPaymentStudentsCount = Student::where('payment_status', 'partial')->count();
+            $partialPaymentStudentsCount =  DB::table('students')
+    ->join('courses_enrollments', 'students.id', '=', 'courses_enrollments.student_id')
+    ->where('students.payment_status', 'partial')
+    ->distinct('students.id')
+    ->count('students.id');
             // $notEnrollStudentsCount = Student::where('course_name', 'Not Enrolled')->count();
 
           $notEnrollStudentsCount = DB::table('students')
@@ -86,7 +90,11 @@ class PaymentGatewayController extends Controller
     ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->distinct('students.id')
     ->count('students.id');
-            $fullPaymentStudentsCount = Student::where('payment_status', 'full')->count();
+          $fullPaymentStudentsCount = DB::table('students')
+    ->join('courses_enrollments', 'students.id', '=', 'courses_enrollments.student_id')
+    ->where('students.payment_status', 'full')
+    ->distinct('students.id')
+    ->count('students.id');
 
             return response()->json([ 
                 'success' => true,
