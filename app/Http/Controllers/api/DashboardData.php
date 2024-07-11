@@ -1,30 +1,26 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Teacher;
 use App\Models\StaffModel;
 use App\Models\Student;
 use App\Models\Course;
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 
 class DashboardData extends Controller
 {
     public function dashboardaData()
-    {        
+    {
         try {
             $teachersCount = Teacher::count();
             $studentsCount = Student::count();
             $staffCount = StaffModel::count();
             $coursesCount = Course::count();
 
-            $partialPaymentStudentsCount = Student::where('payment_status', 'partial')
-                                        ->count();
-
-            $notEnrollStudentsCount = Student::where('course', 'Not Enrolled')
-                                        ->count();
-
-             $fullPaymentStudentsCount = Student::where('payment_status', 'full')
-                                        ->count();
+            $partialPaymentStudentsCount = Student::where('payment_status', 'partial')->count();
+            $notEnrollStudentsCount = Student::where('course', 'Not Enrolled')->count();
+            $fullPaymentStudentsCount = Student::where('payment_status', 'full')->count();
 
             return response()->json([
                 'success' => true,
@@ -34,8 +30,8 @@ class DashboardData extends Controller
                     'staffCount' => $staffCount,
                     'coursesCount' => $coursesCount,
                     'partialPaymentStudentsCount' => $partialPaymentStudentsCount,
-                    'fullPaymentStudentsCount' => $pendingStudentsCount,
-                    'pendingStudentsCount' => $pendingStudentsCount,
+                    'fullPaymentStudentsCount' => $fullPaymentStudentsCount,
+                    'notEnrollStudentsCount' => $notEnrollStudentsCount,
                 ],
             ], 200);
         } catch (\Exception $e) {
@@ -47,8 +43,3 @@ class DashboardData extends Controller
         }
     }
 }
-
-
-
-
-
