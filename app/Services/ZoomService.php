@@ -23,7 +23,7 @@ class ZoomService
             'exp' => Carbon::now()->addMinute()->timestamp,
         ];
 
-        return JWT::encode($payload, $secret);
+          return JWT::encode($payload, $secret, $algorithm);
     }
 
     public function createMeeting($data)
