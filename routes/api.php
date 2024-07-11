@@ -18,6 +18,7 @@ use App\Http\Controllers\api\ClassRoutineController;
 use App\Http\Controllers\api\PaymentGatewayController; 
 use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\MeetingController;
+use App\Http\Controllers\ZoomController;
 
 
 
@@ -399,4 +400,5 @@ Route::get('data-dashboard', [PaymentGatewayController::class, 'dashboardaData']
 
 // Route::get('data-dashboard', [DashboardData::class, 'dashboardaData']);
 
-Route::post('create-meeting', [MeetingController::class, 'create']);
+Route::get('/zoom/authorize', [ZoomController::class, 'redirectToZoom']);
+Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);

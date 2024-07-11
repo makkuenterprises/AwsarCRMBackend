@@ -1,88 +1,80 @@
 <?php
-namespace App\Services;
 
-use GuzzleHttp\Client;
-use Firebase\JWT\JWT;
-use Illuminate\Support\Carbon;
+namespace App\Http\Controllers;
 
-class ZoomService
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
+
+class ZoomController extends Controller
 {
-    protected $client;
-
-    public function __construct()
-    {
-        $this->client = new Client(); 
-    }
-private function generateJWT()
+   public function redirectToZoom()
 {
-    try {
-        // $key = env('ZOOM_API_KEY');
-        // $secret = env('ZOOM_API_SECRET');
+    // Encode client_id and client_secret to Base64
+    $base64Credentials = base64_encode(env('ZOOM_CLIENT_ID') . ':' . env('ZOOM_CLIENT_SECRET'));
 
-        $key="YODxZhcS7eluhFDKlzaUA";
-       $secret="kCEn3DZjNHgY4BxKV4heoeou0eUobmGT";
-        $algorithm = 'HS256';
-// dd($key, $secret);
-        if (!$key || !$secret) {
-            throw new \Exception('Zoom API credentials are missing or incorrect.');
-        }
+    // Build the authorization header
+    $authorizationHeader = 'Basic ' . $base64Credentials;
 
-        $payload = [
-            'iss' => $key,
-            'exp' => Carbon::now()->addMinutes(15)->timestamp, // Example: JWT valid for 15 minutes
-        ];
+    // Redirect URL construction
+    $query = http_build_query([
+        'response_type' => 'code',
+        'client_id' => env('ZOOM_CLIENT_ID'),
+        'redirect_uri' => env('ZOOM_REDIRECT_URI'),
+        'scope' => 'meeting:write meeting:read'
+    ]);
 
-        $token = JWT::encode($payload, $secret, $algorithm);
- 
-        // Log the generated token for debugging
-        \Log::info('Generated JWT token: ' . $token);
-// dd($token);
+    // Construct the full authorization URL
+    $authorizationUrl = 'https://zoom.us/oauth/authorize?' . $query;
 
-        return $token;
-    } catch (\Exception $e) {
-        // Log the error or handle it accordingly
-        \Log::error('Error generating JWT token: ' . $e->getMessage());
-        return null; // Or throw an exception depending on your error handling strategy
-    }
+    // Redirect the user with the authorization header
+    return redirect()->away($authorizationUrl)->header('Authorization', $authorizationHeader);
 }
- 
- 
-public function createMeeting($data)
+
+
+   public function handleZoomCallback(Request $request)
 {
-    try {
-        $token = $this->generateJWT();
+    $code = $request->input('code');
 
-          if (!$token) {
-            throw new \Exception('Failed to generate valid JWT token.');
-        }
+    $response = Http::asForm()->post('https://zoom.us/oauth/token', [
+        'grant_type' => 'authorization_code',
+        'code' => $code,
+        'redirect_uri' => "env('ZOOM_REDIRECT_URI')",
+        'client_id' => "iG8rs9fKS5qO9nUh2xkvQ",
+        'client_secret' => "WjuzwgKObaToMSGPgD5APb9TZFLCSxPR"
+    ]);
+// ZOOM_CLIENT_ID="iG8rs9fKS5qO9nUh2xkvQ"
+// ZOOM_CLIENT_SECRET="WjuzwgKObaToMSGPgD5APb9TZFLCSxPR"
+    if ($response->successful()) {
+        $data = $response->json();
+        Session::put('zoom_access_token', $data['access_token']);
+        return response()->json(['message' => 'Zoom authorization successful', 'access_token' => $data['access_token']], 200);
+    }
 
+    return response()->json(['error' => 'Failed to authenticate with Zoom'], $response->status());
+}
 
-        $response = $this->client->post('https://api.zoom.us/v2/users/me/meetings', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type'  => 'application/json',
-            ],
-            'json' => [
-                'topic'      => $data['topic'],
-                'type'       => 2,
-                'start_time' => $data['start_time'],
-                'duration'   => $data['duration'],  // Duration in minutes
-                'agenda'     => $data['agenda'],
-                'settings'   => [
-                    'host_video'        => false,
-                    'participant_video' => false,
-                    'waiting_room'      => true,
-                ],
+    public function createMeeting(Request $request)
+    {
+        $accessToken = Session::get('zoom_access_token');
+
+        $response = Http::withToken($accessToken)->post('https://api.zoom.us/v2/users/me/meetings', [
+            'topic' => $request->input('topic'),
+            'type' => 2,
+            'start_time' => $request->input('start_time'),
+            'duration' => $request->input('duration'),  // Duration in minutes
+            'agenda' => $request->input('agenda'),
+            'settings' => [
+                'host_video' => false,
+                'participant_video' => false,
+                'waiting_room' => true,
             ],
         ]);
 
-        return json_decode($response->getBody()->getContents());
-    } catch (\Exception $e) {
-        // Log the error or handle it accordingly
-        \Log::error('Error creating Zoom meeting: ' . $e->getMessage());
-        return ['error' => $e->getMessage()];
+        if ($response->successful()) {
+            return response()->json(['message' => 'Meeting created successfully', 'data' => $response->json()]);
+        }
+
+        return response()->json(['message' => 'Failed to create meeting', 'error' => $response->json()], $response->status());
     }
 }
-
-
-} 
