@@ -402,3 +402,5 @@ Route::get('data-dashboard', [PaymentGatewayController::class, 'dashboardaData']
 
 Route::get('/zoom/authorize', [ZoomController::class, 'redirectToZoom']);
 Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
+Route::post('/create/meeting', [ZoomController::class, 'createMeeting']);
+
