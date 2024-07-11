@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\DB;
 use App\Models\Teacher;
 use App\Models\StaffModel;
 use App\Models\Student;
@@ -73,7 +73,14 @@ class PaymentGatewayController extends Controller
             $coursesCount = Course::count();
 
             $partialPaymentStudentsCount = Student::where('payment_status', 'partial')->count();
-            $notEnrollStudentsCount = Student::where('course_name', 'Not Enrolled')->count();
+            // $notEnrollStudentsCount = Student::where('course_name', 'Not Enrolled')->count();
+
+            $notEnrollStudentsCount = DB::table('students')
+    ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+    ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+    ->whereNull('courses.id') // or ->where('courses.name', 'Not Enrolled')
+    ->count();
+
             $fullPaymentStudentsCount = Student::where('payment_status', 'full')->count();
 
             return response()->json([ 
