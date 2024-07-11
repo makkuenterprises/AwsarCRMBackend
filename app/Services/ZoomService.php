@@ -29,7 +29,12 @@ private function generateJWT()
             'exp' => Carbon::now()->addMinutes(15)->timestamp, // Example: JWT valid for 15 minutes
         ];
 
-        return JWT::encode($payload, $secret, $algorithm);
+        $token = JWT::encode($payload, $secret, $algorithm);
+
+        // Log the generated token for debugging
+        \Log::info('Generated JWT token: ' . $token);
+
+        return $token;
     } catch (\Exception $e) {
         // Log the error or handle it accordingly
         \Log::error('Error generating JWT token: ' . $e->getMessage());
@@ -37,13 +42,15 @@ private function generateJWT()
     }
 }
 
-
-
-
- public function createMeeting($data)
+public function createMeeting($data)
 {
     try {
         $token = $this->generateJWT();
+
+        if (!$token) {
+            throw new \Exception('Failed to generate valid JWT token.');
+        }
+
         $response = $this->client->post('https://api.zoom.us/v2/users/me/meetings', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
@@ -65,7 +72,8 @@ private function generateJWT()
 
         return json_decode($response->getBody()->getContents());
     } catch (\Exception $e) {
-        // Handle exceptions, e.g., log error messages, retry token generation, etc.
+        // Log the error or handle it accordingly
+        \Log::error('Error creating Zoom meeting: ' . $e->getMessage());
         return ['error' => $e->getMessage()];
     }
 }
