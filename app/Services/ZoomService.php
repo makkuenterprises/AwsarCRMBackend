@@ -16,8 +16,11 @@ class ZoomService
 
 private function generateJWT() 
 {
-     $key = env('ZOOM_API_KEY');
-    $secret = (string) env('ZOOM_API_SECRET'); // Explicitly cast to string
+    //  $key = env('ZOOM_API_KEY');
+    // $secret = (string) env('ZOOM_API_SECRET'); // Explicitly cast to string
+
+      $key ="cfG6uYRdQPuYqkHHfmVhAg";
+ $secret = "ZRKN6abp0jZ26NqbSQhQHWyNCicZGWWI";
     $algorithm = 'HS256'; 
 
     $payload = [
