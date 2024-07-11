@@ -21,7 +21,7 @@ private function generateJWT()
         $algorithm = 'HS256';
 
         if (!$key || !$secret) {
-            throw new \Exception('Zoom API credentials are missing.');
+            throw new \Exception('Zoom API credentials are missing or incorrect.');
         }
 
         $payload = [
@@ -41,15 +41,17 @@ private function generateJWT()
         return null; // Or throw an exception depending on your error handling strategy
     }
 }
-
+ 
+ 
 public function createMeeting($data)
 {
     try {
         $token = $this->generateJWT();
 
-        if (!$token) {
+          if (!$token) {
             throw new \Exception('Failed to generate valid JWT token.');
         }
+
 
         $response = $this->client->post('https://api.zoom.us/v2/users/me/meetings', [
             'headers' => [
