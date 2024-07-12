@@ -44,14 +44,7 @@ class StudentAuthController extends Controller
             
 
 
-          if ($user) {
-    $imagePath = public_path('Student/' . $user->image);
-
-    // Check if the file exists
-    if (file_exists($imagePath)) {
-        $imagePath = url('/Student/' . $user->image);
-    } else {
-        $imagePath = null; 
+            $imagePath = url('/Student/' . $user->image);
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
            $email = $login['email'];
@@ -155,7 +148,7 @@ class StudentAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
-            'image' => $imagePath, // Include the full image URL
+             'image' => $user->image ? url('/Student/' . $user->image) : null,
             'fname' => $user->fname,
             'femail' => $user->femail,
             'fphone' => $user->fphone,
