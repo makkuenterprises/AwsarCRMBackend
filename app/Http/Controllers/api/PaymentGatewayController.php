@@ -123,11 +123,10 @@ $otherPaymentStatusStudentsCount = DB::table('students')
         }
     }
 
-     public function getStudentOverview(Request $request)
+    public function getStudentOverview(Request $request)
     {
         try {
-            $duration = $request->query('duration', 'month'); // default to monthly data
-            $data = $this->fetchChartData($duration);
+            $data = $this->fetchChartData();
 
             return response()->json([
                 'success' => true,
@@ -142,30 +141,32 @@ $otherPaymentStatusStudentsCount = DB::table('students')
         }
     }
 
-    private function fetchChartData($duration)
+    private function fetchChartData()
     {
-        if ($duration === 'week') {
-            return [
-                'numberOfStudents' => $this->getWeeklyCounts('total'),
-                'partialPayment' => $this->getWeeklyCounts('partial'),
-                'fullPayment' => $this->getWeeklyCounts('full'),
-                'unpaid' => $this->getWeeklyCounts('deactive')
-            ]; 
-        } elseif ($duration === 'year') {
-            return [
-                'numberOfStudents' => $this->getYearlyCounts('total'),
-                'partialPayment' => $this->getYearlyCounts('partial'),
-                'fullPayment' => $this->getYearlyCounts('full'),
-                'unpaid' => $this->getYearlyCounts('deactive')
-            ]; 
-        } else {
-            return [
-                'numberOfStudents' => $this->getMonthlyCounts('total'),
-                'partialPayment' => $this->getMonthlyCounts('partial'),
-                'fullPayment' => $this->getMonthlyCounts('full'),
-                'unpaid' => $this->getMonthlyCounts('deactive')
-            ];
-        }
+        $data = [];
+
+        // Fetch data for week
+        $data['week'] = [
+            'studentsCount' => $this->getWeeklyCounts('total'),
+            'paidPayments' => $this->getWeeklyCounts('full'),
+            'pendingPayments' => $this->getWeeklyCounts('partial'),
+        ];
+
+        // Fetch data for month
+        $data['month'] = [
+            'studentsCount' => $this->getMonthlyCounts('total'),
+            'paidPayments' => $this->getMonthlyCounts('full'),
+            'pendingPayments' => $this->getMonthlyCounts('partial'),
+        ];
+
+        // Fetch data for year
+        $data['year'] = [
+            'studentsCount' => $this->getYearlyCounts('total'),
+            'paidPayments' => $this->getYearlyCounts('full'),
+            'pendingPayments' => $this->getYearlyCounts('partial'),
+        ];
+
+        return $data;
     }
 
     private function getMonthlyCounts($type)
@@ -177,11 +178,6 @@ $otherPaymentStatusStudentsCount = DB::table('students')
 
             if ($type !== 'total') {
                 $query->where('students.payment_status', $type);
-            }
-
-            if ($type === 'full') {
-                $query->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-                    ->distinct('students.id');
             }
 
             $counts[] = $query->count('students.id');
@@ -198,11 +194,6 @@ $otherPaymentStatusStudentsCount = DB::table('students')
 
             if ($type !== 'total') {
                 $query->where('students.payment_status', $type);
-            }
-
-            if ($type === 'full') {
-                $query->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-                    ->distinct('students.id');
             }
 
             $counts[] = $query->count('students.id');
@@ -222,14 +213,8 @@ $otherPaymentStatusStudentsCount = DB::table('students')
                 $query->where('students.payment_status', $type);
             }
 
-            if ($type === 'full') {
-                $query->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-                    ->distinct('students.id');
-            }
-
             $counts[] = $query->count('students.id');
         }
         return $counts;
-    
     }
 }
