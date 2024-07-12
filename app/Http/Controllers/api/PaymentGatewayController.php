@@ -139,26 +139,26 @@ class PaymentGatewayController extends Controller
 
     private function fetchChartData($duration)
     {
-        if ($duration === 'week') {
+        if ($duration === 'Inweek') {
             return [
-                'numberOfStudents' => $this->getWeeklyCounts('total'),
-                'partialPayment' => $this->getWeeklyCounts('partial'),
-                'fullPayment' => $this->getWeeklyCounts('full'),
-                'unpaid' => $this->getWeeklyCounts('unpaid')
+                'numberOfStudentsInweek' => $this->getWeeklyCounts('total'),
+                'partialPaymentInweek' => $this->getWeeklyCounts('partial'),
+                'fullPaymentInweek' => $this->getWeeklyCounts('full'),
+                'unpaidInweek' => $this->getWeeklyCounts('unpaid')
             ];
-        } elseif ($duration === 'year') {
+        } elseif ($duration === 'Inyear') {
             return [
-                'numberOfStudents' => $this->getYearlyCounts('total'),
-                'partialPayment' => $this->getYearlyCounts('partial'),
-                'fullPayment' => $this->getYearlyCounts('full'),
-                'unpaid' => $this->getYearlyCounts('unpaid')
+                'numberOfStudentsInyear' => $this->getYearlyCounts('total'),
+                'partialPaymentInyear' => $this->getYearlyCounts('partial'),
+                'fullPaymentInyear' => $this->getYearlyCounts('full'),
+                'unpaidInyear' => $this->getYearlyCounts('unpaid')
             ];
         } else {
             return [
-                'numberOfStudents' => $this->getMonthlyCounts('total'),
-                'partialPayment' => $this->getMonthlyCounts('partial'),
-                'fullPayment' => $this->getMonthlyCounts('full'),
-                'unpaid' => $this->getMonthlyCounts('unpaid')
+                'numberOfStudentsInMonth' => $this->getMonthlyCounts('total'),
+                'partialPaymentInMonth' => $this->getMonthlyCounts('partial'),
+                'fullPaymentInMonth' => $this->getMonthlyCounts('full'),
+                'unpaidInMonth' => $this->getMonthlyCounts('unpaid')
             ];
         }
     }
