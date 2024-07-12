@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Teacher;
-
 use Image;
+use App\Models\Student;
+use App\Models\Course;
 use DB;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class TeacherAuthController extends Controller
 {
@@ -382,8 +385,8 @@ public function teacherList()
             // $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
 
-          if ($request->has('image') && $request->image !== null) {
-          if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+      if ($request->has('image')) {
+        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
             // Handle image URL
             $imageUrl = $request->image;
             $imageContent = Http::get($imageUrl)->body();
@@ -411,8 +414,9 @@ public function teacherList()
         }
 
         // Update student's image
-        $teacher->image = $fileName;
+        $teacher->image = $fileName; 
     }
+
             $teacher->save();
                $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
            
