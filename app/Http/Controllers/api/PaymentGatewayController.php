@@ -95,7 +95,11 @@ class PaymentGatewayController extends Controller
     ->where('students.payment_status', 'full')
     ->distinct('students.id') 
     ->count('students.id'); 
-
+$otherPaymentStatusStudentsCount = DB::table('students')
+    ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+    ->whereNotIn('students.payment_status', ['partial', 'full'])
+    ->distinct('students.id')
+    ->count();
             return response()->json([ 
                 'success' => true,
                 'data' => [
@@ -107,6 +111,7 @@ class PaymentGatewayController extends Controller
                     'fullPaymentStudentsCount' => $fullPaymentStudentsCount,
                     'notEnrollStudentsCount' => $notEnrollStudentsCount,
                     'enrollStudentsCount' => $enrollStudentsCount,
+                    'otherPaymentStatusStudentsCount' => $otherPaymentStatusStudentsCount,
                 ], 
             ], 200);
         } catch (\Exception $e) {
