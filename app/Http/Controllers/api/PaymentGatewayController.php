@@ -118,7 +118,7 @@ class PaymentGatewayController extends Controller
         }
     }
 
-       public function getStudentOverview(Request $request)
+     public function getStudentOverview(Request $request)
     {
         try {
             $duration = $request->query('duration', 'month'); // default to monthly data
@@ -136,29 +136,29 @@ class PaymentGatewayController extends Controller
             ], 500);
         }
     }
-  
+
     private function fetchChartData($duration)
     {
-        if ($duration === 'Inweek') {
+        if ($duration === 'week') {
             return [
-                'numberOfStudentsInweek' => $this->getWeeklyCounts('total'),
-                'partialPaymentInweek' => $this->getWeeklyCounts('partial'),
-                'fullPaymentInweek' => $this->getWeeklyCounts('full'),
-                'unpaidInweek' => $this->getWeeklyCounts('deactive')
+                'numberOfStudents' => $this->getWeeklyCounts('total'),
+                'partialPayment' => $this->getWeeklyCounts('partial'),
+                'fullPayment' => $this->getWeeklyCounts('full'),
+                'unpaid' => $this->getWeeklyCounts('deactive')
             ];
-        } elseif ($duration === 'Inyear') {
+        } elseif ($duration === 'year') {
             return [
-                'numberOfStudentsInyear' => $this->getYearlyCounts('total'), 
-                'partialPaymentInyear' => $this->getYearlyCounts('partial'),
-                'fullPaymentInyear' => $this->getYearlyCounts('full'),
-                'unpaidInyear' => $this->getYearlyCounts('deactive')
+                'numberOfStudents' => $this->getYearlyCounts('total'),
+                'partialPayment' => $this->getYearlyCounts('partial'),
+                'fullPayment' => $this->getYearlyCounts('full'),
+                'unpaid' => $this->getYearlyCounts('deactive')
             ];
         } else {
             return [
-                'numberOfStudentsInMonth' => $this->getMonthlyCounts('total'),
-                'partialPaymentInMonth' => $this->getMonthlyCounts('partial'),
-                'fullPaymentInMonth' => $this->getMonthlyCounts('full'),
-                'unpaidInMonth' => $this->getMonthlyCounts('deactive')
+                'numberOfStudents' => $this->getMonthlyCounts('total'),
+                'partialPayment' => $this->getMonthlyCounts('partial'),
+                'fullPayment' => $this->getMonthlyCounts('full'),
+                'unpaid' => $this->getMonthlyCounts('deactive')
             ];
         }
     }
@@ -167,11 +167,19 @@ class PaymentGatewayController extends Controller
     {
         $counts = [];
         for ($month = 1; $month <= 12; $month++) {
-            $query = Student::whereMonth('created_at', $month);
+            $query = DB::table('students')
+                ->whereMonth('students.created_at', $month);
+
             if ($type !== 'total') {
-                $query->where('payment_status', $type);
+                $query->where('students.payment_status', $type);
             }
-            $counts[] = $query->count();
+
+            if ($type === 'full') {
+                $query->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+                    ->distinct('students.id');
+            }
+
+            $counts[] = $query->count('students.id');
         }
         return $counts;
     }
@@ -180,26 +188,43 @@ class PaymentGatewayController extends Controller
     {
         $counts = [];
         for ($week = 1; $week <= 52; $week++) {
-            $query = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week]);
+            $query = DB::table('students')
+                ->whereRaw('WEEKOFYEAR(students.created_at) = ?', [$week]);
+
             if ($type !== 'total') {
-                $query->where('payment_status', $type);
+                $query->where('students.payment_status', $type);
             }
-            $counts[] = $query->count();
+
+            if ($type === 'full') {
+                $query->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+                    ->distinct('students.id');
+            }
+
+            $counts[] = $query->count('students.id');
         }
         return $counts;
     }
 
     private function getYearlyCounts($type)
-    { 
+    {
         $counts = [];
         $currentYear = date('Y');
-        for ($year = $currentYear - 4; $year <= $currentYear; $year++) { // last 5 years
-            $query = Student::whereYear('created_at', $year);
+        for ($year = $currentYear - 4; $year <= $currentYear; $year++) {
+            $query = DB::table('students')
+                ->whereYear('students.created_at', $year);
+
             if ($type !== 'total') {
-                $query->where('payment_status', $type);
+                $query->where('students.payment_status', $type);
             }
-            $counts[] = $query->count();
+
+            if ($type === 'full') {
+                $query->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+                    ->distinct('students.id');
+            }
+
+            $counts[] = $query->count('students.id');
         }
         return $counts;
+    
     }
 }
