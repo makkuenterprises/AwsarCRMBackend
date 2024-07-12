@@ -94,7 +94,7 @@ class PaymentGatewayController extends Controller
     ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->where('students.payment_status', 'full')
     ->distinct('students.id')
-    ->count('students.id');
+    ->count('students.id'); 
 
             return response()->json([ 
                 'success' => true,
@@ -136,7 +136,7 @@ class PaymentGatewayController extends Controller
             ], 500);
         }
     }
-
+  
     private function fetchChartData($duration)
     {
         if ($duration === 'Inweek') {
@@ -144,21 +144,21 @@ class PaymentGatewayController extends Controller
                 'numberOfStudentsInweek' => $this->getWeeklyCounts('total'),
                 'partialPaymentInweek' => $this->getWeeklyCounts('partial'),
                 'fullPaymentInweek' => $this->getWeeklyCounts('full'),
-                'unpaidInweek' => $this->getWeeklyCounts('unpaid')
+                'unpaidInweek' => $this->getWeeklyCounts('deactive')
             ];
         } elseif ($duration === 'Inyear') {
             return [
-                'numberOfStudentsInyear' => $this->getYearlyCounts('total'),
+                'numberOfStudentsInyear' => $this->getYearlyCounts('total'), 
                 'partialPaymentInyear' => $this->getYearlyCounts('partial'),
                 'fullPaymentInyear' => $this->getYearlyCounts('full'),
-                'unpaidInyear' => $this->getYearlyCounts('unpaid')
+                'unpaidInyear' => $this->getYearlyCounts('deactive')
             ];
         } else {
             return [
                 'numberOfStudentsInMonth' => $this->getMonthlyCounts('total'),
                 'partialPaymentInMonth' => $this->getMonthlyCounts('partial'),
                 'fullPaymentInMonth' => $this->getMonthlyCounts('full'),
-                'unpaidInMonth' => $this->getMonthlyCounts('unpaid')
+                'unpaidInMonth' => $this->getMonthlyCounts('deactive')
             ];
         }
     }
@@ -190,7 +190,7 @@ class PaymentGatewayController extends Controller
     }
 
     private function getYearlyCounts($type)
-    {
+    { 
         $counts = [];
         $currentYear = date('Y');
         for ($year = $currentYear - 4; $year <= $currentYear; $year++) { // last 5 years

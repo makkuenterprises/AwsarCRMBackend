@@ -25,7 +25,7 @@ class CourseEnrollementController extends Controller
         'payment_type' => ['required', 'string', 'min:1', 'max:250'],
         'payment_status' => ['required', 'string', 'min:1', 'max:250'],
         'paid_amount' => ['required', 'numeric', 'min:0'],
-    ]);
+    ]); 
 
     // Check if validation fails
     if ($validator->fails()) { 
@@ -92,7 +92,7 @@ class CourseEnrollementController extends Controller
         $paymentHistory->save();
 
         // Update student's payment status and course info
-        $student->payment_status = $request->input('payment_status');
+        $student->payment_status = $request->input('payment_status'); 
         $student->course_id = $request->input('course_id');
         $student->paymentType = $request->input('payment_type');
         $student->save();

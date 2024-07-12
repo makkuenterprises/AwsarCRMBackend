@@ -256,7 +256,7 @@ class StudentAuthController extends Controller
             $student->paymentType = 'deactive';
             $student->fstreet = $request->input('fstreet');
             $student->fpostal_code = $request->input('fpostal_code');
-            $student->fcity = $request->input('fcity');
+            $student->fcity = $request->input('fcity'); 
             $student->fstate = $request->input('fstate');
             $student->save();
             DB::commit();
