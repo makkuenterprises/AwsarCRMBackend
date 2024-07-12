@@ -355,7 +355,7 @@ public function teacherList()
         'qualification' => 'nullable|string|min:1|max:250',
 
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
-            'classes' => 'required|array',
+            'classes' => 'nullable|array',
             'image' => 'nullable',
             // 'password' => 'required|string|min:6|confirmed',
         ]);
