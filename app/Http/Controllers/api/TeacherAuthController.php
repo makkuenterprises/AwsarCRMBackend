@@ -273,7 +273,7 @@ public function teacherList()
         'city' => 'nullable|string|min:1|max:250',
         'state' => 'nullable|string|min:1|max:250',
         'qualification' => 'nullable|string|min:1|max:250',
-        'classes' => 'required|array',
+        // 'classes' => 'required|array',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'password' => 'required|string|min:6|confirmed',
     ]);
@@ -315,7 +315,7 @@ public function teacherList()
         $teacher->qualification = $request->input('qualification');
         $teacher->image = $fileName;
         $teacher->password = Hash::make($request->input('password'));
-        $teacher->classes = $request->input('classes');
+        // $teacher->classes = $request->input('classes');
         $teacher->save();
 
         // Commit transaction
@@ -356,7 +356,7 @@ public function teacherList()
         'qualification' => 'nullable|string|min:1|max:250',
 
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
-            'classes' => 'nullable|array',
+            // 'classes' => 'nullable|array',
             'image' => 'nullable',
             // 'password' => 'required|string|min:6|confirmed',
         ]);

@@ -241,7 +241,7 @@ class AdminAuthController extends Controller
                     'iconStyle' => '<i className="material-icons">settings</i>',
                     'to' => 'settings',
                 ],
-            ];
+            ]; 
 
             $data = [
             'admin' => [
@@ -264,7 +264,7 @@ class AdminAuthController extends Controller
 } 
  
 
-    public function adminAuthLogout(Request $request)
+    public function adminAuthLogout(Request $request) 
     {
        $admin = Auth::guard('admin')->user();
         
