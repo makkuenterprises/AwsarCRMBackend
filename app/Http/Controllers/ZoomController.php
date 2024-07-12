@@ -67,8 +67,8 @@ class ZoomController extends Controller
         return response()->json(['message' => 'Failed to create meeting', 'error' => $response->json()], $response->status());
     }
 
-
-    public function createeMeeting(Request $request): array
+ 
+    public function createeMeeting(Request $request) 
     {
         // Validate input
         $validated = $this->validate($request, [

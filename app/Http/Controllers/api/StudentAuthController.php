@@ -44,7 +44,14 @@ class StudentAuthController extends Controller
             
 
 
-            $imagePath = url('/Student/' . $user->image);
+          if ($user) {
+    $imagePath = public_path('Student/' . $user->image);
+
+    // Check if the file exists
+    if (file_exists($imagePath)) {
+        $imagePath = url('/Student/' . $user->image);
+    } else {
+        $imagePath = null; 
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
            $email = $login['email'];
