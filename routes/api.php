@@ -19,6 +19,7 @@ use App\Http\Controllers\api\PaymentGatewayController;
 use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
+use App\Http\Controllers\GoogleMeetController;
 
 
 
@@ -401,7 +402,11 @@ Route::get('student-overview', [PaymentGatewayController::class, 'getStudentOver
 
 // Route::get('data-dashboard', [DashboardData::class, 'dashboardaData']);
 
-Route::get('/zoom/authorize', [ZoomController::class, 'redirectToZoom']);
+Route::get('/zoom/authorize', [ZoomController::class, 'redirectToZoom']); 
 Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
 Route::post('/create/meeting', [ZoomController::class, 'createMeeting']);
-Route::post('/meeting', [ZoomController::class, 'createMeeting']);
+Route::post('/meeting', [ZoomController::class, 'createeMeeting']);
+
+
+Route::get('login/google', [App\Http\Controllers\GoogleMeetController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('oauth2/callback', [App\Http\Controllers\GoogleMeetController::class, 'handleGoogleCallback']);
