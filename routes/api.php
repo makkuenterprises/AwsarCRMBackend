@@ -397,6 +397,7 @@ Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
 Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
  
 Route::get('dashboard-data', [PaymentGatewayController::class, 'dashboardaData']);
+Route::get('student-overview', [PaymentGatewayController::class, 'getStudentOverview']);
 
 // Route::get('data-dashboard', [DashboardData::class, 'dashboardaData']);
 
