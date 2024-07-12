@@ -347,6 +347,15 @@ public function create(Request $request)
     $attendanceData = $request->input('attendance');
 
     try {
+
+         // Check if attendance records already exist for the specified date and course
+        $existingAttendance = Attendance::where('date', $date)
+            ->where('course_id', $courseId)
+            ->exists();
+
+        if ($existingAttendance) {
+            throw new \Exception('Attendance already submitted for this date and course.');
+        }
         // Start a database transaction
         DB::beginTransaction();
 
