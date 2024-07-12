@@ -72,14 +72,14 @@ class PaymentGatewayController extends Controller
             $staffCount = StaffModel::count();
             $coursesCount = Course::count();
 
-            $partialPaymentStudentsCount =  DB::table('students')
+       $partialPaymentStudentsCount = DB::table('students')
     ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->where('students.payment_status', 'partial')
     ->distinct('students.id')
-    ->count('students.id');
+    ->count();
             // $notEnrollStudentsCount = Student::where('course_name', 'Not Enrolled')->count();
 
-          $notEnrollStudentsCount = DB::table('students')
+    $notEnrollStudentsCount = DB::table('students')
     ->whereNotExists(function ($query) {
         $query->select(DB::raw(1))
               ->from('courses_enrollements')
@@ -93,7 +93,7 @@ class PaymentGatewayController extends Controller
           $fullPaymentStudentsCount = DB::table('students')
     ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->where('students.payment_status', 'full')
-    ->distinct('students.id')
+    ->distinct('students.id') 
     ->count('students.id'); 
 
             return response()->json([ 
@@ -145,14 +145,14 @@ class PaymentGatewayController extends Controller
                 'partialPayment' => $this->getWeeklyCounts('partial'),
                 'fullPayment' => $this->getWeeklyCounts('full'),
                 'unpaid' => $this->getWeeklyCounts('deactive')
-            ];
+            ]; 
         } elseif ($duration === 'year') {
             return [
                 'numberOfStudents' => $this->getYearlyCounts('total'),
                 'partialPayment' => $this->getYearlyCounts('partial'),
                 'fullPayment' => $this->getYearlyCounts('full'),
                 'unpaid' => $this->getYearlyCounts('deactive')
-            ];
+            ]; 
         } else {
             return [
                 'numberOfStudents' => $this->getMonthlyCounts('total'),
