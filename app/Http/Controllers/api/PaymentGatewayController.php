@@ -209,7 +209,7 @@ $otherPaymentStatusStudentsCount = DB::table('students')
             $query = DB::table('students')
                 ->whereYear('students.created_at', $year);
 
-            if ($type !== 'total') {
+            if ($type !== 'total') { 
                 $query->where('students.payment_status', $type);
             }
 

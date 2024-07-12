@@ -381,7 +381,7 @@ public function teacherList()
             $teacher->qualification = $request->input('qualification');
             // $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
-              if ($request->has('image')) {
+          if ($request->has('image')) {
         if (filter_var($request->image, FILTER_VALIDATE_URL)) {
             // Handle image URL
             $imageUrl = $request->image;
@@ -397,7 +397,7 @@ public function teacherList()
             $img = Image::make($imagePath);
             $img->resize(200, null, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($imagePath);
+            })->save($imagePath); 
         } else {
             // Handle uploaded image file
             $uploadedImg = $request->file('image');
@@ -409,10 +409,9 @@ public function teacherList()
             })->save($destinationPath . '/' . $fileName);
         }
 
-        // Update teacher's image
+        // Update student's image
         $teacher->image = $fileName;
     }
-
             $teacher->save();
                $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
            
