@@ -148,7 +148,7 @@ class StudentAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
-             'image' => $user->image ? url('/Student/' . $user->image) : null,
+            'image' => $user->image ? url('/Student/' . $user->image) : null,
             'fname' => $user->fname,
             'femail' => $user->femail,
             'fphone' => $user->fphone,

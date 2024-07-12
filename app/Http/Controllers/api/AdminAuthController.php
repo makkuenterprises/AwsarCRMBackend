@@ -249,7 +249,8 @@ class AdminAuthController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'phone' => $user->phone,
-            'image' => $imagePath, // Include the full image URL
+            'image' => $user->image ? url('/Admin/' . $user->image) : null,
+
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
