@@ -493,7 +493,7 @@ public function teacherList()
             $teacher->state = $request->input('state');
             $teacher->qualification = $request->input('qualification');
             $teacher->classes =$request->input('classes');
-             if ($request->has('image')) {
+           if ($request->has('image') && $request->image !== null) {
         if (filter_var($request->image, FILTER_VALIDATE_URL)) {
             // Handle image URL
             $imageUrl = $request->image;
