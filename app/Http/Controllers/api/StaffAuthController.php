@@ -201,20 +201,17 @@ class StaffAuthController extends Controller
                     'to' => 'staff/settings',
                 ],
             ];
-
-            
             $data = [
             'staff' => [
             'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
+            'name' => $user->name, 
+            'email' => $user->email, 
             'phone' => $user->phone,
             'street' => $user->street,
             'postal_code' => $user->postal_code,
-            'city' => $user->city,
+            'city' => $user->city, 
             'state' => $user->state,
             'image' => $user->image ? url('/Staffs/' . $user->image) : null,
-
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
@@ -245,7 +242,7 @@ public function staffList()
 
 public function UpdateView($id){
    $staffs = StaffModel::find($id);
-       $imagePath = url('/Staffs/' . $staffs->image);
+       $imagePath = $user->image ? url('/Staffs/' . $user->image) : null;
 
    if($staffs){
    return response()->json(['status'=>true,'code'=>200,'data'=>$staffs , 'image'=>$imagePath]);
