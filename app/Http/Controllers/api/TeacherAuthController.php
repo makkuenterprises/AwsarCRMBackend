@@ -238,7 +238,7 @@ public function teacherList()
 
  public function UpdateView($id){
    $teacher = Teacher::find($id);
-   $imagePath = $user->image ? url('/Teachers/' . $user->image) : null;
+   $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
 
    if($teacher){
    return response()->json(['status'=>true,'code'=>200,'data'=>$teacher,'image'=>$imagePath]);
