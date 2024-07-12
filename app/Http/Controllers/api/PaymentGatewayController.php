@@ -111,7 +111,7 @@ $otherPaymentStatusStudentsCount = DB::table('students')
                     'fullPaymentStudentsCount' => $fullPaymentStudentsCount,
                     'notEnrollStudentsCount' => $notEnrollStudentsCount,
                     'enrollStudentsCount' => $enrollStudentsCount,
-                    'otherPaymentStatusStudentsCount' => $otherPaymentStatusStudentsCount,
+                    'unpaidPaymentStatusStudentsCount' => $otherPaymentStatusStudentsCount,
                 ], 
             ], 200);
         } catch (\Exception $e) {
