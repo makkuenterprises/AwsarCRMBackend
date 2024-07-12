@@ -19,7 +19,6 @@ use App\Http\Controllers\api\PaymentGatewayController;
 use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
-use App\Models\Notification;
 
 
 
@@ -406,8 +405,3 @@ Route::get('/zoom/authorize', [ZoomController::class, 'redirectToZoom']);
 Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
 Route::post('/create/meeting', [ZoomController::class, 'createMeeting']);
 Route::post('/meeting', [ZoomController::class, 'createMeeting']);
-
- Route::get('/delete-notifications', function () {
-    Notification::truncate();
-    return 'All notifications have been deleted.';
-});
