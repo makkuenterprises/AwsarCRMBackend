@@ -381,8 +381,9 @@ public function teacherList()
             $teacher->qualification = $request->input('qualification');
             // $teacher->password =Hash::make($request->password);
             $teacher->classes =$request->input('classes');
-          if ($request->has('image')) {
-        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+
+          if ($request->has('image') && $request->image !== null) {
+          if (filter_var($request->image, FILTER_VALIDATE_URL)) {
             // Handle image URL
             $imageUrl = $request->image;
             $imageContent = Http::get($imageUrl)->body();
