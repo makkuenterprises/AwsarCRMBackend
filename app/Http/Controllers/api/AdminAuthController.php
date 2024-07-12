@@ -278,7 +278,7 @@ class AdminAuthController extends Controller
     public function profileUpdateView($id){
 
         $admin = Admin::find($id);
-        $imagePath = $teacher->image ? url('/Admin/' . $teacher->image) : null;
+        $imagePath = $admin->image ? url('/Admin/' . $admin->image) : null;
 
 
         if($admin){
