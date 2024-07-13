@@ -9,7 +9,7 @@ use App\Models\Course;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
-use Image;
+use Image; 
 use App\Rules\DateFormat;
 
 class CourseController extends Controller
@@ -22,6 +22,8 @@ class CourseController extends Controller
         'startDate' => ['required', new DateFormat('d/m/Y')],
         'endDate' => ['required', new DateFormat('d/m/Y')],
         'modeType' => ['required', 'string', 'min:1', 'max:250'],
+        'class_shift' => 'nullable', 'string', 'min:1', 'max:250',
+        'class_time' => 'nullable', 'string', 'min:1', 'max:250',
         'summary' => 'nullable', 'string', 'min:1', 'max:250',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
@@ -32,7 +34,7 @@ class CourseController extends Controller
              'status' => false,
                'code'=>400,
               'errors' => $validator->errors()
-              ], 400);
+              ], 400); 
         }
         try{
             $course = new Course();
@@ -43,6 +45,8 @@ class CourseController extends Controller
             $course->startDate = $startDate;
             $course->endDate = $endDate;
             $course->modeType = $request->input('modeType');
+            $course->class_shift = $request->input('class_shift');
+            $course->class_time = $request->input('class_time');
             $course->summary = $request->input('summary');
 
              // Handle image upload if present
@@ -84,10 +88,12 @@ class CourseController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'fee' => $user->fee,
-            'startDate' => $user->startDate,
+            'startDate' => $user->startDate, 
             'endDate' => $user->endDate,
             'modeType' => $user->modeType,
             'summary' => $user->summary,
+            'class_shift' => $user->class_shift,
+            'class_time' => $user->class_time,
             'Course_id' => $user->Course_id,
             'image' => $user->image ? url('/Courses/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
            
