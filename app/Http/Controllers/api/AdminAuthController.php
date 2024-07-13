@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use App\Models\Admin;
+use App\Models\Admin; 
 use Hash;
 use Image;
 use Illuminate\Support\Facades\Validator;
