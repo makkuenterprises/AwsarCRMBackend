@@ -99,8 +99,8 @@ public function list()
 
         // Get the list of course names the student is enrolled in
         $enrolledCourseNames = DB::table('courses')
-            ->join('courses_enrollments', 'courses.id', '=', 'courses_enrollments.course_id')
-            ->where('courses_enrollments.student_id', $studentId)
+            ->join('courses_enrollements', 'courses.id', '=', 'courses_enrollements.course_id')
+            ->where('courses_enrollements.student_id', $studentId)
             ->pluck('courses.name')
             ->toArray();
 
