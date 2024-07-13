@@ -65,8 +65,8 @@ class CourseEnrollementController extends Controller
         $enrollcourse = new CoursesEnrollement();
         $enrollcourse->student_id = $request->input('student_id');
         $enrollcourse->course_id = $request->input('course_id');
-        $enrollcourse->enrollment_date = Carbon::now()->toDateString();
-        $enrollcourse->payment_type = $request->input('payment_type');
+        $enrollcourse->enrollment_date = Carbon::now()->toDateString(); 
+        $enrollcourse->payment_type = $request->input('payment_type'); 
         $enrollcourse->payment_status = $request->input('payment_status');
         $enrollcourse->paid_amount = $request->input('paid_amount');
         
@@ -86,7 +86,7 @@ class CourseEnrollementController extends Controller
         $paymentHistory->enrollment_id = $enrollcourse->id;
         $paymentHistory->transaction_id = $transactionId;
         $paymentHistory->payment_type = $request->input('payment_type');
-        $paymentHistory->payment_status = $request->input('payment_status');
+        $paymentHistory->payment_status = $request->input('payment_status'); 
         $paymentHistory->paid_amount = $request->input('paid_amount');
         $paymentHistory->payment_date = $paymentDate;
         $paymentHistory->save();

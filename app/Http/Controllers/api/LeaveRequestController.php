@@ -178,8 +178,8 @@ public function handleLeaveRequestUpdate(Request $request)
         // Save the leave request
         $result = $leave_request->save();
 
-        // Check if update was successful
-        if ($result) {
+        // Check if update was successful 
+        if ($result) { 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Remark Done',
