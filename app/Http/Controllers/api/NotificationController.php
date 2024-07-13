@@ -115,7 +115,7 @@ public function list()
                 return !empty(array_intersect($batch, $enrolledCourseNames));
             }
             return false;
-        });
+        }); 
 
         // Transform batch JSON data back to array format for each notification
         $filteredNotifications->transform(function ($notification) {
