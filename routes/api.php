@@ -303,6 +303,7 @@ Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentH
 
 Route::prefix('notice')->group(function () {
       Route::get('/list', [NotificationController::class, 'List']);
+      Route::post('/list/student', [NotificationController::class, 'studentNoticelist']);
 }); 
 
 
