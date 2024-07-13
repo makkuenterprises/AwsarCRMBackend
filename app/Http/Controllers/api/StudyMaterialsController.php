@@ -143,7 +143,7 @@ public function downloadMaterial(Request $request)
             'message' => 'No files found for download.',
         ], 404);
     }
-
+ 
     // Check if the file path exists in the material_paths JSON
     if (!in_array($filePath, $materialPaths)) {
         return response()->json([
@@ -222,87 +222,35 @@ public function index()
 // LISTS OF  STUDY MATERIALS FOR STUDENT FILTER BY COURSE -------------------------------
 // --------------------------------------------------------------------------------------
 
-// public function studentMaterials(Request $request,$course_id)
-// {
-//     try { 
-
-//         // Get the batch_id from the request
-//         $course = Course::find($course_id);
-//         if (!$course) {
-//             DB::rollBack(); // Rollback the transaction
-//             return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
-//         }
-
-//         // Retrieve all study materials for the given batch ID, sorted by created_at in descending order
-//         $studyMaterials = StudyMaterials::where('batch_id', $course_id)
-//             ->orderBy('created_at', 'desc')
-//             ->get();
-
-//         // Decode JSON data for each study material and encode file paths
-//         $studyMaterials->transform(function ($studyMaterial) {
-//             $materialPaths = json_decode($studyMaterial->material_path);
-
-//             if (is_array($materialPaths)) {
-//                 $studyMaterial->material_path = array_map('urlencode', $materialPaths);
-//             } else {
-//                 $studyMaterial->material_path = [];
-//             }
-
-//             return $studyMaterial;
-//         });
-
-
-//         // Return success response with study materials data
-//         return response()->json([
-//             'status' => 'success',
-//             'code' => 200,
-//             'data' => $studyMaterials,
-//         ], 200);
-
-//     } catch (\Exception $e) {
-//         // Return error response in case of exception
-//         return response()->json([
-//             'status' => 'error',
-//             'code' => 500,
-//             'message' => 'Failed to retrieve study materials',
-//             'error' => $e->getMessage(),
-//         ], 500);
-//     }
-// }
-
-public function studentMaterials(Request $request, $course_id)
+public function studentMaterials(Request $request,$course_id)
 {
-    try {
-        // Get the course by ID
+    try { 
+
+        // Get the batch_id from the request
         $course = Course::find($course_id);
         if (!$course) {
+            DB::rollBack(); // Rollback the transaction
             return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
         }
 
-        // Retrieve all study materials for the given course ID, sorted by created_at in descending order
+        // Retrieve all study materials for the given batch ID, sorted by created_at in descending order
         $studyMaterials = StudyMaterials::where('batch_id', $course_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Decode JSON data for each study material and decode file paths
+        // Decode JSON data for each study material and encode file paths
         $studyMaterials->transform(function ($studyMaterial) {
             $materialPaths = json_decode($studyMaterial->material_path);
 
             if (is_array($materialPaths)) {
-                $studyMaterial->material_path = array_map('urldecode', $materialPaths);
+                $studyMaterial->material_path = array_map('urlencode', $materialPaths);
             } else {
                 $studyMaterial->material_path = [];
             }
 
-            return [
-                'id' => $studyMaterial->id,
-                'title' => $studyMaterial->title,
-                'description' => $studyMaterial->description,
-                'material_path' => $studyMaterial->material_path,
-                'created_at' => $studyMaterial->created_at,
-                'updated_at' => $studyMaterial->updated_at,
-            ];
+            return $studyMaterial;
         });
+
 
         // Return success response with study materials data
         return response()->json([
@@ -310,6 +258,7 @@ public function studentMaterials(Request $request, $course_id)
             'code' => 200,
             'data' => $studyMaterials,
         ], 200);
+
     } catch (\Exception $e) {
         // Return error response in case of exception
         return response()->json([
@@ -320,5 +269,56 @@ public function studentMaterials(Request $request, $course_id)
         ], 500);
     }
 }
+
+// public function studentMaterials(Request $request, $course_id)
+// {
+//     try {
+//         // Get the course by ID
+//         $course = Course::find($course_id);
+//         if (!$course) {
+//             return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+//         }
+
+//         // Retrieve all study materials for the given course ID, sorted by created_at in descending order
+//         $studyMaterials = StudyMaterials::where('batch_id', $course_id)
+//             ->orderBy('created_at', 'desc')
+//             ->get();
+
+//         // Decode JSON data for each study material and decode file paths
+//         $studyMaterials->transform(function ($studyMaterial) {
+//             $materialPaths = json_decode($studyMaterial->material_path);
+
+//             if (is_array($materialPaths)) {
+//                 $studyMaterial->material_path = array_map('urldecode', $materialPaths);
+//             } else {
+//                 $studyMaterial->material_path = [];
+//             }
+
+//             return [
+//                 'id' => $studyMaterial->id,
+//                 'title' => $studyMaterial->title,
+//                 'description' => $studyMaterial->description,
+//                 'material_path' => $studyMaterial->material_path,
+//                 'created_at' => $studyMaterial->created_at,
+//                 'updated_at' => $studyMaterial->updated_at,
+//             ];
+//         });
+
+//         // Return success response with study materials data
+//         return response()->json([
+//             'status' => 'success',
+//             'code' => 200,
+//             'data' => $studyMaterials,
+//         ], 200);
+//     } catch (\Exception $e) {
+//         // Return error response in case of exception
+//         return response()->json([
+//             'status' => 'error',
+//             'code' => 500,
+//             'message' => 'Failed to retrieve study materials',
+//             'error' => $e->getMessage(),
+//         ], 500);
+//     }
+// }
 
 }
