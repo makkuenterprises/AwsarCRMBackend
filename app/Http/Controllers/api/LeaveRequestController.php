@@ -169,11 +169,11 @@ public function handleLeaveRequestUpdate(Request $request)
         // Concatenate the guard name and user name for approved_by field
         $userName = $request->input('name');
         $role = $request->input('role');
-        $approvedBy = $role . ' -> ' . $userName;
+        $rejectedBy = $role . ' -> ' . $userName;
 
         // Update leave request status and approved_by
         $leave_request->remark = $request->input('remark');
-        $leave_request->approved_by = $approvedBy;
+        $leave_request->rejected_by = $rejectedBy;
 
         // Save the leave request
         $result = $leave_request->save();
