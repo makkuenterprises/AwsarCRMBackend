@@ -120,8 +120,12 @@ public function list()
         // Transform batch JSON data back to array format for each notification
         $filteredNotifications->transform(function ($notification) {
             $notification->batch = json_decode($notification->batch, true); // Decode JSON to array
-            return $notification;
-        });
+            return [
+                'id' => $notification->id,
+                'title' => $notification->title,
+                'description' => strip_tags($notification->description), // Remove HTML tags from description
+            ];
+        }); 
 
         return response()->json([
             'status' => true,
