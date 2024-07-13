@@ -45,7 +45,7 @@ public function create(Request $request)
 
         return response()->json([
             'status' => true, 
-            'code' => 200,
+            'code' => 200, 
             'message' => 'Notification created successfully',
             'notification' => $notification
         ], 200);
@@ -90,24 +90,35 @@ public function list()
     }
 }
 
-public function studentNoticelist(Request $request)
+
+   public function studentNoticelist(Request $request)
 {
     try {
         // Get the student_id from the request
         $studentId = $request->input('student_id');
 
-        // Join notifications with enrollments and filter based on enrolled courses for the specific student
-        $notifications = Notification::whereHas('batch', function ($query) use ($studentId) {
-            $query->whereIn('name', function ($subQuery) use ($studentId) {
-                $subQuery->select('courses.name')
-                         ->from('courses')
-                         ->join('courses_enrollments', 'courses.id', '=', 'courses_enrollments.course_id')
-                         ->where('courses_enrollments.student_id', $studentId);
-            });
-        })->orderBy('id', 'asc')->get();
+        // Get the list of course names the student is enrolled in
+        $enrolledCourseNames = DB::table('courses')
+            ->join('courses_enrollments', 'courses.id', '=', 'courses_enrollments.course_id')
+            ->where('courses_enrollments.student_id', $studentId)
+            ->pluck('courses.name')
+            ->toArray();
+
+        // Retrieve all notifications
+        $notifications = Notification::orderBy('id', 'asc')->get();
+
+        // Filter notifications based on the student's enrolled courses
+        $filteredNotifications = $notifications->filter(function ($notification) use ($enrolledCourseNames) {
+            $batch = json_decode($notification->batch, true);
+            if (is_array($batch)) {
+                // Check if there is any intersection between the batch and enrolled courses
+                return !empty(array_intersect($batch, $enrolledCourseNames));
+            }
+            return false;
+        });
 
         // Transform batch JSON data back to array format for each notification
-        $notifications->transform(function ($notification) {
+        $filteredNotifications->transform(function ($notification) {
             $notification->batch = json_decode($notification->batch, true); // Decode JSON to array
             return $notification;
         });
@@ -115,7 +126,7 @@ public function studentNoticelist(Request $request)
         return response()->json([
             'status' => true,
             'code' => 200,
-            'notifications' => $notifications,
+            'notifications' => $filteredNotifications->values(), // Reset array keys
         ], 200);
     } catch (Exception $e) {
         return response()->json([
@@ -126,5 +137,6 @@ public function studentNoticelist(Request $request)
         ], 500);
     }
 }
+
 
 }
