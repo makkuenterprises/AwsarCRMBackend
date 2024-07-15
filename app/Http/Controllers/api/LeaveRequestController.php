@@ -103,7 +103,7 @@ public function handleLeaveRequestUpdate(Request $request)
         // Concatenate the guard name and user name for approved_by field
         $userName = $request->input('name');
         $role = $request->input('role');
-        $approvedBy = $role . ' -> ' . $userName;
+          $approvedBy = $userName . ' (' . $role . ')';
 
         // Update leave request status and approved_by
         $leave_request->status = $request->input('status');
@@ -169,7 +169,7 @@ public function handleLeaveRequestUpdate(Request $request)
         // Concatenate the guard name and user name for approved_by field
         $userName = $request->input('name');
         $role = $request->input('role');
-        $rejectedBy = $role . ' -> ' . $userName;
+        $rejectedBy = $userName . ' (' . $role . ')';
 
         // Update leave request status and approved_by
         $leave_request->remark = $request->input('remark');
