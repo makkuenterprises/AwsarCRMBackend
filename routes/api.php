@@ -20,6 +20,7 @@ use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\GoogleMeetController;
+use App\Http\Controllers\Notification;
 
 
 
@@ -305,8 +306,9 @@ Route::prefix('notice')->group(function () {
       Route::get('/list', [NotificationController::class, 'List']);
       Route::post('/list/student', [NotificationController::class, 'studentNoticelist']);
 }); 
+Route::get('/notify', [Notification::class, 'fetchNotifications']);
 
-
+ 
 // });
 
 
@@ -411,3 +413,5 @@ Route::post('/meeting', [ZoomController::class, 'createeMeeting']);
 
 Route::get('login/google', [App\Http\Controllers\GoogleMeetController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('oauth2/callback', [App\Http\Controllers\GoogleMeetController::class, 'handleGoogleCallback']);
+
+
