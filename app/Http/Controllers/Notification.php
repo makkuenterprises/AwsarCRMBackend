@@ -20,7 +20,7 @@ class Notification extends Controller
     }
 
     // Fetch notifications for the student
-    $notifications = $student->notifications()->paginate(10); // Adjust as per your pagination needs
+   $notifications = $student->notifications()->get();
 
     return response()->json([
         'status' => 'success',

@@ -489,6 +489,13 @@ public function getCoursesByStudent($studentId)
             $data[] = [
                 'course_id' => $course->id,
                 'course_name' => $course->name,
+                'course_fee' => $course->fee,
+                'course_startDate' => $course->startDate,
+                'course_endDate' => $course->endDate,
+                'course_modeType' => $course->modeType,
+                'course_class_shift' => $course->class_shift,
+                'course_class_time' => $course->class_time,
+                
                 'course_description' => $course->summary,
                 'enrollment_date' => $course->enrollment_date,
             ];
