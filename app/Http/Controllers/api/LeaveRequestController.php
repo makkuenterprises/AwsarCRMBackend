@@ -221,7 +221,7 @@ public function viewLeaveRequestList()
                 $join->on('leave_requests.teacher_id', '=', 'teachers.id')
                     ->where('leave_requests.role', '=', 'teacher');
             })
-            ->selectRaw('COALESCE(staff.name, teachers.name) as teacher_name')
+            ->selectRaw('COALESCE(staff_models.name, teachers.name) as teacher_name')
             ->orderBy('leave_requests.created_at', 'asc')
             ->get();
 
