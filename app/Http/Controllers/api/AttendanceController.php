@@ -385,27 +385,27 @@ public function create(Request $request)
 }
 
 // all student list for attendance============================================================================
- 
-public function getStudentsEnrolledInCourse(Request $request, $courseId)
+ public function getStudentsEnrolledInCourse(Request $request, $courseId)
 {
     // Validate the course ID
     $validator = Validator::make(['course_id' => $courseId], [
         'course_id' => 'required|exists:courses,id',
-         'date' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $d = \DateTime::createFromFormat('d/m/Y', $value);
-                    if (!$d || $d->format('d/m/Y') !== $value) {
-                        $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
-                    }
-                }
-            ],
     ]);
 
-    $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
+    // Validate the date
+    $dateValidator = Validator::make($request->all(), [
+        'date' => [
+            'required',
+            function ($attribute, $value, $fail) {
+                $d = \DateTime::createFromFormat('d/m/Y', $value);
+                if (!$d || $d->format('d/m/Y') !== $value) {
+                    $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
+                }
+            }
+        ],
+    ]);
 
-
-    // Check if validation fails
+    // Check if course ID validation fails
     if ($validator->fails()) {
         return response()->json([
             'status' => false,
@@ -414,15 +414,28 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
         ], 400);
     }
 
-    try {
+    // Check if date validation fails
+    if ($dateValidator->fails()) {
+        return response()->json([
+            'status' => false,
+            'code' => 400,
+            'errors' => $dateValidator->errors()
+        ], 400);
+    }
 
-         $existingAttendance = Attendance::where('date', $date)
+    // Format the date
+    $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
+
+    try {
+        // Check if attendance already exists for the given date and course
+        $existingAttendance = Attendance::where('date', $date)
             ->where('course_id', $courseId)
             ->exists();
 
         if ($existingAttendance) {
             throw new \Exception('Attendance already submitted for this date and course.');
         }
+
         // Get the list of students enrolled in the specific course
         $students = DB::table('courses_enrollements')
             ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
