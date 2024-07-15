@@ -49,7 +49,7 @@ class StudyMaterial extends Notification
             'created_at' => $this->studyMaterial->created_at,
         ];
     }
-
+  
     /**
      * Get the broadcastable representation of the notification.
      * 

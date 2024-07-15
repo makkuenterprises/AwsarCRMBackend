@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use App\Models\StudyMaterials;
+use App\Models\Student;
 use App\Models\Course;
 use Illuminate\Support\Facades\Validator;
 use DB; 
@@ -96,7 +97,7 @@ public function store(Request $request)
             ->pluck('student_id');
 
         // Get User objects for each student
-        $students = User::whereIn('id', $studentIds)->get();
+        $students = Student::whereIn('id', $studentIds)->get();
 
         // Send notifications to the students
         foreach ($students as $student) {

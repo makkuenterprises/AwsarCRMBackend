@@ -375,7 +375,7 @@ Route::prefix('leave-request')->group(function () {
       Route::post('/update-status/{id}', [LeaveRequestController::class, 'handleLeaveRequestUpdate']);
       Route::post('/update-remark/{id}', [LeaveRequestController::class, 'handleLeaveRequestUpdateRemark']);
      
-});   
+});    
  
 // teacher----------------------------------------------------------------------------------------------------
 Route::prefix('leave-request')->group(function () {

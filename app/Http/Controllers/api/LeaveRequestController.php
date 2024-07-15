@@ -105,7 +105,7 @@ public function handleLeaveRequestUpdate(Request $request)
         $role = $request->input('role');
           $approvedBy = $userName . ' (' . $role . ')';
 
-        // Update leave request status and approved_by
+        // Update leave request status and approved_by 
         $leave_request->status = $request->input('status');
         $leave_request->approved_by = $approvedBy;
 
