@@ -12,6 +12,8 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Validator;
 use DB; 
 use Crypt;
+use App\Notifications\StudyMaterial;
+
 
 
 class StudyMaterialsController extends Controller
@@ -68,7 +70,7 @@ public function store(Request $request)
         $materialPaths = [];
 
         // Handle multiple file uploads
-        if ($request->hasFile('material')) {
+        if ($request->hasFile('material')) { 
             foreach ($request->file('material') as $file) {
                 $path = $file->store('study_material');
                 $materialPaths[] = $path;
@@ -86,14 +88,28 @@ public function store(Request $request)
         $studyMaterial->material_path  = json_encode($materialPaths);
 
         // Save the study material
-        $studyMaterial->save();
+        $studyMaterial->save(); 
+
+          // Get the student IDs enrolled in the course
+        $studentIds = DB::table('courses_enrollements')
+            ->where('course_id', $request['batch_id'])
+            ->pluck('student_id');
+
+        // Get User objects for each student
+        $students = User::whereIn('id', $studentIds)->get();
+
+        // Send notifications to the students
+        foreach ($students as $student) {
+            $student->notify(new StudyMaterial($studyMaterial));
+        } 
+ 
 
         // Return success response
         return response()->json([
             'status' => 'success',
             'code' => 200,
             'message' => 'Study material saved successfully',
-        ], 200);
+        ], 200); 
 
     } catch (\Exception $e) {
         // Return error response in case of exception
