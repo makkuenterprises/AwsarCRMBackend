@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Notification;
+use App\Models\Notice;
 use DB;
 use App\Models\Course;
  
@@ -13,7 +13,7 @@ use App\Models\Course;
 
 class NotificationController extends Controller
 {
-
+ 
 public function create(Request $request)
 {
     $validator = Validator::make($request->all(), [
@@ -33,7 +33,7 @@ public function create(Request $request)
     }
 
     try {
-        $notification = new Notification();
+        $notification = new Notice();
         $notification->title = $request->input('title');
         $notification->description = $request->input('description');
         $notification->sendTo = $request->input('sendTo');
@@ -66,7 +66,7 @@ public function list()
     
      try {
       // Retrieve all notifications including the newly created one
-        $notifications = Notification::orderBy('id', 'asc')->get();
+        $notifications = Notice::orderBy('id', 'asc')->get();
 
         // Transform batch JSON data back to array format for each notification
         $notifications->transform(function ($notification) {
@@ -91,7 +91,7 @@ public function list()
 }
 
 
-   public function studentNoticelist(Request $request)
+   public function studentNoticelist(Request $request) 
 {
     try {
         // Get the student_id from the request
@@ -105,7 +105,7 @@ public function list()
             ->toArray();
 
         // Retrieve all notifications
-        $notifications = Notification::orderBy('id', 'asc')->get();
+        $notifications = Notice::orderBy('id', 'asc')->get();
 
         // Filter notifications based on the student's enrolled courses
         $filteredNotifications = $notifications->filter(function ($notification) use ($enrolledCourseNames) {
