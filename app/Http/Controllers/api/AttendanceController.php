@@ -495,7 +495,6 @@ public function getCoursesByStudent($studentId)
                 'course_modeType' => $course->modeType,
                 'course_class_shift' => $course->class_shift,
                 'course_class_time' => $course->class_time,
-                
                 'course_description' => $course->summary,
                 'enrollment_date' => $course->enrollment_date,
             ];
