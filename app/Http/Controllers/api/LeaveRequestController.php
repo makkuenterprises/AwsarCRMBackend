@@ -211,8 +211,19 @@ public function handleLeaveRequestUpdate(Request $request)
 public function viewLeaveRequestList()
 {
     try {
-        // Retrieve all leave requests
-       $leave_requests = LeaveRequest::orderBy('created_at', 'asc')->get();
+        // Retrieve all leave requests with conditional join based on role
+        $leave_requests = LeaveRequest::select('leave_requests.*')
+            ->leftJoin('staff_models', function ($join) {
+                $join->on('leave_requests.teacher_id', '=', 'staff_models.id')
+                    ->where('leave_requests.role', '=', 'staff');
+            })
+            ->leftJoin('teachers', function ($join) {
+                $join->on('leave_requests.teacher_id', '=', 'teachers.id')
+                    ->where('leave_requests.role', '=', 'teacher');
+            })
+            ->selectRaw('COALESCE(staff.name, teachers.name) as teacher_name')
+            ->orderBy('leave_requests.created_at', 'asc')
+            ->get();
 
         // Return JSON response with leave requests data
         return response()->json([
