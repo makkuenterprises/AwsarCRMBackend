@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\api;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -95,9 +96,11 @@ public function store(Request $request)
         $studentIds = DB::table('courses_enrollements')
             ->where('course_id', $request['batch_id'])
             ->pluck('student_id');
-
+ 
         // Get User objects for each student
         $students = Student::whereIn('id', $studentIds)->get();
+
+          Log::info('Sending notifications to students', ['students' => $students->pluck('id')]);
 
         // Send notifications to the students
         foreach ($students as $student) {
