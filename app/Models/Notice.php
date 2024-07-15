@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Notice extends Model
 {
       use HasFactory;
-    protected $table='notifications';
+    protected $table='notices';
     protected $primarykey='id';
     protected $fillable = [
         'title', 'description', 'sendTo'
