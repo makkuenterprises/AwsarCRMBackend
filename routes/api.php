@@ -334,7 +334,7 @@ Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendan
 Route::prefix('attendance')->group(function () { 
 
       Route::get('course/list', [AttendanceController::class, 'alllist']);
-      Route::get('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
+      Route::post('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
 
      
