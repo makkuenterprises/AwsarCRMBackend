@@ -58,7 +58,8 @@ class StudentAuthController extends Controller
 
             $code = 200;
             // Fetch unread notifications for the student
-        $notifications = $user->unreadNotifications()->get();
+          $notifications = $user->unreadNotifications()->get();  
+
                             $menuList = [
                 [
                     'title' => 'Dashboard',
