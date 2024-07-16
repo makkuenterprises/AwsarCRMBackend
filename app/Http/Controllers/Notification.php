@@ -84,5 +84,58 @@ public function markAsRead(Request $request)
     }
 }
 
+public function markAllAsRead(Request $request)
+{
+    try {
+        // Validate the request
+        $validatedData = $request->validate([
+            'student_id' => 'required|integer|exists:students,id',
+        ]);
+
+        // Fetch the student by ID
+        $studentId = $validatedData['student_id'];
+        $student = Student::find($studentId);
+
+        if (!$student) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student not found',
+            ], 404);
+        }
+
+        // Get all unread notifications for the student
+        $unreadNotifications = $student->unreadNotifications;
+
+        if ($unreadNotifications->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No unread notifications to mark as read',
+            ]);
+        }
+
+        // Mark all unread notifications as read
+        foreach ($unreadNotifications as $notification) {
+            $notification->markAsRead();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All notifications marked as read',
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation error',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An unexpected error occurred',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
 
 }

@@ -308,6 +308,7 @@ Route::prefix('notice')->group(function () {
 }); 
 Route::get('/notify/{Student_id}', [Notification::class, 'fetchNotifications']);
 Route::post('/mark/as/read', [Notification::class, 'markAsRead']);
+Route::post('/mark/all/as/read', [Notification::class, 'markAllAsRead']);
 
  
 // });
