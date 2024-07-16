@@ -7,12 +7,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
+use Carbon\Carbon; 
 use App\Models\StudyMaterials;
 use App\Models\Student;
 use App\Models\Course;
+use App\Models\StaffModel;
+use App\Models\Teacher;
 use Illuminate\Support\Facades\Validator;
 use DB; 
+use App\Models\Admin; 
+
 use Crypt;
 use App\Notifications\StudyMaterial;
 
@@ -60,9 +64,9 @@ public function store(Request $request)
             'message' => 'Please provide only one of either files or URLs for the study materials.',
         ], 400);
     }
-
+ 
     try {
-        // Create a new StudyMaterial instance
+        // Create a new StudyMaterial instance 
         $studyMaterial = new StudyMaterials();
         $studyMaterial->title = $request['title'];
         $studyMaterial->batch_id = $request['batch_id'];
@@ -92,7 +96,7 @@ public function store(Request $request)
         // Save the study material
         $studyMaterial->save(); 
 
-          // Get the student IDs enrolled in the course
+        // Get the student IDs enrolled in the course
         $studentIds = DB::table('courses_enrollements')
             ->where('course_id', $request['batch_id'])
             ->pluck('student_id');
@@ -100,12 +104,40 @@ public function store(Request $request)
         // Get User objects for each student
         $students = Student::whereIn('id', $studentIds)->get();
 
+           $admins = Admin::all();
+        $staffMembers = StaffModel::all();
+          // Add teachers' details to the study material
+        $teachersList = $course->teachers->map(function ($teacher) {
+            return [
+                'id' => $teacher->id,
+                'name' => $teacher->name,
+                'email' => $teacher->email, // Add any other relevant fields
+            ];
+        });
+
           Log::info('Sending notifications to students', ['students' => $students->pluck('id')]);
 
         // Send notifications to the students
         foreach ($students as $student) {
             $student->notify(new StudyMaterial($studyMaterial));
         } 
+
+          foreach ($teachersList as $teacher) {
+            // Assuming you have a notification class for notifying teachers about study materials
+            $teacherModel = Teacher::find($teacher['id']);
+            if ($teacherModel) {
+                $teacherModel->notify(new StudyMaterialNotification($studyMaterial));
+            }
+        }
+
+         foreach ($admins as $admin) {
+            $admin->notify(new StudyMaterial($studyMaterial));
+        }
+
+        // Send notifications to staff members
+        foreach ($staffMembers as $staff) {
+            $staff->notify(new StudyMaterial($studyMaterial));
+        }
  
 
         // Return success response

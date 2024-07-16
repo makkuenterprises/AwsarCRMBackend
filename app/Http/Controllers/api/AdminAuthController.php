@@ -24,7 +24,7 @@ class AdminAuthController extends Controller
     try {
         $user = Admin::whereEmail($login['email'])->first();
 
-        if (!$user) {
+        if (!$user) { 
           return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
         }
 

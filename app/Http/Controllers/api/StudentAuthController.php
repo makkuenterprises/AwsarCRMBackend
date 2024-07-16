@@ -9,9 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Image;
 use App\Models\Student;
-
 use App\Models\Course;
-use DB;
+use DB; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http; 
 use Illuminate\Validation\Rule;
@@ -42,16 +41,15 @@ class StudentAuthController extends Controller
             $code = 401;
         } else {
 
-            
+           $imagePath = url('/Student/' . $user->image);
 
-
-            $imagePath = url('/Student/' . $user->image);
-
-           $token = $user->createToken('AwsarClass')->plainTextToken;
+           $token = $user->createToken('AwsarClass')->plainTextToken; 
            
-           $email = $login['email']; 
+           $email = $login['email'];   
+            $notifications = $user->unreadNotifications()->get();
+
             $user = DB::table('students')
-           ->where('students.email', $email)
+           ->where('students.email', $email) 
            ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
            ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
            ->select('students.*', 'courses.name as course_name')
@@ -124,7 +122,6 @@ class StudentAuthController extends Controller
                     'to' => 'student/settings',
                 ],
             ];
-
             $data = [
             'student' => [
             'id' => $user->id,
@@ -151,7 +148,6 @@ class StudentAuthController extends Controller
              'message' => 'Login Successfully',
              'role' => $menuList,
             ];
-
         }
     } catch (Exception $e) {
         $data = ['error' => $e->getMessage()];

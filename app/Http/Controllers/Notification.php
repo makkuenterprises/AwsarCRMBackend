@@ -18,7 +18,7 @@ class Notification extends Controller
         return response()->json([
             'status' => 'error',
             'message' => 'Student not found', 
-        ], 404);
+        ], 404); 
     }
 
     // Fetch notifications for the student 
