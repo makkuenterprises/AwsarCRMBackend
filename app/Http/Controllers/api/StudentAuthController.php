@@ -18,148 +18,282 @@ use Illuminate\Validation\Rule;
 class StudentAuthController extends Controller
 {
   
-    public function studentAuthLogin(Request $request){
-     $login = $request->validate([
+    // public function studentAuthLogin(Request $request){
+//      $login = $request->validate([
+//         'email' => 'required|email',
+//         'password' => 'required|string',
+//     ]);
+//     try {
+//         $user = Student::whereEmail($login['email'])->first();
+
+//         if (!$user) {
+//           return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+//         }
+
+//         if (!Hash::check($request->input('password'), $user->password)) {
+//         // Return error response for incorrect password
+//         return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
+//         }
+
+//         if (!$user || !Hash::check($login['password'], $user->password)) {
+            
+//             $data = 'Invalid Login Credentials';
+//             $code = 401;
+//         } else {
+
+            
+
+
+//             $imagePath = url('/Student/' . $user->image);
+
+//            $token = $user->createToken('AwsarClass')->plainTextToken;
+           
+//            $email = $login['email']; 
+//             $user = DB::table('students')
+//            ->where('students.email', $email)
+//            ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+//            ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+//            ->select('students.*', 'courses.name as course_name')
+//            ->first();
+
+//             $code = 200;
+//             // Fetch unread notifications for the student
+//           $notifications = $user->unreadNotifications()->get();  
+
+//                             $menuList = [
+//                 [
+//                     'title' => 'Dashboard',
+//                     'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
+//                     'to' => 'dashboard',
+//                 ],
+//                 [     
+//                     'title' => 'Teachers',
+//                     'iconStyle' => '<i className="material-symbols-outlined">person</i>',
+//                      'to'=> 'teacher',	
+//                 ],  
+//                 [
+//                     'title' => 'Enrolled Batch',
+//                     'iconStyle' => '<i className="merial-icons">article</i>',
+//                     'to' => 'batch', 
+
+//                 ],          
+//                  [
+//                     'title' => 'Live Classes',
+//                      'classsChange' => 'mm-collapse',
+//                      'iconStyle' => '<i className="merial-icons">article</i>',
+//                        'to'=> 'live-classes',
+//                 ],
+               
+//                 [
+//                     'title' => 'Fees System',
+//                     'iconStyle' => '<i className="material-icons">money</i>',
+//                     'to' => 'settings',
+//                 ],
+//                 [
+//                     'title' => 'Exams',
+//                     'iconStyle' => '<i className="material-icons">settings</i>',
+//                     'to' => 'settings',
+//                 ],
+//                  [
+//                     'title' => 'Institute',
+//                      'classsChange' => 'mm-collapse',
+//                      'iconStyle' => '<i className="merial-icons">settings</i>',
+//                         'content'=> [
+//                         [
+//                             'title'=> 'Notice',
+//                             'to'=> 'view-notice',					
+//                         ],
+//                         [
+//                             'title'=> 'Study Materials',
+//                             'to'=> 'view-study-materials',
+//                         ],
+//                         [
+//                           'title' => 'Attendance',
+                 
+//                         'to' => 'attendance-list-for-student',				
+//                         ],
+//                          [
+//                             'title'=> 'Class Routine',
+//                             'to'=> 'page-lock-screen',					
+//                         ],
+//                         ],
+//                 ],
+//                 [
+//                     'title' => 'Settings',
+//                     'iconStyle' => '<i className="material-icons">settings</i>',
+//                     'to' => 'student/settings',
+//                 ],
+//             ];
+
+//             $data = [
+//             'student' => [
+//             'id' => $user->id,
+//             'name' => $user->name,
+//             'email' => $user->email,
+//             'phone' => $user->phone,
+//             'street' => $user->street,
+//             'postal_code' => $user->postal_code,
+//             'city' => $user->city,
+//             'state' => $user->state,
+//             'image' => $user->image ? url('/Student/' . $user->image) : null,
+//             'fname' => $user->fname,
+//             'femail' => $user->femail,
+//             'fphone' => $user->fphone,
+//             'fstreet' => $user->fstreet,
+//             'fpostal_code' => $user->postal_code,
+//             'fcity' => $user->fcity,
+//             'fstate' => $user->fstate, 
+//             'dob' => $user->dob,
+//             'payment_status' => $user->payment_status,
+//             'course' => $user->course_name ?? 'Not Enrolled',
+//             ],
+//             'token' => $token, 
+//              'message' => 'Login Successfully',
+//              'role' => $menuList,
+//               'notifications' => $notifications, // Include notifications here
+//             ];
+
+//         }
+//     } catch (Exception $e) {
+//         $data = ['error' => $e->getMessage()];
+        
+//     }
+//     return response()->json($data, $code);
+// } 
+use App\Models\Student;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+
+public function studentAuthLogin(Request $request)
+{
+    $login = $request->validate([
         'email' => 'required|email',
         'password' => 'required|string',
     ]);
+
     try {
-        $user = Student::whereEmail($login['email'])->first();
+        // Find the student by email using the Student model
+        $user = Student::where('email', $login['email'])->first();
 
         if (!$user) {
-          return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'We could not find an account with that email address. Please check and try again.'], 404);
         }
 
+        // Check if password matches
         if (!Hash::check($request->input('password'), $user->password)) {
-        // Return error response for incorrect password
-        return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
+            return response()->json(['status' => false, 'code' => 401, 'message' => 'The password you entered is incorrect. Please try again.'], 401);
         }
 
-        if (!$user || !Hash::check($login['password'], $user->password)) {
-            
-            $data = 'Invalid Login Credentials';
-            $code = 401;
-        } else {
+        // Retrieve image path
+        $imagePath = $user->image ? url('/Student/' . $user->image) : null;
 
-            
+        // Retrieve student's enrolled course name
+        $user = $user->load('coursesEnrollments.course'); // Assuming 'coursesEnrollments' is the relationship name
 
+        // Fetch unread notifications for the student
+        $notifications = $user->unreadNotifications()->get();
 
-            $imagePath = url('/Student/' . $user->image);
+        // Generate token for API authentication
+        $token = $user->createToken('AwsarClass')->plainTextToken;
 
-           $token = $user->createToken('AwsarClass')->plainTextToken;
-           
-           $email = $login['email'];
-            $user = DB::table('students')
-           ->where('students.email', $email)
-           ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-           ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-           ->select('students.*', 'courses.name as course_name')
-           ->first();
-
-            $code = 200;
-            // Fetch unread notifications for the student
-          $notifications = $user->unreadNotifications()->get();  
-
-                            $menuList = [
-                [
-                    'title' => 'Dashboard',
-                    'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
-                    'to' => 'dashboard',
-                ],
-                [     
-                    'title' => 'Teachers',
-                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
-                     'to'=> 'teacher',	
-                ],  
-                [
-                    'title' => 'Enrolled Batch',
-                    'iconStyle' => '<i className="merial-icons">article</i>',
-                    'to' => 'batch', 
-
-                ],          
-                 [
-                    'title' => 'Live Classes',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                       'to'=> 'live-classes',
-                ],
-               
-                [
-                    'title' => 'Fees System',
-                    'iconStyle' => '<i className="material-icons">money</i>',
-                    'to' => 'settings',
-                ],
-                [
-                    'title' => 'Exams',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'settings',
-                ],
-                 [
-                    'title' => 'Institute',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Notice',
-                            'to'=> 'view-notice',					
-                        ],
-                        [
-                            'title'=> 'Study Materials',
-                            'to'=> 'view-study-materials',
-                        ],
-                        [
-                          'title' => 'Attendance',
-                 
-                        'to' => 'attendance-list-for-student',				
-                        ],
-                         [
-                            'title'=> 'Class Routine',
-                            'to'=> 'page-lock-screen',					
-                        ],
-                        ],
-                ],
-                [
-                    'title' => 'Settings',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'student/settings',
-                ],
-            ];
-
-            $data = [
-            'student' => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'street' => $user->street,
-            'postal_code' => $user->postal_code,
-            'city' => $user->city,
-            'state' => $user->state,
-            'image' => $user->image ? url('/Student/' . $user->image) : null,
-            'fname' => $user->fname,
-            'femail' => $user->femail,
-            'fphone' => $user->fphone,
-            'fstreet' => $user->fstreet,
-            'fpostal_code' => $user->postal_code,
-            'fcity' => $user->fcity,
-            'fstate' => $user->fstate, 
-            'dob' => $user->dob,
-            'payment_status' => $user->payment_status,
-            'course' => $user->course_name ?? 'Not Enrolled',
+        // Menu list for student dashboard
+        $menuList = [
+            [
+                'title' => 'Dashboard',
+                'iconStyle' => '<i className="material-symbols-outlined">home</i>',
+                'to' => 'dashboard',
             ],
-            'token' => $token, 
-             'message' => 'Login Successfully',
-             'role' => $menuList,
-              'notifications' => $notifications, // Include notifications here
-            ];
+            [
+                'title' => 'Teachers',
+                'iconStyle' => '<i className="material-symbols-outlined">person</i>',
+                'to' => 'teacher',
+            ],
+            [
+                'title' => 'Enrolled Batch',
+                'iconStyle' => '<i className="merial-icons">article</i>',
+                'to' => 'batch',
+            ],
+            [
+                'title' => 'Live Classes',
+                'classsChange' => 'mm-collapse',
+                'iconStyle' => '<i className="merial-icons">article</i>',
+                'to' => 'live-classes',
+            ],
+            [
+                'title' => 'Fees System',
+                'iconStyle' => '<i className="material-icons">money</i>',
+                'to' => 'settings',
+            ],
+            [
+                'title' => 'Exams',
+                'iconStyle' => '<i className="material-icons">settings</i>',
+                'to' => 'settings',
+            ],
+            [
+                'title' => 'Institute',
+                'classsChange' => 'mm-collapse',
+                'iconStyle' => '<i className="merial-icons">settings</i>',
+                'content' => [
+                    [
+                        'title' => 'Notice',
+                        'to' => 'view-notice',
+                    ],
+                    [
+                        'title' => 'Study Materials',
+                        'to' => 'view-study-materials',
+                    ],
+                    [
+                        'title' => 'Attendance',
+                        'to' => 'attendance-list-for-student',
+                    ],
+                    [
+                        'title' => 'Class Routine',
+                        'to' => 'page-lock-screen',
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Settings',
+                'iconStyle' => '<i className="material-icons">settings</i>',
+                'to' => 'student/settings',
+            ],
+        ];
 
-        }
+        // Construct response data
+        $data = [
+            'student' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'street' => $user->street,
+                'postal_code' => $user->postal_code,
+                'city' => $user->city,
+                'state' => $user->state,
+                'image' => $imagePath,
+                'fname' => $user->fname,
+                'femail' => $user->femail,
+                'fphone' => $user->fphone,
+                'fstreet' => $user->fstreet,
+                'fpostal_code' => $user->postal_code,
+                'fcity' => $user->fcity,
+                'fstate' => $user->fstate,
+                'dob' => $user->dob,
+                'payment_status' => $user->payment_status,
+                'course' => $user->coursesEnrollments->first()->course->name ?? 'Not Enrolled', // Adjust this as per your relationship structure
+            ],
+            'token' => $token,
+            'message' => 'Login Successfully',
+            'role' => $menuList,
+            'notifications' => $notifications, // Include notifications here
+        ];
+
+        return response()->json($data, 200);
     } catch (Exception $e) {
-        $data = ['error' => $e->getMessage()];
-        
+        return response()->json(['status' => false, 'code' => 500, 'message' => 'Login failed', 'error' => $e->getMessage()], 500);
     }
-    return response()->json($data, $code);
-} 
+}
 
 
     public function studentAuthLogout(Request $request)
