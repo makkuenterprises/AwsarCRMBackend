@@ -312,8 +312,8 @@ Route::post('/mark/all/as/read', [Notification::class, 'markAllAsRead']);
 
 
 Route::post('/notification/role', [Notification::class, 'fetchNotificationsByRole']);
-Route::post('/mark/as/read/role', [Notification::class, 'markAsRead']);
-Route::post('/mark/all/as/read/role', [Notification::class, 'markAsReadByrole']);
+Route::post('/mark/as/read/role', [Notification::class, 'markAsReadByrole']);
+Route::post('/mark/all/as/read/role', [Notification::class, 'markAllAsReadforRole']);
  
 // });
 
