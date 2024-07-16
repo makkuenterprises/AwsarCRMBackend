@@ -123,7 +123,7 @@ public function list()
             return [
                 'id' => $notification->id,
                 'title' => $notification->title,
-                'title' => $notification->created_at,
+                'created_date' => $notification->created_at,
                 'description' => strip_tags($notification->description), // Remove HTML tags from description
             ];
         }); 

@@ -30,43 +30,59 @@ class Notification extends Controller
     ]);
 }
 
- public function markAsRead(Request $request)
+public function markAsRead(Request $request)
 {
-    // Validate the request
-    $request->validate([
-        'student_id' => 'required|integer|exists:students,id',
-        'notification_id' => 'required|integer|exists:notifications,id',
-    ]);
+    try {
+        // Validate the request
+        $validatedData = $request->validate([
+            'student_id' => 'required|integer|exists:students,id',
+            'notification_id' => 'required|integer|exists:notifications,id',
+        ]);
 
-    // Fetch the student by ID
-    $studentId = $request->input('student_id');
-    $notificationId = $request->input('notification_id');
-    $student = Student::find($studentId);
+        // Fetch the student by ID
+        $studentId = $validatedData['student_id'];
+        $notificationId = $validatedData['notification_id'];
+        $student = Student::find($studentId);
 
-    if (!$student) {
+        if (!$student) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student not found',
+            ], 404);
+        }
+
+        // Find the notification by ID
+        $notification = $student->notifications()->where('id', $notificationId)->first();
+
+        if (!$notification) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Notification not found',
+            ], 404);
+        }
+
+        // Mark the notification as read
+        $notification->markAsRead();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Notification marked as read',
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
             'status' => 'error',
-            'message' => 'Student not found',
-        ], 404);
-    }
-
-    // Find the notification by ID
-    $notification = $student->notifications()->where('id', $notificationId)->first();
-
-    if (!$notification) {
+            'message' => 'Validation error',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'message' => 'Notification not found',
-        ], 404);
+            'message' => 'An unexpected error occurred',
+            'error' => $e->getMessage(),
+        ], 500);
     }
-
-    // Mark the notification as read
-    $notification->markAsRead(); 
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Notification marked as read',
-    ]);
 }
+
 
 }
