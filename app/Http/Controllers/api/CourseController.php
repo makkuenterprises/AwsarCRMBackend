@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Image; 
+use App\Models\Teacher;
 use App\Rules\DateFormat;
 
 class CourseController extends Controller
@@ -26,6 +27,8 @@ class CourseController extends Controller
         'class_time' => 'nullable', 'string', 'min:1', 'max:250',
         'summary' => 'nullable', 'string', 'min:1', 'max:250',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'teachers' => 'nullable|array', // Teachers IDs or names
+        'teachers.*' => 'exists:teachers,id', 
 
         ]);
 
@@ -71,6 +74,13 @@ class CourseController extends Controller
 
             $course->Course_id = $courseId;
             $course->save();
+
+               // Attach teachers to the course if selected
+        if ($request->has('teachers')) {
+            $teachers = $request->input('teachers');
+            $course->teachers()->attach($teachers); // Attach multiple teachers
+        }
+
             $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
 
              return response()->json(['status'=>true,'code'=>200,'message' => 'Course created successfully', 'course' => $course,'image'=>$imagePath], 200);
@@ -81,45 +91,93 @@ class CourseController extends Controller
          
     }
  
-    public function courseList(){
-         $courses = Course::where('status', 'active')->orderByDesc('id')->get();
-         $coursesList = $courses->map(function ($user) {
-        return [
-            'id' => $user->id,
-            'name' => $user->name,
-            'fee' => $user->fee,
-            'startDate' => $user->startDate, 
-            'endDate' => $user->endDate,
-            'modeType' => $user->modeType,
-            'summary' => $user->summary,
-            'class_shift' => $user->class_shift,
-            'class_time' => $user->class_time,
-            'Course_id' => $user->Course_id,
-            'image' => $user->image ? url('/Courses/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
-           
-        ];
-    });
-        //  return response()->json(['status'=>true,'code'=>200,'data'=>$courses]);
-        return response()->json([
-        'status' => true,
-        'code' => 200,
-        'data' => $coursesList
-    ]);
-    }
+    
+public function courseList()
+{
+    try {
+        // Fetch courses with active status, ordered by descending ID
+        $courses = Course::where('status', 'active')->orderByDesc('id')->get();
 
-    public function UpdateView($id){
-      $course = Course::find($id);
-      $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
-      if($course){
-      return response()->json(['status'=>true,'code'=>200,'data'=>$course,'image'=>$imagePath]);
-      }else{
-     return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
-      }
+        // Map through each course to format the response
+        $coursesList = $courses->map(function ($course) {
+            // Retrieve associated teachers' names
+            $teachersNames = $course->teachers()->pluck('name')->toArray();
+
+            return [
+                'id' => $course->id,
+                'name' => $course->name,
+                'fee' => $course->fee,
+                'startDate' => $course->startDate,
+                'endDate' => $course->endDate,
+                'modeType' => $course->modeType,
+                'summary' => $course->summary,
+                'class_shift' => $course->class_shift,
+                'class_time' => $course->class_time,
+                'Course_id' => $course->Course_id,
+                'image' => $course->image ? url('/Courses/' . $course->image) : null,
+                'teachers' => $teachersNames, // Include teachers' names
+            ];
+        });
+
+        // Return JSON response with formatted data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => $coursesList,
+        ]);
+    } catch (\Exception $e) {
+        // Handle any exceptions that may occur
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'Failed to fetch course list',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
+    // public function UpdateView($id){
+    //   $course = Course::find($id);
+    //   $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
+    //   if($course){
+    //   return response()->json(['status'=>true,'code'=>200,'data'=>$course,'image'=>$imagePath]);
+    //   }else{
+    //  return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
+    //   }
+    // }
+    public function UpdateView($id)
+{
+    try {
+        $course = Course::find($id);
+
+        if (!$course) {
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+        }
+
+        // Retrieve image path
+        $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
+
+        // Retrieve selected teachers associated with the course
+        $teachers = $course->teachers()->select('id', 'name')->get();
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => [
+                'course' => $course,
+                'teachers' => $teachers,
+            ],
+            'image' => $imagePath,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to fetch course details', 'error' => $e->getMessage()], 500);
+    }
+}
 
     public function deleteCourse($id)
     {
         $course = Course::find($id);
+                $course->teachers()->detach();
 
         if (!$course) {
             return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
@@ -142,6 +200,8 @@ class CourseController extends Controller
         'modeType' => ['required', 'string', 'min:1', 'max:250'],
         'summary' => 'nullable', 'string', 'min:1', 'max:250',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+          'teachers' => 'nullable|array', // Optional if updating teachers
+        'teachers.*' => 'exists:teachers,id', //
         ]);
 
         if ($validator->fails()) {
@@ -176,6 +236,12 @@ class CourseController extends Controller
             })->save($destinationPath . '/' . $fileName);
             $course->image = $fileName;
 
+        }
+
+           // Update teachers associated with the course
+        if ($request->has('teachers')) {
+            $teachers = $request->input('teachers');
+            $course->teachers()->sync($teachers); // Syncs the teachers IDs
         }
             $course->save();
               $imagePath = $course->image ? url('/Courses/' . $course->image) : null;

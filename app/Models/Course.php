@@ -10,4 +10,8 @@ class Course extends Model
     use HasFactory;
     protected $table='courses';
     protected $primarykey='id';
+     public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class);
+    }
 }

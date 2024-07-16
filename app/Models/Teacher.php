@@ -30,7 +30,10 @@ class Teacher extends Authenticatable
         'password',
         'classes'
     ];
-   
+     public function courses()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 
    
 
