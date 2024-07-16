@@ -106,6 +106,7 @@ public function store(Request $request)
 
            $admins = Admin::all();
         $staffMembers = StaffModel::all();
+          $course = Course::with('teachers')->find($request['batch_id']);
           // Add teachers' details to the study material
         $teachersList = $course->teachers->map(function ($teacher) {
             return [
