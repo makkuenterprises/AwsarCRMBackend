@@ -47,7 +47,7 @@ class Student extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-          public function courseEnrollments()
+     public function courses()
     {
         return $this->belongsToMany(Course::class, 'course_enrollments', 'student_id', 'course_id')
                     ->withTimestamps(); // Assuming you have timestamps in your pivot table
