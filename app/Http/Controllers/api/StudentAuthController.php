@@ -47,6 +47,7 @@ class StudentAuthController extends Controller
             $imagePath = url('/Student/' . $user->image);
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
+           
            $email = $login['email'];
             $user = DB::table('students')
            ->where('students.email', $email)
@@ -56,40 +57,25 @@ class StudentAuthController extends Controller
            ->first();
 
             $code = 200;
+            // Fetch unread notifications for the student
+        $notifications = $user->unreadNotifications()->get();
                             $menuList = [
                 [
                     'title' => 'Dashboard',
                     'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
                     'to' => 'dashboard',
                 ],
-                [
+                [     
                     'title' => 'Teachers',
                     'iconStyle' => '<i className="material-symbols-outlined">person</i>',
                      'to'=> 'teacher',	
-                ],
+                ],  
                 [
                     'title' => 'Enrolled Batch',
                     'iconStyle' => '<i className="merial-icons">article</i>',
-                    'to' => 'batch',
+                    'to' => 'batch', 
 
-                ],
-                // [
-                //     'title' => 'Reports',
-                //      'classsChange' => 'mm-collapse',
-                //      'iconStyle' => '<i className="merial-icons">article</i>',
-                //         'content'=> [
-                //         [
-                //             'title'=> 'Live Classes',
-                //             'to'=> 'live-classes',					
-                //         ],
-                //         [
-                //             'title'=> 'Create Live Class',
-                //             'to'=> 'page-lock-screen',
-                //         ],
-                      
-           
-                //         ],
-                // ],
+                ],          
                  [
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
@@ -160,9 +146,10 @@ class StudentAuthController extends Controller
             'payment_status' => $user->payment_status,
             'course' => $user->course_name ?? 'Not Enrolled',
             ],
-            'token' => $token,
+            'token' => $token, 
              'message' => 'Login Successfully',
              'role' => $menuList,
+              'notifications' => $notifications, // Include notifications here
             ];
 
         }
