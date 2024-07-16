@@ -189,7 +189,7 @@ public function studentAuthLogin(Request $request)
         $user = $user->load('coursesEnrollments.course'); // Assuming 'coursesEnrollments' is the relationship name
 
         // Fetch unread notifications for the student
-        $notifications = $user->unreadNotifications()->get();
+        // $notifications = $user->unreadNotifications()->get();
 
         // Generate token for API authentication
         $token = $user->createToken('AwsarClass')->plainTextToken;
@@ -283,7 +283,7 @@ public function studentAuthLogin(Request $request)
             'token' => $token,
             'message' => 'Login Successfully',
             'role' => $menuList,
-            'notifications' => $notifications, // Include notifications here
+            // 'notifications' => $notifications, // Include notifications here
         ];
 
         return response()->json($data, 200);
