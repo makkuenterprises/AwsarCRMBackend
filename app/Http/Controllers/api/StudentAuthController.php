@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Image;
 use App\Models\Student;
+
 use App\Models\Course;
 use DB;
 use Carbon\Carbon;
@@ -160,10 +161,6 @@ class StudentAuthController extends Controller
 //     }
 //     return response()->json($data, $code);
 // } 
-use App\Models\Student;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
 
 public function studentAuthLogin(Request $request)
 {
