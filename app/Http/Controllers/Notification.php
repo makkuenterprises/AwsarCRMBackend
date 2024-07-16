@@ -36,7 +36,7 @@ public function markAsRead(Request $request)
         // Validate the request
         $validatedData = $request->validate([
             'student_id' => 'required|integer|exists:students,id',
-            'notification_id' => 'required|integer|exists:notifications,id',
+            'notification_id' => 'required|string|exists:notifications,id',
         ]);
 
         // Fetch the student by ID
