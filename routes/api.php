@@ -310,6 +310,10 @@ Route::get('/notify/{Student_id}', [Notification::class, 'fetchNotifications']);
 Route::post('/mark/as/read', [Notification::class, 'markAsRead']);
 Route::post('/mark/all/as/read', [Notification::class, 'markAllAsRead']);
 
+
+Route::post('/notification/role', [Notification::class, 'fetchNotificationsByRole']);
+Route::post('/mark/as/read/role', [Notification::class, 'markAsRead']);
+Route::post('/mark/all/as/read/role', [Notification::class, 'markAllAsRead']);
  
 // });
 
