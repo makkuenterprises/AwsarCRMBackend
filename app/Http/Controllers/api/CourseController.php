@@ -93,7 +93,7 @@ class CourseController extends Controller
  
     
 public function courseList()
-{
+{ 
     try {
         // Fetch courses with active status, ordered by descending ID
         $courses = Course::where('status', 'active')->orderByDesc('id')->get();
@@ -116,7 +116,7 @@ public function courseList()
                 'Course_id' => $course->Course_id,
                 'image' => $course->image ? url('/Courses/' . $course->image) : null,
                 'teachers' => $teachersNames, // Include teachers' names
-            ];
+            ]; 
         });
 
         // Return JSON response with formatted data
@@ -145,7 +145,7 @@ public function courseList()
     //  return response()->json(['status'=>false,'code'=>404,'message' => 'Course not found'], 404);
     //   }
     // }
-    public function UpdateView($id)
+   public function UpdateView($id)
 {
     try {
         $course = Course::find($id);
@@ -158,14 +158,14 @@ public function courseList()
         $imagePath = $course->image ? url('/Courses/' . $course->image) : null;
 
         // Retrieve selected teachers associated with the course
-        $teachers = $course->teachers()->select('id', 'name')->get();
+        $teachers = $course->teachers()->select('teachers.id', 'teachers.name')->get();
 
         return response()->json([
             'status' => true,
             'code' => 200,
             'data' => [
                 'course' => $course,
-                'teachers' => $teachers,
+                'teachers' => $teachers, // This already includes the id and name
             ],
             'image' => $imagePath,
         ]);
@@ -173,7 +173,6 @@ public function courseList()
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to fetch course details', 'error' => $e->getMessage()], 500);
     }
 }
-
     public function deleteCourse($id)
     {
         $course = Course::find($id);
