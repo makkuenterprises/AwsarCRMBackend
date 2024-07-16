@@ -307,7 +307,7 @@ Route::prefix('notice')->group(function () {
       Route::post('/list/student', [NotificationController::class, 'studentNoticelist']);
 }); 
 Route::get('/notify/{Student_id}', [Notification::class, 'fetchNotifications']);
-Route::get('/mark-as-read', [Notification::class, 'markAsRead']);
+Route::post('/mark-as-read', [Notification::class, 'markAsRead']);
 
  
 // });

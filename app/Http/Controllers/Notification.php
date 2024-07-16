@@ -61,7 +61,7 @@ class Notification extends Controller
     }
 
     // Mark the notification as read
-    $notification->markAsRead();
+    $notification->markAsRead(); 
 
     return response()->json([
         'status' => 'success',
