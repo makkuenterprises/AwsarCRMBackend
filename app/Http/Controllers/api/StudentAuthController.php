@@ -31,14 +31,17 @@ class StudentAuthController extends Controller
         }
 
         if (!Hash::check($request->input('password'), $user->password)) {
-        // Return error response for incorrect password
-        return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
+            return response()->json([
+                'status' => false,
+                'code' => 401,
+                'message' => 'The password you entered is incorrect. Please try again.',
+            ], 401);
         }
 
         if (!$user || !Hash::check($login['password'], $user->password)) {
             
             $data = 'Invalid Login Credentials';
-            $code = 401;
+            $code = 401; 
         } else {
 
            $imagePath = url('/Student/' . $user->image);
@@ -503,38 +506,49 @@ class StudentAuthController extends Controller
         }
     }
 
-    public function passwordUpdate(Request $request){
-
-        $validator = Validator::make($request->all(), [
+  public function passwordUpdate(Request $request)
+{
+    $validator = Validator::make($request->all(), [
         'email' => 'required|email',
         'password' => 'required|string',
         'new_password' => 'required|string',
-        ]);
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-             'status' => false,
-               'code'=>400,
-              'errors' => $validator->errors()
-              ], 400);
-        }
-        $student = Student::where('email',$request->input('email'))->first();
-        
-        if($student){
-
-            if (Hash::check($request->input('password'), $student->password)) {
-                $student->password = Hash::make($request->new_password);
-                $student->save();
-                return response()->json(['status'=>true,'code'=>200,'message' => 'Your password has been updated successfully.'], 200);
-            }else{
-            return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect'], 401);
-            }
-        }else{
-        return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address. Please check and try again.'], 404);
-        }
-
-        
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'code' => 400,
+            'errors' => $validator->errors(),
+        ], 400);
     }
+
+    $student = Student::where('email', $request->input('email'))->first();
+
+    if ($student) {
+        if (Hash::check($request->input('password'), $student->password)) {
+            $student->password = Hash::make($request->input('new_password'));
+            $student->save();
+            return response()->json([
+                'status' => true,
+                'code' => 200,
+                'message' => 'Your password has been updated successfully.',
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'code' => 401,
+                'message' => 'The password you entered is incorrect.',
+            ], 401);
+        }
+    } else {
+        return response()->json([
+            'status' => false,
+            'code' => 404,
+            'message' => 'We could not find an account with that email address. Please check and try again.',
+        ], 404);
+    }
+}
+
 
 
     public function courseList(){
