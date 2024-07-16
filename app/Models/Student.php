@@ -47,4 +47,8 @@ class Student extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+      public function courseEnrollments()
+    {
+        return $this->hasMany(CoursesEnrollement::class, 'student_id', 'id');
+    }
 }
