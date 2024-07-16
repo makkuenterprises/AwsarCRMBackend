@@ -30,7 +30,7 @@ class StudentAuthController extends Controller
           return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
         }
 
-          if (Hash::check($request->input('password'), $user->password)) {
+          if (!Hash::check($request->input('password'), $user->password)) {
             return response()->json([
                 'status' => false,
                 'code' => 401,
@@ -38,7 +38,7 @@ class StudentAuthController extends Controller
             ], 401);
         }
 
-        if (!$user || !Hash::check($login['password'], $user->password)) {
+        if (!$user || !Hash::check($request->input('password'), $user->password)) {
             
             $data = 'Invalid Login Credentials';
             $code = 401; 
