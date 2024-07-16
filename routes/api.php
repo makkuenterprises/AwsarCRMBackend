@@ -307,6 +307,7 @@ Route::prefix('notice')->group(function () {
       Route::post('/list/student', [NotificationController::class, 'studentNoticelist']);
 }); 
 Route::get('/notify/{Student_id}', [Notification::class, 'fetchNotifications']);
+Route::get('/mark-as-read', [Notification::class, 'markAsRead']);
 
  
 // });
@@ -338,7 +339,7 @@ Route::prefix('attendance')->group(function () {
       Route::get('course/list', [AttendanceController::class, 'alllist']);
       Route::post('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
       Route::post('/submit-attendance', [AttendanceController::class, 'create']);
-
+ 
      
      
 }); 
