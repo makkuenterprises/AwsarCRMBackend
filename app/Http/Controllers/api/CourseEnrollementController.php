@@ -105,26 +105,18 @@ class CourseEnrollementController extends Controller
         $admins = Admin::all();
         $staffMembers = StaffModel::all();
          // Fetch and include the attached teachers
-        $batch = Course::with('courses.teachers')->find($request->input('course_id'));
+      
+        $course = Course::with('teachers')->find($request->input('course_id'));
 
-    if (!$batch) {
-        return response()->json([
-            'status' => false,
-            'code' => 404,
-            'message' => 'Batch not found'
-        ], 404);
-    }
-
-    $teachers = collect();
-
-    foreach ($batch->courses as $course) {
-        foreach ($course->teachers as $teacher) {
-            $teachers->push($teacher);
+        if (!$course) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'Course not found'
+            ], 404);
         }
-    }
 
-    // Remove duplicate teachers
-    $teachers = $teachers->unique('id');
+        $teachers = $course->teachers;
         foreach ($teachers as $teacher) {
             $teacher->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
         }  
