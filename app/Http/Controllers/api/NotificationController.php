@@ -13,6 +13,15 @@ use App\Models\StaffModel;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Course;
+use Illuminate\Support\Facades\Log;
+
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon; 
+use App\Models\StudyMaterials;
+
+use Crypt;
+use App\Notifications\StudyMaterial;
 
 
 
