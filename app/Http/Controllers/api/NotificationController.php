@@ -85,7 +85,7 @@ public function create(Request $request)
         }
         // Send notifications to teachers
         $teachers = collect();
-        foreach ($courses as $course) {
+        foreach ($courses as $course) { 
             $teachers = $teachers->merge($course->teachers()->get());
         }
         $teachers = $teachers->unique('id');

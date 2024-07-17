@@ -56,7 +56,7 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
 
         return [
             'material_id' => $this->enrollmentNo, 
-            'material_title' => 'Student has enrolled in the course: ' . $this->courseName . '. Welcome, ' . $this->name . '!',
+            'material_title' => $this->name . ' has enrolled in the course: ' . $this->courseName . '. Welcome!',
             'material_from' => 'Course_Enrollment',
             'created_at' => $this->created_at,
         ];
