@@ -2,25 +2,28 @@
 
 namespace App\Notifications;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
+
 
 class CourseEnrollmentNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+   use Queueable;
 
-    protected $courseName;
+     protected $courseName;
     protected $enrollmentNo;
+    protected $created_at;
 
     /**
      * Create a new notification instance.
      *
-     * @param string $courseName
-     * @param string $enrollmentNo
+     * @param  mixed  $notice
+     * @return void
      */
-    public function __construct($courseName, $enrollmentNo, $created_at)
+     public function __construct($courseName, $enrollmentNo, $created_at)
     {
         $this->courseName = $courseName;
         $this->enrollmentNo = $enrollmentNo;
@@ -30,38 +33,27 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @return array<int, string>
+     * @param  mixed  $notifiable
+     * @return array
      */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->subject('You are enrolled in a new course')
-                    ->line("Dear {$notifiable->name},")
-                    ->line("You have successfully enrolled in the course: {$this->courseName}.")
-                    ->line("Your enrollment number is: {$this->enrollmentNo}.")
-                    ->action('Go to Dashboard', url('/dashboard'))
-                    ->line('Thank you for using our application!');
+        Log::info('Notification via method called', ['notifiable' => $notifiable]);
+        return ['database', 'broadcast'];
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @return array<string, mixed>
+     * @param  mixed  $notifiable
+     * @return array
      */
-  public function toArray($notifiable)
+    public function toArray($notifiable)
     {
         Log::info('Notification toArray method called', ['notifiable' => $notifiable]);
 
         return [
-            'material_id' => $this->enrollmentNo, 
+                        'material_id' => $this->enrollmentNo, 
             'material_title' => $this->courseName,
             'material_from' => 'Course_Enrollment',
             'created_at' => $this->created_at,
@@ -79,7 +71,7 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
         Log::info('Notification toBroadcast method called', ['notifiable' => $notifiable]);
 
         return new BroadcastMessage([
-            'material_id' => $this->enrollmentNo, 
+             'material_id' => $this->enrollmentNo, 
             'material_title' => $this->courseName,
             'material_from' => 'Course_Enrollment',
             'created_at' => $this->created_at,
