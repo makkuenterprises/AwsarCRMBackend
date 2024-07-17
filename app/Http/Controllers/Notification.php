@@ -176,7 +176,7 @@ public function markAllAsRead(Request $request)
                     'message' => ucfirst($role) . ' not found',
                 ], 404);
             }
-
+ 
             // Fetch notifications for the user
             $notifications = $user->unreadNotifications()->get();
 

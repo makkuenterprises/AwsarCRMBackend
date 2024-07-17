@@ -2,21 +2,19 @@
 
 namespace App\Notifications;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification; 
-use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
-
-class CourseEnrollmentNotification extends Notification implements ShouldQueue
+class CourseEnrollmentNotificationForAdmin extends Notification
 {
-   use Queueable; 
- 
+    use Queueable; 
+
     protected $courseName;
     protected $enrollmentNo;
     protected $created_at;
-    protected $name;
+    protected $name; 
 
     /**
      * Create a new notification instance.
@@ -54,9 +52,9 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
     {
         Log::info('Notification toArray method called', ['notifiable' => $notifiable]);
 
-        return [  
+        return [   
             'material_id' => $this->enrollmentNo, 
-            'material_title' => 'Congratulations You has been enrolled in ' . $this->courseName . 'Batch.',
+            'material_title' => $this->name . 'has been enrolled in ' . $this->courseName . 'Batch.',
             'material_from' => 'Course_Enrollment',
             'created_at' => $this->created_at,
         ]; 
@@ -80,7 +78,3 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
         ]);
     }
 }
-
-
-
-

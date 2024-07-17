@@ -15,6 +15,7 @@ use App\Models\Teacher;
 use Illuminate\Support\Str;
 use App\Models\PaymentHistory;
 use App\Notifications\CourseEnrollmentNotification;
+use App\Notifications\CourseEnrollmentNotificationForAdmin;
 
 use DB;
  
@@ -103,14 +104,39 @@ class CourseEnrollementController extends Controller
         $student->save();
         $admins = Admin::all();
         $staffMembers = StaffModel::all();
+         // Fetch and include the attached teachers
+        $batch = Batch::with('courses.teachers')->find($request->input('course_id'));
+
+    if (!$batch) {
+        return response()->json([
+            'status' => false,
+            'code' => 404,
+            'message' => 'Batch not found'
+        ], 404);
+    }
+
+    $teachers = collect();
+
+    foreach ($batch->courses as $course) {
+        foreach ($course->teachers as $teacher) {
+            $teachers->push($teacher);
+        }
+    }
+
+    // Remove duplicate teachers
+    $teachers = $teachers->unique('id');
+        foreach ($teachers as $teacher) {
+            $teacher->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
+        }  
+
           foreach ($admins as $admin) {
-            $admin->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
-        } 
+            $admin->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
+        }  
 
         // Send notifications to staff members
         foreach ($staffMembers as $staff) {
-            $staff->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
-        }
+            $staff->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
+        } 
 
         $student->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
 

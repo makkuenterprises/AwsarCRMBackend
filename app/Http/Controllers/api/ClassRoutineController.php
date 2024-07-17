@@ -44,7 +44,7 @@ public function store(Request $request)
                                     ->where('batch_id', $validatedData['batch_id'])
                                     ->exists();
 
-    if ($existingRoutine) {
+    if ($existingRoutine) { 
         return response()->json([
             'status' => 'error',
             'message' => 'Another class routine already exists for the same day, time, and batch.',
