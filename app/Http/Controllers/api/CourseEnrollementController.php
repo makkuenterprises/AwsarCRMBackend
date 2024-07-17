@@ -11,6 +11,8 @@ use App\Models\Student;
 use App\Models\Course;
 use Illuminate\Support\Str;
 use App\Models\PaymentHistory;
+use App\Notifications\CourseEnrollmentNotification;
+
 use DB;
 
 class CourseEnrollementController extends Controller
@@ -93,9 +95,11 @@ class CourseEnrollementController extends Controller
 
         // Update student's payment status and course info
         $student->payment_status = $request->input('payment_status'); 
-        $student->course_id = $request->input('course_id');
+        $student->course_id = $request->input('course_id'); 
         $student->paymentType = $request->input('payment_type');
         $student->save();
+
+        $student->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at));
 
         DB::commit(); // Commit the transaction
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Student enrolled in the course successfully'], 200);
