@@ -51,6 +51,7 @@ class NoticeNotification extends Notification
         return [
             'material_id' => $this->notice->id,
             'material_title' => $this->notice->title,
+             'material_from' => 'notice',
             'created_at' => $this->notice->created_at,
         ];
     }

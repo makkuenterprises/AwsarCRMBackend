@@ -49,6 +49,7 @@ class StudyMaterial extends Notification implements ShouldQueue
         return [
             'material_id' => $this->studyMaterial->id,
             'material_title' => $this->studyMaterial->title,
+             'material_from' => 'Study_materials',
             'created_at' => $this->studyMaterial->created_at,
         ];
     }
