@@ -105,7 +105,7 @@ class CourseEnrollementController extends Controller
         $admins = Admin::all();
         $staffMembers = StaffModel::all();
          // Fetch and include the attached teachers
-        $batch = Batch::with('courses.teachers')->find($request->input('course_id'));
+        $batch = Course::with('courses.teachers')->find($request->input('course_id'));
 
     if (!$batch) {
         return response()->json([
