@@ -9,6 +9,9 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Student;
 use App\Models\Course;
+use App\Models\Admin;
+use App\Models\StaffModel;
+use App\Models\Teacher;
 use Illuminate\Support\Str;
 use App\Models\PaymentHistory;
 use App\Notifications\CourseEnrollmentNotification;
@@ -98,6 +101,16 @@ class CourseEnrollementController extends Controller
         $student->course_id = $request->input('course_id'); 
         $student->paymentType = $request->input('payment_type');
         $student->save();
+        $admins = Admin::all();
+        $staffMembers = StaffModel::all();
+          foreach ($admins as $admin) {
+            $admin->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at));
+        }
+
+        // Send notifications to staff members
+        foreach ($staffMembers as $staff) {
+            $staff->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at));
+        }
 
         $student->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at));
 
