@@ -17,7 +17,7 @@ use App\Models\PaymentHistory;
 use App\Notifications\CourseEnrollmentNotification;
 
 use DB;
-
+ 
 class CourseEnrollementController extends Controller
 {
 
@@ -104,15 +104,15 @@ class CourseEnrollementController extends Controller
         $admins = Admin::all();
         $staffMembers = StaffModel::all();
           foreach ($admins as $admin) {
-            $admin->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at));
-        }
+            $admin->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
+        } 
 
         // Send notifications to staff members
         foreach ($staffMembers as $staff) {
-            $staff->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at));
+            $staff->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
         }
 
-        $student->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at));
+        $student->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
 
         DB::commit(); // Commit the transaction
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Student enrolled in the course successfully'], 200);
@@ -138,7 +138,7 @@ public function getPaymentHistory(Request $request)
             'errors' => $validator->errors()
         ], 400);
     }
-
+ 
     try {
         // Retrieve the payment history for the specific course and student using join
           $paymentHistory = DB::table('payment_histories')

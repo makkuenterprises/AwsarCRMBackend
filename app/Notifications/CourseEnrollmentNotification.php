@@ -16,6 +16,7 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
      protected $courseName;
     protected $enrollmentNo;
     protected $created_at;
+    protected $name;
 
     /**
      * Create a new notification instance.
@@ -23,11 +24,12 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
      * @param  mixed  $notice
      * @return void
      */
-     public function __construct($courseName, $enrollmentNo, $created_at)
+     public function __construct($courseName, $enrollmentNo, $created_at, $name)
     {
         $this->courseName = $courseName;
         $this->enrollmentNo = $enrollmentNo;
         $this->created_at = $created_at;
+        $this->name = $name;
     }
 
     /**
@@ -53,8 +55,8 @@ class CourseEnrollmentNotification extends Notification implements ShouldQueue
         Log::info('Notification toArray method called', ['notifiable' => $notifiable]);
 
         return [
-                        'material_id' => $this->enrollmentNo, 
-            'material_title' => $this->courseName,
+            'material_id' => $this->enrollmentNo, 
+            'material_title' => 'Student has enrolled in the course: ' . $this->courseName . '. Welcome, ' . $this->name . '!',
             'material_from' => 'Course_Enrollment',
             'created_at' => $this->created_at,
         ];
