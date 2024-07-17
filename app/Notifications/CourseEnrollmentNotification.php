@@ -11,9 +11,9 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 
 class CourseEnrollmentNotification extends Notification implements ShouldQueue
 {
-   use Queueable;
+   use Queueable; 
 
-     protected $courseName;
+    protected $courseName;
     protected $enrollmentNo;
     protected $created_at;
     protected $name;
