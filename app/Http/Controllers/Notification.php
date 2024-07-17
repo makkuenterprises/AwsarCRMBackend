@@ -126,7 +126,7 @@ public function markAllAsRead(Request $request)
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
+        return response()->json([ 
             'status' => 'error',
             'message' => 'Validation error',
             'errors' => $e->errors(),
@@ -139,7 +139,7 @@ public function markAllAsRead(Request $request)
         ], 500);
     }
 } 
-
+ 
 
     public function fetchNotificationsByRole(Request $request)
     {

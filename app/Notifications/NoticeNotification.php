@@ -1,27 +1,28 @@
 <?php
+
 namespace App\Notifications;
-use Illuminate\Support\Facades\Log;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class StudyMaterial extends Notification implements ShouldQueue
+class NoticeNotification extends Notification
 {
-    use Queueable;
+   use Queueable;
 
-    protected $studyMaterial;
+    protected $notice;
 
     /**
      * Create a new notification instance.
      *
-     * @param  mixed  $studyMaterial
+     * @param  mixed  $notice
      * @return void
      */
-    public function __construct($studyMaterial)
+    public function __construct($notice)
     {
-        $this->studyMaterial = $studyMaterial;
-        Log::info('StudyMaterial notification created', ['studyMaterial' => $studyMaterial]);
+        $this->notice = $notice;
+        Log::info('notice notification created', ['notice' => $notice]);
     }
 
     /**
@@ -47,9 +48,9 @@ class StudyMaterial extends Notification implements ShouldQueue
         Log::info('Notification toArray method called', ['notifiable' => $notifiable]);
 
         return [
-            'material_id' => $this->studyMaterial->id,
-            'material_title' => $this->studyMaterial->title,
-            'created_at' => $this->studyMaterial->created_at,
+            'material_id' => $this->notice->id,
+            'material_title' => $this->notice->title,
+            'created_at' => $this->notice->created_at,
         ];
     }
 
@@ -57,17 +58,17 @@ class StudyMaterial extends Notification implements ShouldQueue
      * Get the broadcastable representation of the notification.
      * 
      * @param  mixed  $notifiable
-     * @return BroadcastMessage
+     * @return BroadcastMessage 
      */
     public function toBroadcast($notifiable)
     {
         Log::info('Notification toBroadcast method called', ['notifiable' => $notifiable]);
 
         return new BroadcastMessage([
-            'material_id' => $this->studyMaterial->id,
-            'material_title' => $this->studyMaterial->title,
-            'material_from' => 'Study_materials',
-            'created_at' => $this->studyMaterial->created_at,
+            'material_id' => $this->notice->id,
+            'material_title' => $this->notice->title,
+            'material_from' => 'notice',
+            'created_at' => $this->notice->created_at,
         ]);
     }
 }

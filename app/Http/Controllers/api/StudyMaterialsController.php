@@ -104,7 +104,7 @@ public function store(Request $request)
         // Get User objects for each student
         $students = Student::whereIn('id', $studentIds)->get();
 
-           $admins = Admin::all();
+        $admins = Admin::all();
         $staffMembers = StaffModel::all();
           $course = Course::with('teachers')->find($request['batch_id']);
           // Add teachers' details to the study material
@@ -129,7 +129,7 @@ public function store(Request $request)
             if ($teacherModel) {
                 $teacherModel->notify(new StudyMaterialNotification($studyMaterial));
             }
-        }
+        } 
 
          foreach ($admins as $admin) {
             $admin->notify(new StudyMaterial($studyMaterial));

@@ -5,10 +5,15 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Notice;
+use App\Notifications\Notice;
+use App\Models\NoticeNotification;
 use DB;
+use App\Models\Admin;
+use App\Models\StaffModel;
+use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\Course;
- 
+
 
 
 class NotificationController extends Controller
@@ -30,7 +35,7 @@ public function create(Request $request)
             'code' => 400,
             'errors' => $validator->errors()
         ], 400);
-    }
+    } 
 
     try {
         $notification = new Notice();
@@ -40,13 +45,65 @@ public function create(Request $request)
         $notification->batch = json_encode($request->input('batch')); // Store as JSON
         $notification->save();
 
+        // Fetch courses associated with the specified batches
+        if ($request->has('batch')) {
+            $batchNames = $request->input('batch');
+            $courses = Course::whereIn('name', $batchNames)->get();
+        } else {
+            $courses = Course::all(); // Fetch all courses if no batches specified (for admins and staff)
+        }
+
+        // Send notifications to students
+         if ($request->has('batch')) {
+            $courseNames = $request->input('batch');
+
+            // Fetch students enrolled in the specified batches
+            $students = DB::table('students')
+                ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+                ->join('courses', 'courses.id', '=', 'courses_enrollements.course_id')
+                ->whereIn('courses.name', $courseNames)
+                ->select('students.id', 'students.name', 'students.email')
+                ->distinct()
+                ->get();
+
+            foreach ($students as $student) {
+                $studentModel = Student::find($student->id);
+                if ($studentModel) {
+                    $studentModel->notify(new NoticeNotification($notification));
+                }
+            }
+
+        }
+        // Send notifications to teachers
+        $teachers = collect();
+        foreach ($courses as $course) {
+            $teachers = $teachers->merge($course->teachers()->get());
+        }
+        $teachers = $teachers->unique('id');
+        foreach ($teachers as $teacher) {
+            $teacher->notify(new NoticeNotification($notification));
+        }
+
+        // Send notifications to admins
+        $admins = Admin::all();
+        foreach ($admins as $admin) {
+            $admin->notify(new NoticeNotification($notification));
+        }
+
+        // Send notifications to staff members
+        $staffMembers = StaffModel::all();
+        foreach ($staffMembers as $staff) {
+            $staff->notify(new NoticeNotification($notification));
+        }
+
+          
         // Encode batch data to JSON for consistent response
         $notification->batch = json_decode($notification->batch, true); // Decode JSON to array
 
         return response()->json([
             'status' => true, 
             'code' => 200, 
-            'message' => 'Notification created successfully',
+            'message' => 'Notice created successfully',
             'notification' => $notification
         ], 200);
     } catch (Exception $e) {
@@ -54,7 +111,7 @@ public function create(Request $request)
         return response()->json([
             'status' => false,
             'code' => 500,
-            'message' => 'An error occurred while creating notification',
+            'message' => 'An error occurred while creating notice',
             'data' => $data
         ], 500);
     }
@@ -84,7 +141,7 @@ public function list()
         return response()->json([
             'status' => false,
             'code' => 500,
-            'message' => 'An error occurred while fetching notifications',
+            'message' => 'An error occurred while fetching notice',
             'error' => $e->getMessage(),
         ], 500);
     }
@@ -137,7 +194,7 @@ public function list()
         return response()->json([
             'status' => false,
             'code' => 500,
-            'message' => 'An error occurred while fetching notifications',
+            'message' => 'An error occurred while fetching notice',
             'error' => $e->getMessage(),
         ], 500);
     }
