@@ -397,7 +397,7 @@ Route::prefix('leave-request')->group(function () {
 
 // routine
 Route::get('class-routines', [ClassRoutineController::class, 'index']);
-Route::post('class-routines', [ClassRoutineController::class, 'store']);
+Route::post('store/class-routines', [ClassRoutineController::class, 'store']);
 Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
 Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
 Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
