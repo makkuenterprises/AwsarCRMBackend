@@ -28,7 +28,7 @@ class CourseController extends Controller
         'summary' => 'nullable', 'string', 'min:1', 'max:250',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'teachers' => 'nullable|array', // Teachers IDs or names
-        'teachers.*' => 'exists:teachers,id', 
+        'teachers.*' => 'nullable|exists:teachers,id', 
 
         ]);
 

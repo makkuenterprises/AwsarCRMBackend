@@ -200,7 +200,7 @@ public function show($batch_id = null)
 
         if ($batch_id) {
             $query->where('batch_id', $batch_id);
-        }
+        } 
 
         $classRoutines = $query->orderBy('start_time')->get();
 
