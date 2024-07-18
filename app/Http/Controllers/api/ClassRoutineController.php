@@ -192,14 +192,16 @@ public function store(Request $request)
  
 public function createTimeSlot(Request $request)
 {
-    $validatedData = $request->validate([
+   
+
+    try {
+
+         $validatedData = $request->validate([
         'batch_id' => 'required|exists:batches,id',
         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i|after:start_time',
     ]);
-
-    try {
         // Check for overlapping time slots
         $existingTimeSlot = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
                                         ->where('batch_id', $validatedData['batch_id'])
