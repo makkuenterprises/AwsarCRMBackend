@@ -189,53 +189,60 @@ public function store(Request $request)
         ], 500);
     }
 }
- 
 public function createTimeSlot(Request $request)
 {
-   
-
     try {
-
-         $validatedData = $request->validate([
-        'batch_id' => 'required|exists:courses,id',
-        'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
-        'start_time' => 'required|date_format:H:i',
-        'end_time' => 'required|date_format:H:i|after:start_time',
-    ]);
-        // Check for overlapping time slots
-        $existingTimeSlot = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
-                                        ->where('batch_id', $validatedData['batch_id'])
-                                        ->where(function ($query) use ($validatedData) {
-                                            $query->where(function ($q) use ($validatedData) {
-                                                $q->where('start_time', '<=', $validatedData['start_time'])
-                                                  ->where('end_time', '>', $validatedData['start_time']);
-                                            })->orWhere(function ($q) use ($validatedData) {
-                                                $q->where('start_time', '<', $validatedData['end_time'])
-                                                  ->where('end_time', '>=', $validatedData['end_time']);
-                                            });
-                                        })
-                                        ->exists();
-
-        if ($existingTimeSlot) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'A time slot with overlapping time already exists for the same day and batch.',
-            ], 400);
-        }
-
-        // Create time slot
-        $timeSlot = ClassRoutine::create([
-            'batch_id' => $validatedData['batch_id'],
-            'day_of_week' => $validatedData['day_of_week'],
-            'start_time' => $validatedData['start_time'],
-            'end_time' => $validatedData['end_time'],
-            'subject' => null, // Initially, no subject is assigned
+        // Validate the request data
+        $validatedData = $request->validate([
+            'batch_id' => 'required|exists:courses,id',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'days' => 'required|array',
+            'days.*' => 'required|in:mon,tue,wed,thu,fri,sat',
         ]);
+
+        // Prepare to store time slots
+        $createdTimeSlots = [];
+
+        // Loop through each provided day
+        foreach ($validatedData['days'] as $dayOfWeek) {
+            // Check for overlapping time slots
+            $existingTimeSlot = ClassRoutine::where('day_of_week', $dayOfWeek)
+                ->where('batch_id', $validatedData['batch_id'])
+                ->where(function ($query) use ($validatedData) {
+                    $query->where(function ($q) use ($validatedData) {
+                        $q->where('start_time', '<=', $validatedData['start_time'])
+                            ->where('end_time', '>', $validatedData['start_time']);
+                    })->orWhere(function ($q) use ($validatedData) {
+                        $q->where('start_time', '<', $validatedData['end_time'])
+                            ->where('end_time', '>=', $validatedData['end_time']);
+                    });
+                })
+                ->exists();
+
+            if ($existingTimeSlot) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'A time slot with overlapping time already exists for ' . ucfirst($dayOfWeek) . ' and batch.',
+                ], 400);
+            }
+
+            // Create time slot
+            $timeSlot = ClassRoutine::create([
+                'batch_id' => $validatedData['batch_id'],
+                'day_of_week' => $dayOfWeek,
+                'start_time' => $validatedData['start_time'],
+                'end_time' => $validatedData['end_time'],
+                'subject' => null, // Initially, no subject is assigned
+            ]);
+
+            $createdTimeSlots[] = $timeSlot;
+        }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Time slot created successfully',
-            'data' => $timeSlot,
+            'message' => 'Time slots created successfully',
+            'data' => $createdTimeSlots,
         ], 201);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -247,7 +254,7 @@ public function createTimeSlot(Request $request)
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'message' => 'Failed to create class routine',
+            'message' => 'Failed to create time slots',
             'errors' => [
                 'exception' => [$e->getMessage()],
             ],
