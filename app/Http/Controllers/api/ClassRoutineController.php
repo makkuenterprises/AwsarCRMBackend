@@ -100,24 +100,28 @@ public function store(Request $request)
         'subject' => 'required|string',
         'batch_id' => 'nullable|exists:courses,id',
         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
-        'start_time' => 'required|date_format:H:i',
-        'end_time' => 'required|date_format:H:i|after:start_time',
+        'start_time' => 'required|date_format:H:i', // Ensure time is in 24-hour format
+        'end_time' => 'required|date_format:H:i|after:start_time', // Ensure end time is after start time
     ]);
 
     try {
-        // Check if there's already a routine with the same day, time, batch, and subject
-        // Exclude the current routine ID if editing an existing routine
+        // Check if start_time and end_time are in 24-hour format
+        if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['start_time']) ||
+            !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['end_time'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid time format. Please use 24-hour format (HH:MM).',
+            ], 400);
+        }
+
+        // Check if there's already a routine with overlapping time for the same day, batch, and subject
         $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
                                         ->where('batch_id', $validatedData['batch_id'])
                                         ->where('subject', $validatedData['subject'])
                                         ->where(function ($query) use ($validatedData) {
                                             $query->where(function ($q) use ($validatedData) {
-                                                $q->whereBetween('start_time', [$validatedData['start_time'], $validatedData['end_time']])
-                                                  ->orWhereBetween('end_time', [$validatedData['start_time'], $validatedData['end_time']]);
-                                            })
-                                            ->orWhere(function ($q) use ($validatedData) {
-                                                $q->where('start_time', '<', $validatedData['start_time'])
-                                                  ->where('end_time', '>', $validatedData['end_time']);
+                                                $q->where('start_time', '<', $validatedData['end_time'])
+                                                  ->where('end_time', '>', $validatedData['start_time']);
                                             });
                                         })
                                         ->exists();
@@ -127,7 +131,7 @@ public function store(Request $request)
                 'status' => 'error',
                 'message' => 'Another class routine already exists for the same day, time, subject, and batch.',
                 'errors' => [
-                    'subject' => ['A routine with the same subject, day, time, and batch already exists.'],
+                    'subject' => ['A routine with the same subject, day, and overlapping time already exists.'],
                 ]
             ], 400);
         }
@@ -152,6 +156,7 @@ public function store(Request $request)
         ], 500);
     }
 }
+
 
 
  
