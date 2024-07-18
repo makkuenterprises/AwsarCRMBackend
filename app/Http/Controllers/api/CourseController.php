@@ -224,6 +224,8 @@ public function courseListForTeacher($teacherId)
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
           'teachers' => 'nullable|array', // Optional if updating teachers
         'teachers.*' => 'exists:teachers,id', //
+        'class_shift' => 'nullable', 'string', 'min:1', 'max:250',
+        'class_time' => 'nullable', 'string', 'min:1', 'max:250',
         ]);
 
         if ($validator->fails()) {
@@ -244,6 +246,8 @@ public function courseListForTeacher($teacherId)
             $endDate = Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->format('Y-m-d');
             $course->startDate = $startDate;
             $course->endDate = $endDate;
+               $course->class_shift = $request->input('class_shift');
+            $course->class_time = $request->input('class_time');
             $course->modeType = $request->input('modeType');
             $course->summary = $request->input('summary');
 

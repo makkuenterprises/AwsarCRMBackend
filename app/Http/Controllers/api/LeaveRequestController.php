@@ -72,6 +72,7 @@ class LeaveRequestController extends Controller
 //         ], 500);
 //     } 
 // }
+
 public function handleLeaveRequestCreate(Request $request)
 {
     // Validate the request data
