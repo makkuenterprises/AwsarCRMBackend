@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 
 class ClassRoutineController extends Controller
 {
-    //
-    public function index()
-    {
-       // Fetch all class routines
+   
+public function index()
+{
+// Fetch all class routines
 $classRoutines = ClassRoutine::get();
 
 // Group the class routines by 'day_of_week' and 'batch_id'
@@ -26,6 +26,74 @@ $groupedData = $classRoutines->groupBy(function ($routine) {
         ], 200);
     }
 
+// public function store(Request $request)
+// {
+//     // Validate request data
+//     $validatedData = $request->validate([
+//         'subject' => 'required|string',
+//         'batch_id' => 'nullable|exists:courses,id',
+//         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
+//         'start_time' => 'required|date_format:H:i',
+//         'end_time' => 'required|date_format:H:i|after:start_time',
+//     ]);
+
+//     // Check if there's already a routine with the same day, time, and batch
+//     $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
+//                                     ->where('start_time', '<', $validatedData['end_time'])
+//                                     ->where('end_time', '>', $validatedData['start_time'])
+//                                     ->where('batch_id', $validatedData['batch_id'])
+//                                     ->exists();
+
+//     if ($existingRoutine) { 
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Another class routine already exists for the same day, time, and batch.',
+//         ], 400);
+//     }
+
+//     // Create the class routine if validation passes
+//     $classRoutine = ClassRoutine::create($validatedData);
+
+//     return response()->json([
+//         'status' => 'success',
+//         'message' => 'Class routine created successfully',
+//         'data' => $classRoutine->toArray(), // Convert model to array for response
+//     ], 201);
+// }
+
+
+
+// public function show($batch_id)
+// { 
+//     try {
+//         // Retrieve all class routines for the given batch ID
+//         $classRoutines = ClassRoutine::where('batch_id', $batch_id)
+//                                      ->get(); 
+
+//         // Check if any routines were found
+//         if ($classRoutines->isEmpty()) {
+//             return response()->json([
+//                 'status' => 'error',
+//                 'message' => 'No class routines found for the batch',
+//             ], 404);
+//         }
+
+//         // Return a JSON response with the routines
+//         return response()->json([
+//             'status' => 'success',
+//             'message' => 'Class routines retrieved successfully',
+//             'data' => $classRoutines,
+//         ], 200);
+
+//     } catch (\Exception $e) {
+//         // Return a JSON response with an error message
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Failed to retrieve class routines',
+//         ], 500);
+//     }
+// }
+
 public function store(Request $request)
 {
     // Validate request data
@@ -37,38 +105,48 @@ public function store(Request $request)
         'end_time' => 'required|date_format:H:i|after:start_time',
     ]);
 
-    // Check if there's already a routine with the same day, time, and batch
-    $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
-                                    ->where('start_time', '<', $validatedData['end_time'])
-                                    ->where('end_time', '>', $validatedData['start_time'])
-                                    ->where('batch_id', $validatedData['batch_id'])
-                                    ->exists();
+    try {
+        // Check if there's already a routine with the same day, time, and batch
+        $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
+                                        ->where(function ($query) use ($validatedData) {
+                                            $query->whereBetween('start_time', [$validatedData['start_time'], $validatedData['end_time']])
+                                                  ->orWhereBetween('end_time', [$validatedData['start_time'], $validatedData['end_time']]);
+                                        })
+                                        ->where('batch_id', $validatedData['batch_id'])
+                                        ->exists();
 
-    if ($existingRoutine) { 
+        if ($existingRoutine) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Another class routine already exists for the same day, time, and batch.',
+            ], 400);
+        }
+
+        // Create the class routine if validation passes
+        $classRoutine = ClassRoutine::create($validatedData);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Class routine created successfully',
+            'data' => $classRoutine->toArray(), // Convert model to array for response
+        ], 201);
+
+    } catch (\Exception $e) {
+        // Return a JSON response with an error message
         return response()->json([
             'status' => 'error',
-            'message' => 'Another class routine already exists for the same day, time, and batch.',
-        ], 400);
+            'message' => 'Failed to create class routine',
+        ], 500);
     }
-
-    // Create the class routine if validation passes
-    $classRoutine = ClassRoutine::create($validatedData);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Class routine created successfully',
-        'data' => $classRoutine->toArray(), // Convert model to array for response
-    ], 201);
 }
-
-
-
+ 
 public function show($batch_id)
-{ 
+{
     try {
         // Retrieve all class routines for the given batch ID
         $classRoutines = ClassRoutine::where('batch_id', $batch_id)
-                                     ->get(); 
+                                     ->orderBy('start_time')
+                                     ->get();
 
         // Check if any routines were found
         if ($classRoutines->isEmpty()) {
@@ -78,11 +156,35 @@ public function show($batch_id)
             ], 404);
         }
 
-        // Return a JSON response with the routines
+        // Initialize an array to hold the timetable data
+        $timetable = [];
+
+        // Days of the week in order
+        $daysOfWeek = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+        // Initialize timetable with empty arrays for each time slot
+        foreach ($daysOfWeek as $day) {
+            $timetable[$day] = [
+                '9:00 AM' => '',
+                '10:00 AM' => '',
+                '11:00 AM' => '',
+                '12:00 PM' => 'Lunch Break',
+                '1:00 PM' => '',
+                '2:00 PM' => '',
+                '3:00 PM' => '',
+            ];
+        }
+
+        // Populate timetable with class routines
+        foreach ($classRoutines as $routine) {
+            $timetable[$routine->day_of_week][$routine->start_time] = $routine->subject;
+        }
+
+        // Return a JSON response with the formatted timetable
         return response()->json([
             'status' => 'success',
             'message' => 'Class routines retrieved successfully',
-            'data' => $classRoutines,
+            'data' => $timetable,
         ], 200);
 
     } catch (\Exception $e) {
@@ -167,5 +269,6 @@ public function destroy($id)
     }
 }
 
-
+ 
 }
+ 
