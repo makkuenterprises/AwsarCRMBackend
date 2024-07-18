@@ -191,47 +191,47 @@ public function store(Request $request)
 }
  
 
-
-
  
-public function show($batch_id)
+public function show($batch_id = null)
 {
     try {
-        // Retrieve all class routines for the given batch ID
-        $classRoutines = ClassRoutine::where('batch_id', $batch_id)
-                                     ->orderBy('start_time')
-                                     ->get();
+        // Retrieve all class routines, optionally filtered by batch ID
+        $query = ClassRoutine::query();
+
+        if ($batch_id) {
+            $query->where('batch_id', $batch_id);
+        }
+
+        $classRoutines = $query->orderBy('start_time')->get();
 
         // Check if any routines were found
         if ($classRoutines->isEmpty()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'No class routines found for the batch',
+                'message' => 'No class routines found' . ($batch_id ? ' for the batch' : ''),
             ], 404);
         }
 
         // Initialize an array to hold the timetable data
         $timetable = [];
 
-        // Days of the week in order
-        $daysOfWeek = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-
-        // Initialize timetable with empty arrays for each time slot
-        foreach ($daysOfWeek as $day) {
-            $timetable[$day] = [
-                '9:00 AM' => '',
-                '10:00 AM' => '',
-                '11:00 AM' => '',
-                '12:00 PM' => 'Lunch Break',
-                '1:00 PM' => '',
-                '2:00 PM' => '',
-                '3:00 PM' => '',
-            ];
-        }
-
-        // Populate timetable with class routines
+        // Group routines by batch ID and then by day of the week
         foreach ($classRoutines as $routine) {
-            $timetable[$routine->day_of_week][$routine->start_time] = $routine->subject;
+            if (!isset($timetable[$routine->batch_id])) {
+                $timetable[$routine->batch_id] = [];
+            }
+
+            if (!isset($timetable[$routine->batch_id][$routine->day_of_week])) {
+                $timetable[$routine->batch_id][$routine->day_of_week] = [];
+            }
+
+            $routineKey = $routine->start_time . '-' . $routine->end_time;
+
+            $timetable[$routine->batch_id][$routine->day_of_week][$routineKey] = [
+                'subject' => $routine->subject,
+                'start_time' => $routine->start_time,
+                'end_time' => $routine->end_time,
+            ];
         }
 
         // Return a JSON response with the formatted timetable
