@@ -135,7 +135,7 @@ public function store(Request $request)
                 ]
             ], 400);
         }
-
+ 
         // Create the class routine if validation passes
         $classRoutine = ClassRoutine::create($validatedData);
 
@@ -155,7 +155,7 @@ public function store(Request $request)
             ]
         ], 500);
     }
-}
+}   
 
 
 
