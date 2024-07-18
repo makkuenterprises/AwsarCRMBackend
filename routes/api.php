@@ -405,7 +405,7 @@ Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy'])
 
 Route::post('create/class-routines', [ClassRoutineController::class, 'createTimeSlot']);
 Route::post('assign/subject', [ClassRoutineController::class, 'assignSubject']);
-Route::get('class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
+Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
 
 //  payment Gateway============================================================
 
