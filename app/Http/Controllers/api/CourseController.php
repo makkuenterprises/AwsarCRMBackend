@@ -91,8 +91,7 @@ class CourseController extends Controller
          
     }
  
-    
-public function courseList()
+ public function courseList()
 { 
     try {
         // Fetch courses with active status, ordered by descending ID
@@ -100,22 +99,32 @@ public function courseList()
 
         // Map through each course to format the response
         $coursesList = $courses->map(function ($course) {
-            // Retrieve associated teachers' names
-            $teachersNames = $course->teachers()->pluck('name')->toArray();
+            // Retrieve associated teachers' IDs and names
+            $teachers = $course->teachers()->get(['id', 'name'])->map(function ($teacher) {
+                return [
+                    'id' => $teacher->id,
+                    'name' => $teacher->name
+                ];
+            });
 
             return [
-                'id' => $course->id,
-                'name' => $course->name,
-                'fee' => $course->fee,
-                'startDate' => $course->startDate,
-                'endDate' => $course->endDate,
-                'modeType' => $course->modeType,
-                'summary' => $course->summary,
-                'class_shift' => $course->class_shift,
-                'class_time' => $course->class_time,
-                'Course_id' => $course->Course_id,
-                'image' => $course->image ? url('/Courses/' . $course->image) : null,
-                'teachers' => $teachersNames, // Include teachers' names
+                'course' => [
+                    'id' => $course->id,
+                    'name' => $course->name,
+                    'fee' => $course->fee,
+                    'startDate' => $course->startDate,
+                    'endDate' => $course->endDate,
+                    'modeType' => $course->modeType,
+                    'status' => $course->status,
+                    'created_at' => $course->created_at,
+                    'updated_at' => $course->updated_at,
+                    'course_id' => $course->course_id, // Assuming 'course_id' is the correct field name
+                    'summary' => $course->summary,
+                    'image' => $course->image ? url('/Courses/' . $course->image) : null,
+                    'class_shift' => $course->class_shift,
+                    'class_time' => $course->class_time,
+                ],
+                'teachers' => $teachers, // Include teachers with IDs and names
             ]; 
         });
 
@@ -135,6 +144,7 @@ public function courseList()
         ], 500);
     }
 }
+
 
     // public function UpdateView($id){
     //   $course = Course::find($id);
@@ -252,3 +262,5 @@ public function courseList()
          
     }
 } 
+
+
