@@ -98,13 +98,13 @@ public function store(Request $request)
     // Validate request data
     $validatedData = $request->validate([
         'subject' => 'required|string',
-        'batch_id' => 'nullable|exists:courses,id',
+        'batch_id' => 'required|exists:courses,id',
         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
         'start_time' => 'required|date_format:H:i', // Ensure time is in 24-hour format
         'end_time' => 'required|date_format:H:i|after:start_time', // Ensure end time is after start time
     ]);
 
-    try {
+    try { 
         // Check if start_time and end_time are in 24-hour format
         if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['start_time']) ||
             !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['end_time'])) {
