@@ -197,7 +197,7 @@ public function createTimeSlot(Request $request)
     try {
 
          $validatedData = $request->validate([
-        'batch_id' => 'required|exists:batches,id',
+        'batch_id' => 'required|exists:courses,id',
         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i|after:start_time',
