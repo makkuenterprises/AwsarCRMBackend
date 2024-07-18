@@ -120,8 +120,16 @@ public function store(Request $request)
                                         ->where('subject', $validatedData['subject'])
                                         ->where(function ($query) use ($validatedData) {
                                             $query->where(function ($q) use ($validatedData) {
-                                                $q->where('start_time', '<', $validatedData['end_time'])
-                                                  ->where('end_time', '>', $validatedData['start_time']);
+                                                $q->where(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '<=', $validatedData['start_time'])
+                                                       ->where('end_time', '>', $validatedData['start_time']);
+                                                })->orWhere(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '<', $validatedData['end_time'])
+                                                       ->where('end_time', '>=', $validatedData['end_time']);
+                                                })->orWhere(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '>=', $validatedData['start_time'])
+                                                       ->where('end_time', '<=', $validatedData['end_time']);
+                                                });
                                             });
                                         })
                                         ->exists();
@@ -135,7 +143,7 @@ public function store(Request $request)
                 ]
             ], 400);
         }
- 
+
         // Create the class routine if validation passes
         $classRoutine = ClassRoutine::create($validatedData);
 
@@ -155,7 +163,8 @@ public function store(Request $request)
             ]
         ], 500);
     }
-}   
+}
+ 
 
 
 
