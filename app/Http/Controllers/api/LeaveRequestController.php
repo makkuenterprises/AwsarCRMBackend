@@ -124,8 +124,6 @@ public function handleLeaveRequestCreate(Request $request)
                 'message' => 'Leave request already exists for the specified date range and role.',
             ], 400);
         }
-    }else{
-         $endDate='';
     }
         // Create a new leave request
         $leave_request = new LeaveRequest();
