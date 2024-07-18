@@ -8,95 +8,10 @@ use Illuminate\Http\Request;
 
 class ClassRoutineController extends Controller
 {
-   
-public function index()
-{
-// Fetch all class routines
-$classRoutines = ClassRoutine::get();
-
-// Group the class routines by 'day_of_week' and 'batch_id'
-$groupedData = $classRoutines->groupBy(function ($routine) {
-    return $routine->day_of_week . '_' . $routine->batch_id;
-})->values()->all();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Class routines retrieved successfully',
-            'data' => $groupedData
-        ], 200);
-    }
-
-// public function store(Request $request)
-// {
-//     // Validate request data
-//     $validatedData = $request->validate([
-//         'subject' => 'required|string',
-//         'batch_id' => 'nullable|exists:courses,id',
-//         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
-//         'start_time' => 'required|date_format:H:i',
-//         'end_time' => 'required|date_format:H:i|after:start_time',
-//     ]);
-
-//     // Check if there's already a routine with the same day, time, and batch
-//     $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
-//                                     ->where('start_time', '<', $validatedData['end_time'])
-//                                     ->where('end_time', '>', $validatedData['start_time'])
-//                                     ->where('batch_id', $validatedData['batch_id'])
-//                                     ->exists();
-
-//     if ($existingRoutine) { 
-//         return response()->json([
-//             'status' => 'error',
-//             'message' => 'Another class routine already exists for the same day, time, and batch.',
-//         ], 400);
-//     }
-
-//     // Create the class routine if validation passes
-//     $classRoutine = ClassRoutine::create($validatedData);
-
-//     return response()->json([
-//         'status' => 'success',
-//         'message' => 'Class routine created successfully',
-//         'data' => $classRoutine->toArray(), // Convert model to array for response
-//     ], 201);
-// }
-
-
-
-// public function show($batch_id)
-// { 
-//     try {
-//         // Retrieve all class routines for the given batch ID
-//         $classRoutines = ClassRoutine::where('batch_id', $batch_id)
-//                                      ->get(); 
-
-//         // Check if any routines were found
-//         if ($classRoutines->isEmpty()) {
-//             return response()->json([
-//                 'status' => 'error',
-//                 'message' => 'No class routines found for the batch',
-//             ], 404);
-//         }
-
-//         // Return a JSON response with the routines
-//         return response()->json([
-//             'status' => 'success',
-//             'message' => 'Class routines retrieved successfully',
-//             'data' => $classRoutines,
-//         ], 200);
-
-//     } catch (\Exception $e) {
-//         // Return a JSON response with an error message
-//         return response()->json([
-//             'status' => 'error',
-//             'message' => 'Failed to retrieve class routines',
-//         ], 500);
-//     }
-// }
+ 
 public function store(Request $request)
 {
     // Validate request data
-    
 
     try { 
         $validatedData = $request->validate([
@@ -265,7 +180,6 @@ public function createTimeSlot(Request $request)
  
 public function assignSubject(Request $request)
 {
-   
 
     try {
 
@@ -307,6 +221,58 @@ public function assignSubject(Request $request)
         ], 500);
     }
 }
+
+public function assignSubjectUpdate(Request $request)
+{
+    try {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'time_slot_id' => 'required|exists:class_routines,id',
+            'subject' => 'required|string',
+        ]);
+
+        // Find the time slot by ID
+        $timeSlot = ClassRoutine::findOrFail($validatedData['time_slot_id']);
+        
+        // Check if a subject is already assigned
+        if ($timeSlot->subject) {
+            // If subject already assigned, return an error response
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This time slot already has a subject assigned.',
+            ], 400);
+        }
+
+        // Update the subject field and save the changes
+        $timeSlot->subject = $validatedData['subject'];
+        $timeSlot->save();
+
+        // Return a success response with updated time slot details
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Subject assigned to time slot successfully',
+            'data' => $timeSlot,
+        ], 200);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Return validation errors if validation fails
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation error',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        // Return an error response for any other exceptions
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to assign subject to time slot',
+            'errors' => [
+                'exception' => [$e->getMessage()],
+            ],
+        ], 500);
+    }
+}
+
 
 public function showClassRoutine($batch_id)
 {
