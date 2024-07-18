@@ -120,8 +120,16 @@ public function store(Request $request)
                                         ->where('subject', $validatedData['subject'])
                                         ->where(function ($query) use ($validatedData) {
                                             $query->where(function ($q) use ($validatedData) {
-                                                $q->where('start_time', '<', $validatedData['end_time'])
-                                                  ->where('end_time', '>', $validatedData['start_time']);
+                                                $q->where(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '<=', $validatedData['start_time'])
+                                                       ->where('end_time', '>', $validatedData['start_time']);
+                                                })->orWhere(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '<', $validatedData['end_time'])
+                                                       ->where('end_time', '>=', $validatedData['end_time']);
+                                                })->orWhere(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '>=', $validatedData['start_time'])
+                                                       ->where('end_time', '<=', $validatedData['end_time']);
+                                                });
                                             });
                                         })
                                         ->exists();
@@ -129,13 +137,38 @@ public function store(Request $request)
         if ($existingRoutine) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Another class routine already exists for the same day, time, subject, and batch.',
                 'errors' => [
                     'subject' => ['A routine with the same subject, day, and overlapping time already exists.'],
                 ]
             ], 400);
         }
+// Check if there's already a routine with overlapping time for the same day and batch
+        $existingRoutineTime = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
+                                        ->where('batch_id', $validatedData['batch_id'])
+                                        ->where(function ($query) use ($validatedData) {
+                                            $query->where(function ($q) use ($validatedData) {
+                                                $q->where(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '<=', $validatedData['start_time'])
+                                                       ->where('end_time', '>', $validatedData['start_time']);
+                                                })->orWhere(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '<', $validatedData['end_time'])
+                                                       ->where('end_time', '>=', $validatedData['end_time']);
+                                                })->orWhere(function ($qq) use ($validatedData) {
+                                                    $qq->where('start_time', '>=', $validatedData['start_time'])
+                                                       ->where('end_time', '<=', $validatedData['end_time']);
+                                                });
+                                            });
+                                        })
+                                        ->exists();
 
+        if ($existingRoutineTime) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => [
+                    'subject' => ['A routine with the same day, time, and batch already exists.'],
+                ]
+            ], 400);
+        }
         // Create the class routine if validation passes
         $classRoutine = ClassRoutine::create($validatedData);
 
@@ -156,6 +189,7 @@ public function store(Request $request)
         ], 500);
     }
 }
+ 
 
 
 
