@@ -96,15 +96,16 @@ $groupedData = $classRoutines->groupBy(function ($routine) {
 public function store(Request $request)
 {
     // Validate request data
-    $validatedData = $request->validate([
+    
+
+    try { 
+        $validatedData = $request->validate([
         'subject' => 'required|string',
         'batch_id' => 'required|exists:courses,id',
         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
         'start_time' => 'required|date_format:H:i', // Ensure time is in 24-hour format
         'end_time' => 'required|date_format:H:i|after:start_time', // Ensure end time is after start time
     ]);
-
-    try { 
         // Check if start_time and end_time are in 24-hour format
         if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['start_time']) ||
             !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['end_time'])) {
@@ -261,15 +262,17 @@ public function createTimeSlot(Request $request)
         ], 500);
     }
 }
-
+ 
 public function assignSubject(Request $request)
 {
-    $validatedData = $request->validate([
+   
+
+    try {
+
+         $validatedData = $request->validate([
         'time_slot_id' => 'required|exists:class_routines,id',
         'subject' => 'required|string',
     ]);
-
-    try {
         $timeSlot = ClassRoutine::find($validatedData['time_slot_id']);
         
         if ($timeSlot->subject) {
@@ -288,11 +291,19 @@ public function assignSubject(Request $request)
             'data' => $timeSlot,
         ], 200);
 
+    }catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation error',
+            'errors' => $e->errors(), // Return validation errors
+        ], 422); // HTTP status code for Unprocessable Entity
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'message' => 'Failed to assign subject to time slot',
-            'errors' => $e->getMessage(),
+            'message' => 'Failed to create time slots',
+            'errors' => [
+                'exception' => [$e->getMessage()],
+            ],
         ], 500);
     }
 }
