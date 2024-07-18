@@ -393,7 +393,7 @@ Route::prefix('leave-request')->group(function () {
       Route::post('role/list', [LeaveRequestController::class, 'viewLeaveRequestListForFaculty']);
      
  
-});
+}); 
 
 // routine
 Route::get('class-routines', [ClassRoutineController::class, 'index']);
@@ -405,6 +405,7 @@ Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy'])
 
 Route::post('create/class-routines', [ClassRoutineController::class, 'createTimeSlot']);
 Route::post('update/class-routines', [ClassRoutineController::class, 'updateTimeSlot']);
+Route::get('delete/class-routines/{course_id}', [ClassRoutineController::class, 'deleteTimeSlotsByBatchId']);
 Route::get('class-routines/time/{course_id}', [ClassRoutineController::class, 'showClassTimeRoutine']);
 Route::post('assign/subject', [ClassRoutineController::class, 'assignSubject']);
 Route::post('assign/subject/update', [ClassRoutineController::class, 'assignSubjectUpdate']);

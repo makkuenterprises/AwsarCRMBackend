@@ -262,6 +262,38 @@ public function createTimeSlot(Request $request)
         ], 500);
     }
 }
+public function deleteTimeSlotsByBatchId($batch_id)
+{
+    try {
+        // Find all time slots with the given batch_id
+        $timeSlots = ClassRoutine::where('batch_id', $batch_id)->get();
+
+        // If no time slots found, return a not found response
+        if ($timeSlots->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No time slots found for batch ID ' . $batch_id,
+            ], 404);
+        }
+
+        // Delete each time slot
+        foreach ($timeSlots as $timeSlot) {
+            $timeSlot->delete();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All time slots deleted successfully for batch ID ' . $batch_id,
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to delete time slots for batch ID ' . $batch_id,
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
 
 public function assignSubject(Request $request)
 {
