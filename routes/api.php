@@ -402,6 +402,11 @@ Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
 Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
 Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
 
+
+Route::post('create/class-routines', [ClassRoutineController::class, 'createTimeSlot']);
+Route::post('assign/subject', [ClassRoutineController::class, 'assignSubject']);
+Route::get('class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
+
 //  payment Gateway============================================================
 
 Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);

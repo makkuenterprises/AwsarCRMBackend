@@ -190,6 +190,139 @@ public function store(Request $request)
     }
 }
  
+public function createTimeSlot(Request $request)
+{
+    $validatedData = $request->validate([
+        'batch_id' => 'required|exists:batches,id',
+        'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
+        'start_time' => 'required|date_format:H:i',
+        'end_time' => 'required|date_format:H:i|after:start_time',
+    ]);
+
+    try {
+        // Check for overlapping time slots
+        $existingTimeSlot = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
+                                        ->where('batch_id', $validatedData['batch_id'])
+                                        ->where(function ($query) use ($validatedData) {
+                                            $query->where(function ($q) use ($validatedData) {
+                                                $q->where('start_time', '<=', $validatedData['start_time'])
+                                                  ->where('end_time', '>', $validatedData['start_time']);
+                                            })->orWhere(function ($q) use ($validatedData) {
+                                                $q->where('start_time', '<', $validatedData['end_time'])
+                                                  ->where('end_time', '>=', $validatedData['end_time']);
+                                            });
+                                        })
+                                        ->exists();
+
+        if ($existingTimeSlot) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'A time slot with overlapping time already exists for the same day and batch.',
+            ], 400);
+        }
+
+        // Create time slot
+        $timeSlot = ClassRoutine::create([
+            'batch_id' => $validatedData['batch_id'],
+            'day_of_week' => $validatedData['day_of_week'],
+            'start_time' => $validatedData['start_time'],
+            'end_time' => $validatedData['end_time'],
+            'subject' => null, // Initially, no subject is assigned
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Time slot created successfully',
+            'data' => $timeSlot,
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to create time slot',
+            'errors' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+public function assignSubject(Request $request)
+{
+    $validatedData = $request->validate([
+        'time_slot_id' => 'required|exists:class_routines,id',
+        'subject' => 'required|string',
+    ]);
+
+    try {
+        $timeSlot = ClassRoutine::find($validatedData['time_slot_id']);
+        
+        if ($timeSlot->subject) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This time slot already has a subject assigned.',
+            ], 400);
+        }
+
+        $timeSlot->subject = $validatedData['subject'];
+        $timeSlot->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Subject assigned to time slot successfully',
+            'data' => $timeSlot,
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to assign subject to time slot',
+            'errors' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+public function showClassRoutine($batch_id)
+{
+    try {
+        // Fetch all class routines for the specified batch_id, ordered by start_time
+        $classRoutines = ClassRoutine::where('batch_id', $batch_id)
+                                     ->orderBy('start_time')
+                                     ->get();
+
+        // Prepare the data in the desired format
+        $routineData = [];
+
+        // Loop through each class routine
+        foreach ($classRoutines as $routine) {
+            $dayOfWeek = ucfirst($routine->day_of_week);
+
+            // Initialize the day if not set
+            if (!isset($routineData[$dayOfWeek])) {
+                $routineData[$dayOfWeek] = [];
+            }
+
+            // Format the time range
+            $timeRange = $routine->start_time . ' - ' . $routine->end_time;
+
+            // Add subject to the routine day
+            $routineData[$dayOfWeek][$timeRange] = $routine->subject;
+        }
+
+        // Return the formatted routine data
+        return response()->json([
+            'status' => 'success',
+            'data' => $routineData,
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Return a JSON response with an error message if an exception occurs
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fetch class routines for batch ' . $batch_id,
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
 
  
 public function show($batch_id = null)
