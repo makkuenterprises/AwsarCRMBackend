@@ -96,6 +96,7 @@ public function handleLeaveRequestCreate(Request $request)
     try {
         // Parse and format the dates
         $startDate = Carbon::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
+        if($request->input('end_date')){
         $endDate = $request->input('end_date') ? Carbon::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d') : null;
 
         // Check if there is already a leave request overlapping with the specified dates for the same user and role
@@ -123,7 +124,7 @@ public function handleLeaveRequestCreate(Request $request)
                 'message' => 'Leave request already exists for the specified date range and role.',
             ], 400);
         }
-
+    }
         // Create a new leave request
         $leave_request = new LeaveRequest();
         $leave_request->teacher_id = $request->input('user_id'); // Assuming teacher_id is stored based on authenticated user
