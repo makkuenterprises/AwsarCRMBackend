@@ -18,60 +18,6 @@ class LeaveRequestController extends Controller
 // ============================================================================================================
 
 
-// public function handleLeaveRequestCreate(Request $request)
-// {
-//     // Validate the request data
-//     $validation = Validator::make($request->all(), [
-//         'start_date' => ['required', 'string'],
-//         'end_date' => ['nullable', 'string'],
-//         'user_id' => ['required', 'string'],
-//         'role' => ['required', 'string'],
-//         'message' => ['required', 'string', 'min:1', 'max:1000'],
-//     ]);
-
-//     // Check if validation fails
-//     if ($validation->fails()) {
-//         return response()->json([
-//             'status' => 'error',
-//             'message' => 'Validation Error',
-//             'errors' => $validation->errors(),
-//         ], 400);
-//     }
-
-//     try {
-//         // Parse and format the dates
-//         $startDate = Carbon::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
-//         $endDate = $request->input('end_date') ? Carbon::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d') : null;
-
-//         // Create a new leave request
-//         $leave_request = new LeaveRequest();
-//         $leave_request->teacher_id = $request->input('user_id'); // Assuming teacher_id is stored based on authenticated user
-//         $leave_request->start_date = $startDate;
-//         $leave_request->end_date = $endDate;
-//         $leave_request->role = $request->input('role');
-//         $leave_request->message = $request->input('message');
-//         $result = $leave_request->save();
-
-//         if ($result) {
-//             return response()->json([
-//                 'status' => 'success',
-//                 'message' => 'Leave Request Submitted',
-//                 'data' => $leave_request, // Optionally return the created leave request data
-//             ], 201); // HTTP status code 201 for resource created
-//         } else {
-//             return response()->json([
-//                 'status' => 'error',
-//                 'message' => 'Internal Server Error',
-//             ], 500);
-//         }
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'status' => 'error',
-//             'message' => 'Exception Occurred',
-//             'error' => $e->getMessage(),
-//         ], 500);
-//     } 
-// }
 public function handleLeaveRequestCreate(Request $request)
 {
     // Validate the request data
@@ -96,31 +42,6 @@ public function handleLeaveRequestCreate(Request $request)
         // Parse and format the dates
         $startDate = Carbon::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
         $endDate = $request->input('end_date') ? Carbon::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d') : null;
-
-        // Check if there is already a leave request overlapping with the specified dates
-        $existingLeaveRequest = LeaveRequest::where('teacher_id', $request->input('user_id'))
-                                            ->where(function ($query) use ($startDate, $endDate) {
-                                                $query->where(function ($q) use ($startDate, $endDate) {
-                                                    $q->where('start_date', '<=', $startDate)
-                                                        ->where('end_date', '>=', $startDate);
-                                                })
-                                                ->orWhere(function ($q) use ($startDate, $endDate) {
-                                                    $q->where('start_date', '<=', $endDate)
-                                                        ->where('end_date', '>=', $endDate);
-                                                })
-                                                ->orWhere(function ($q) use ($startDate, $endDate) {
-                                                    $q->where('start_date', '>=', $startDate)
-                                                        ->where('end_date', '<=', $endDate);
-                                                });
-                                            })
-                                            ->exists();
-
-        if ($existingLeaveRequest) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Leave request already exists for the specified date range.',
-            ], 400);
-        }
 
         // Create a new leave request
         $leave_request = new LeaveRequest();
@@ -151,6 +72,85 @@ public function handleLeaveRequestCreate(Request $request)
         ], 500);
     } 
 }
+// public function handleLeaveRequestCreate(Request $request)
+// {
+//     // Validate the request data
+//     $validation = Validator::make($request->all(), [
+//         'start_date' => ['required', 'string'],
+//         'end_date' => ['nullable', 'string'],
+//         'user_id' => ['required', 'string'],
+//         'role' => ['required', 'string'],
+//         'message' => ['required', 'string', 'min:1', 'max:1000'],
+//     ]);
+
+//     // Check if validation fails
+//     if ($validation->fails()) {
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Validation Error',
+//             'errors' => $validation->errors(),
+//         ], 400);
+//     }
+
+//     try {
+//         // Parse and format the dates
+//         $startDate = Carbon::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
+//         $endDate = $request->input('end_date') ? Carbon::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d') : null;
+
+//         // Check if there is already a leave request overlapping with the specified dates
+//         $existingLeaveRequest = LeaveRequest::where('teacher_id', $request->input('user_id'))
+//                                             ->where(function ($query) use ($startDate, $endDate) {
+//                                                 $query->where(function ($q) use ($startDate, $endDate) {
+//                                                     $q->where('start_date', '<=', $startDate)
+//                                                         ->where('end_date', '>=', $startDate);
+//                                                 })
+//                                                 ->orWhere(function ($q) use ($startDate, $endDate) {
+//                                                     $q->where('start_date', '<=', $endDate)
+//                                                         ->where('end_date', '>=', $endDate);
+//                                                 })
+//                                                 ->orWhere(function ($q) use ($startDate, $endDate) {
+//                                                     $q->where('start_date', '>=', $startDate)
+//                                                         ->where('end_date', '<=', $endDate);
+//                                                 });
+//                                             })
+//                                             ->exists();
+
+//         if ($existingLeaveRequest) {
+//             return response()->json([
+//                 'status' => 'error',
+//                 'message' => 'Leave request already exists for the specified date range.',
+//             ], 400);
+//         }
+
+//         // Create a new leave request
+//         $leave_request = new LeaveRequest();
+//         $leave_request->teacher_id = $request->input('user_id'); // Assuming teacher_id is stored based on authenticated user
+//         $leave_request->start_date = $startDate;
+//         $leave_request->end_date = $endDate;
+//         $leave_request->role = $request->input('role');
+//         $leave_request->message = $request->input('message');
+//         $result = $leave_request->save();
+
+//         if ($result) {
+//             return response()->json([
+//                 'status' => 'success',
+//                 'message' => 'Leave Request Submitted',
+//                 'data' => $leave_request, // Optionally return the created leave request data
+//             ], 201); // HTTP status code 201 for resource created
+//         } else {
+//             return response()->json([
+//                 'status' => 'error',
+//                 'message' => 'Internal Server Error',
+//             ], 500);
+//         }
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Exception Occurred',
+//             'error' => $e->getMessage(),
+//         ], 500);
+//     } 
+// }
 
 
 // ============================================================================================================
