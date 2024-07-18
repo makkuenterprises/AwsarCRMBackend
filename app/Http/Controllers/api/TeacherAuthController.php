@@ -465,7 +465,6 @@ public function teacherList()
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
             'qualification' => ['nullable', 'string', 'min:1', 'max:250'],
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
-            'classes' => 'required|array', 
             'image' => 'nullable',
            
         ]);
@@ -493,7 +492,6 @@ public function teacherList()
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
             $teacher->qualification = $request->input('qualification');
-            $teacher->classes =$request->input('classes');
            if ($request->has('image') && $request->image !== null) {
         if (filter_var($request->image, FILTER_VALIDATE_URL)) {
             // Handle image URL
