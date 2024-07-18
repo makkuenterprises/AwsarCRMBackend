@@ -238,11 +238,19 @@ public function createTimeSlot(Request $request)
             'data' => $timeSlot,
         ], 201);
 
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation error',
+            'errors' => $e->errors(), // Return validation errors
+        ], 422); // HTTP status code for Unprocessable Entity
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'message' => 'Failed to create time slot',
-            'errors' => $e->getMessage(),
+            'message' => 'Failed to create class routine',
+            'errors' => [
+                'exception' => [$e->getMessage()],
+            ],
         ], 500);
     }
 }
