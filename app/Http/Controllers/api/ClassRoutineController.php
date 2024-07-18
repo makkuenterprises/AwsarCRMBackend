@@ -355,6 +355,43 @@ public function showClassRoutine($batch_id)
     }
 }
 
+public function showClassTimeRoutine($batch_id)
+{
+    try {
+        // Fetch all class routines for the specified batch_id, ordered by start_time
+        $classRoutines = ClassRoutine::where('batch_id', $batch_id)
+                                     ->orderBy('start_time')
+                                     ->get();
+
+        // Prepare the data in the desired format
+        $timeRanges = [];
+
+        // Loop through each class routine
+        foreach ($classRoutines as $routine) {
+            // Format the time range
+            $timeRange = $routine->start_time . ' - ' . $routine->end_time;
+
+            // Add time range to the list if not already present
+            if (!in_array($timeRange, $timeRanges)) {
+                $timeRanges[] = $timeRange;
+            }
+        }
+
+        // Return the formatted routine data
+        return response()->json([
+            'status' => 'success',
+            'data' => $timeRanges,
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Return a JSON response with an error message if an exception occurs
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fetch class routines for batch ' . $batch_id,
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
 
  
 public function show($batch_id = null)
