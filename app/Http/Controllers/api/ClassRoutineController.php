@@ -331,8 +331,12 @@ public function showClassRoutine($batch_id)
             // Format the time range
             $timeRange = $routine->start_time . ' - ' . $routine->end_time;
 
-            // Add subject to the routine day
-            $routineData[$dayOfWeek][$timeRange] = $routine->subject;
+            // Add details including id, subject to the routine day
+            $routineData[$dayOfWeek][] = [
+                'id' => $routine->id,
+                'time_range' => $timeRange,
+                'subject' => $routine->subject,
+            ];
         }
 
         // Return the formatted routine data
