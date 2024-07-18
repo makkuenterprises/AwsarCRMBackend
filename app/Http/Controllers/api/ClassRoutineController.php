@@ -234,16 +234,7 @@ public function assignSubjectUpdate(Request $request)
         // Find the time slot by ID
         $timeSlot = ClassRoutine::findOrFail($validatedData['time_slot_id']);
         
-        // Check if a subject is already assigned
-        if ($timeSlot->subject) {
-            // If subject already assigned, return an error response
-            return response()->json([
-                'status' => 'error',
-                'message' => 'This time slot already has a subject assigned.',
-            ], 400);
-        }
-
-        // Update the subject field and save the changes
+        // Update the subject field regardless of its current value
         $timeSlot->subject = $validatedData['subject'];
         $timeSlot->save();
 
@@ -272,7 +263,6 @@ public function assignSubjectUpdate(Request $request)
         ], 500);
     }
 }
-
 
 public function showClassRoutine($batch_id)
 {
