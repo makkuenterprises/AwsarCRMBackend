@@ -177,7 +177,92 @@ public function createTimeSlot(Request $request)
         ], 500);
     }
 }
- 
+ public function updateTimeSlot(Request $request)
+{
+    try {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'batch_id' => 'required|exists:courses,id',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'days' => 'required|array',
+            'days.*' => 'required|in:mon,tue,wed,thu,fri,sat',
+            'time_slot_id' => 'nullable|exists:class_routines,id', // Optional for update
+        ]);
+
+        // Prepare to store time slots
+        $createdTimeSlots = [];
+
+        // Loop through each provided day
+        foreach ($validatedData['days'] as $dayOfWeek) {
+            if ($validatedData['time_slot_id']) {
+                // Update existing time slot if time_slot_id is provided
+                $timeSlot = ClassRoutine::findOrFail($validatedData['time_slot_id']);
+                
+                // Update time slot details
+                $timeSlot->batch_id = $validatedData['batch_id'];
+                $timeSlot->day_of_week = $dayOfWeek;
+                $timeSlot->start_time = $validatedData['start_time'];
+                $timeSlot->end_time = $validatedData['end_time'];
+                $timeSlot->save();
+            } else {
+                // Check for overlapping time slots
+                $existingTimeSlot = ClassRoutine::where('day_of_week', $dayOfWeek)
+                    ->where('batch_id', $validatedData['batch_id'])
+                    ->where(function ($query) use ($validatedData) {
+                        $query->where(function ($q) use ($validatedData) {
+                            $q->where('start_time', '<=', $validatedData['start_time'])
+                                ->where('end_time', '>', $validatedData['start_time']);
+                        })->orWhere(function ($q) use ($validatedData) {
+                            $q->where('start_time', '<', $validatedData['end_time'])
+                                ->where('end_time', '>=', $validatedData['end_time']);
+                        });
+                    })
+                    ->exists();
+
+                if ($existingTimeSlot) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'A time slot with overlapping time already exists for ' . ucfirst($dayOfWeek) . ' and batch.',
+                    ], 400);
+                }
+
+                // Create time slot
+                $timeSlot = ClassRoutine::create([
+                    'batch_id' => $validatedData['batch_id'],
+                    'day_of_week' => $dayOfWeek,
+                    'start_time' => $validatedData['start_time'],
+                    'end_time' => $validatedData['end_time'],
+                    'subject' => null, // Initially, no subject is assigned
+                ]);
+            }
+
+            $createdTimeSlots[] = $timeSlot;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Time slots ' . ($validatedData['time_slot_id'] ? 'updated' : 'created') . ' successfully',
+            'data' => $createdTimeSlots,
+        ], $validatedData['time_slot_id'] ? 200 : 201); // Use 200 for update, 201 for create
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation error',
+            'errors' => $e->errors(), // Return validation errors
+        ], 422); // HTTP status code for Unprocessable Entity
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to ' . ($validatedData['time_slot_id'] ? 'update' : 'create') . ' time slots',
+            'errors' => [
+                'exception' => [$e->getMessage()],
+            ],
+        ], 500);
+    }
+}
+
 public function assignSubject(Request $request)
 {
 
