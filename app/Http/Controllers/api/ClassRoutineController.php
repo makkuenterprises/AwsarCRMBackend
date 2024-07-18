@@ -93,7 +93,6 @@ $groupedData = $classRoutines->groupBy(function ($routine) {
 //         ], 500);
 //     }
 // }
-
 public function store(Request $request)
 {
     // Validate request data
@@ -127,6 +126,9 @@ public function store(Request $request)
             return response()->json([
                 'status' => 'error',
                 'message' => 'Another class routine already exists for the same day, time, subject, and batch.',
+                'errors' => [
+                    'subject' => ['A routine with the same subject, day, time, and batch already exists.'],
+                ]
             ], 400);
         }
 
@@ -144,9 +146,13 @@ public function store(Request $request)
         return response()->json([
             'status' => 'error',
             'message' => 'Failed to create class routine',
+            'errors' => [
+                'exception' => ['Failed to create class routine.'],
+            ]
         ], 500);
     }
 }
+
 
  
 public function show($batch_id)
