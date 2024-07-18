@@ -106,19 +106,27 @@ public function store(Request $request)
     ]);
 
     try {
-        // Check if there's already a routine with the same day, time, and batch
+        // Check if there's already a routine with the same day, time, batch, and subject
+        // Exclude the current routine ID if editing an existing routine
         $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
-                                        ->where(function ($query) use ($validatedData) {
-                                            $query->whereBetween('start_time', [$validatedData['start_time'], $validatedData['end_time']])
-                                                  ->orWhereBetween('end_time', [$validatedData['start_time'], $validatedData['end_time']]);
-                                        })
                                         ->where('batch_id', $validatedData['batch_id'])
+                                        ->where('subject', $validatedData['subject'])
+                                        ->where(function ($query) use ($validatedData) {
+                                            $query->where(function ($q) use ($validatedData) {
+                                                $q->whereBetween('start_time', [$validatedData['start_time'], $validatedData['end_time']])
+                                                  ->orWhereBetween('end_time', [$validatedData['start_time'], $validatedData['end_time']]);
+                                            })
+                                            ->orWhere(function ($q) use ($validatedData) {
+                                                $q->where('start_time', '<', $validatedData['start_time'])
+                                                  ->where('end_time', '>', $validatedData['end_time']);
+                                            });
+                                        })
                                         ->exists();
 
         if ($existingRoutine) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Another class routine already exists for the same day, time, and batch.',
+                'message' => 'Another class routine already exists for the same day, time, subject, and batch.',
             ], 400);
         }
 
@@ -139,6 +147,7 @@ public function store(Request $request)
         ], 500);
     }
 }
+
  
 public function show($batch_id)
 {
