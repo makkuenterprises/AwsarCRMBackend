@@ -139,7 +139,7 @@ class CourseEnrollementController extends Controller
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
     }
 }
-
+  
 public function getPaymentHistory(Request $request)
 {
     // Validate the request data

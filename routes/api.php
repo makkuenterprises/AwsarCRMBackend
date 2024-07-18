@@ -252,9 +252,10 @@ Route::prefix('notice')->group(function () {
       Route::get('/list', [NotificationController::class, 'List']);
 
 }); 
-
+ 
 Route::prefix('course')->group(function () {
       Route::get('/list', [CourseController::class, 'courseList']);
+      Route::get('/list/for/teacher/{id}', [CourseController::class, 'courseListForTeacher']);
 }); 
 
 // ------------------------------------------------------------------------------------------------

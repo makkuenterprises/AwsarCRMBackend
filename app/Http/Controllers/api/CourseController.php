@@ -90,6 +90,63 @@ class CourseController extends Controller
         }
          
     }
+
+    public function courseListForTeacher($teacherId)
+{
+    try {
+        // Fetch the teacher
+        $teacher = Teacher::find($teacherId);
+
+        if (!$teacher) {
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Teacher not found'], 404);
+        }
+
+        // Get all courses assigned to the teacher
+        $courses = $teacher->courses()->with(['batches' => function ($query) {
+            $query->select('id', 'name'); // Adjust the selected fields as needed
+        }])->get();
+
+        // Format the response
+        $coursesList = $courses->map(function ($course) {
+            return [
+                'id' => $course->id,
+                'name' => $course->name,
+                'fee' => $course->fee,
+                'startDate' => $course->startDate,
+                'endDate' => $course->endDate,
+                'modeType' => $course->modeType,
+                'status' => $course->status,
+                'created_at' => $course->created_at,
+                'updated_at' => $course->updated_at,
+                'course_id' => $course->course_id, // Assuming 'course_id' is the correct field name
+                'summary' => $course->summary,
+                'image' => $course->image ? url('/Courses/' . $course->image) : null,
+                'class_shift' => $course->class_shift,
+                'class_time' => $course->class_time,
+                'batches' => $course->batches->map(function ($batch) {
+                    return [
+                        'id' => $batch->id,
+                        'name' => $batch->name,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => $coursesList,
+        ]);
+    }catch (\Exception $e) {
+        // Handle any exceptions that may occur
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'Failed to fetch course list',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
  
  public function courseList()
 { 
