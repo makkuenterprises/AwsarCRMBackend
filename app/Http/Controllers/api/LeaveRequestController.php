@@ -93,7 +93,7 @@ public function handleLeaveRequestCreate(Request $request)
         ], 400);
     }
 
-    try {
+    try { 
         // Parse and format the dates
         $startDate = Carbon::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
         $endDate = $request->input('end_date') ? Carbon::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d') : null;
@@ -118,6 +118,8 @@ public function handleLeaveRequestCreate(Request $request)
                                             })
                                             ->exists();
 
+
+
         if ($existingLeaveRequest) {
             return response()->json([
                 'status' => 'error',
@@ -125,6 +127,22 @@ public function handleLeaveRequestCreate(Request $request)
             ], 400);
         }
     }
+                                                // Check if there is already a leave request overlapping with the specified single start date for the same user and role
+$existingLeaveRequestforSingle = LeaveRequest::where('teacher_id', $request->input('user_id'))
+                                    ->where('role', $request->input('role'))
+                                    ->where(function ($query) use ($startDate) {
+                                        $query->where(function ($q) use ($startDate) {
+                                            $q->where('start_date', '<=', $startDate)
+                                                ->where('end_date', '>=', $startDate);
+                                        });
+                                    })
+                                    ->exists();
+if ($existingLeaveRequestforSingle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Leave request already exists for the specified date range and role.',
+            ], 400);
+        }
         // Create a new leave request
         $leave_request = new LeaveRequest();
         $leave_request->teacher_id = $request->input('user_id'); // Assuming teacher_id is stored based on authenticated user
