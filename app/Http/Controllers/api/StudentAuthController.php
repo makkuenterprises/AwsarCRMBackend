@@ -51,6 +51,12 @@ class StudentAuthController extends Controller
            $email = $login['email'];   
             $notifications = $user->unreadNotifications()->get();
 
+            // Get the count of enrolled courses using join
+        $enrollCourseCount = DB::table('courses_enrollements')
+        ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
+        ->where('students.id', $student->id)
+        ->count(); 
+
             $user = DB::table('students')
            ->where('students.email', $email) 
            ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
@@ -146,6 +152,7 @@ class StudentAuthController extends Controller
             'dob' => $user->dob,
             'payment_status' => $user->payment_status,
             'course' => $user->course_name ?? 'Not Enrolled',
+            'enrollCourseCount' =>$enrollCourseCount
             ],
             'token' => $token, 
              'message' => 'Login Successfully',
