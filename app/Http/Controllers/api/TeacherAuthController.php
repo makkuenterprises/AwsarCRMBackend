@@ -48,11 +48,11 @@ class TeacherAuthController extends Controller
 
           // Extract course IDs
         $courseIds = $courses->pluck('id')->toArray();
-
+ 
         // Get the students enrolled in these courses
         $students = DB::table('students')
-            ->leftJoin('courses_enrollments', 'students.id', '=', 'courses_enrollments.student_id')
-            ->leftJoin('courses', 'courses_enrollments.course_id', '=', 'courses.id')
+            ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+            ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->whereIn('courses.id', $courseIds)
             ->select('students.*', 'courses.name as course_name')
             ->orderByDesc('students.id')
