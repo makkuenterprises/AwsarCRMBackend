@@ -32,7 +32,7 @@ public function create(Request $request)
 {
     $validator = Validator::make($request->all(), [
         'title' => 'required|string|min:1|max:255',
-        'description' => ['required', 'string', 'min:1', 'max:250'],
+        'description' => ['nullable', 'string', 'min:1', 'max:250'],
         'sendTo' => ['required', 'string', 'min:1', 'max:250'],
         'batch' => 'nullable|array',
         'batch.*' => 'string|exists:courses,name'
