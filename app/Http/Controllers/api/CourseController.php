@@ -99,7 +99,7 @@ public function courseListForTeacher($teacherId)
         // Add URL path to each course image
         $courses->map(function($course) {
             if ($course->image) {
-                $course->image_url = url('Courses/' . $course->image);
+                $course->image = url('Courses/' . $course->image);
             }
             return $course;
         });
