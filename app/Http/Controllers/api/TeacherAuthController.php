@@ -45,6 +45,11 @@ class TeacherAuthController extends Controller
         $courses = $user->courses()->get();
         $courseCount = $courses->count();
 
+         $totalStudents = DB::table('courses')
+            ->join('course_student', 'courses.id', '=', 'course_student.course_id')
+            ->where('courses.teacher_id', $teacherId)
+            ->count('course_student.student_id');
+
            $token = $user->createToken('AwsarClass')->plainTextToken;
            $code = 200;
            $imagePath = url('/Teachers/' . $user->image);
@@ -208,6 +213,7 @@ class TeacherAuthController extends Controller
             'image' => $user->image ? url('/Teachers/' . $user->image) : null,
             'classes' => $user->classes,
             'courseCount' => $courseCount,
+            'totalStudents' => $totalStudents
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
