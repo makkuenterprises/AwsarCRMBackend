@@ -163,7 +163,7 @@ class StudentAuthController extends Controller
             'payment_status' => $user->payment_status,
             'course' => $user->course_name ?? 'Not Enrolled',
             'enrollCourseCount' =>$enrollCourseCount,
-            'teacherCount' => $teacherCount
+            'enrollTeacherCount' => $teacherCount
             ],
             'token' => $token, 
              'message' => 'Login Successfully',
