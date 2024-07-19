@@ -44,11 +44,21 @@ class TeacherAuthController extends Controller
            
         $courses = $user->courses()->get();
         $courseCount = $courses->count();
+        
 
-         $totalStudents = DB::table('courses')
-            ->join('course_student', 'courses.id', '=', 'course_student.course_id')
-            ->where('courses.teacher_id', $teacherId)
-            ->count('course_student.student_id');
+          // Extract course IDs
+        $courseIds = $courses->pluck('id')->toArray();
+
+        // Get the students enrolled in these courses
+        $students = DB::table('students')
+            ->leftJoin('courses_enrollments', 'students.id', '=', 'courses_enrollments.student_id')
+            ->leftJoin('courses', 'courses_enrollments.course_id', '=', 'courses.id')
+            ->whereIn('courses.id', $courseIds)
+            ->select('students.*', 'courses.name as course_name')
+            ->orderByDesc('students.id')
+            ->get();
+
+        $totalStudentCount = $students->count();
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
            $code = 200;
@@ -213,7 +223,7 @@ class TeacherAuthController extends Controller
             'image' => $user->image ? url('/Teachers/' . $user->image) : null,
             'classes' => $user->classes,
             'courseCount' => $courseCount,
-            'totalStudents' => $totalStudents
+            'totalStudentCount' => $totalStudentCount
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
