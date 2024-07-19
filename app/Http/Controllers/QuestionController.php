@@ -24,7 +24,7 @@ class QuestionController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $question = new Question();
+        $question = new Questions();
         $question->question_text = $request->input('question_text');
         $question->question_type = $request->input('question_type');
         $question->options = $request->input('options');
