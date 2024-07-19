@@ -264,18 +264,102 @@ class StudentAuthController extends Controller
     }
     }
 
-    public function StudentList(){
-    //  $students = Student::orderByDesc('id')->get();
+    // public function StudentList(){
+    // //  $students = Student::orderByDesc('id')->get();
     
-    $students = DB::table('students')
-    ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-    ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-    ->select('students.id', 'students.name', DB::raw('GROUP_CONCAT(courses.name) as course_names'))
-    ->groupBy('students.id', 'students.name')
-    ->orderByDesc('students.id')
-    ->get();
+    // $students = DB::table('students')
+    // ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+    // ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+    // ->select('students.*', 'courses.name as course_name')
+    // ->orderByDesc('students.id')
+    // ->get();
 
-       $studentList = $students->map(function ($user) {
+    //    $studentList = $students->map(function ($user) {
+    //     return [
+    //         'id' => $user->id,
+    //         'name' => $user->name,
+    //         'email' => $user->email,
+    //         'phone' => $user->phone,
+    //         'street' => $user->street,
+    //         'postal_code' => $user->postal_code,
+    //         'city' => $user->city,
+    //         'state' => $user->state,
+    //          'image' => $user->image ? url('/Student/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
+    //         'fname' => $user->fname,
+    //         'femail' => $user->femail,
+    //         'fphone' => $user->fphone,
+    //         'fstreet' => $user->fstreet,
+    //         'fpostal_code' => $user->fpostal_code,
+    //         'fcity' => $user->fcity,
+    //         'fstate' => $user->fstate,
+    //         'paymentType' => $user->paymentType,
+    //         'dob' => $user->dob,
+    //         'payment_status' => $user->payment_status,
+    //         'course' =>$user->course_name ?? 'Not Enrolled'
+
+
+    //     ];
+    // });
+
+    // return response()->json([
+    //     'status' => true,
+    //     'code' => 200,
+    //     'data' => $studentList
+    // ]);
+    // //  return response()->json(['status' => true  , 'code' => 200 , 'data'=>$students]);
+    // }
+     public function StudentList()
+{
+    $students = DB::table('students')
+        ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+        ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+        ->select(
+            'students.id',
+            'students.name',
+            'students.email',
+            'students.phone',
+            'students.street',
+            'students.postal_code',
+            'students.city',
+            'students.state',
+            'students.image',
+            'students.fname',
+            'students.femail',
+            'students.fphone',
+            'students.fstreet',
+            'students.fpostal_code',
+            'students.fcity',
+            'students.fstate',
+            'students.paymentType',
+            'students.dob',
+            'students.payment_status',
+            DB::raw('GROUP_CONCAT(courses.name) as course_names')
+        )
+        ->groupBy(
+            'students.id',
+            'students.name',
+            'students.email',
+            'students.phone',
+            'students.street',
+            'students.postal_code',
+            'students.city',
+            'students.state',
+            'students.image',
+            'students.fname',
+            'students.femail',
+            'students.fphone',
+            'students.fstreet',
+            'students.fpostal_code',
+            'students.fcity',
+            'students.fstate',
+            'students.paymentType',
+            'students.dob',
+            'students.payment_status'
+        )
+        ->orderByDesc('students.id')
+        ->get();
+
+    $studentList = $students->map(function ($user) {
         return [
             'id' => $user->id,
             'name' => $user->name,
@@ -285,7 +369,7 @@ class StudentAuthController extends Controller
             'postal_code' => $user->postal_code,
             'city' => $user->city,
             'state' => $user->state,
-             'image' => $user->image ? url('/Student/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
+            'image' => $user->image ? url('/Student/' . $user->image) : null, // Assuming $user->image contains the relative path
             'fname' => $user->fname,
             'femail' => $user->femail,
             'fphone' => $user->fphone,
@@ -296,9 +380,7 @@ class StudentAuthController extends Controller
             'paymentType' => $user->paymentType,
             'dob' => $user->dob,
             'payment_status' => $user->payment_status,
-            'course' =>$user->course_name ?? 'Not Enrolled'
-
-
+            'course' => $user->course_names ?? 'Not Enrolled'
         ];
     });
 
@@ -307,9 +389,7 @@ class StudentAuthController extends Controller
         'code' => 200,
         'data' => $studentList
     ]);
-    //  return response()->json(['status' => true  , 'code' => 200 , 'data'=>$students]);
-    }
-     
+}
 
     public function UpdateView($id){
       $student = Student::find($id);
