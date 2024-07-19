@@ -49,7 +49,7 @@ class StudentAuthController extends Controller
            $token = $user->createToken('AwsarClass')->plainTextToken; 
            
            $email = $login['email'];   
-            $notifications = $user->unreadNotifications()->get();
+            $notifications = $user->unreadNotifications()->get(); 
 
             // Get the count of enrolled courses using join
         $enrollCourseCount = DB::table('courses_enrollements')
@@ -58,13 +58,13 @@ class StudentAuthController extends Controller
         ->count(); 
 
              // Optional: Retrieve course names if needed
-        $courseNames = DB::table('courses_enrollements')
+        $courseNames = DB::table('courses_enrollements') 
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $user->id)
             ->pluck('courses.name')
             ->implode(', '); // Concatenate course names
                   // Get the count of unique teachers for the enrolled courses
-    $teacherCount = DB::table('courses_enrollements')
+         $teacherCount = DB::table('courses_enrollements')
         ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
         ->join('course_teacher', 'courses.id', '=', 'course_teacher.course_id')
         ->where('courses_enrollements.student_id', $user->id)

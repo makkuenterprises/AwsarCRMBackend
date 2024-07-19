@@ -382,6 +382,52 @@ public function assignSubjectUpdate(Request $request)
     }
 }
 
+// public function showClassRoutine($batch_id)
+// {
+//     try {
+//         // Fetch all class routines for the specified batch_id, ordered by start_time
+//         $classRoutines = ClassRoutine::where('batch_id', $batch_id)
+//                                      ->orderBy('start_time')
+//                                      ->get();
+
+//         // Prepare the data in the desired format
+//         $routineData = [];
+
+//         // Loop through each class routine
+//         foreach ($classRoutines as $routine) {
+//             $dayOfWeek = ucfirst($routine->day_of_week);
+
+//             // Initialize the day if not set
+//             if (!isset($routineData[$dayOfWeek])) {
+//                 $routineData[$dayOfWeek] = [];
+//             }
+
+//             // Format the time range
+//             $timeRange = $routine->start_time . ' - ' . $routine->end_time;
+
+//             // Add details including id, subject to the routine day
+//             $routineData[$dayOfWeek][] = [
+//                 'id' => $routine->id,
+//                 'time_range' => $timeRange,
+//                 'subject' => $routine->subject,
+//             ];
+//         }
+
+//         // Return the formatted routine data
+//         return response()->json([
+//             'status' => 'success',
+//             'data' => $routineData,
+//         ], 200);
+
+//     } catch (\Exception $e) {
+//         // Return a JSON response with an error message if an exception occurs
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Failed to fetch class routines for batch ' . $batch_id,
+//             'error' => $e->getMessage(),
+//         ], 500);
+//     }
+// }
 public function showClassRoutine($batch_id)
 {
     try {
@@ -411,6 +457,11 @@ public function showClassRoutine($batch_id)
                 'time_range' => $timeRange,
                 'subject' => $routine->subject,
             ];
+        }
+
+        // If no routines are found, ensure that 'data' is an empty object
+        if (empty($routineData)) {
+            $routineData = new \stdClass(); // Create an empty object
         }
 
         // Return the formatted routine data
