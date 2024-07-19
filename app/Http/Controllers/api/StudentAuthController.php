@@ -54,7 +54,7 @@ class StudentAuthController extends Controller
             // Get the count of enrolled courses using join
         $enrollCourseCount = DB::table('courses_enrollements')
         ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
-        ->where('students.id', $student->id)
+        ->where('students.id', $user->id)
         ->count(); 
 
             $user = DB::table('students')
