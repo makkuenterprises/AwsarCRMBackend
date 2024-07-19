@@ -66,6 +66,14 @@ class CourseEnrollementController extends Controller
             DB::rollBack(); // Rollback the transaction
             return response()->json(['status' => false, 'code' => 400, 'message' => 'Student is already enrolled in the course.'], 400);
         }
+         
+           if ($request->input('paid_amount') > $course->fee) {
+        return response()->json([
+            'status' => false,
+            'code' => 400,
+            'message' => 'Paid amount should be less than or equal to the course fee.',
+        ], 400);
+    }
 
         // Enroll the student in the course
         $enrollcourse = new CoursesEnrollement();

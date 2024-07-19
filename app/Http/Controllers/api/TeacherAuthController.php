@@ -224,7 +224,6 @@ class TeacherAuthController extends Controller
             'classes' => $user->classes,
             'courseCount' => $courseCount,
             'totalStudentCount' => $totalStudentCount,
-            'students' => $students
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
