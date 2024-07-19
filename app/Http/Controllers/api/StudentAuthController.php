@@ -57,6 +57,12 @@ class StudentAuthController extends Controller
         ->where('students.id', $user->id)
         ->count(); 
 
+             // Optional: Retrieve course names if needed
+        $courseNames = DB::table('courses_enrollements')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('courses_enrollements.student_id', $user->id)
+            ->pluck('courses.name')
+            ->implode(', '); // Concatenate course names
                   // Get the count of unique teachers for the enrolled courses
     $teacherCount = DB::table('courses_enrollements')
         ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
@@ -161,7 +167,7 @@ class StudentAuthController extends Controller
             'fstate' => $user->fstate, 
             'dob' => $user->dob,
             'payment_status' => $user->payment_status,
-            'course' => $user->course_name ?? 'Not Enrolled',
+            'course' => $courseNames ?? 'Not Enrolled',
             'enrollCourseCount' =>$enrollCourseCount,
             'enrollTeacherCount' => $teacherCount
             ],
