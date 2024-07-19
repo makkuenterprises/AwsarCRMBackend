@@ -57,12 +57,22 @@ class StudentAuthController extends Controller
         ->where('students.id', $user->id)
         ->count(); 
 
+                  // Get the count of unique teachers for the enrolled courses
+    $teacherCount = DB::table('courses_enrollements')
+        ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+        ->join('course_teacher', 'courses.id', '=', 'course_teacher.course_id')
+        ->where('courses_enrollements.student_id', $user->id)
+        ->distinct('course_teacher.teacher_id')
+        ->count('course_teacher.teacher_id');
+
             $user = DB::table('students')
            ->where('students.email', $email) 
            ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
            ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
            ->select('students.*', 'courses.name as course_name')
            ->first();
+
+  
 
             $code = 200;
             // Fetch unread notifications for the student
@@ -152,7 +162,8 @@ class StudentAuthController extends Controller
             'dob' => $user->dob,
             'payment_status' => $user->payment_status,
             'course' => $user->course_name ?? 'Not Enrolled',
-            'enrollCourseCount' =>$enrollCourseCount
+            'enrollCourseCount' =>$enrollCourseCount,
+            'teacherCount' => $teacherCount
             ],
             'token' => $token, 
              'message' => 'Login Successfully',
@@ -313,7 +324,7 @@ class StudentAuthController extends Controller
     $students = DB::table('students')
         ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
         ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-        ->select(
+        ->select( 
             'students.id',
             'students.name',
             'students.email',
