@@ -21,6 +21,7 @@ use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\GoogleMeetController;
 use App\Http\Controllers\Notification;
+use App\Http\Controllers\QuestionController;
 
 
 
@@ -431,3 +432,10 @@ Route::get('login/google', [App\Http\Controllers\GoogleMeetController::class, 'r
 Route::get('oauth2/callback', [App\Http\Controllers\GoogleMeetController::class, 'handleGoogleCallback']);
 
 
+// questions-----------------------------------------------------------------------------------------------
+
+Route::get('questions', [QuestionController::class, 'index']);
+Route::post('questions', [QuestionController::class, 'store']);
+Route::get('questions/{id}', [QuestionController::class, 'show']);
+Route::put('questions/{id}', [QuestionController::class, 'update']);
+Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
