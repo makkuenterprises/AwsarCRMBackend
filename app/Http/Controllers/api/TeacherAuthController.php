@@ -223,7 +223,8 @@ class TeacherAuthController extends Controller
             'image' => $user->image ? url('/Teachers/' . $user->image) : null,
             'classes' => $user->classes,
             'courseCount' => $courseCount,
-            'totalStudentCount' => $totalStudentCount
+            'totalStudentCount' => $totalStudentCount,
+            'students' => $students
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
