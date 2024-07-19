@@ -270,7 +270,8 @@ class StudentAuthController extends Controller
     $students = DB::table('students')
     ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
     ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-    ->select('students.*', 'courses.name as course_name')
+    ->select('students.id', 'students.name', DB::raw('GROUP_CONCAT(courses.name) as course_names'))
+    ->groupBy('students.id', 'students.name')
     ->orderByDesc('students.id')
     ->get();
 
