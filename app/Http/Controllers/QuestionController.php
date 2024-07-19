@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Question;
+use App\Models\Questions;
 use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
     public function index()
     {
-        $questions = Question::all();
+        $questions = Questions::all();
         return response()->json(['status' => 'success', 'data' => $questions]);
     }
 
@@ -23,7 +23,7 @@ class QuestionController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $question = new Question();
+        $question = new Questions();
         $question->question_text = $request->input('question_text');
         $question->question_type = $request->input('question_type');
         $question->options = $request->input('options');
@@ -41,7 +41,7 @@ class QuestionController extends Controller
 
     public function show($id)
     {
-        $question = Question::find($id);
+        $question = Questions::find($id);
         if (!$question) {
             return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
         }
@@ -50,7 +50,7 @@ class QuestionController extends Controller
 
     public function update(Request $request, $id)
     {
-        $question = Question::find($id);
+        $question = Questions::find($id);
         if (!$question) {
             return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
         }
@@ -84,7 +84,7 @@ class QuestionController extends Controller
 
     public function destroy($id)
     {
-        $question = Question::find($id);
+        $question = Questions::find($id);
         if (!$question) {
             return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
         }
