@@ -64,7 +64,7 @@ class QuestionController extends Controller
 
     public function update(Request $request, $id)
     {
-        $question = Questions::find($id);
+        $question = Questions::find($id); 
         if (!$question) {
             return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
         }

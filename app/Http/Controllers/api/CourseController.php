@@ -90,12 +90,19 @@ class CourseController extends Controller
         }
          
     } 
-
 public function courseListForTeacher($teacherId)
 {
     try {
         $teacher = Teacher::findOrFail($teacherId);
         $courses = $teacher->courses()->get();
+
+        // Add URL path to each course image
+        $courses->map(function($course) {
+            if ($course->image) {
+                $course->image_url = url('Courses/' . $course->image);
+            }
+            return $course;
+        });
 
         return response()->json([
             'status' => true,
@@ -113,6 +120,7 @@ public function courseListForTeacher($teacherId)
         ], 500);
     }
 }
+
 
  
  public function courseList()
