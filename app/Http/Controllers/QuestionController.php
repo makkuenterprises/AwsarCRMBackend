@@ -13,8 +13,9 @@ class QuestionController extends Controller
         return response()->json(['status' => 'success', 'data' => $questions]);
     }
 
-    public function store(Request $request)
-    {
+   public function store(Request $request)
+{
+    try {
         $request->validate([
             'question_text' => 'required|string',
             'question_type' => 'required|in:MCQ,Short Answer,Fill in the Blanks',
@@ -23,7 +24,7 @@ class QuestionController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $question = new Questions();
+        $question = new Question();
         $question->question_text = $request->input('question_text');
         $question->question_type = $request->input('question_type');
         $question->options = $request->input('options');
@@ -37,7 +38,20 @@ class QuestionController extends Controller
         $question->save();
 
         return response()->json(['status' => 'success', 'data' => $question], 201);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation Error',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An error occurred while processing your request.',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
 
     public function show($id)
     {
