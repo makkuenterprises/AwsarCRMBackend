@@ -89,7 +89,7 @@ class CourseController extends Controller
          return response()->json(['status'=>false,'code'=>500,'message' => 'An error occurred while Created Course', 'data' => $data], 500);
         }
          
-    }
+    } 
 
 public function courseListForTeacher($teacherId)
 {

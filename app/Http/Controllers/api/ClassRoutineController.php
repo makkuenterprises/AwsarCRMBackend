@@ -105,6 +105,7 @@ public function store(Request $request)
         ], 500);
     }
 }
+
 public function createTimeSlot(Request $request)
 {
     try {

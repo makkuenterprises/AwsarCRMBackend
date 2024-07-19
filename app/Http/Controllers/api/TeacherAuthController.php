@@ -41,6 +41,9 @@ class TeacherAuthController extends Controller
             $data = 'Invalid Login Credentials';
             $code = 401;
         } else {
+           
+        $courses = $user->courses()->get();
+        $courseCount = $courses->count();
 
            $token = $user->createToken('AwsarClass')->plainTextToken;
            $code = 200;
@@ -204,6 +207,7 @@ class TeacherAuthController extends Controller
             'qualification' => $user->qualification,
             'image' => $user->image ? url('/Teachers/' . $user->image) : null,
             'classes' => $user->classes,
+            'courseCount' => $courseCount,
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
@@ -467,7 +471,7 @@ public function teacherList()
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
            
-        ]);
+        ]); 
 
          if ($validator->fails()) {
             return response()->json([
