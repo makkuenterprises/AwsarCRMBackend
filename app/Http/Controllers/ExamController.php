@@ -50,7 +50,8 @@ public function createExam(Request $request)
         }
 
         // Return success response
-        return response()->json(['message' => 'Exam created successfully'], 201);
+        return response()->json([ 'status' => true,
+            'code' => 200,'message' => 'Exam created successfully'], 201);
         
     } catch (\Illuminate\Validation\ValidationException $e) {
         // Handle validation errors
