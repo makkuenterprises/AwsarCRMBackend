@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,11 +12,13 @@ return new class extends Migration
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('start_time');
-            $table->string('end_time');
-            $table->foreignId('batch_id')->constrained();
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+             $table->unsignedBigInteger('batch_id'); 
             $table->float('passing_marks');
             $table->timestamps();
+
+               $table->foreign('batch_id')->references('id')->on('batches')->onDelete('cascade');
         });
     }
 

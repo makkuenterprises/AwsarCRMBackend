@@ -10,9 +10,12 @@ return new class extends Migration
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('exam_id')->constrained();
+              $table->unsignedBigInteger('exam_id'); 
             $table->string('name');
             $table->timestamps();
+
+          $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
+
         });
     }
 
