@@ -9,7 +9,7 @@ class QuestionController extends Controller
 {
     public function index()
     {
-          $questions = Question::orderBy('created_at', 'asc')->get();
+          $questions = Questions::orderBy('created_at', 'asc')->get();
         return response()->json(['status' => 'success', 'data' => $questions]);
     }
 
