@@ -281,50 +281,27 @@ class StudentAuthController extends Controller
     }
     }
 
-    // public function StudentList(){
-    // //  $students = Student::orderByDesc('id')->get();
-    
-    // $students = DB::table('students')
-    // ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
-    // ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-    // ->select('students.*', 'courses.name as course_name')
-    // ->orderByDesc('students.id')
-    // ->get();
+       public function TeachersLists($student_id) {
+        try {
+            $teachers = DB::table('courses_enrollements')
+                ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+                ->join('course_teacher', 'courses.id', '=', 'course_teacher.course_id')
+                ->join('teachers', 'course_teacher.teacher_id', '=', 'teachers.id')
+                ->where('courses_enrollements.student_id', $student_id)
+                ->select('teachers.*')
+                ->distinct()
+                ->get();
 
-    //    $studentList = $students->map(function ($user) {
-    //     return [
-    //         'id' => $user->id,
-    //         'name' => $user->name,
-    //         'email' => $user->email,
-    //         'phone' => $user->phone,
-    //         'street' => $user->street,
-    //         'postal_code' => $user->postal_code,
-    //         'city' => $user->city,
-    //         'state' => $user->state,
-    //          'image' => $user->image ? url('/Student/' . $user->image) : null, // Assuming $user->imagePath contains the relative path
-    //         'fname' => $user->fname,
-    //         'femail' => $user->femail,
-    //         'fphone' => $user->fphone,
-    //         'fstreet' => $user->fstreet,
-    //         'fpostal_code' => $user->fpostal_code,
-    //         'fcity' => $user->fcity,
-    //         'fstate' => $user->fstate,
-    //         'paymentType' => $user->paymentType,
-    //         'dob' => $user->dob,
-    //         'payment_status' => $user->payment_status,
-    //         'course' =>$user->course_name ?? 'Not Enrolled'
+            return response()->json($teachers);
+        } catch (\Exception $e) {
+            // Log the exception message
+            Log::error('Error fetching teachers: ' . $e->getMessage());
 
+            // Return a JSON response with the error message
+            return response()->json(['error' => 'An error occurred while fetching teachers. Please try again later.'], 500);
+        }
+    }
 
-    //     ];
-    // });
-
-    // return response()->json([
-    //     'status' => true,
-    //     'code' => 200,
-    //     'data' => $studentList
-    // ]);
-    // //  return response()->json(['status' => true  , 'code' => 200 , 'data'=>$students]);
-    // }
      public function StudentList()
 {
     $students = DB::table('students')

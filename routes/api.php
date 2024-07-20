@@ -92,6 +92,9 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
         Route::post('update/{id}', [StudentAuthController::class, 'updateStudent']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
         Route::get('course/list', [StudentAuthController::class, 'courseList']);
+        Route::post('teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
+
+        
     });
 
 // ------------------------------------------------------------------------------------------------
