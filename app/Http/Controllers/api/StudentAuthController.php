@@ -299,7 +299,7 @@ public function TeachersLists($student_id) {
                 'teachers.image', 
                 'teachers.status', 
                 'teachers.qualification',
-               
+                'courses.name as course_name'
             )
             ->distinct()
             ->get();
