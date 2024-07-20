@@ -10,7 +10,7 @@ class ExamController extends Controller
 { 
 public function createExam(Request $request)
 {
-    try {
+    try { 
         // Validate the request
         $request->validate([
             'name' => 'required|string',
