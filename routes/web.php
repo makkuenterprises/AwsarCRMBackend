@@ -85,3 +85,18 @@ Route::get('rollback', function() {
         return response()->json(['message' => 'Migration failed', 'error' => $e->getMessage()], 500);
     }
 });
+
+
+Route::get('drop-table/{table}', function($table) {
+    try {
+        // Drop the table using raw SQL
+        DB::statement("DROP TABLE IF EXISTS {$table}");
+
+        return response()->json(['message' => "Table '$table' has been dropped successfully."], 200);
+    } catch (\Exception $e) {
+        // Log the exception
+        Log::error('Table drop failed: ' . $e->getMessage());
+
+        return response()->json(['message' => 'Table drop failed', 'error' => $e->getMessage()], 500);
+    }
+});
