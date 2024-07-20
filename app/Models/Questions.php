@@ -20,4 +20,16 @@ class Questions extends Model
         'options' => 'array',
         'correct_answers' => 'array',
     ];
+
+    public function exams()
+    {
+        return $this->belongsToMany(Exam::class, 'exam_questions')->withPivot('marks', 'negative_marks');
+    }
+
+    public function sections()
+    {
+        return $this->belongsToMany(Section::class, 'exam_questions')->withPivot('marks', 'negative_marks');
+    }
+
+
 }

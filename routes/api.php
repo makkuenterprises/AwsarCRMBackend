@@ -22,6 +22,7 @@ use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\GoogleMeetController;
 use App\Http\Controllers\Notification;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\ExamController;
 
 
 
@@ -439,3 +440,11 @@ Route::post('questions', [QuestionController::class, 'store']);
 Route::get('questions/{id}', [QuestionController::class, 'show']);
 Route::put('questions/{id}', [QuestionController::class, 'update']);
 Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
+
+
+// EXAMS====================================================================================================
+
+
+Route::post('/exams', [ExamController::class, 'createExam']);
+
+

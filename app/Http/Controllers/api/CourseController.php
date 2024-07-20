@@ -43,8 +43,8 @@ class CourseController extends Controller
             $course = new Course();
             $course->name = $request->input('name');
             $course->fee = $request->input('fee');
-             $startDate = Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->format('Y-m-d');
-             $endDate = Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->format('Y-m-d');
+            $startDate = Carbon::createFromFormat('d/m/Y', $request->input('startDate'))->format('Y-m-d');
+            $endDate = Carbon::createFromFormat('d/m/Y', $request->input('endDate'))->format('Y-m-d');
             $course->startDate = $startDate;
             $course->endDate = $endDate;
             $course->modeType = $request->input('modeType');
