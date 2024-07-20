@@ -11,6 +11,6 @@ class ExamQuestion extends Model
     protected $fillable = ['exam_id', 'question_id', 'section_id', 'marks', 'negative_marks'];
       public function question()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Questions::class);
     }
 }
