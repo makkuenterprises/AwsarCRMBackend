@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->string('start_time');
+            $table->string('end_time');
             $table->foreignId('batch_id')->constrained();
             $table->float('passing_marks');
             $table->timestamps();
