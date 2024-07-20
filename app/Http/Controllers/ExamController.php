@@ -7,14 +7,14 @@ use App\Models\Question;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
 class ExamController extends Controller
-{
+{ 
     public function createExam(Request $request)
     {
         $request->validate([
             'name' => 'required|string',
             'start_time' => 'required|date_format:Y-m-d H:i:s',
             'end_time' => 'required|date_format:Y-m-d H:i:s',
-            'batch_id' => 'required|exists:batches,id',
+            'batch_id' => 'required|exists:courses,id',
             'passing_marks' => 'required|numeric',
             'sections' => 'required|array',
             'sections.*.name' => 'required|string',
