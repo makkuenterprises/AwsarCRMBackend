@@ -16,14 +16,14 @@ public function createExam(Request $request)
             'name' => 'required|string',
             'start_time' => 'required|date_format:Y-m-d H:i:s',
             'end_time' => 'required|date_format:Y-m-d H:i:s',
-            'batch_id' => 'required|exists:courses,id', // Changed from courses to batches
+            'batch_id' => 'required|exists:courses,id',
             'passing_marks' => 'required|numeric',
             'sections' => 'required|array',
             'sections.*.name' => 'required|string',
             'sections.*.questions' => 'required|array',
             'sections.*.questions.*.id' => 'required|exists:questions,id',
             'sections.*.questions.*.marks' => 'required|numeric',
-            'sections.*.questions.*.negative_marks' => 'nullable|numeric', // Make negative_marks optional
+            'sections.*.questions.*.negative_marks' => 'nullable|numeric',
         ]);
 
         // Create the exam
@@ -115,7 +115,7 @@ public function listQuestionsForExam($examId)
 
         // Get all questions associated with the exam
         $examQuestions = ExamQuestion::where('exam_id', $examId)
-            ->with('question') // Assuming you have a relationship defined in ExamQuestion model
+            ->with('question') 
             ->get();
 
         // Prepare the result
