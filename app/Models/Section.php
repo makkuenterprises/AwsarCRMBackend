@@ -18,4 +18,9 @@ class Section extends Model
     {
         return $this->belongsToMany(Question::class, 'exam_questions')->withPivot('marks', 'negative_marks');
     }
+    public function examQuestions()
+    {
+        return $this->hasMany(ExamQuestion::class);
+    }
+    
 }
