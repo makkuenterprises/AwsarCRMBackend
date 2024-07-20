@@ -85,7 +85,7 @@ class ExamResponseController extends Controller
         }
 
         // Create or update exam response record
-        $examResponse = ExamResponse::updateOrCreate(
+        $examResponse = CreateExamResponse::updateOrCreate(
             ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
             [
                 'total_marks' => $totalMarks,
@@ -100,7 +100,7 @@ class ExamResponseController extends Controller
 
         // Store individual question responses
         foreach ($validated['responses'] as $response) {
-            ExamQuestionResponse::updateOrCreate(
+            CreateExamQuestionResponse::updateOrCreate(
                 [
                     'exam_response_id' => $examResponse->id,
                     'question_id' => $response['question_id']
