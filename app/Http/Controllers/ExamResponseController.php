@@ -7,8 +7,8 @@ use App\Models\Section;
 use App\Models\Question;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
-use App\Models\CreateExamResponse; 
-use App\Models\CreateExamQuestionResponse;
+use App\Models\ExamResponse; 
+use App\Models\ExamQuestionResponse;
 
 class ExamResponseController extends Controller
 {
@@ -85,7 +85,7 @@ class ExamResponseController extends Controller
         }
 
         // Create or update exam response record
-        $examResponse = CreateExamResponse::updateOrCreate(
+        $examResponse = ExamResponse::updateOrCreate(
             ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
             [
                 'total_marks' => $totalMarks,
@@ -100,7 +100,7 @@ class ExamResponseController extends Controller
 
         // Store individual question responses
         foreach ($validated['responses'] as $response) {
-            CreateExamQuestionResponse::updateOrCreate(
+            ExamQuestionResponse::updateOrCreate(
                 [
                     'exam_response_id' => $examResponse->id,
                     'question_id' => $response['question_id']
