@@ -112,10 +112,10 @@ class ExamResponseController extends Controller
     public function calculateMarks($examId, $studentId)
 {
     $examResponse = ExamResponse::where('exam_id', $examId)
-        ->where('student_id', $studentId)
+        ->where('student_id', $studentId) 
         ->first();
 
-    if (!$examResponse) {
+    if (!$examResponse) { 
         return response()->json(['status' => false, 'message' => 'No exam response found'], 404);
     }
 
