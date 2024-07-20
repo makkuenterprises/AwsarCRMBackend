@@ -450,6 +450,8 @@ Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
 
 Route::post('/exams', [ExamController::class, 'createExam']);
 Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch']);
+Route::get('/exams/questions/{examId}', [YourController::class, 'listQuestionsForExam']);
+
 
 
 

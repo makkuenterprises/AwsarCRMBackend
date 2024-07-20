@@ -106,5 +106,49 @@ public function listExamsForBatch($batchId)
     }
 }
 
+
+public function listQuestionsForExam($examId)
+{
+    try {
+        // Fetch the exam
+        $exam = Exam::findOrFail($examId);
+
+        // Get all questions associated with the exam
+        $examQuestions = ExamQuestion::where('exam_id', $examId)
+            ->with('question') // Assuming you have a relationship defined in ExamQuestion model
+            ->get();
+
+        // Prepare the result
+        $questions = $examQuestions->map(function ($examQuestion) {
+            return [
+                'question_id' => $examQuestion->question_id,
+                'question_text' => $examQuestion->question->question_text,
+                'question_type' => $examQuestion->question->question_type,
+                'options' => $examQuestion->question->options,
+                'correct_answers' => $examQuestion->question->correct_answers,
+                'marks' => $examQuestion->marks,
+                'negative_marks' => $examQuestion->negative_marks,
+            ];
+        });
+
+        // Return success response with questions data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Questions retrieved successfully',
+            'data' => $questions
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving questions',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }
 
