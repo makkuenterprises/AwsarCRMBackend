@@ -1,11 +1,11 @@
 <?php
+namespace App\Http\Controllers;
 
 use App\Models\Exam;
 use App\Models\Section;
 use App\Models\Question;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
-
 class ExamController extends Controller
 {
     public function createExam(Request $request)
