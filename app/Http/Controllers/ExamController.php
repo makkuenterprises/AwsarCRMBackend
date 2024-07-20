@@ -6,7 +6,7 @@ use App\Models\Section;
 use App\Models\Question;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
-class ExamController extends Controller
+class ExamController extends Controller 
 { 
 public function createExam(Request $request)
 {
@@ -68,6 +68,39 @@ public function createExam(Request $request)
             'status' => false,
             'code' => 500,
             'message' => 'An error occurred while creating the exam',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+public function listExamsForBatch($batchId)
+{
+    try {
+        // Fetch all exams associated with the specific batch
+        $exams = Exam::where('batch_id', $batchId)->get();
+
+        // Check if exams are found
+        if ($exams->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'No exams found for the specified batch'
+            ], 404);
+        }
+
+        // Return success response with exams data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Exams retrieved successfully',
+            'data' => $exams
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving exams',
             'error' => $e->getMessage()
         ], 500);
     }
