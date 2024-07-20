@@ -280,8 +280,7 @@ class StudentAuthController extends Controller
          
     }
     }
-
-   public function TeachersLists($student_id) {
+public function TeachersLists($student_id) {
     try {
         $teachers = DB::table('courses_enrollements')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
@@ -289,7 +288,7 @@ class StudentAuthController extends Controller
             ->join('teachers', 'course_teacher.teacher_id', '=', 'teachers.id')
             ->where('courses_enrollements.student_id', $student_id)
             ->select(
-                'teachers.id', 
+                'teachers.id',
                 'teachers.name', 
                 'teachers.email', 
                 'teachers.phone', 
@@ -300,18 +299,20 @@ class StudentAuthController extends Controller
                 'teachers.image', 
                 'teachers.status', 
                 'teachers.qualification',
-                'courses.name as course_name' // Select the course name
+                'courses.name as course_name'
             )
             ->distinct()
             ->get();
 
-        // Modify the image path or set to null if image is not available
-        $teachers->transform(function ($teacher) {
+        // Group by teacher ID and aggregate course names
+        $teachersGrouped = $teachers->groupBy('id')->map(function ($group) {
+            $teacher = $group->first(); // Take the first entry (all entries are the same for a teacher)
+            $teacher->courses = $group->pluck('course_name')->unique()->values(); // Collect unique course names
             $teacher->image = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
             return $teacher;
         });
 
-        return response()->json($teachers);
+        return response()->json($teachersGrouped->values());
     } catch (\Exception $e) {
         // Log the exception message
         Log::error('Error fetching teachers: ' . $e->getMessage());
@@ -320,6 +321,7 @@ class StudentAuthController extends Controller
         return response()->json(['error' => 'An error occurred while fetching teachers. Please try again later.'], 500);
     }
 }
+
 
 
 
