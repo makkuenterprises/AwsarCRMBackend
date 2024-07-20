@@ -281,20 +281,32 @@ class StudentAuthController extends Controller
     }
     }
 
-     public function TeachersLists($student_id) {
+   public function TeachersLists($student_id) {
     try {
         $teachers = DB::table('courses_enrollements')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->join('course_teacher', 'courses.id', '=', 'course_teacher.course_id')
             ->join('teachers', 'course_teacher.teacher_id', '=', 'teachers.id')
             ->where('courses_enrollements.student_id', $student_id)
-            ->select('teachers.name', 'teachers.email', 'teachers.phone', 'teachers.street', 'teachers.postal_code', 'teachers.city', 'teachers.state', 'teachers.image', 'teachers.status', 'teachers.qualification')
+            ->select(
+                'teachers.name', 
+                'teachers.email', 
+                'teachers.phone', 
+                'teachers.street', 
+                'teachers.postal_code', 
+                'teachers.city', 
+                'teachers.state', 
+                'teachers.image', 
+                'teachers.status', 
+                'teachers.qualification',
+                'courses.name as course_name' // Select the course name
+            )
             ->distinct()
             ->get();
 
-        // Modify the image path
+        // Modify the image path or set to null if image is not available
         $teachers->transform(function ($teacher) {
-            $teacher->image = url('/Teachers/' . $teacher->image);
+            $teacher->image = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
             return $teacher;
         });
 
@@ -307,6 +319,7 @@ class StudentAuthController extends Controller
         return response()->json(['error' => 'An error occurred while fetching teachers. Please try again later.'], 500);
     }
 }
+
 
 
      public function StudentList()
