@@ -143,7 +143,6 @@ public function listQuestionsForExam($examId)
             'message' => 'Sections and questions retrieved successfully',
             'data' => $data
         ], 200);
-
     } catch (\Exception $e) {
         // Handle any errors
         return response()->json([

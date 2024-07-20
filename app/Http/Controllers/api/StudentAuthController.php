@@ -281,26 +281,33 @@ class StudentAuthController extends Controller
     }
     }
 
-       public function TeachersLists($student_id) {
-        try {
-            $teachers = DB::table('courses_enrollements')
-                ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-                ->join('course_teacher', 'courses.id', '=', 'course_teacher.course_id')
-                ->join('teachers', 'course_teacher.teacher_id', '=', 'teachers.id')
-                ->where('courses_enrollements.student_id', $student_id)
-                ->select('teachers.*')
-                ->distinct()
-                ->get();
+     public function TeachersLists($student_id) {
+    try {
+        $teachers = DB::table('courses_enrollements')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->join('course_teacher', 'courses.id', '=', 'course_teacher.course_id')
+            ->join('teachers', 'course_teacher.teacher_id', '=', 'teachers.id')
+            ->where('courses_enrollements.student_id', $student_id)
+            ->select('teachers.name', 'teachers.email', 'teachers.phone', 'teachers.street', 'teachers.postal_code', 'teachers.city', 'teachers.state', 'teachers.image', 'teachers.status', 'teachers.qualification')
+            ->distinct()
+            ->get();
 
-            return response()->json($teachers);
-        } catch (\Exception $e) {
-            // Log the exception message
-            Log::error('Error fetching teachers: ' . $e->getMessage());
+        // Modify the image path
+        $teachers->transform(function ($teacher) {
+            $teacher->image = url('/Teachers/' . $teacher->image);
+            return $teacher;
+        });
 
-            // Return a JSON response with the error message
-            return response()->json(['error' => 'An error occurred while fetching teachers. Please try again later.'], 500);
-        }
+        return response()->json($teachers);
+    } catch (\Exception $e) {
+        // Log the exception message
+        Log::error('Error fetching teachers: ' . $e->getMessage());
+
+        // Return a JSON response with the error message
+        return response()->json(['error' => 'An error occurred while fetching teachers. Please try again later.'], 500);
     }
+}
+
 
      public function StudentList()
 {

@@ -17,10 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 class TeacherAuthController extends Controller
-{
-   
-    
-
+{ 
     public function teacherAuthLogin(Request $request){
      $login = $request->validate([
         'email' => 'required|email',
