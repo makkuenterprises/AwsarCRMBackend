@@ -24,6 +24,7 @@ use App\Http\Controllers\Notification;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ExamController;
 
+use App\Http\Controllers\ExamResponseController;
 
 
 /* 
@@ -452,5 +453,8 @@ Route::post('/exams', [ExamController::class, 'createExam']);
 Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch']);
 Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
 
+
+Route::post('/exam-responses', [ExamResponseController::class, 'storeExamResponse']);
+Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::class, 'calculateMarks']);
 
 
