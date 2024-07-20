@@ -106,37 +106,42 @@ public function listExamsForBatch($batchId)
     }
 }
 
-
 public function listQuestionsForExam($examId)
 {
     try {
         // Fetch the exam
         $exam = Exam::findOrFail($examId);
 
-        // Get all questions associated with the exam
-        $examQuestions = ExamQuestion::where('exam_id', $examId)
-            ->with('question') 
+        // Get all sections associated with the exam
+        $sections = Section::where('exam_id', $examId)
+            ->with(['examQuestions.question']) // Load questions for each section
             ->get();
 
         // Prepare the result
-        $questions = $examQuestions->map(function ($examQuestion) {
+        $data = $sections->map(function ($section) {
             return [
-                'question_id' => $examQuestion->question_id,
-                'question_text' => $examQuestion->question->question_text,
-                'question_type' => $examQuestion->question->question_type,
-                'options' => $examQuestion->question->options,
-                'correct_answers' => $examQuestion->question->correct_answers,
-                'marks' => $examQuestion->marks,
-                'negative_marks' => $examQuestion->negative_marks,
+                'section_id' => $section->id,
+                'section_name' => $section->name,
+                'questions' => $section->examQuestions->map(function ($examQuestion) {
+                    return [
+                        'question_id' => $examQuestion->question_id,
+                        'question_text' => $examQuestion->question->question_text,
+                        'question_type' => $examQuestion->question->question_type,
+                        'options' => $examQuestion->question->options,
+                        'correct_answers' => $examQuestion->question->correct_answers,
+                        'marks' => $examQuestion->marks,
+                        'negative_marks' => $examQuestion->negative_marks,
+                    ];
+                })
             ];
         });
 
-        // Return success response with questions data
+        // Return success response with sections and questions data
         return response()->json([
             'status' => true,
             'code' => 200,
-            'message' => 'Questions retrieved successfully',
-            'data' => $questions
+            'message' => 'Sections and questions retrieved successfully',
+            'data' => $data
         ], 200);
 
     } catch (\Exception $e) {
@@ -144,7 +149,7 @@ public function listQuestionsForExam($examId)
         return response()->json([
             'status' => false,
             'code' => 500,
-            'message' => 'An error occurred while retrieving questions',
+            'message' => 'An error occurred while retrieving sections and questions',
             'error' => $e->getMessage()
         ], 500);
     }
