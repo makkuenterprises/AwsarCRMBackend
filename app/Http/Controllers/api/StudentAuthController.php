@@ -289,6 +289,7 @@ class StudentAuthController extends Controller
             ->join('teachers', 'course_teacher.teacher_id', '=', 'teachers.id')
             ->where('courses_enrollements.student_id', $student_id)
             ->select(
+                'teachers.id', 
                 'teachers.name', 
                 'teachers.email', 
                 'teachers.phone', 
