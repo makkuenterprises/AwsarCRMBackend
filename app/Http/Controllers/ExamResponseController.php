@@ -44,7 +44,7 @@ public function storeExamResponse(Request $request)
         });
 
         // Get unique question IDs from the exam questions
-        $uniqueQuestionIds = $examQuestions->pluck('question_id')->unique();
+        $uniqueQuestionIds = $examQuestions->pluck('id')->unique();
 
         // Calculate the total number of questions
         $totalQuestions = $uniqueQuestionIds->count();
