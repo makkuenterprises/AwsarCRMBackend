@@ -237,9 +237,10 @@ class TeacherAuthController extends Controller
 //     $teacher = Teacher::orderByDesc('id')->get();
 //     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 // }
-public function teacherList()
+
+public function teacherList() 
 {
-    try {
+    try { 
         // Retrieve all teachers
         $teachers = Teacher::all();
 
@@ -250,12 +251,13 @@ public function teacherList()
             $courses = $teacher->courses()->get();
 
             // Add URL path to each course image
-            $courses->map(function ($course) {
-                if ($course->image) {
-                    $course->image = url('Courses/' . $course->image);
-                }
-                return $course;
-            });
+$courses->map(function ($course) {
+    return [
+        'id' => $course->id,
+        'course_name' => $course->course_name
+    ];
+});
+
 
             // Append teacher's courses to the allCourses array
             $allCourses[] = [
