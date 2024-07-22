@@ -251,18 +251,17 @@ public function teacherList()
             $courses = $teacher->courses()->get();
 
             // Add URL path to each course image
-$courses->map(function ($course) {
-    return [
-        'id' => $course->id,
-        'course_name' => $course->course_name
-    ];
-});
-
+            $courses->map(function ($course) {
+                return [
+                    'id' => $course->id,
+                    'course_name' => $course->course_name
+                ];
+            });
+            
 
             // Append teacher's courses to the allCourses array
             $allCourses[] = [
-                'teacher_id' => $teacher->id,
-                'teacher_name' => $teacher->name,
+                'teacher' => $teachers,
                 'courses' => $courses
             ];
         }
