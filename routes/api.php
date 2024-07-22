@@ -456,6 +456,7 @@ Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsFo
 Route::post('/exam-responses', [ExamResponseController::class, 'storeExamResponse']);
 Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::class, 'calculateMarks']);
 // API Route for retrieving exam responses
-Route::post('student/responses', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
+Route::post('student/responses/mcq', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
+Route::post('student/responses/short-answer', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
 
 
