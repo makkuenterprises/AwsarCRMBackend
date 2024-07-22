@@ -21,9 +21,10 @@ public function storeExamResponse(Request $request)
             'student_id' => 'required|exists:students,id',
             'responses' => 'required|array',
             'responses.*.question_id' => 'required|exists:questions,id',
-            'responses.*.response' => 'nullable|string',
+            'responses.*.response' => 'nullable|array',
             'responses.*.marks' => 'nullable|numeric',
-            'responses.*.negative_marks' => 'nullable|numeric'
+            'responses.*.negative_marks' => 'nullable|numeric',
+            'passing_marks' => 'nullable|numeric'
         ]);
 
         // Initialize counters
@@ -53,7 +54,7 @@ public function storeExamResponse(Request $request)
             $marks = $response['marks'] ?? 0;
             $negativeMarks = $response['negative_marks'] ?? 0;
             $questionId = $response['question_id'];
-            $responseText = $response['response'] ?? '';
+            $responseText = $response['response'] ?? [];
 
             // Aggregate marks for each question
             if (!isset($questionMarksMap[$questionId])) {
@@ -71,7 +72,7 @@ public function storeExamResponse(Request $request)
 
             // Determine if the response is correct based on question type
             $question = $examQuestions->firstWhere('question_id', $questionId);
-            $correctAnswers = $correctAnswersMap[$questionId] ?? null;
+            $correctAnswers = $correctAnswersMap[$questionId] ?? [];
 
             if ($question) {
                 switch ($question->question->question_type) {
@@ -118,7 +119,7 @@ public function storeExamResponse(Request $request)
             [
                 'total_marks' => $totalMarks,
                 'gained_marks' => $gainedMarks,
-                'passing_marks' => $request->input('passing_marks', 0),
+                'passing_marks' => $validated['passing_marks'] ?? 0,
                 'negative_marks' => $request->input('negative_marks', 0),
                 'total_correct_answers' => $totalCorrectAnswers,
                 'total_wrong_answers' => $totalWrongAnswers,
@@ -134,7 +135,7 @@ public function storeExamResponse(Request $request)
                     'question_id' => $questionId
                 ],
                 [
-                    'response' => $marksData['response'], // Ensure response is stored as a string
+                    'response' => json_encode($marksData['response']), // Ensure response is stored as JSON
                     'marks' => $marksData['marks'],
                     'negative_marks' => $marksData['negative_marks'],
                 ]
@@ -164,7 +165,6 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
-
 
 
     public function calculateMarks($examId, $studentId)
