@@ -155,7 +155,7 @@ class StaffAuthController extends Controller
                         ],
                         [
                             'title'=> 'Create Routine',
-                            'to'=> 'create-Class-routine',
+                            'to'=> 'create-class-routine',
                         ],
                       
            
