@@ -100,9 +100,8 @@ public function storeExamResponse(Request $request)
         }
 
         // Compute total marks considering the aggregation
-        foreach ($questionMarksMap as $marks) {
-            $totalMarks += $marks['marks'];
-            $gainedMarks -= $marks['negative_marks'];
+        foreach ($questionMarksMap as $marksData) {
+            $totalMarks += $marksData['marks']; // Add total marks
         }
 
         // Create or update exam response record
@@ -149,7 +148,6 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
-
 
 
     public function calculateMarks($examId, $studentId)
