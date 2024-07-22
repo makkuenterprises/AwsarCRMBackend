@@ -408,8 +408,7 @@ public function gradeShortAnswer(Request $request)
 }
  
 
-
-  public function getResponsesByBatchAndStudent(Request $request)
+public function getResponsesByBatchAndStudent(Request $request)
 {
     // Validate the incoming request data 
     $validated = $request->validate([
@@ -446,7 +445,17 @@ public function gradeShortAnswer(Request $request)
                 // Append exam response and question responses to the array
                 $responses[] = [
                     'exam_id' => $exam->id,
-                    'exam' => $exam,
+                    'exam' => [
+                        'id' => $exam->id,
+                        'name' => $exam->name,
+                        'start_time' => $exam->start_time,
+                        'end_time' => $exam->end_time,
+                        'batch_id' => $exam->batch_id,
+                        'passing_marks' => $exam->passing_marks,
+                        'got_marks' => $exam->got_marks, // Ensure got_marks is included
+                        'created_at' => $exam->created_at,
+                        'updated_at' => $exam->updated_at
+                    ],
                     'exam_response' => $examResponse,
                     'question_responses' => $questionResponses
                 ];
@@ -466,6 +475,5 @@ public function gradeShortAnswer(Request $request)
         ], 500);
     }
 }
-
 
 }
