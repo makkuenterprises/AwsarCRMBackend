@@ -255,15 +255,18 @@ public function teacherList()
             $courses = $courses->map(function ($course) {
                 return [
                     'id' => $course->id,
-                    'course_name' => $course->name
+                    'course_name' => $course->course_name
                 ];
             });
 
+            // Convert teacher model to array with all fields
+            $teacherArray = $teacher->toArray();
+
+            // Include course names in the teacher's array
+            $teacherArray['courses'] = $courses->pluck('course_name'); // Get only the course names
+
             // Append teacher's information and courses to the allCourses array
-            $allCourses[] = [
-                'teacher' => $teacher->toArray(), // Convert teacher model to array with all fields
-                'courses' => $courses
-            ];
+            $allCourses[] = $teacherArray;
         }
 
         return response()->json([
