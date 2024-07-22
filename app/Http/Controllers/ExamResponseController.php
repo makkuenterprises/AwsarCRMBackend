@@ -31,10 +31,10 @@ public function storeExamResponse(Request $request)
         $totalCorrectAnswers = 0;
         $totalWrongAnswers = 0;
         $totalQuestions = 0;
-
+ 
         // Fetch the questions and correct answers for the exam
         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
-            ->with('question')
+            ->with('question') 
             ->get();
 
         // Create a map of correct answers for quick lookup
@@ -133,7 +133,15 @@ public function storeExamResponse(Request $request)
             );
         }
 
-        return response()->json(['status' => true, 'message' => 'Response stored successfully'], 201);
+        // Return the stored exam response data
+        return response()->json([
+            'status' => true,
+            'message' => 'Response stored successfully',
+            'data' => [
+                'exam_response' => $examResponse,
+                'question_marks' => $questionMarksMap
+            ]
+        ], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
             'status' => false,
