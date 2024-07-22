@@ -273,7 +273,7 @@ public function teacherList()
             'data' => $data
         ], 500);
     }
-}
+}  
 
 
 
