@@ -137,7 +137,7 @@ class StudentAuthController extends Controller
                         ],
                          [
                             'title'=> 'Class Routine',
-                            'to'=> 'page-lock-screen',					
+                            'to'=> 'view-class-routine',					
                         ],
                         ],
                 ],

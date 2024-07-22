@@ -111,7 +111,7 @@ class ExamResponseController extends Controller
                     'negative_marks' => $response['negative_marks'] ?? null,
                 ]
             );
-        }
+        } 
 
         return response()->json(['status' => true, 'message' => 'Response stored successfully'], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {

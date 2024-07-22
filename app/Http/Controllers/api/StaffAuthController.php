@@ -151,11 +151,11 @@ class StaffAuthController extends Controller
                         'content'=> [
                         [
                             'title'=> 'View Routine',
-                            'to'=> 'page-lock-screen',					
+                            'to'=> 'view-class-routine',					
                         ],
                         [
                             'title'=> 'Create Routine',
-                            'to'=> 'page-lock-screen',
+                            'to'=> 'create-Class-routine',
                         ],
                       
            

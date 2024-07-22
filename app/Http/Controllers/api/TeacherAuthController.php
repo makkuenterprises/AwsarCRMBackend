@@ -146,18 +146,18 @@ class TeacherAuthController extends Controller
            
                         ],
                 ],
-                 [
+                  [
                     'title' => 'Class Routine',
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
                         'content'=> [
                         [
                             'title'=> 'View Routine',
-                            'to'=> 'page-lock-screen',					
+                            'to'=> 'view-class-routine',					
                         ],
                         [
                             'title'=> 'Create Routine',
-                            'to'=> 'page-lock-screen',
+                            'to'=> 'create-Class-routine',
                         ],
                       
            
