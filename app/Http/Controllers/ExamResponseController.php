@@ -12,10 +12,11 @@ use App\Models\ExamQuestionResponse;
 
 class ExamResponseController extends Controller
 {
+
 public function storeExamResponse(Request $request)
 {
     try {
-        $validated = $request->validate([
+        $validated = $request->validate([ 
             'exam_id' => 'required|exists:exams,id',
             'student_id' => 'required|exists:students,id',
             'responses' => 'required|array',
@@ -42,11 +43,16 @@ public function storeExamResponse(Request $request)
             return [$examQuestion->question_id => $examQuestion->question->correct_answers];
         });
 
+        // Get unique question IDs from the exam questions
+        $uniqueQuestionIds = $examQuestions->pluck('question_id')->unique();
+
+        // Calculate the total number of questions
+        $totalQuestions = $uniqueQuestionIds->count();
+
         // Initialize an array to keep track of question responses and marks
         $questionMarksMap = [];
 
         foreach ($validated['responses'] as $response) {
-            $totalQuestions++;
             $marks = $response['marks'] ?? 0;
             $negativeMarks = $response['negative_marks'] ?? 0;
 
@@ -139,7 +145,7 @@ public function storeExamResponse(Request $request)
             'status' => false,
             'message' => 'Validation failed',
             'errors' => $e->errors()
-        ], 422);
+        ], 422); 
     } catch (\Exception $e) {
         return response()->json([
             'status' => false,
@@ -186,7 +192,7 @@ public function storeExamResponse(Request $request)
 
   public function getResponsesByBatchAndStudent(Request $request)
 {
-    // Validate the incoming request data
+    // Validate the incoming request data 
     $validated = $request->validate([
         'batch_id' => 'required|exists:exams,batch_id',
         'student_id' => 'required|exists:students,id',
