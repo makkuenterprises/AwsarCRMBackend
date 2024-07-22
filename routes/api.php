@@ -459,4 +459,4 @@ Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::cla
 Route::post('student/responses/mcq', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
 Route::post('student/responses/short-answer', [ExamResponseController::class, 'gradeShortAnswerResponses']);
 
-
+ 
