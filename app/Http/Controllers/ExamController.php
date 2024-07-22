@@ -25,6 +25,7 @@ public function createExam(Request $request)
             'sections.*.questions.*.id' => 'required|exists:questions,id',
             'sections.*.questions.*.marks' => 'required|numeric',
             'sections.*.questions.*.negative_marks' => 'nullable|numeric',
+            'sections.*.questions.*.got_marks' => 'nullable|numeric', // Include got_marks in validation
         ]);
 
         // Create the exam
@@ -46,13 +47,14 @@ public function createExam(Request $request)
                     'section_id' => $section->id,
                     'marks' => $questionData['marks'],
                     'negative_marks' => $questionData['negative_marks'] ?? null, // Handle optional negative_marks
+                    'got_marks' => $questionData['got_marks'] ?? 0, // Set got_marks, default to 0 if not provided
                 ]);
             }
-        }
+        } 
 
         // Return success response
         return response()->json([ 'status' => true,
-            'code' => 200,'message' => 'Exam created successfully'], 201);
+            'code' => 200, 'message' => 'Exam created successfully'], 201);
         
     } catch (\Illuminate\Validation\ValidationException $e) {
         // Handle validation errors
@@ -73,6 +75,7 @@ public function createExam(Request $request)
         ], 500);
     }
 }
+
 
 public function listExamsForBatch($batchId)
 {
