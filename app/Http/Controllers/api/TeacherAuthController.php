@@ -237,7 +237,7 @@ class TeacherAuthController extends Controller
 //     $teacher = Teacher::orderByDesc('id')->get();
 //     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 // }
-public function courseListForAllTeachers()
+public function teacherList()
 {
     try {
         // Retrieve all teachers
