@@ -12,7 +12,6 @@ use App\Models\ExamQuestionResponse;
 
 class ExamResponseController extends Controller
 {
-    
 public function storeExamResponse(Request $request)
 {
     try {
