@@ -15,6 +15,7 @@ class ExamResponseController extends Controller
 public function storeExamResponse(Request $request)
 {
     try {
+        // Validate the request data
         $validated = $request->validate([ 
             'exam_id' => 'required|exists:exams,id',
             'student_id' => 'required|exists:students,id',
@@ -156,6 +157,7 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
+
 
 
     public function calculateMarks($examId, $studentId)
