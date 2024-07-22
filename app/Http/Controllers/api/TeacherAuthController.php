@@ -248,20 +248,20 @@ public function teacherList()
         $allCourses = [];
 
         foreach ($teachers as $teacher) {
+            // Retrieve courses for the current teacher
             $courses = $teacher->courses()->get();
 
-            // Add URL path to each course image
-            $courses->map(function ($course) {
+            // Modify courses to include only id and course_name
+            $courses = $courses->map(function ($course) {
                 return [
                     'id' => $course->id,
                     'course_name' => $course->course_name
                 ];
             });
-            
 
-            // Append teacher's courses to the allCourses array
+            // Append teacher's information and courses to the allCourses array
             $allCourses[] = [
-                'teacher' => $teachers,
+                'teacher' => $teacher->toArray(), // Convert teacher model to array with all fields
                 'courses' => $courses
             ];
         }
