@@ -167,6 +167,53 @@ public function storeExamResponse(Request $request)
 }
 
 
+
+public function gradeShortAnswer(Request $request)
+{
+    try {
+        $validated = $request->validate([
+            'exam_response_id' => 'required|exists:exam_responses,id',
+            'grades' => 'required|array',
+            'grades.*.question_id' => 'required|exists:questions,id',
+            'grades.*.marks' => 'required|numeric',
+        ]);
+
+        foreach ($validated['grades'] as $grade) {
+            ExamQuestionResponse::where('exam_response_id', $validated['exam_response_id'])
+                ->where('question_id', $grade['question_id'])
+                ->update([
+                    'marks' => $grade['marks'],
+                    'status' => 'graded'
+                ]);
+        }
+
+        // Update total marks for the exam response
+        $examResponse = ExamResponse::find($validated['exam_response_id']);
+        $examResponse->gained_marks = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+            ->sum('marks');
+        $examResponse->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Grades updated successfully'
+        ], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422); 
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'An error occurred',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+
     public function calculateMarks($examId, $studentId)
 {
     $examResponse = ExamResponse::where('exam_id', $examId)
