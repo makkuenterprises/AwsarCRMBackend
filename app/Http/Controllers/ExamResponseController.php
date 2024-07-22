@@ -178,41 +178,76 @@ public function storeExamResponse(Request $request)
 
 
 
-public function gradeShortAnswer(Request $request)
+public function gradeShortAnswerResponses(Request $request)
 {
     try {
+        // Validate the request data
         $validated = $request->validate([
-            'exam_response_id' => 'required|exists:exam_responses,id',
-            'grades' => 'required|array',
-            'grades.*.question_id' => 'required|exists:questions,id',
-            'grades.*.marks' => 'required|numeric',
+            'exam_id' => 'required|exists:exams,id',
+            'student_id' => 'required|exists:students,id',
+            'manual_grades' => 'required|array',
+            'manual_grades.*.question_id' => 'required|exists:questions,id',
+            'manual_grades.*.marks' => 'required|numeric',
         ]);
 
-        foreach ($validated['grades'] as $grade) {
-            ExamQuestionResponse::where('exam_response_id', $validated['exam_response_id'])
-                ->where('question_id', $grade['question_id'])
-                ->update([
-                    'marks' => $grade['marks'],
-                    'status' => 'graded'
-                ]);
+        // Initialize counters
+        $totalMarks = 0;
+        $totalCorrectAnswers = 0;
+        $totalWrongAnswers = 0;
+
+        // Fetch the existing exam responses
+        $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
+            ->where('student_id', $validated['student_id'])
+            ->firstOrFail();
+
+        // Fetch the exam questions
+        $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
+            ->with('question')
+            ->get()
+            ->keyBy('question_id');
+
+        // Update question responses based on manual grades
+        foreach ($validated['manual_grades'] as $grade) {
+            $questionId = $grade['question_id'];
+            $manualMarks = $grade['marks'];
+
+            // Fetch the question and its current response
+            $question = $examQuestions->get($questionId);
+            $response = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+                ->where('question_id', $questionId)
+                ->first();
+
+            if ($response && in_array($question->question->question_type, ['Short Answer', 'Fill in the Blanks'])) {
+                // Update the response with the manual marks
+                $response->your_marks = $manualMarks;
+                $response->status = 'graded'; // Mark as graded
+                $response->save();
+
+                // Update total marks and counters
+                $totalMarks += $manualMarks;
+                $totalCorrectAnswers += $manualMarks > 0 ? 1 : 0;
+                $totalWrongAnswers += $manualMarks <= 0 ? 1 : 0;
+            }
         }
 
-        // Update total marks for the exam response
-        $examResponse = ExamResponse::find($validated['exam_response_id']);
-        $examResponse->gained_marks = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
-            ->sum('marks');
+        // Update the total marks and correct/wrong answers in the exam response
+        $examResponse->gained_marks += $totalMarks;
+        $examResponse->total_correct_answers += $totalCorrectAnswers;
+        $examResponse->total_wrong_answers += $totalWrongAnswers;
         $examResponse->save();
 
+        // Return the updated exam response data
         return response()->json([
             'status' => true,
-            'message' => 'Grades updated successfully'
+            'message' => 'Manual grading updated successfully',
+            'data' => $examResponse
         ], 200);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
             'status' => false,
             'message' => 'Validation failed',
             'errors' => $e->errors()
-        ], 422); 
+        ], 422);
     } catch (\Exception $e) {
         return response()->json([
             'status' => false,
@@ -245,7 +280,7 @@ public function gradeShortAnswer(Request $request)
         'passing_marks' => $examResponse->passing_marks,
     ]);
  
-    return response()->json([
+    return response()->json([ 
         'status' => true,
         'message' => 'Marks calculated successfully',
         'data' => [
