@@ -252,7 +252,7 @@ public function teacherList()
                 return [
                     'id' => $course->id,
                     'name' => $course->name,
-                    'image' => $course->image ? url('Courses/' . $course->image) : null,
+                    // 'image' => $course->image ? url('Courses/' . $course->image) : null,
                 ];
             });
 
