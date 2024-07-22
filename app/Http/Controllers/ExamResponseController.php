@@ -16,7 +16,7 @@ public function storeExamResponse(Request $request)
 {
     try {
         // Validate the request data
-        $validated = $request->validate([ 
+        $validated = $request->validate([
             'exam_id' => 'required|exists:exams,id',
             'student_id' => 'required|exists:students,id',
             'responses' => 'required|array',
@@ -32,7 +32,7 @@ public function storeExamResponse(Request $request)
         $totalCorrectAnswers = 0;
         $totalWrongAnswers = 0;
         $totalQuestions = 0;
- 
+
         // Fetch the questions and correct answers for the exam
         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
             ->with('question') 
@@ -46,11 +46,12 @@ public function storeExamResponse(Request $request)
         // Initialize an array to keep track of question responses and marks
         $questionMarksMap = [];
 
+        // Initialize a set to track unique questions answered
+        $answeredQuestionIds = [];
+
         foreach ($validated['responses'] as $response) {
-            $totalQuestions++;
             $marks = $response['marks'] ?? 0;
             $negativeMarks = $response['negative_marks'] ?? 0;
-
             $questionId = $response['question_id'];
             $responseText = $response['response'] ?? '';
 
@@ -64,6 +65,9 @@ public function storeExamResponse(Request $request)
             }
             $questionMarksMap[$questionId]['marks'] += $marks;
             $questionMarksMap[$questionId]['negative_marks'] += $negativeMarks;
+
+            // Track answered question IDs
+            $answeredQuestionIds[$questionId] = true;
 
             // Determine if the response is correct based on question type
             $question = $examQuestions->firstWhere('question_id', $questionId);
@@ -104,6 +108,9 @@ public function storeExamResponse(Request $request)
         $totalMarks = $examQuestions->sum(function ($examQuestion) {
             return $examQuestion->question->max_marks ?? 0;
         });
+
+        // Count the total number of unique questions
+        $totalQuestions = count($answeredQuestionIds);
 
         // Create or update exam response record
         $examResponse = ExamResponse::updateOrCreate(
