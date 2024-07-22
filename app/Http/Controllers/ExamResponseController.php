@@ -21,7 +21,7 @@ public function storeExamResponse(Request $request)
             'student_id' => 'required|exists:students,id',
             'responses' => 'required|array',
             'responses.*.question_id' => 'required|exists:questions,id',
-            'responses.*.response' => 'nullable',
+            'responses.*.response' => 'nullable|string',
             'responses.*.marks' => 'nullable|numeric',
             'responses.*.negative_marks' => 'nullable|numeric'
         ]);
@@ -33,7 +33,7 @@ public function storeExamResponse(Request $request)
         $totalWrongAnswers = 0;
         $totalQuestions = 0;
 
-        // Fetch the questions and correct answers for the exam
+        // Fetch the questions for the exam
         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
             ->with('question') 
             ->get();
@@ -104,12 +104,12 @@ public function storeExamResponse(Request $request)
             }
         }
 
-        // Compute total marks considering the maximum marks for each question
+        // Compute total marks by summing the marks of all questions for the exam
         $totalMarks = $examQuestions->sum(function ($examQuestion) {
-            return $examQuestion->question->max_marks ?? 0;
+            return $examQuestion->marks; // Assuming `marks` is the mark for the question
         });
 
-        // Count the total number of unique questions
+        // Count the total number of unique questions answered
         $totalQuestions = count($answeredQuestionIds);
 
         // Create or update exam response record
