@@ -12,7 +12,7 @@ use App\Models\ExamQuestionResponse;
 
 class ExamResponseController extends Controller
 {
- public function storeExamResponse(Request $request)
+public function storeExamResponse(Request $request)
 {
     try {
         $validated = $request->validate([
@@ -42,32 +42,47 @@ class ExamResponseController extends Controller
             return [$examQuestion->question_id => $examQuestion->question->correct_answers];
         });
 
+        // Initialize an array to keep track of question responses and marks
+        $questionMarksMap = [];
+
         foreach ($validated['responses'] as $response) {
             $totalQuestions++;
             $marks = $response['marks'] ?? 0;
             $negativeMarks = $response['negative_marks'] ?? 0;
 
-            $totalMarks += $marks;
-            
-            $question = $examQuestions->firstWhere('question_id', $response['question_id']);
-            $correctAnswers = $correctAnswersMap[$response['question_id']] ?? null;
+            $questionId = $response['question_id'];
+            $responseText = $response['response'] ?? '';
+
+            // Aggregate marks for each question
+            if (!isset($questionMarksMap[$questionId])) {
+                $questionMarksMap[$questionId] = [
+                    'marks' => 0,
+                    'negative_marks' => 0,
+                    'response' => $responseText
+                ];
+            }
+            $questionMarksMap[$questionId]['marks'] += $marks;
+            $questionMarksMap[$questionId]['negative_marks'] += $negativeMarks;
 
             // Determine if the response is correct based on question type
+            $question = $examQuestions->firstWhere('question_id', $questionId);
+            $correctAnswers = $correctAnswersMap[$questionId] ?? null;
+
             if ($question) {
                 switch ($question->question->question_type) {
                     case 'MCQ':
                         // For MCQ, compare if the selected options match correct answers
-                        if (is_array($correctAnswers) && is_array($response['response'])) {
-                            $isCorrect = !array_diff($correctAnswers, $response['response']) && !array_diff($response['response'], $correctAnswers);
+                        if (is_array($correctAnswers) && is_array($responseText)) {
+                            $isCorrect = !array_diff($correctAnswers, $responseText) && !array_diff($responseText, $correctAnswers);
                         } else {
-                            $isCorrect = $response['response'] == $correctAnswers;
+                            $isCorrect = $responseText == $correctAnswers;
                         }
                         break;
                     
                     case 'Short Answer':
                     case 'Fill in the Blanks':
                         // For Short Answer and Fill in the Blanks, compare exact match
-                        $isCorrect = $response['response'] == $correctAnswers;
+                        $isCorrect = $responseText == $correctAnswers;
                         break;
 
                     default:
@@ -82,6 +97,12 @@ class ExamResponseController extends Controller
                     $totalWrongAnswers++;
                 }
             }
+        }
+
+        // Compute total marks considering the aggregation
+        foreach ($questionMarksMap as $marks) {
+            $totalMarks += $marks['marks'];
+            $gainedMarks -= $marks['negative_marks'];
         }
 
         // Create or update exam response record
@@ -99,19 +120,19 @@ class ExamResponseController extends Controller
         );
 
         // Store individual question responses
-        foreach ($validated['responses'] as $response) {
+        foreach ($questionMarksMap as $questionId => $marksData) {
             ExamQuestionResponse::updateOrCreate(
                 [
                     'exam_response_id' => $examResponse->id,
-                    'question_id' => $response['question_id']
+                    'question_id' => $questionId
                 ],
                 [
-                    'response' => $response['response'] ?? '', // Ensure response is stored as a string
-                    'marks' => $response['marks'] ?? null,
-                    'negative_marks' => $response['negative_marks'] ?? null,
+                    'response' => $marksData['response'], // Ensure response is stored as a string
+                    'marks' => $marksData['marks'],
+                    'negative_marks' => $marksData['negative_marks'],
                 ]
             );
-        } 
+        }
 
         return response()->json(['status' => true, 'message' => 'Response stored successfully'], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -128,6 +149,7 @@ class ExamResponseController extends Controller
         ], 500);
     }
 }
+
 
 
     public function calculateMarks($examId, $studentId)
@@ -161,7 +183,7 @@ class ExamResponseController extends Controller
         ]
     ], 200);
 }
-
+ 
 
 
     public function getResponsesByBatchAndStudent(Request $request)
