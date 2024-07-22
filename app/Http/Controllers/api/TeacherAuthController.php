@@ -237,24 +237,19 @@ class TeacherAuthController extends Controller
 //     $teacher = Teacher::orderByDesc('id')->get();
 //     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 // }
+
 public function teacherList() 
 {
     try {
         // Retrieve all teachers
-        $teachers = Teacher::with('courses')->get();
+        $teachers = Teacher::all();
 
         // Initialize an array to hold courses for each teacher
         $allTeachers = []; 
 
         foreach ($teachers as $teacher) {
-            // Map courses to only include name and course ID
-            $courses = $teacher->courses->map(function ($course) {
-                return [
-                    'id' => $course->id,
-                    'name' => $course->name,
-                    // 'image' => $course->image ? url('Courses/' . $course->image) : null,
-                ];
-            });
+            // Fetch the courses for the current teacher
+            $courses = $teacher->courses()->get(['id', 'name']);
 
             // Append teacher's details and courses to the allTeachers array
             $allTeachers[] = [
@@ -279,6 +274,7 @@ public function teacherList()
         ], 500);
     }
 }
+
 
 
  public function UpdateView($id){
