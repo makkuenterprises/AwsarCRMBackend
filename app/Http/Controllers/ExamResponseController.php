@@ -12,7 +12,7 @@ use App\Models\ExamQuestionResponse;
 
 class ExamResponseController extends Controller
 {
-
+    
 public function storeExamResponse(Request $request)
 {
     try {
@@ -43,16 +43,11 @@ public function storeExamResponse(Request $request)
             return [$examQuestion->question_id => $examQuestion->question->correct_answers];
         });
 
-        // Get unique question IDs from the exam questions
-        $uniqueQuestionIds = $examQuestions->pluck('id')->unique();
-
-        // Calculate the total number of questions
-        $totalQuestions = $uniqueQuestionIds->count();
-
         // Initialize an array to keep track of question responses and marks
         $questionMarksMap = [];
 
         foreach ($validated['responses'] as $response) {
+            $totalQuestions++;
             $marks = $response['marks'] ?? 0;
             $negativeMarks = $response['negative_marks'] ?? 0;
 
