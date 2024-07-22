@@ -78,7 +78,7 @@ public function storeExamResponse(Request $request)
                             $isCorrect = $responseText == $correctAnswers;
                         }
                         break;
-                    
+
                     case 'Short Answer':
                     case 'Fill in the Blanks':
                         // For Short Answer and Fill in the Blanks, compare exact match
@@ -99,10 +99,10 @@ public function storeExamResponse(Request $request)
             }
         }
 
-        // Compute total marks considering the aggregation
-        foreach ($questionMarksMap as $marksData) {
-            $totalMarks += $marksData['marks']; // Add total marks
-        }
+        // Compute total marks considering the maximum marks for each question
+        $totalMarks = $examQuestions->sum(function ($examQuestion) {
+            return $examQuestion->question->max_marks ?? 0;
+        });
 
         // Create or update exam response record
         $examResponse = ExamResponse::updateOrCreate(
