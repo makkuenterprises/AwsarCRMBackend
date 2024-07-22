@@ -12,7 +12,7 @@ use App\Models\ExamQuestionResponse;
 
 class ExamResponseController extends Controller
 {
-    public function storeExamResponse(Request $request)
+public function storeExamResponse(Request $request)
 {
     try {
         // Validate the request data
@@ -83,6 +83,14 @@ class ExamResponseController extends Controller
                         } else {
                             $isCorrect = $responseText == $correctAnswers;
                         }
+
+                        if ($isCorrect) {
+                            $gainedMarks += $marks;
+                            $totalCorrectAnswers++;
+                        } else {
+                            $gainedMarks -= $negativeMarks;
+                            $totalWrongAnswers++;
+                        }
                         break;
 
                     case 'Short Answer':
@@ -93,14 +101,6 @@ class ExamResponseController extends Controller
 
                     default:
                         $isCorrect = false;
-                }
-
-                if ($isCorrect) {
-                    $gainedMarks += $marks;
-                    $totalCorrectAnswers++;
-                } else {
-                    $gainedMarks -= $negativeMarks;
-                    $totalWrongAnswers++;
                 }
             }
         }
@@ -138,7 +138,7 @@ class ExamResponseController extends Controller
                     'response' => json_encode($marksData['response']), // Ensure response is stored as JSON
                     'marks' => $marksData['marks'],
                     'negative_marks' => $marksData['negative_marks'],
-                    'status' => $question->question_type === 'Short Answer' ? 'pending' : 'graded' // Set status
+                    'status' => in_array($examQuestions->firstWhere('question_id', $questionId)->question->question_type, ['Short Answer', 'Fill in the Blanks']) ? 'pending' : 'graded' // Set status
                 ]
             );
         }
@@ -158,7 +158,7 @@ class ExamResponseController extends Controller
             'message' => 'Validation failed',
             'errors' => $e->errors()
         ], 422); 
-    } catch (\Exception $e) {
+    }catch (\Exception $e) {
         return response()->json([
             'status' => false,
             'message' => 'An error occurred',
