@@ -61,7 +61,8 @@ public function storeExamResponse(Request $request)
                 $questionMarksMap[$questionId] = [
                     'marks' => 0,
                     'negative_marks' => 0,
-                    'response' => $responseText
+                    'response' => $responseText,
+                    'your_marks' => 0 // Initialize your_marks
                 ];
             }
             $questionMarksMap[$questionId]['marks'] += $marks;
@@ -87,9 +88,11 @@ public function storeExamResponse(Request $request)
                         if ($isCorrect) {
                             $gainedMarks += $marks;
                             $totalCorrectAnswers++;
+                            $questionMarksMap[$questionId]['your_marks'] = $marks; // Add marks if correct
                         } else {
                             $gainedMarks -= $negativeMarks;
                             $totalWrongAnswers++;
+                            $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks; // Deduct marks if incorrect and negative marks are applicable
                         }
                         break;
 
@@ -143,6 +146,7 @@ public function storeExamResponse(Request $request)
                     'response' => json_encode($marksData['response']), // Ensure response is stored as JSON
                     'marks' => $marksData['marks'],
                     'negative_marks' => $marksData['negative_marks'],
+                    'your_marks' => $marksData['your_marks'], // Store your_marks
                     'status' => in_array($examQuestions->firstWhere('question_id', $questionId)->question->question_type, ['Short Answer', 'Fill in the Blanks']) ? 'pending' : 'graded' // Set status
                 ]
             );
@@ -171,6 +175,7 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
+
 
 
 public function gradeShortAnswer(Request $request)
