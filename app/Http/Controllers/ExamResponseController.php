@@ -123,9 +123,14 @@ public function storeExamResponse(Request $request)
                 'negative_marks' => $request->input('negative_marks', 0),
                 'total_correct_answers' => $totalCorrectAnswers,
                 'total_wrong_answers' => $totalWrongAnswers,
-                'total_question' => $totalQuestions,
+                'total_questions' => $totalQuestions,
             ]
         );
+
+        // Update the got_marks for the exam
+        $exam = Exam::find($validated['exam_id']);
+        $exam->got_marks = $gainedMarks;
+        $exam->save();
 
         // Store individual question responses
         foreach ($questionMarksMap as $questionId => $marksData) {
@@ -166,6 +171,7 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
+
 
 // public function storeExamResponse(Request $request)
 // {
