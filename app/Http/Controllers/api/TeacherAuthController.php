@@ -237,32 +237,29 @@ class TeacherAuthController extends Controller
 //     $teacher = Teacher::orderByDesc('id')->get();
 //     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 // }
-
 public function teacherList() 
 {
     try {
         // Retrieve all teachers
-        $teachers = Teacher::all();
+        $teachers = Teacher::with('courses')->get();
 
         // Initialize an array to hold courses for each teacher
-        $allCourses = [];
+        $allTeachers = []; 
 
         foreach ($teachers as $teacher) {
-            $courses = $teacher->courses()->get();
-
-            // Add URL path to each course image
-            $courses->map(function ($course) {
-                if ($course->image) {
-                    $course->image = url('Courses/' . $course->image);
-                }
-                return $course;
+            // Map courses to only include name and course ID
+            $courses = $teacher->courses->map(function ($course) {
+                return [
+                    'id' => $course->id,
+                    'name' => $course->name,
+                    'image' => $course->image ? url('Courses/' . $course->image) : null,
+                ];
             });
 
-            // Append teacher's courses to the allCourses array
-            $allCourses[] = [
-                'teacher_id' => $teacher->id,
-                'teacher_name' => $teacher->name,
-                'courses' => $courses
+            // Append teacher's details and courses to the allTeachers array
+            $allTeachers[] = [
+                'teacher' => $teacher, // All fields of the teacher
+                'courses' => $courses  // Courses with only name and ID
             ];
         }
 
@@ -270,7 +267,7 @@ public function teacherList()
             'status' => true,
             'code' => 200,
             'message' => 'All teachers',
-            'data' => $allCourses
+            'data' => $allTeachers
         ], 200);
     } catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
