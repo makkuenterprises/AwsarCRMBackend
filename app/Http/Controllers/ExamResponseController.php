@@ -36,7 +36,7 @@ public function storeExamResponse(Request $request)
 
         // Fetch the questions for the exam
         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
-            ->with('question') 
+            ->with('question')
             ->get();
 
         // Create a map of correct answers for quick lookup
@@ -123,7 +123,7 @@ public function storeExamResponse(Request $request)
                 'negative_marks' => $request->input('negative_marks', 0),
                 'total_correct_answers' => $totalCorrectAnswers,
                 'total_wrong_answers' => $totalWrongAnswers,
-                'total_question' => $totalQuestions,
+                'total_questions' => $totalQuestions,
             ]
         );
 
@@ -157,8 +157,8 @@ public function storeExamResponse(Request $request)
             'status' => false,
             'message' => 'Validation failed',
             'errors' => $e->errors()
-        ], 422); 
-    }catch (\Exception $e) {
+        ], 422);
+    } catch (\Exception $e) {
         return response()->json([
             'status' => false,
             'message' => 'An error occurred',
