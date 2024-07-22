@@ -251,12 +251,23 @@ public function teacherList()
             // Fetch the courses for the current teacher
             $courses = $teacher->courses()->get(['id', 'name']);
 
-            // Make courses hidden in teacher object
-            $teacher->makeHidden('courses');
-
             // Append teacher's details and courses to the allTeachers array
             $allTeachers[] = [
-                'teacher' => $teacher, // All fields of the teacher without courses
+                'teacher' => [
+                    'id' => $teacher->id,
+                    'name' => $teacher->name,
+                    'email' => $teacher->email,
+                    'created_at' => $teacher->created_at,
+                    'updated_at' => $teacher->updated_at,
+                    'phone' => $teacher->phone,
+                    'street' => $teacher->street,
+                    'postal_code' => $teacher->postal_code,
+                    'city' => $teacher->city,
+                    'state' => $teacher->state,
+                    'image' => $teacher->image,
+                    'status' => $teacher->status,
+                    'qualification' => $teacher->qualification,
+                ],
                 'courses' => $courses  // Courses with only name and ID
             ];
         }
