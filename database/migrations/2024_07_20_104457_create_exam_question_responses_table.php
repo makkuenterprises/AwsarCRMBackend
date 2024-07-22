@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('exam_response_id');
             $table->unsignedBigInteger('question_id');
             $table->text('response')->nullable();
-              $table->json('response')->nullable(); // Store response as text
+            //   $table->json('response')->nullable(); // Store response as text
             $table->float('marks', 8, 2)->nullable(); // Marks for the response
             $table->float('negative_marks', 8, 2)->nullable(); // Negative marks for the response
             $table->timestamps();
