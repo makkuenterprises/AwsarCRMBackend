@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('exam_questions', function (Blueprint $table) {
+        Schema::table('exam_question_responses', function (Blueprint $table) {
             //
-             $table->float('gain-marks')->nullable();
+              $table->float('your-marks')->nullable();
         });
     }
 
@@ -22,9 +22,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('exam_questions', function (Blueprint $table) {
+        Schema::table('exam_question_responses', function (Blueprint $table) {
             //
-             $table->dropColumn('got_marks');
+             $table->dropColumn('your_marks');
+
         });
     }
-}; 
+};
