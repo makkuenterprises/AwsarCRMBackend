@@ -94,7 +94,7 @@ class ExamResponseController extends Controller
                 'negative_marks' => $request->input('negative_marks', 0),
                 'total_correct_answers' => $totalCorrectAnswers,
                 'total_wrong_answers' => $totalWrongAnswers,
-                'total_questions' => $totalQuestions,
+                'total_question' => $totalQuestions,
             ]
         );
 

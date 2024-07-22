@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreign('exam_response_id')->references('id')->on('exam_responses')->onDelete('cascade');
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
-    }
+    } 
 
     /**
      * Reverse the migrations.

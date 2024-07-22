@@ -8,6 +8,7 @@ use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
 class ExamController extends Controller 
 { 
+    
 public function createExam(Request $request)
 {
     try { 
@@ -72,6 +73,7 @@ public function createExam(Request $request)
         ], 500);
     }
 }
+
 public function listExamsForBatch($batchId)
 {
     try {
@@ -81,7 +83,7 @@ public function listExamsForBatch($batchId)
         // Check if exams are found
         if ($exams->isEmpty()) {
             return response()->json([
-                'status' => false,
+                'status' => false, 
                 'code' => 404,
                 'message' => 'No exams found for the specified batch'
             ], 404);
