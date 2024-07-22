@@ -451,9 +451,11 @@ Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
 Route::post('/exams', [ExamController::class, 'createExam']);
 Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch']);
 Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
-
+ 
 
 Route::post('/exam-responses', [ExamResponseController::class, 'storeExamResponse']);
 Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::class, 'calculateMarks']);
+// API Route for retrieving exam responses
+Route::post('student/responses', [YourController::class, 'getResponsesByBatchAndStudent']);
 
 

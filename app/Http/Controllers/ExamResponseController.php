@@ -150,7 +150,7 @@ class ExamResponseController extends Controller
         'gained_marks' => $gainedMarks,
         'passing_marks' => $examResponse->passing_marks,
     ]);
-
+ 
     return response()->json([
         'status' => true,
         'message' => 'Marks calculated successfully',
@@ -161,5 +161,57 @@ class ExamResponseController extends Controller
         ]
     ], 200);
 }
+
+
+
+    public function getResponsesByBatchAndStudent(Request $request)
+    {
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'batch_id' => 'required|exists:exams,batch_id',
+            'student_id' => 'required|exists:students,id'
+        ]);
+
+        try {
+            // Retrieve all exams associated with the batch
+            $exams = Exam::where('batch_id', $validated['batch_id'])->get();
+
+            // Initialize an array to hold exam responses
+            $responses = [];
+
+            foreach ($exams as $exam) {
+                // Fetch the response for the specific student and exam
+                $examResponse = ExamResponse::where('exam_id', $exam->id)
+                    ->where('student_id', $validated['student_id'])
+                    ->first();
+
+                if ($examResponse) {
+                    // Retrieve detailed responses for the exam
+                    $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+                        ->get();
+
+                    // Append exam response and question responses to the array
+                    $responses[] = [
+                        'exam' => $exam,
+                        'exam_response' => $examResponse,
+                        'question_responses' => $questionResponses
+                    ];
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Responses retrieved successfully',
+                'data' => $responses
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred while retrieving responses',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }
