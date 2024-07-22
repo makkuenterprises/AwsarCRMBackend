@@ -255,15 +255,18 @@ public function teacherList()
             $courses = $courses->map(function ($course) {
                 return [
                     'id' => $course->id,
-                    'course_name' => $course->name
+                    'course_name' => $course->name // Ensure the correct field is used
                 ];
             });
 
             // Convert teacher model to array with all fields
             $teacherArray = $teacher->toArray();
 
+            // Format the teacher's image URL
+            $teacherArray['image'] = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
+
             // Include course names in the teacher's array
-            $teacherArray['courses'] = $courses->pluck('course_name'); // Get only the course names
+            $teacherArray['courses'] = $courses; // Include the full course details
 
             // Append teacher's information and courses to the allCourses array
             $allCourses[] = $teacherArray;
@@ -285,7 +288,6 @@ public function teacherList()
         ], 500);
     }
 }
-
 
 
 
