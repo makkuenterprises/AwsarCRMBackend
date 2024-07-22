@@ -237,46 +237,39 @@ class TeacherAuthController extends Controller
 //     $teacher = Teacher::orderByDesc('id')->get();
 //     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 // }
-
-public function teacherList() 
+public function courseListForAllTeachers()
 {
     try {
         // Retrieve all teachers
         $teachers = Teacher::all();
 
         // Initialize an array to hold courses for each teacher
-        $allTeachers = []; 
+        $allCourses = [];
 
         foreach ($teachers as $teacher) {
-            // Fetch the courses for the current teacher
-            $courses = $teacher->courses()->get(['id', 'name']);
+            $courses = $teacher->courses()->get();
 
-            // Append teacher's details and courses to the allTeachers array
-            $allTeachers[] = [
-                'teacher' => [
-                    'id' => $teacher->id,
-                    'name' => $teacher->name,
-                    'email' => $teacher->email,
-                    'created_at' => $teacher->created_at,
-                    'updated_at' => $teacher->updated_at,
-                    'phone' => $teacher->phone,
-                    'street' => $teacher->street,
-                    'postal_code' => $teacher->postal_code,
-                    'city' => $teacher->city,
-                    'state' => $teacher->state,
-                    'image' => $teacher->image,
-                    'status' => $teacher->status,
-                    'qualification' => $teacher->qualification,
-                ],
-                'courses' => $courses  // Courses with only name and ID
+            // Add URL path to each course image
+            $courses->map(function ($course) {
+                if ($course->image) {
+                    $course->image = url('Courses/' . $course->image);
+                }
+                return $course;
+            });
+
+            // Append teacher's courses to the allCourses array
+            $allCourses[] = [
+                'teacher_id' => $teacher->id,
+                'teacher_name' => $teacher->name,
+                'courses' => $courses
             ];
         }
 
         return response()->json([
             'status' => true,
             'code' => 200,
-            'message' => 'All teachers',
-            'data' => $allTeachers
+            'message' => 'Courses retrieved successfully for all teachers',
+            'data' => $allCourses
         ], 200);
     } catch (Exception $e) {
         $data = ['error' => $e->getMessage()];
