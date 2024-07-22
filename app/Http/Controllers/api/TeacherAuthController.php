@@ -255,7 +255,7 @@ public function teacherList()
             $courses = $courses->map(function ($course) {
                 return [
                     'id' => $course->id,
-                    'course_name' => $course->course_name
+                    'course_name' => $course->name
                 ];
             });
 
