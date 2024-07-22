@@ -103,7 +103,6 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 // ------------------------------------------------------------------------------------------------    
 
     Route::prefix('teacher')->group(function () {
-
       Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
       Route::get('/list', [TeacherAuthController::class, 'teacherList']);
       Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);

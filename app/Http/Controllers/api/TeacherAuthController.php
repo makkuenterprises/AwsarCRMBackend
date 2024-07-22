@@ -237,19 +237,50 @@ class TeacherAuthController extends Controller
 //     $teacher = Teacher::orderByDesc('id')->get();
 //     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
 // }
-public function teacherList()
+
+public function teacherList() 
 {
-    // Retrieve all teachers ordered by descending ID
-    $teacher = Teacher::orderByDesc('id')->get();
+    try {
+        // Retrieve all teachers
+        $teachers = Teacher::all();
 
-    // Process each teacher to include the full image URL
-    $teacher->transform(function ($t) {
-        $t->image = $t->image ? url('/Teachers/' . $t->image) : null;
-        return $t;
-    });
+        // Initialize an array to hold courses for each teacher
+        $allCourses = [];
 
-    // Return the response as JSON
-    return response()->json(['status' => true, 'code' => 200, 'data' => $teacher]);
+        foreach ($teachers as $teacher) {
+            $courses = $teacher->courses()->get();
+
+            // Add URL path to each course image
+            $courses->map(function ($course) {
+                if ($course->image) {
+                    $course->image = url('Courses/' . $course->image);
+                }
+                return $course;
+            });
+
+            // Append teacher's courses to the allCourses array
+            $allCourses[] = [
+                'teacher_id' => $teacher->id,
+                'teacher_name' => $teacher->name,
+                'courses' => $courses
+            ];
+        }
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'All teachers',
+            'data' => $allCourses
+        ], 200);
+    } catch (Exception $e) {
+        $data = ['error' => $e->getMessage()];
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving courses',
+            'data' => $data
+        ], 500);
+    }
 }
 
 
