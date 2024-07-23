@@ -19,4 +19,14 @@ class ExamResponse extends Model
         'total_wrong_answers',
         'total_questions'
     ];
+     public function exam()
+    {
+        return $this->belongsTo(Exam::class);
+    }
+
+    public function questionResponses()
+    {
+        return $this->hasMany(ExamQuestionResponse::class);
+    }
+        
 }

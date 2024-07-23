@@ -20,4 +20,13 @@ class ExamQuestionResponse extends Model
     protected $casts = [
         'response' => 'array',
     ];
+       public function examResponse()
+    {
+        return $this->belongsTo(ExamResponse::class);
+    }
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
+    }
 }

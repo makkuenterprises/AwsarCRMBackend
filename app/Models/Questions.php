@@ -30,6 +30,10 @@ class Questions extends Model
     {
         return $this->belongsToMany(Section::class, 'exam_questions')->withPivot('marks', 'negative_marks');
     }
+    public function responses()
+    {
+        return $this->hasMany(ExamQuestionResponse::class);
+    }
 
 
 }
