@@ -16,7 +16,7 @@ class Exam extends Model
 
     public function questions()
     {
-        return $this->belongsToMany(Question::class, 'exam_questions')->withPivot('marks', 'negative_marks');
+        return $this->belongsToMany(Questions::class, 'exam_questions')->withPivot('marks', 'negative_marks');
     }
      public function responses()
     {
