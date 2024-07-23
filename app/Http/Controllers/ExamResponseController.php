@@ -502,6 +502,6 @@ public function getStudentResult(Request $request)
             'error' => $e->getMessage()
         ], 500);
     }
-}
+} 
 
 }
