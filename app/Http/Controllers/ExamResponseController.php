@@ -41,6 +41,7 @@ public function storeExamResponse(Request $request)
 
         // Calculate the total number of questions in the exam
         $totalQuestions = $examQuestions->count();
+        dd($totalQuestions);
 
         // Create a map of correct answers for quick lookup
         $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
