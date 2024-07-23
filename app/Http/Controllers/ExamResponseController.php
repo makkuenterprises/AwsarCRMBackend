@@ -211,7 +211,6 @@ public function storeExamResponse(Request $request)
     }
 }
 
-
 public function gradeShortAnswerResponses(Request $request)
 {
     try {
@@ -228,8 +227,9 @@ public function gradeShortAnswerResponses(Request $request)
         $totalMarks = 0;
         $totalCorrectAnswers = 0;
         $totalWrongAnswers = 0;
+        $totalNegativeMarks = 0;
 
-        // Fetch the existing exam responses
+        // Fetch the existing exam response
         $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
             ->where('student_id', $validated['student_id'])
             ->firstOrFail();
@@ -240,6 +240,11 @@ public function gradeShortAnswerResponses(Request $request)
             ->get()
             ->keyBy('question_id');
 
+        // Fetch pending status question responses
+        $pendingResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+            ->where('status', 'pending')
+            ->get();
+
         // Update question responses based on manual grades
         foreach ($validated['manual_grades'] as $grade) {
             $questionId = $grade['question_id'];
@@ -247,27 +252,27 @@ public function gradeShortAnswerResponses(Request $request)
 
             // Fetch the question and its current response
             $question = $examQuestions->get($questionId);
-            $response = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
-                ->where('question_id', $questionId)
-                ->first();
+            $response = $pendingResponses->firstWhere('question_id', $questionId);
 
             if ($response && in_array($question->question->question_type, ['Short Answer', 'Fill in the Blanks'])) {
                 // Update the response with the manual marks
                 $response->your_marks = $manualMarks;
-                // $response->status = 'graded'; // Mark as graded
+                $response->status = 'graded'; // Mark as graded
                 $response->save();
 
                 // Update total marks and counters
                 $totalMarks += $manualMarks;
                 $totalCorrectAnswers += $manualMarks > 0 ? 1 : 0;
                 $totalWrongAnswers += $manualMarks <= 0 ? 1 : 0;
+                $totalNegativeMarks += $manualMarks < 0 ? abs($manualMarks) : 0;
             }
         }
 
-        // Update the total marks and correct/wrong answers in the exam response
+        // Recalculate the total gained marks, correct answers, and wrong answers
         $examResponse->gained_marks += $totalMarks;
         $examResponse->total_correct_answers += $totalCorrectAnswers;
         $examResponse->total_wrong_answers += $totalWrongAnswers;
+        $examResponse->negative_marks += $totalNegativeMarks;
         $examResponse->save();
 
         // Return the updated exam response data
@@ -290,8 +295,6 @@ public function gradeShortAnswerResponses(Request $request)
         ], 500);
     }
 }
-
-
 
     public function calculateMarks($examId, $studentId)
 {
