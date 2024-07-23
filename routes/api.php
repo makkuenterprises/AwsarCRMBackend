@@ -21,7 +21,7 @@ use App\Http\Controllers\api\subjectController;
 
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
-use App\Http\Controllers\GoogleMeetController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Notification;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ExamController;
@@ -429,9 +429,6 @@ Route::get('student-overview', [PaymentGatewayController::class, 'getStudentOver
 
 
 
-Route::get('login/google', [App\Http\Controllers\GoogleMeetController::class, 'redirectToGoogle'])->name('login.google');
-Route::get('oauth2/callback', [App\Http\Controllers\GoogleMeetController::class, 'handleGoogleCallback']);
-
 
 // questions-----------------------------------------------------------------------------------------------
 
@@ -462,6 +459,12 @@ Route::post('/student-result', [ExamResponseController::class, 'getStudentResult
 Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
 Route::get('zoom/callback', [ZoomController::class, 'handleProviderCallback'])->name('zoom.callback');
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
+
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+
+Route::get('auth/google/callback', 'GoogleController@handleGoogleCallback');
+Route::post('create-meeting', 'GoogleController@createMeeting');
+
 
 
 // subject ======================================================================================
