@@ -17,6 +17,8 @@ use App\Http\Controllers\api\LeaveRequestController;
 use App\Http\Controllers\api\ClassRoutineController;
 use App\Http\Controllers\api\PaymentGatewayController; 
 use App\Http\Controllers\api\DashboardData;
+use App\Http\Controllers\api\Subject;
+
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
 use App\Http\Controllers\GoogleMeetController;
