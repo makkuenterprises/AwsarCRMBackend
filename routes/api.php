@@ -459,3 +459,9 @@ Route::post('student/responses/short-answer', [ExamResponseController::class, 'g
 Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
 Route::get('zoom/callback', [ZoomController::class, 'handleProviderCallback'])->name('zoom.callback');
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
+
+
+// subject ======================================================================================
+Route::post('/subjects', [SubjectController::class, 'create']);
+Route::put('/subjects/{id}', [SubjectController::class, 'update']);
+Route::delete('/subjects/{id}', [SubjectController::class, 'delete']);
