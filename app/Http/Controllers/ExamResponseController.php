@@ -124,7 +124,7 @@ public function storeExamResponse(Request $request)
                 'total_question' => $totalQuestions,
             ]
         );
-        dd($totalQuestions);
+        // dd($totalQuestions);
 
 
         // Update the got_marks for the exam
