@@ -39,6 +39,9 @@ public function storeExamResponse(Request $request)
             ->with('question')
             ->get();
 
+        // Calculate the total number of questions in the exam
+        $totalQuestions = $examQuestions->count();
+
         // Create a map of correct answers for quick lookup
         $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
             return [$examQuestion->question_id => $examQuestion->question->correct_answers];
@@ -108,14 +111,6 @@ public function storeExamResponse(Request $request)
             }
         }
 
-        // Compute total marks by summing the marks of all questions for the exam
-        $totalMarks = $examQuestions->sum(function ($examQuestion) {
-            return $examQuestion->marks; // Assuming `marks` is the mark for the question
-        });
-
-        // Count the total number of unique questions answered
-        $totalQuestions = count($answeredQuestionIds);
-
         // Create or update exam response record
         $examResponse = ExamResponse::updateOrCreate(
             ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
@@ -163,7 +158,7 @@ public function storeExamResponse(Request $request)
         ], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
-            'status' => false, 
+            'status' => false,
             'message' => 'Validation failed',
             'errors' => $e->errors()
         ], 422);
@@ -175,6 +170,7 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
+
 
 public function gradeShortAnswerResponses(Request $request)
 {
