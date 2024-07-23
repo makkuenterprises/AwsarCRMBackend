@@ -456,6 +456,9 @@ Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::cla
 Route::post('student/responses/mcq', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
 Route::post('student/responses/short-answer', [ExamResponseController::class, 'gradeShortAnswerResponses']);
 
+Route::get('/student-result', [ExamController::class, 'getStudentResult']);
+
+
 Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
 Route::get('zoom/callback', [ZoomController::class, 'handleProviderCallback'])->name('zoom.callback');
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
