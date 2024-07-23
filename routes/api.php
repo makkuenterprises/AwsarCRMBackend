@@ -465,3 +465,5 @@ Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
 Route::post('/subjects', [subjectController::class, 'create']);
 Route::put('/subjects/{id}', [subjectController::class, 'update']);
 Route::delete('/subjects/{id}', [subjectController::class, 'delete']);
+Route::get('/subjects', [SubjectController::class, 'index']);
+Route::get('/subjects/{id}', [SubjectController::class, 'show']);

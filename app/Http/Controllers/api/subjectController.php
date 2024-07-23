@@ -76,4 +76,29 @@ class subjectController extends Controller
             return response()->json(['message' => 'Failed to delete subject!', 'error' => $e->getMessage()], 500);
         }
     }
+
+       public function index()
+    {
+        try {
+            $subjects = Subject::all();
+            return response()->json(['subjects' => $subjects], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Failed to retrieve subjects!', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+      public function show($id)
+    {
+        try {
+            $subject = Subject::find($id);
+
+            if (!$subject) {
+                return response()->json(['message' => 'Subject not found!'], 404);
+            }
+
+            return response()->json(['subject' => $subject], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Failed to retrieve subject!', 'error' => $e->getMessage()], 500);
+        }
+    }
 }
