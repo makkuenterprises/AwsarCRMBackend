@@ -15,7 +15,7 @@ class ExamResponseController extends Controller
 public function storeExamResponse(Request $request)
 {
     try {
-        // Validate request data
+        // Validate the request data
         $validated = $request->validate([
             'exam_id' => 'required|exists:exams,id',
             'student_id' => 'required|exists:students,id',
@@ -32,15 +32,12 @@ public function storeExamResponse(Request $request)
         $gainedMarks = 0;
         $totalCorrectAnswers = 0;
         $totalWrongAnswers = 0;
+        $totalQuestions = 0;
 
         // Fetch the questions for the exam
         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
             ->with('question')
             ->get();
-
-        // Calculate total number of unique questions answered
-        $answeredQuestionIds = array_unique(array_column($validated['responses'], 'question_id'));
-        $totalQuestions = count($answeredQuestionIds);
 
         // Create a map of correct answers for quick lookup
         $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
@@ -49,6 +46,9 @@ public function storeExamResponse(Request $request)
 
         // Initialize an array to keep track of question responses and marks
         $questionMarksMap = [];
+
+        // Track unique question IDs
+        $answeredQuestionIds = [];
 
         foreach ($validated['responses'] as $response) {
             $marks = $response['marks'] ?? 0;
@@ -62,11 +62,14 @@ public function storeExamResponse(Request $request)
                     'marks' => 0,
                     'negative_marks' => 0,
                     'response' => $responseText,
-                    'your_marks' => 0 // Initialize your_marks
+                    'your_marks' => 0
                 ];
             }
             $questionMarksMap[$questionId]['marks'] += $marks;
             $questionMarksMap[$questionId]['negative_marks'] += $negativeMarks;
+
+            // Track answered question IDs
+            $answeredQuestionIds[$questionId] = true;
 
             // Determine if the response is correct based on question type
             $question = $examQuestions->firstWhere('question_id', $questionId);
@@ -85,18 +88,18 @@ public function storeExamResponse(Request $request)
                         if ($isCorrect) {
                             $gainedMarks += $marks;
                             $totalCorrectAnswers++;
-                            $questionMarksMap[$questionId]['your_marks'] = $marks; // Add marks if correct
+                            $questionMarksMap[$questionId]['your_marks'] = $marks;
                         } else {
                             $gainedMarks -= $negativeMarks;
                             $totalWrongAnswers++;
-                            $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks; // Deduct marks if incorrect and negative marks are applicable
+                            $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
                         }
                         break;
 
                     case 'Short Answer':
                     case 'Fill in the Blanks':
                         // For Short Answer and Fill in the Blanks, keep the response for manual grading
-                        $isCorrect = false; // We'll handle grading manually later
+                        $isCorrect = false;
                         break;
 
                     default:
@@ -105,7 +108,15 @@ public function storeExamResponse(Request $request)
             }
         }
 
-    
+        // Compute total marks by summing the marks of all questions for the exam
+        $totalMarks = $examQuestions->sum('marks');
+
+        // Count the total number of unique questions answered
+        $totalQuestions = count($answeredQuestionIds);
+
+        // Debugging to check how many unique questions are counted
+        \Log::info('Computed Total Questions:', ['totalQuestions' => $totalQuestions]);
+
         // Create or update exam response record
         $examResponse = ExamResponse::updateOrCreate(
             ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
@@ -119,13 +130,31 @@ public function storeExamResponse(Request $request)
                 'total_question' => $totalQuestions,
             ]
         );
-        dd($totalQuestions);
 
-        // Re-fetch the exam response to ensure it's saved correctly
-        $examResponse = ExamResponse::find($examResponse->id);
+        // Debugging to confirm what was saved
+        \Log::info('ExamResponse after updateOrCreate:', $examResponse->toArray());
 
-        // Debug the saved response to confirm totalQuestions
-        \Log::info('Saved Exam Response:', $examResponse->toArray());
+        // Update the got_marks for the exam
+        $exam = Exam::find($validated['exam_id']);
+        $exam->got_marks = $gainedMarks;
+        $exam->save();
+
+        // Store individual question responses
+        foreach ($questionMarksMap as $questionId => $marksData) {
+            ExamQuestionResponse::updateOrCreate(
+                [
+                    'exam_response_id' => $examResponse->id,
+                    'question_id' => $questionId
+                ],
+                [
+                    'response' => json_encode($marksData['response']),
+                    'marks' => $marksData['marks'],
+                    'negative_marks' => $marksData['negative_marks'],
+                    'your_marks' => $marksData['your_marks'],
+                    'status' => in_array($examQuestions->firstWhere('question_id', $questionId)->question->question_type, ['Short Answer', 'Fill in the Blanks']) ? 'pending' : 'graded'
+                ]
+            );
+        }
 
         // Return the stored exam response data
         return response()->json([
