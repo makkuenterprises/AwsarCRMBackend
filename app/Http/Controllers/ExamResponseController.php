@@ -215,7 +215,7 @@ public function gradeShortAnswerResponses(Request $request)
 {
     try {
         // Validate the request data
-        $validated = $request->validate([
+        $validated = $request->validate([ 
             'exam_id' => 'required|exists:exams,id',
             'student_id' => 'required|exists:students,id',
             'manual_grades' => 'required|array',
