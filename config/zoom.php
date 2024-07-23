@@ -1,8 +1,12 @@
 <?php
 
 return [
-    'api_key' => env('ZOOM_API_KEY'),
-    'api_secret' => env('ZOOM_API_SECRET'),
-    'base_url' => env('ZOOM_API_URL', 'https://api.zoom.us/v2/'),
-    'user_id' => env('ZOOM_USER_ID'), // Ensure this is set correctly
+    'client_id' => env('ZOOM_CLIENT_ID'),
+    'client_secret' => env('ZOOM_CLIENT_SECRET'),
+    'redirect_uri' => env('ZOOM_REDIRECT_URI'),
+    'auth_url' => env('ZOOM_AUTH_URL'),
+    'token_url' => env('ZOOM_TOKEN_URL'),
+    'api_url' => env('ZOOM_API_URL'),
 ];
+
+ 

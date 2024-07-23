@@ -39,7 +39,7 @@ class Cors
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self'; object-src 'none';");
         $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
-
+                
         return $response;
     }
 }

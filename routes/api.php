@@ -23,7 +23,6 @@ use App\Http\Controllers\GoogleMeetController;
 use App\Http\Controllers\Notification;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ExamController;
-
 use App\Http\Controllers\ExamResponseController;
 
 
@@ -426,10 +425,6 @@ Route::get('student-overview', [PaymentGatewayController::class, 'getStudentOver
 
 // Route::get('data-dashboard', [DashboardData::class, 'dashboardaData']);
 
-Route::get('/zoom/authorize', [ZoomController::class, 'redirectToZoom']); 
-Route::get('/zoom/callback', [ZoomController::class, 'handleZoomCallback']);
-Route::post('/create/meeting', [ZoomController::class, 'createMeeting']);
-Route::post('/meeting', [ZoomController::class, 'createeMeeting']);
 
 
 Route::get('login/google', [App\Http\Controllers\GoogleMeetController::class, 'redirectToGoogle'])->name('login.google');
@@ -459,4 +454,6 @@ Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::cla
 Route::post('student/responses/mcq', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
 Route::post('student/responses/short-answer', [ExamResponseController::class, 'gradeShortAnswerResponses']);
 
- 
+Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
+Route::get('zoom/callback', [ZoomController::class, 'handleProviderCallback'])->name('zoom.callback');
+Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('exam_question_responses', function (Blueprint $table) {
             //
-              $table->float('your_marks')->nullable();
+              $table->float('your-marks')->nullable();
         });
     }
 
