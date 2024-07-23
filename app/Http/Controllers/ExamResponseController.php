@@ -105,15 +105,7 @@ public function storeExamResponse(Request $request)
             }
         }
 
-        // Debugging to check values before saving
-        \Log::info('Exam Response Data:', [
-            'total_marks' => $totalMarks,
-            'gained_marks' => $gainedMarks,
-            'total_correct_answers' => $totalCorrectAnswers,
-            'total_wrong_answers' => $totalWrongAnswers,
-            'total_question' => $totalQuestions,
-        ]);
-
+    
         // Create or update exam response record
         $examResponse = ExamResponse::updateOrCreate(
             ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
@@ -127,6 +119,7 @@ public function storeExamResponse(Request $request)
                 'total_question' => $totalQuestions,
             ]
         );
+        dd($examResponse);
 
         // Re-fetch the exam response to ensure it's saved correctly
         $examResponse = ExamResponse::find($examResponse->id);
