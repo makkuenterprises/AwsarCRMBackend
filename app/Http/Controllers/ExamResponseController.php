@@ -119,7 +119,7 @@ public function storeExamResponse(Request $request)
                 'total_question' => $totalQuestions,
             ]
         );
-        dd($examResponse);
+        dd($totalQuestions);
 
         // Re-fetch the exam response to ensure it's saved correctly
         $examResponse = ExamResponse::find($examResponse->id);
