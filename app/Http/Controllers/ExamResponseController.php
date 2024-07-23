@@ -41,7 +41,6 @@ public function storeExamResponse(Request $request)
 
         // Calculate the total number of questions in the exam
         $totalQuestions = $examQuestions->count();
-        dd($totalQuestions);
 
         // Create a map of correct answers for quick lookup
         $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
@@ -125,6 +124,8 @@ public function storeExamResponse(Request $request)
                 'total_question' => $totalQuestions,
             ]
         );
+        dd($totalQuestions);
+
 
         // Update the got_marks for the exam
         $exam = Exam::find($validated['exam_id']);
