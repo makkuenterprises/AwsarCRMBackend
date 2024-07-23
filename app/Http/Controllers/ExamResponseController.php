@@ -469,7 +469,7 @@ public function getStudentResult(Request $request)
 
             if ($examResponse) {
                 // Fetch question responses for the exam
-                $questionResponses = ExamQuestionResponse::select('id', 'exam_response_id', 'question_id', 'response', 'marks', 'negative_marks', 'your_marks', 'status', 'created_at', 'updated_at')
+                $questionResponses = ExamQuestionResponse::select('id', 'exam_response_id', 'question_id', 'response', 'marks', 'negative_marks', 'your_marks', 'status')
                     ->where('exam_response_id', $examResponse->id)
                     ->with('question:id,question_text,question_type,options,correct_answers')
                     ->get();
