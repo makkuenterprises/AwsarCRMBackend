@@ -127,7 +127,6 @@ public function storeExamResponse(Request $request)
                 'negative_marks' => $request->input('negative_marks', 0),
                 'total_correct_answers' => $totalCorrectAnswers,
                 'total_wrong_answers' => $totalWrongAnswers,
-                'total_question' => $totalQuestions,
             ]
         );
 
