@@ -388,31 +388,92 @@ public function gradeShortAnswerResponses(Request $request)
 }
 
 
+// public function getStudentResult(Request $request)
+// {
+//     try {
+//         // Validate the request data
+//         $validated = $request->validate([
+//             'course_id' => 'required|exists:courses,id',
+//             'student_id' => 'required|exists:students,id'
+//         ]);
+
+//         // Fetch exams for the specified course and batch
+//         $exams = Exam::where('batch_id', $validated['course_id'])
+//             ->get();
+
+//         $results = [];
+
+//         foreach ($exams as $exam) {
+//             // Fetch the student's exam response
+//             $examResponse = ExamResponse::where('exam_id', $exam->id)
+//                 ->where('student_id', $validated['student_id'])
+//                 ->first();
+
+//             if ($examResponse) {
+//                 // Fetch question responses for the exam
+//                 $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+//                     ->with('question')
+//                     ->get();
+
+//                 $results[] = [
+//                     'exam' => $exam,
+//                     'exam_response' => $examResponse,
+//                     'question_responses' => $questionResponses
+//                 ];
+//             }
+//         }
+
+//         return response()->json([
+//             'status' => true,
+//             'message' => 'Student result fetched successfully',
+//             'data' => $results
+//         ], 200);
+//     } catch (\Illuminate\Validation\ValidationException $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Validation failed',
+//             'errors' => $e->errors()
+//         ], 422);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'An error occurred',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+
+
 public function getStudentResult(Request $request)
 {
     try {
         // Validate the request data
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
+            'batch_id' => 'required|exists:batches,id',
             'student_id' => 'required|exists:students,id'
         ]);
 
         // Fetch exams for the specified course and batch
-        $exams = Exam::where('batch_id', $validated['course_id'])
+        $exams = Exam::select('id', 'name', 'course_id', 'batch_id', 'created_at', 'updated_at')
+            ->where('course_id', $validated['course_id'])
+            ->where('batch_id', $validated['batch_id'])
             ->get();
 
         $results = [];
 
         foreach ($exams as $exam) {
             // Fetch the student's exam response
-            $examResponse = ExamResponse::where('exam_id', $exam->id)
+            $examResponse = ExamResponse::select('id', 'exam_id', 'student_id', 'total_marks', 'gained_marks', 'passing_marks', 'negative_marks', 'total_correct_answers', 'total_wrong_answers', 'created_at', 'updated_at')
+                ->where('exam_id', $exam->id)
                 ->where('student_id', $validated['student_id'])
                 ->first();
 
             if ($examResponse) {
                 // Fetch question responses for the exam
-                $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
-                    ->with('question')
+                $questionResponses = ExamQuestionResponse::select('id', 'exam_response_id', 'question_id', 'response', 'marks', 'negative_marks', 'your_marks', 'status', 'created_at', 'updated_at')
+                    ->where('exam_response_id', $examResponse->id)
+                    ->with('question:id,question_text,question_type,options,correct_answers')
                     ->get();
 
                 $results[] = [
@@ -442,7 +503,5 @@ public function getStudentResult(Request $request)
         ], 500);
     }
 }
-
-
 
 }
