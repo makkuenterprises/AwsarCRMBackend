@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\api;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Exception;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 
 class Subject extends Controller
 {

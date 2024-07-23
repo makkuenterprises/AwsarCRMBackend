@@ -109,6 +109,7 @@ public function store(Request $request)
 
 public function createTimeSlot(Request $request)
 {
+     dd($request->all());
     try {
         // Validate the request data
         $validatedData = $request->validate([
