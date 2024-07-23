@@ -15,7 +15,7 @@ class ExamResponseController extends Controller
 public function storeExamResponse(Request $request)
 {
     try {
-        // Validate the request data
+        // Validate request data
         $validated = $request->validate([
             'exam_id' => 'required|exists:exams,id',
             'student_id' => 'required|exists:students,id',
@@ -105,8 +105,14 @@ public function storeExamResponse(Request $request)
             }
         }
 
-        // Debug the totalQuestions value before saving
-        \Log::info('Total Questions: ' . $totalQuestions);
+        // Debugging to check values before saving
+        \Log::info('Exam Response Data:', [
+            'total_marks' => $totalMarks,
+            'gained_marks' => $gainedMarks,
+            'total_correct_answers' => $totalCorrectAnswers,
+            'total_wrong_answers' => $totalWrongAnswers,
+            'total_question' => $totalQuestions,
+        ]);
 
         // Create or update exam response record
         $examResponse = ExamResponse::updateOrCreate(
@@ -126,29 +132,7 @@ public function storeExamResponse(Request $request)
         $examResponse = ExamResponse::find($examResponse->id);
 
         // Debug the saved response to confirm totalQuestions
-        \Log::info('Saved Exam Response: ' . print_r($examResponse, true));
-
-        // Update the got_marks for the exam
-        $exam = Exam::find($validated['exam_id']);
-        $exam->got_marks = $gainedMarks;
-        $exam->save();
-
-        // Store individual question responses
-        foreach ($questionMarksMap as $questionId => $marksData) {
-            ExamQuestionResponse::updateOrCreate(
-                [
-                    'exam_response_id' => $examResponse->id,
-                    'question_id' => $questionId
-                ],
-                [
-                    'response' => json_encode($marksData['response']), // Ensure response is stored as JSON
-                    'marks' => $marksData['marks'],
-                    'negative_marks' => $marksData['negative_marks'],
-                    'your_marks' => $marksData['your_marks'], // Store your_marks
-                    'status' => in_array($examQuestions->firstWhere('question_id', $questionId)->question->question_type, ['Short Answer', 'Fill in the Blanks']) ? 'pending' : 'graded' // Set status
-                ]
-            );
-        }
+        \Log::info('Saved Exam Response:', $examResponse->toArray());
 
         // Return the stored exam response data
         return response()->json([
@@ -173,7 +157,6 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
-
 
 
 
