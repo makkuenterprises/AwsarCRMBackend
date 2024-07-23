@@ -220,7 +220,7 @@ public function gradeShortAnswerResponses(Request $request)
             if ($response && in_array($question->question->question_type, ['Short Answer', 'Fill in the Blanks'])) {
                 // Update the response with the manual marks
                 $response->your_marks = $manualMarks;
-                $response->status = 'graded'; // Mark as graded
+                // $response->status = 'graded'; // Mark as graded
                 $response->save();
 
                 // Update total marks and counters
@@ -292,7 +292,6 @@ public function gradeShortAnswerResponses(Request $request)
 }
  
 
-
   public function getResponsesByBatchAndStudent(Request $request)
 {
     // Validate the incoming request data 
@@ -350,6 +349,7 @@ public function gradeShortAnswerResponses(Request $request)
         ], 500);
     }
 }
+
 
 
 }
