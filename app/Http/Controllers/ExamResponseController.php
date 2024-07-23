@@ -115,23 +115,38 @@ public function storeExamResponse(Request $request)
         $totalQuestions = count($answeredQuestionIds);
 
         // Debugging to check how many unique questions are counted
-        \Log::info('Computed Total Questions:', ['totalQuestions' => $totalQuestions]);
 
-        // Create or update exam response record
-        $examResponse = ExamResponse::updateOrCreate(
-            ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
-            [
+        // Check if an exam response already exists
+        $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
+            ->where('student_id', $validated['student_id'])
+            ->first();
+
+        if ($examResponse) {
+            // Update the existing record
+            $examResponse->update([
                 'total_marks' => $totalMarks,
                 'gained_marks' => $gainedMarks,
                 'passing_marks' => $validated['passing_marks'] ?? 0,
                 'negative_marks' => $request->input('negative_marks', 0),
                 'total_correct_answers' => $totalCorrectAnswers,
                 'total_wrong_answers' => $totalWrongAnswers,
-            ]
-        );
+            ]);
+        } else {
+            // Create a new record
+            $examResponse = ExamResponse::create([
+                'exam_id' => $validated['exam_id'],
+                'student_id' => $validated['student_id'],
+                'total_marks' => $totalMarks,
+                'gained_marks' => $gainedMarks,
+                'passing_marks' => $validated['passing_marks'] ?? 0,
+                'negative_marks' => $request->input('negative_marks', 0),
+                'total_correct_answers' => $totalCorrectAnswers,
+                'total_wrong_answers' => $totalWrongAnswers,
+            ]);
+        }
 
         // Debugging to confirm what was saved
-        \Log::info('ExamResponse after updateOrCreate:', $examResponse->toArray());
+        \Log::info('ExamResponse after create or update:', $examResponse->toArray());
 
         // Update the got_marks for the exam
         $exam = Exam::find($validated['exam_id']);
@@ -179,8 +194,6 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
-
-
 
 
 public function gradeShortAnswerResponses(Request $request)
