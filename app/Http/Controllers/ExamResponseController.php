@@ -394,7 +394,6 @@ public function getStudentResult(Request $request)
         // Validate the request data
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
-            'batch_id' => 'required|exists:batches,id',
             'student_id' => 'required|exists:students,id'
         ]);
 
