@@ -162,7 +162,8 @@ public function storeExamResponse(Request $request)
             'message' => 'Response stored successfully',
             'data' => [
                 'exam_response' => $examResponse,
-                'question_marks' => $questionMarksMap
+                'question_marks' => $questionMarksMap,
+                'total_question' => $totalQuestions
             ]
         ], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -179,6 +180,7 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
+
 
 
 
