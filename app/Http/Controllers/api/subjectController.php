@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\api;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use App\Models\Subject;
 use Illuminate\Http\Request; 
+ 
 
-class Subject extends Controller
+class subjectController extends Controller
 {
      // Create a new subject
     public function create(Request $request)
