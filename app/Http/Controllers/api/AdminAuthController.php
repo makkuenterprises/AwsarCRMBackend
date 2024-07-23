@@ -11,7 +11,6 @@ use Hash;
 use Image;
 use Illuminate\Support\Facades\Validator;
 
-
 class AdminAuthController extends Controller
 {
 
