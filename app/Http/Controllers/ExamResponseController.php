@@ -450,14 +450,12 @@ public function getStudentResult(Request $request)
         // Validate the request data
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
-            'batch_id' => 'required|exists:batches,id',
             'student_id' => 'required|exists:students,id'
         ]);
 
         // Fetch exams for the specified course and batch
-        $exams = Exam::select('id', 'name', 'course_id', 'batch_id', 'created_at', 'updated_at')
+        $exams = Exam::select('id', 'name', 'course_id', 'batch_id', 'start_time', 'end_time')
             ->where('course_id', $validated['course_id'])
-            ->where('batch_id', $validated['batch_id'])
             ->get();
 
         $results = [];
