@@ -163,7 +163,7 @@ public function storeExamResponse(Request $request)
         ], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
-            'status' => false,
+            'status' => false, 
             'message' => 'Validation failed',
             'errors' => $e->errors()
         ], 422);
