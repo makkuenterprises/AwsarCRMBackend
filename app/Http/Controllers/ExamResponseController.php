@@ -399,8 +399,7 @@ public function getStudentResult(Request $request)
         ]);
 
         // Fetch exams for the specified course and batch
-        $exams = Exam::where('course_id', $validated['course_id'])
-            ->where('batch_id', $validated['batch_id'])
+        $exams = Exam::where('batch_id', $validated['course_id'])
             ->get();
 
         $results = [];
