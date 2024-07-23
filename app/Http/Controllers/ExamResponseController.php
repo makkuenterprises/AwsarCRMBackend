@@ -111,6 +111,9 @@ public function storeExamResponse(Request $request)
             }
         }
 
+        // Debug the totalQuestions value before saving
+        \Log::info('Total Questions: ' . $totalQuestions);
+
         // Create or update exam response record
         $examResponse = ExamResponse::updateOrCreate(
             ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
@@ -124,8 +127,12 @@ public function storeExamResponse(Request $request)
                 'total_question' => $totalQuestions,
             ]
         );
-        // dd($totalQuestions);
 
+        // Re-fetch the exam response to ensure it's saved correctly
+        $examResponse = ExamResponse::find($examResponse->id);
+
+        // Debug the saved response to confirm totalQuestions
+        \Log::info('Saved Exam Response: ' . print_r($examResponse, true));
 
         // Update the got_marks for the exam
         $exam = Exam::find($validated['exam_id']);
@@ -172,6 +179,7 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
+
 
 
 public function gradeShortAnswerResponses(Request $request)
