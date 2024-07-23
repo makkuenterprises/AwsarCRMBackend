@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use Exception;
 use Illuminate\Http\Request;
 
 class Subject extends Controller
@@ -10,47 +12,67 @@ class Subject extends Controller
      // Create a new subject
     public function create(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
         ]);
 
-        $subject = new Subject();
-        $subject->name = $request->name;
-        $subject->save();
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        return response()->json(['message' => 'Subject created successfully!', 'subject' => $subject], 201);
+        try {
+            $subject = new Subject();
+            $subject->name = $request->name;
+            $subject->save();
+
+            return response()->json(['message' => 'Subject created successfully!', 'subject' => $subject], 201);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Failed to create subject!', 'error' => $e->getMessage()], 500);
+        }
     }
 
     // Update an existing subject
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
         ]);
 
-        $subject = Subject::find($id);
-
-        if (!$subject) {
-            return response()->json(['message' => 'Subject not found!'], 404);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $subject->name = $request->name;
-        $subject->save();
+        try {
+            $subject = Subject::find($id);
 
-        return response()->json(['message' => 'Subject updated successfully!', 'subject' => $subject], 200);
+            if (!$subject) {
+                return response()->json(['message' => 'Subject not found!'], 404);
+            }
+
+            $subject->name = $request->name;
+            $subject->save();
+
+            return response()->json(['message' => 'Subject updated successfully!', 'subject' => $subject], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Failed to update subject!', 'error' => $e->getMessage()], 500);
+        }
     }
 
     // Delete a subject
     public function delete($id)
     {
-        $subject = Subject::find($id);
+        try {
+            $subject = Subject::find($id);
 
-        if (!$subject) {
-            return response()->json(['message' => 'Subject not found!'], 404);
+            if (!$subject) {
+                return response()->json(['message' => 'Subject not found!'], 404);
+            }
+
+            $subject->delete();
+
+            return response()->json(['message' => 'Subject deleted successfully!'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Failed to delete subject!', 'error' => $e->getMessage()], 500);
         }
-
-        $subject->delete();
-
-        return response()->json(['message' => 'Subject deleted successfully!'], 200);
     }
 }
