@@ -32,15 +32,15 @@ public function storeExamResponse(Request $request)
         $gainedMarks = 0;
         $totalCorrectAnswers = 0;
         $totalWrongAnswers = 0;
-        $totalQuestions = 0;
 
         // Fetch the questions for the exam
         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
             ->with('question')
             ->get();
 
-        // Calculate the total number of questions in the exam
-        $totalQuestions = $examQuestions->count();
+        // Calculate total number of unique questions answered
+        $answeredQuestionIds = array_unique(array_column($validated['responses'], 'question_id'));
+        $totalQuestions = count($answeredQuestionIds);
 
         // Create a map of correct answers for quick lookup
         $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
@@ -49,9 +49,6 @@ public function storeExamResponse(Request $request)
 
         // Initialize an array to keep track of question responses and marks
         $questionMarksMap = [];
-
-        // Initialize a set to track unique questions answered
-        $answeredQuestionIds = [];
 
         foreach ($validated['responses'] as $response) {
             $marks = $response['marks'] ?? 0;
@@ -70,9 +67,6 @@ public function storeExamResponse(Request $request)
             }
             $questionMarksMap[$questionId]['marks'] += $marks;
             $questionMarksMap[$questionId]['negative_marks'] += $negativeMarks;
-
-            // Track answered question IDs
-            $answeredQuestionIds[$questionId] = true;
 
             // Determine if the response is correct based on question type
             $question = $examQuestions->firstWhere('question_id', $questionId);
@@ -179,6 +173,7 @@ public function storeExamResponse(Request $request)
         ], 500);
     }
 }
+
 
 
 
