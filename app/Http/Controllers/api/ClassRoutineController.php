@@ -12,6 +12,7 @@ class ClassRoutineController extends Controller
 public function store(Request $request)
 {
     // Validate request data
+    dd($request->all());
 
     try { 
         $validatedData = $request->validate([
