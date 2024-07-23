@@ -114,8 +114,6 @@ public function storeExamResponse(Request $request)
         // Count the total number of unique questions answered
         $totalQuestions = count($answeredQuestionIds);
 
-        // Debugging to check how many unique questions are counted
-
         // Check if an exam response already exists
         $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
             ->where('student_id', $validated['student_id'])
@@ -133,16 +131,16 @@ public function storeExamResponse(Request $request)
             ]);
         } else {
             // Create a new record
-            $examResponse = ExamResponse::create([
-                'exam_id' => $validated['exam_id'],
-                'student_id' => $validated['student_id'],
-                'total_marks' => $totalMarks,
-                'gained_marks' => $gainedMarks,
-                'passing_marks' => $validated['passing_marks'] ?? 0,
-                'negative_marks' => $request->input('negative_marks', 0),
-                'total_correct_answers' => $totalCorrectAnswers,
-                'total_wrong_answers' => $totalWrongAnswers,
-            ]);
+            $examResponse = new ExamResponse();
+            $examResponse->exam_id = $validated['exam_id'];
+            $examResponse->student_id = $validated['student_id'];
+            $examResponse->total_marks = $totalMarks;
+            $examResponse->gained_marks = $gainedMarks;
+            $examResponse->passing_marks = $validated['passing_marks'] ?? 0;
+            $examResponse->negative_marks = $request->input('negative_marks', 0);
+            $examResponse->total_correct_answers = $totalCorrectAnswers;
+            $examResponse->total_wrong_answers = $totalWrongAnswers;
+            $examResponse->save();
         }
 
         // Debugging to confirm what was saved
@@ -155,19 +153,37 @@ public function storeExamResponse(Request $request)
 
         // Store individual question responses
         foreach ($questionMarksMap as $questionId => $marksData) {
-            ExamQuestionResponse::updateOrCreate(
-                [
-                    'exam_response_id' => $examResponse->id,
-                    'question_id' => $questionId
-                ],
-                [
-                    'response' => json_encode($marksData['response']),
-                    'marks' => $marksData['marks'],
-                    'negative_marks' => $marksData['negative_marks'],
-                    'your_marks' => $marksData['your_marks'],
-                    'status' => in_array($examQuestions->firstWhere('question_id', $questionId)->question->question_type, ['Short Answer', 'Fill in the Blanks']) ? 'pending' : 'graded'
-                ]
-            );
+            $existingResponse = ExamQuestionResponse::where([
+                'exam_response_id' => $examResponse->id,
+                'question_id' => $questionId
+            ])->first();
+
+            if ($existingResponse) {
+                // Update the existing record
+                $existingResponse->response = json_encode($marksData['response']);
+                $existingResponse->marks = $marksData['marks'];
+                $existingResponse->negative_marks = $marksData['negative_marks'];
+                $existingResponse->your_marks = $marksData['your_marks'];
+                $existingResponse->status = in_array(
+                    $examQuestions->firstWhere('question_id', $questionId)->question->question_type,
+                    ['Short Answer', 'Fill in the Blanks']
+                ) ? 'pending' : 'graded';
+                $existingResponse->save();
+            } else {
+                // Create a new record
+                $newResponse = new ExamQuestionResponse();
+                $newResponse->exam_response_id = $examResponse->id;
+                $newResponse->question_id = $questionId;
+                $newResponse->response = json_encode($marksData['response']);
+                $newResponse->marks = $marksData['marks'];
+                $newResponse->negative_marks = $marksData['negative_marks'];
+                $newResponse->your_marks = $marksData['your_marks'];
+                $newResponse->status = in_array(
+                    $examQuestions->firstWhere('question_id', $questionId)->question->question_type,
+                    ['Short Answer', 'Fill in the Blanks']
+                ) ? 'pending' : 'graded';
+                $newResponse->save();
+            }
         }
 
         // Return the stored exam response data
