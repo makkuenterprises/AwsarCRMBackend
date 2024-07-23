@@ -176,8 +176,6 @@ public function storeExamResponse(Request $request)
     }
 }
 
-
-
 public function gradeShortAnswerResponses(Request $request)
 {
     try {
