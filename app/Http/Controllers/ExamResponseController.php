@@ -510,7 +510,7 @@ public function getStudentResult(Request $request)
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
             'student_id' => 'required|exists:students,id',
-            'exam_id' => 'nullable|exists:exams,id' // Optional filter for exam ID
+            'exam_id' => 'required|exists:exams,id' // Optional filter for exam ID
         ]);
 
         // Fetch exams for the specified course, optionally filtered by exam_id
