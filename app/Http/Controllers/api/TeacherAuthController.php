@@ -145,7 +145,7 @@ class TeacherAuthController extends Controller
                       
            
                         ],
-                ],
+                ], 
                   [
                     'title' => 'Class Routine',
                      'classsChange' => 'mm-collapse',
