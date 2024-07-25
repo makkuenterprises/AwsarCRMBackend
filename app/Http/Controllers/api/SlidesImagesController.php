@@ -54,4 +54,34 @@ class SlidesImagesController extends Controller
             ], 500);
         }
     }
+
+    public function showImages()
+    {
+        try {
+            // Fetch all images from the SlidesImages table
+            $images = SlidesImage::all();
+
+            // Format the data with URLs to the images
+            $formattedImages = $images->map(function($image) {
+                return [
+                    'id' => $image->id,
+                    'path' => Storage::url($image->path),
+                    'title' => $image->title,
+                    'link' => $image->link,
+                ];
+            });
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Images retrieved successfully',
+                'data' => $formattedImages,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to retrieve images',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
