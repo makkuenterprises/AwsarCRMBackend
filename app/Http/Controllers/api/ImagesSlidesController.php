@@ -6,7 +6,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
-class SlidesImagesController extends Controller
+class ImagesSlidesController extends Controller
 {
     public function storeMultiple(Request $request)
     {

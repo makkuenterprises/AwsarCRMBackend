@@ -18,7 +18,7 @@ use App\Http\Controllers\api\ClassRoutineController;
 use App\Http\Controllers\api\PaymentGatewayController; 
 use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\api\subjectController;
-use App\Http\Controllers\api\SlidesImagesController;
+use App\Http\Controllers\api\ImagesSlidesController;
 
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
@@ -478,5 +478,5 @@ Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 
 
 // Slides Images
-Route::post('/slider-images', [SlidesImagesController::class, 'storeMultiple']);
-Route::get('/slider-images', [SlidesImagesController::class, 'showImages']);
+Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
+Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
