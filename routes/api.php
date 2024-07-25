@@ -478,5 +478,5 @@ Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 
 
 // Slides Images
-Route::post('/slider-images', [SliderImageController::class, 'storeMultiple']);
-Route::get('/slider-images', [SliderImageController::class, 'showImages']);
+Route::post('/slider-images', [SlidesImagesController::class, 'storeMultiple']);
+Route::get('/slider-images', [SlidesImagesController::class, 'showImages']);
