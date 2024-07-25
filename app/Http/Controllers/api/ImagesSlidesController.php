@@ -21,6 +21,7 @@ class ImagesSlidesController extends Controller
   public function storeMultiple(Request $request)
 {
     try {
+        dd($request->all());
         // Validate the incoming request data
         $request->validate([
             'images' => 'required|array',
