@@ -2,27 +2,40 @@
 namespace App\Http\Controllers;
 use App\Models\SlidesImages;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class SlidesImagesController extends Controller
 {
     public function storeMultiple(Request $request)
     {
-        // Validate the incoming request data
-        $request->validate([
-            'images' => 'required|array',
-            'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'images.*.title' => 'required|string|max:255',
-            'images.*.link' => 'nullable|url',
-        ]);
-
-        $uploadedImages = [];
-
         try {
+            // Validate the incoming request data
+            $request->validate([
+                'images' => 'required|array',
+                'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'images.*.title' => 'required|string|max:255',
+                'images.*.link' => 'nullable|url',
+            ]);
+
+            $uploadedImages = [];
+
             foreach ($request->images as $imageData) {
-                // Store the image
                 if (isset($imageData['image'])) {
-                    $path = $imageData['image']->store('slider_images', 'public');
+                    // Process and store the image
+                    $file = $imageData['image'];
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $path = 'slider_images/' . $filename;
+
+                    // Resize and compress the image
+                    $img = Image::make($file)
+                        ->resize(800, 600, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        })
+                        ->save(public_path('storage/' . $path), 75); // Save with 75% quality
+
                     $title = $imageData['title'];
                     $link = $imageData['link'] ?? null;
 
@@ -34,7 +47,7 @@ class SlidesImagesController extends Controller
                     ]);
 
                     $uploadedImages[] = [
-                        'path' => $path,
+                        'path' => Storage::url($path),
                         'title' => $title,
                         'link' => $link,
                     ];
@@ -46,6 +59,12 @@ class SlidesImagesController extends Controller
                 'message' => 'Images uploaded successfully',
                 'data' => $uploadedImages,
             ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation errors',
+                'errors' => $e->errors(), // Get validation errors
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
