@@ -23,14 +23,13 @@ public function store(Request $request)
         'end_time' => 'required|date_format:H:i|after:start_time', // Ensure end time is after start time
     ]);
         // Check if start_time and end_time are in 24-hour format
-        if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['start_time']) ||
-            !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/', $validatedData['end_time'])) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid time format. Please use 24-hour format (HH:MM).',
-            ], 400);
-        }
-
+        if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/', $validatedData['start_time']) ||
+    !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/', $validatedData['end_time'])) {
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Invalid time format. Please use 24-hour format (HH:MM) or (HH:MM:SS).',
+    ], 400);
+}
         // Check if there's already a routine with overlapping time for the same day, batch, and subject
         $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
                                         ->where('batch_id', $validatedData['batch_id'])
