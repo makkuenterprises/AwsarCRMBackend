@@ -151,7 +151,7 @@ class TeacherAuthController extends Controller
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
                      'to'=> 'view-class-routine',		
-s                ],
+               ],
                  [
                     'title' => 'Notice',
                      'classsChange' => 'mm-collapse',
