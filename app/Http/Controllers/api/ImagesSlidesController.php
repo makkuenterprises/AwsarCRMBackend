@@ -15,17 +15,18 @@ use App\Models\SlidesImages;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
+
 class ImagesSlidesController extends Controller
 {
-    public function storeMultiple(Request $request)
+   public function storeMultiple(Request $request)
     {
         try {
             // Validate the incoming request data
             $request->validate([
-                'images' => 'required|array',
-                'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+               'images' => 'required|array',
+                   'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'images.*.title' => 'required|string|max:255',
-                'images.*.link' => 'nullable|url',
+            'images.*.link' => 'nullable|url',
             ]);
 
             $uploadedImages = [];
@@ -34,22 +35,23 @@ class ImagesSlidesController extends Controller
                 if (isset($imageData['image'])) {
                     // Process and store the image
                     $file = $imageData['image'];
-                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $filename = time() . '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
                     $path = 'slider_images/' . $filename;
 
-                    // Resize and compress the image
+                    // Resize and compress the image, convert to WebP
                     $img = Image::make($file)
                         ->resize(800, 600, function ($constraint) {
                             $constraint->aspectRatio();
                             $constraint->upsize();
                         })
-                        ->save(public_path('storage/' . $path), 75); // Save with 75% quality
+                        ->encode('webp', 75) // Convert to WebP format with 75% quality
+                        ->save(public_path('storage/' . $path)); // Save with WebP extension
 
                     $title = $imageData['title'];
                     $link = $imageData['link'] ?? null;
 
                     // Save the data in the SlidesImages table
-                    $slideImage = SlidesImages::create([
+                    $slideImage = SlidesImage::create([
                         'path' => $path,
                         'title' => $title,
                         'link' => $link,
