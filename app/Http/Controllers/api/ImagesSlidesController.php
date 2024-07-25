@@ -53,7 +53,7 @@ class ImagesSlidesController extends Controller
                 $link = $imageData['link'] ?? null;
 
                 // Save the data in the SlidesImages table
-                $slideImage = SlidesImage::create([
+                $slideImage = SlidesImages::create([
                     'path' => $path,
                     'title' => $title,
                     'link' => $link,
