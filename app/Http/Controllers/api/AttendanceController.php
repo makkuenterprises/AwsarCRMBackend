@@ -385,7 +385,79 @@ public function create(Request $request)
 }
 
 // all student list for attendance============================================================================
- public function getStudentsEnrolledInCourse(Request $request, $courseId)
+//  public function getStudentsEnrolledInCourse(Request $request, $courseId)
+// {
+//     // Validate the course ID
+//     $validator = Validator::make(['course_id' => $courseId], [
+//         'course_id' => 'required|exists:courses,id',
+//     ]);
+
+//     // Validate the date
+//     $dateValidator = Validator::make($request->all(), [
+//         'date' => [
+//             'required',
+//             function ($attribute, $value, $fail) {
+//                 $d = \DateTime::createFromFormat('d/m/Y', $value);
+//                 if (!$d || $d->format('d/m/Y') !== $value) {
+//                     $fail('The ' . $attribute . ' does not match the format dd/mm/yyyy.');
+//                 }
+//             }
+//         ],
+//     ]);
+
+//     // Check if course ID validation fails
+//     if ($validator->fails()) {
+//         return response()->json([
+//             'status' => false,
+//             'code' => 400,
+//             'errors' => $validator->errors()
+//         ], 400);
+//     }
+
+//     // Check if date validation fails
+//     if ($dateValidator->fails()) {
+//         return response()->json([
+//             'status' => false,
+//             'code' => 400,
+//             'errors' => $dateValidator->errors()
+//         ], 400);
+//     }
+
+//     // Format the date
+//     $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
+
+//     try {
+//         // Check if attendance already exists for the given date and course
+//         $existingAttendance = Attendance::where('date', $date)
+//             ->where('course_id', $courseId)
+//             ->exists();
+
+//         if ($existingAttendance) {
+//             throw new \Exception('Attendance already submitted for this date and course.');
+//         }
+
+//         // Get the list of students enrolled in the specific course
+//         $students = DB::table('courses_enrollements')
+//             ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
+//             ->where('courses_enrollements.course_id', $courseId)
+//             ->select('students.id', 'students.name')
+//             ->get();
+
+//         return response()->json([
+//             'status' => true,
+//             'code' => 200,
+//             'data' => $students
+//         ], 200);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'code' => 500,
+//             'message' => 'Failed to retrieve students enrolled in the course',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+public function getStudentsEnrolledInCourse(Request $request, $courseId)
 {
     // Validate the course ID
     $validator = Validator::make(['course_id' => $courseId], [
@@ -427,21 +499,24 @@ public function create(Request $request)
     $date = \DateTime::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d');
 
     try {
-        // Check if attendance already exists for the given date and course
-        $existingAttendance = Attendance::where('date', $date)
-            ->where('course_id', $courseId)
-            ->exists();
-
-        if ($existingAttendance) {
-            throw new \Exception('Attendance already submitted for this date and course.');
-        }
-
-        // Get the list of students enrolled in the specific course
+        // Get the list of students enrolled in the specific course along with attendance status
         $students = DB::table('courses_enrollements')
             ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
+            ->leftJoin('attendances', function($join) use ($date, $courseId) {
+                $join->on('students.id', '=', 'attendances.student_id')
+                    ->where('attendances.date', $date)
+                    ->where('attendances.course_id', $courseId);
+            })
             ->where('courses_enrollements.course_id', $courseId)
-            ->select('students.id', 'students.name')
+            ->select('students.id', 'students.name', 'attendances.status as attendance_status')
             ->get();
+
+        // Set default status to 'absent' if no record is found
+        foreach ($students as $student) {
+            if (is_null($student->attendance_status)) {
+                $student->attendance_status = 'absent';
+            }
+        }
 
         return response()->json([
             'status' => true,
