@@ -31,8 +31,7 @@ class ImagesSlidesController extends Controller
 
         $uploadedImages = [];
 
-        foreach ($request->input('images', []) as $imageData) {
-            // Ensure image data is correctly processed
+        foreach ($request->input('images', []) as $index => $imageData) {
             if (isset($imageData['image']) && $imageData['image'] instanceof \Illuminate\Http\UploadedFile) {
                 $file = $imageData['image'];
                 $filename = time() . '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
@@ -63,8 +62,8 @@ class ImagesSlidesController extends Controller
                     'link' => $link,
                 ];
             } else {
-                // Log or handle missing file case
-                throw new \Exception('Missing or invalid image file');
+                // Handle missing or invalid file case
+                throw new \Exception('Missing or invalid image file at index ' . $index);
             }
         }
 
@@ -87,7 +86,6 @@ class ImagesSlidesController extends Controller
         ], 500);
     }
 }
-
 
     public function showImages()
     {
