@@ -18,10 +18,9 @@ use Illuminate\Validation\ValidationException;
 
 class ImagesSlidesController extends Controller
 {
-  public function storeMultiple(Request $request)
+ public function storeMultiple(Request $request)
 {
     try {
-        dd($request->all());
         // Validate the incoming request data
         $request->validate([
             'images' => 'required|array',
@@ -32,41 +31,41 @@ class ImagesSlidesController extends Controller
 
         $uploadedImages = [];
 
-        foreach ($request->images as $index => $imageData) {
-            // Ensure all fields are present
-            if (!isset($imageData['image']) || !isset($imageData['title'])) {
-                throw new \Exception("Missing required fields for image at index $index");
+        foreach ($request->input('images', []) as $imageData) {
+            // Ensure image data is correctly processed
+            if (isset($imageData['image']) && $imageData['image'] instanceof \Illuminate\Http\UploadedFile) {
+                $file = $imageData['image'];
+                $filename = time() . '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
+                $path = 'slider_images/' . $filename;
+
+                // Resize and compress the image, convert to WebP
+                $img = Image::make($file)
+                    ->resize(800, 600, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->encode('webp', 75)
+                    ->save(public_path('storage/' . $path));
+
+                $title = $imageData['title'];
+                $link = $imageData['link'] ?? null;
+
+                // Save the data in the SlidesImages table
+                SlidesImage::create([
+                    'path' => $path,
+                    'title' => $title,
+                    'link' => $link,
+                ]);
+
+                $uploadedImages[] = [
+                    'path' => Storage::url($path),
+                    'title' => $title,
+                    'link' => $link,
+                ];
+            } else {
+                // Log or handle missing file case
+                throw new \Exception('Missing or invalid image file');
             }
-
-            // Process the uploaded file
-            $file = $imageData['image'];
-            $filename = time() . '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
-            $path = 'slider_images/' . $filename;
-
-            // Resize and compress the image, convert to WebP
-            $img = Image::make($file)
-                ->resize(800, 600, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                })
-                ->encode('webp', 75)
-                ->save(public_path('storage/' . $path));
-
-            $title = $imageData['title'];
-            $link = $imageData['link'] ?? null;
-
-            // Save the data in the SlidesImages table
-            SlidesImages::create([
-                'path' => $path,
-                'title' => $title,
-                'link' => $link,
-            ]);
-
-            $uploadedImages[] = [
-                'path' => Storage::url($path),
-                'title' => $title,
-                'link' => $link,
-            ];
         }
 
         return response()->json([
