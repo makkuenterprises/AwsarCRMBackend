@@ -514,7 +514,7 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
         // Set default status to 'absent' if no record is found
         foreach ($students as $student) {
             if (is_null($student->attendance_status)) {
-                $student->attendance_status = 'absent';
+                $student->attendance_status = 'null';
             }
         }
 
