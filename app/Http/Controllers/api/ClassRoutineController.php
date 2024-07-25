@@ -118,13 +118,14 @@ public function store(Request $request)
             'end_time' => 'required|date_format:H:i:s|after:start_time',
         ]);
 
-        if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/', $validatedData['start_time']) ||
+         if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/', $validatedData['start_time']) ||
             !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/', $validatedData['end_time'])) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid time format. Please use 24-hour format (HH:MM:SS).',
             ], 400);
         }
+
 
         // Overlapping time validation
         $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
