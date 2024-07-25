@@ -667,7 +667,6 @@ $studentBatchDetails = DB::table('students')
     ->first();
 
 
-
         if (!$studentBatchDetails) {
             return response()->json(['success' => false, 'message' => 'Student not found in the specified batch'], 404);
         }
