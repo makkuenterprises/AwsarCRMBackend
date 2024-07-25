@@ -480,3 +480,5 @@ Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 // Slides Images
 Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
 Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
+
+
