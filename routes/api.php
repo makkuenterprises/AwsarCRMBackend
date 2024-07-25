@@ -18,6 +18,7 @@ use App\Http\Controllers\api\ClassRoutineController;
 use App\Http\Controllers\api\PaymentGatewayController; 
 use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\api\subjectController;
+use App\Http\Controllers\api\SlidesImagesController;
 
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
@@ -473,3 +474,8 @@ Route::put('/subjects/{id}', [subjectController::class, 'update']);
 Route::delete('/subjects/{id}', [subjectController::class, 'delete']);
 Route::get('/subjects', [SubjectController::class, 'index']);
 Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+
+
+
+// Slides Images
+Route::post('/slider-images', [SliderImageController::class, 'storeMultiple']);

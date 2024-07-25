@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('slides_images', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
-            $table->string('image');
-            $table->string('status')->default('active');
+            $table->string('path'); // To store the image file path
+            $table->string('title'); // To store the image title
+            $table->string('link')->nullable(); // To store the image link, nullable if not always provided
             $table->timestamps();
         });
     }
