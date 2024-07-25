@@ -18,73 +18,76 @@ use Illuminate\Validation\ValidationException;
 
 class ImagesSlidesController extends Controller
 {
-   public function storeMultiple(Request $request)
-    {
-        try {
-            dd($request->all());
-            // Validate the incoming request data
-           $request->validate([
-    'images' => 'required|array',
-    'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-    'images.*.title' => 'required|string|max:255',
-    'images.*.link' => 'nullable|url',
-]);
+  public function storeMultiple(Request $request)
+{
+    try {
+        // Validate the incoming request data
+        $request->validate([
+            'images' => 'required|array',
+            'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*.title' => 'required|string|max:255',
+            'images.*.link' => 'nullable|url',
+        ]);
 
-            $uploadedImages = [];
+        $uploadedImages = [];
 
-            foreach ($request->images as $imageData) {
-                if (isset($imageData['image'])) {
-                    // Process and store the image
-                    $file = $imageData['image'];
-                    $filename = time() . '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
-                    $path = 'slider_images/' . $filename;
-
-                    // Resize and compress the image, convert to WebP
-                    $img = Image::make($file)
-                        ->resize(800, 600, function ($constraint) {
-                            $constraint->aspectRatio();
-                            $constraint->upsize();
-                        })
-                        ->encode('webp', 75) // Convert to WebP format with 75% quality
-                        ->save(public_path('storage/' . $path)); // Save with WebP extension
-
-                    $title = $imageData['title'];
-                    $link = $imageData['link'] ?? null;
-
-                    // Save the data in the SlidesImages table
-                    $slideImage = SlidesImage::create([
-                        'path' => $path,
-                        'title' => $title,
-                        'link' => $link,
-                    ]);
-
-                    $uploadedImages[] = [
-                        'path' => Storage::url($path),
-                        'title' => $title,
-                        'link' => $link,
-                    ];
-                }
+        foreach ($request->images as $index => $imageData) {
+            // Ensure all fields are present
+            if (!isset($imageData['image']) || !isset($imageData['title'])) {
+                throw new \Exception("Missing required fields for image at index $index");
             }
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Images uploaded successfully',
-                'data' => $uploadedImages,
-            ], 200);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validation errors',
-                'errors' => $e->errors(), // Get validation errors
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Image upload failed',
-                'error' => $e->getMessage(),
-            ], 500);
+            // Process the uploaded file
+            $file = $imageData['image'];
+            $filename = time() . '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.webp';
+            $path = 'slider_images/' . $filename;
+
+            // Resize and compress the image, convert to WebP
+            $img = Image::make($file)
+                ->resize(800, 600, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('webp', 75)
+                ->save(public_path('storage/' . $path));
+
+            $title = $imageData['title'];
+            $link = $imageData['link'] ?? null;
+
+            // Save the data in the SlidesImages table
+            SlidesImages::create([
+                'path' => $path,
+                'title' => $title,
+                'link' => $link,
+            ]);
+
+            $uploadedImages[] = [
+                'path' => Storage::url($path),
+                'title' => $title,
+                'link' => $link,
+            ];
         }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Images uploaded successfully',
+            'data' => $uploadedImages,
+        ], 200);
+    } catch (ValidationException $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validation errors',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Image upload failed',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
     public function showImages()
     {
