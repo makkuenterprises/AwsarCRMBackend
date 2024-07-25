@@ -1,8 +1,17 @@
 <?php
 namespace App\Http\Controllers\api;
-use App\Models\SlidesImages;
+
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Course;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
+use Image; 
+use App\Models\Teacher;
+use App\Rules\DateFormat;
+use App\Models\SlidesImages;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
