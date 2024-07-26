@@ -30,7 +30,7 @@ class ImagesSlidesController extends Controller
             'images.*.role' => 'required|string',
         ]);
 
-        $uploadedImages = [];
+        $uploadedImages = []; 
 
         foreach ($request->images as $imageData) {
             if (isset($imageData['image'])) {
@@ -51,7 +51,7 @@ class ImagesSlidesController extends Controller
                 Storage::disk('public')->put($path, $img);
 
                 $title = $imageData['title'];
-                $role = $imageData['role'];
+                $role = $imageData['role'] ?? null;
                 $link = $imageData['link'] ?? null;
 
                 // Save the data in the SlidesImages table
