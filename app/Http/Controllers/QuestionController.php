@@ -100,7 +100,7 @@ public function update(Request $request, $id)
     $question->question_text = $request->input('question_text', $question->question_text);
     $question->question_type = $request->input('question_type', $question->question_type);
     $question->options = $request->input('options', $question->options);
-    $question->correct_answers = $request->input('correct_answers', $question->correct_answers);
+    $question->correct_answers = $request->input('correct_answers');
 
     if ($request->hasFile('image')) {
         // Delete old image if exists
@@ -115,6 +115,9 @@ public function update(Request $request, $id)
 
     return response()->json(['status' => 'success', 'data' => $question]);
 }
+
+
+
     public function destroy($id)
     {
         $question = Questions::find($id);
