@@ -74,6 +74,7 @@ class QuestionController extends Controller
         return response()->json(['status' => 'success', 'data' => $question]);
     }
 
+    
 public function update(Request $request, $id)
 {
     $question = Questions::find($id); 
@@ -97,18 +98,21 @@ public function update(Request $request, $id)
         ], 422);
     }
 
-    
-        $question->question_text = $request->input('question_text');
-        $question->question_type = $request->input('question_type');
-        $question->options = $request->input('options');
-        $question->correct_answers = $request->input('correct_answers');
+    $question->question_text = $request->input('question_text', $question->question_text);
+    $question->question_type = $request->input('question_type', $question->question_type);
+    $question->options = $request->input('options', $question->options);
+    $question->correct_answers = $request->input('correct_answers', $question->correct_answers);
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('questions', 'public');
-            $question->image = $imagePath;
+    if ($request->hasFile('image')) {
+        // Delete old image if exists
+        if ($question->image) {
+            \Storage::disk('public')->delete($question->image);
         }
+        $imagePath = $request->file('image')->store('questions', 'public');
+        $question->image = $imagePath;
+    }
 
-        $question->save();
+    $question->save();
 
     return response()->json(['status' => 'success', 'data' => $question]);
 }
