@@ -27,6 +27,7 @@ class ImagesSlidesController extends Controller
             'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'images.*.title' => 'required|string|max:255',
             'images.*.link' => 'nullable|url',
+            'images.*.role' => 'required|string',
         ]);
 
         $uploadedImages = [];
@@ -50,6 +51,7 @@ class ImagesSlidesController extends Controller
                 Storage::disk('public')->put($path, $img);
 
                 $title = $imageData['title'];
+                $role = $imageData['role'];
                 $link = $imageData['link'] ?? null;
 
                 // Save the data in the SlidesImages table
@@ -57,12 +59,14 @@ class ImagesSlidesController extends Controller
                     'path' => $path,
                     'title' => $title,
                     'link' => $link,
+                    'role' => $link,
                 ]);
 
                 $uploadedImages[] = [
                     'path' => Storage::url($path), // Generate URL for the stored file
                     'title' => $title,
                     'link' => $link,
+                    'role' => $role,
                 ];
             }
         }
@@ -100,6 +104,7 @@ class ImagesSlidesController extends Controller
                     'path' => Storage::url($image->path),
                     'title' => $image->title,
                     'link' => $image->link,
+                    'role' => $image->role,
                 ];
             });
 

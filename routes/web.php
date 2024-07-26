@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Artisan; 
 use Illuminate\Support\Facades\Log;
 /*
 |--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ Route::get('rollback', function() {
     }
 });
 
-
+ 
 Route::get('drop-table/{table}', function($table) {
     try {
         // Drop the table using raw SQL
