@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Questions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+
 
 class QuestionController extends Controller
 {
@@ -16,13 +19,22 @@ class QuestionController extends Controller
    public function store(Request $request)
 {
     try {
-        $request->validate([
+       
+    $validator = Validator::make($request->all(), [
             'question_text' => 'required|string',
             'question_type' => 'required|in:MCQ,Short Answer,Fill in the Blanks',
             'options' => 'nullable|array',
             'correct_answers' => 'nullable|array',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        if ($validator->fails()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation failed',
+            'errors' => $validator->errors()
+        ], 422);
+    }
 
         $question = new Questions();
         $question->question_text = $request->input('question_text');
@@ -62,40 +74,47 @@ class QuestionController extends Controller
         return response()->json(['status' => 'success', 'data' => $question]);
     }
 
-    public function update(Request $request, $id)
-    {
-        $question = Questions::find($id); 
-        if (!$question) {
-            return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
-        }
-
-        $request->validate([
-            'question_text' => 'sometimes|required|string',
-            'question_type' => 'sometimes|required|in:MCQ,Short Answer,Fill in the Blanks',
-            'options' => 'nullable|array',
-            'correct_answers' => 'nullable|array',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
-        $question->question_text = $request->input('question_text', $question->question_text);
-        $question->question_type = $request->input('question_type', $question->question_type);
-        $question->options = $request->input('options', $question->options);
-        $question->correct_answers = $request->input('correct_answers', $question->correct_answers);
-
-        if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($question->image) {
-                \Storage::disk('public')->delete($question->image);
-            }
-            $imagePath = $request->file('image')->store('questions', 'public');
-            $question->image = $imagePath;
-        }
-
-        $question->save();
-
-        return response()->json(['status' => 'success', 'data' => $question]);
+public function update(Request $request, $id)
+{
+    $question = Questions::find($id); 
+    if (!$question) {
+        return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
     }
 
+    $validator = Validator::make($request->all(), [
+        'question_text' => 'sometimes|required|string',
+        'question_type' => 'sometimes|required|in:MCQ,Short Answer,Fill in the Blanks',
+        'options' => 'nullable|array',
+        'correct_answers' => 'nullable|array',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation failed',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    $question->question_text = $request->input('question_text', $question->question_text);
+    $question->question_type = $request->input('question_type', $question->question_type);
+    $question->options = $request->input('options', $question->options);
+    $question->correct_answers = $request->input('correct_answers', $question->correct_answers);
+
+    if ($request->hasFile('image')) {
+        // Delete old image if exists
+        if ($question->image) {
+            \Storage::disk('public')->delete($question->image);
+        }
+        $imagePath = $request->file('image')->store('questions', 'public');
+        $question->image = $imagePath;
+    }
+
+    $question->save();
+
+    return response()->json(['status' => 'success', 'data' => $question]);
+}
     public function destroy($id)
     {
         $question = Questions::find($id);
