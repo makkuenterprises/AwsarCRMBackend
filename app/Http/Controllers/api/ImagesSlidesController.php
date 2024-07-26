@@ -101,10 +101,10 @@ class ImagesSlidesController extends Controller
             $formattedImages = $images->map(function($image) {
                 return [
                     'id' => $image->id,
-                    'path' => Storage::url($image->path),
+                    'image' => url($image->path),
                     'title' => $image->title,
                     'link' => $image->link,
-                    'role' =>url($image->role),
+                    'role' =>$image->role,
                 ];
             });
 
