@@ -16,6 +16,7 @@ class SlidesImages extends Model
         'path',
         'title',
         'link',
+        'role',
     ];
 
 }
