@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('slides_images', function (Blueprint $table) {
             //
-            $table->string('role'); // To store the image title
+            $table->string('role')->nullable();// To store the image title
 
         });
     }
