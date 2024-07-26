@@ -59,7 +59,7 @@ class ImagesSlidesController extends Controller
                     'path' => $path,
                     'title' => $title,
                     'link' => $link,
-                    'role' => $link,
+                    'role' => $role,
                 ]);
 
                 $uploadedImages[] = [
@@ -104,7 +104,7 @@ class ImagesSlidesController extends Controller
                     'path' => Storage::url($image->path),
                     'title' => $image->title,
                     'link' => $image->link,
-                    'role' => $image->role,
+                    'role' =>url($image->role),
                 ];
             });
 
