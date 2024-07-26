@@ -96,6 +96,7 @@ class ImagesSlidesController extends Controller
         try {
             // Fetch all images from the SlidesImages table
             $images = SlidesImages::all();
+            dd($images);
 
             // Format the data with URLs to the images
             $formattedImages = $images->map(function($image) {
