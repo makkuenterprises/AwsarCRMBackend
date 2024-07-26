@@ -75,6 +75,7 @@ class QuestionController extends Controller
     }
 
 
+
 public function update(Request $request, $id)
 {
     $question = Questions::find($id); 
@@ -84,8 +85,8 @@ public function update(Request $request, $id)
 
     // Define validation rules
     $validator = Validator::make($request->all(), [
-        'question_text' => 'sometimes|required|string',
-        'question_type' => 'sometimes|required|in:MCQ,Short Answer,Fill in the Blanks',
+        'question_text' => 'required|string',
+        'question_type' => 'required|in:MCQ,Short Answer,Fill in the Blanks',
         'options' => 'nullable|array',
         'correct_answers' => 'nullable|array',
         'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -100,11 +101,19 @@ public function update(Request $request, $id)
         ], 422);
     }
 
-    // Update the question with provided data
-    $question->question_text = $request->input('question_text', $question->question_text);
-    $question->question_type = $request->input('question_type', $question->question_type);
-    $question->options = $request->input('options', $question->options);
-    $question->correct_answers = $request->input('correct_answers', $question->correct_answers);
+    // Update fields only if they are present in the request
+    if ($request->has('question_text')) {
+        $question->question_text = $request->input('question_text');
+    }
+    if ($request->has('question_type')) {
+        $question->question_type = $request->input('question_type');
+    }
+    if ($request->has('options')) {
+        $question->options = $request->input('options');
+    }
+    if ($request->has('correct_answers')) {
+        $question->correct_answers = $request->input('correct_answers');
+    }
 
     // Handle image upload
     if ($request->hasFile('image')) {
@@ -123,6 +132,7 @@ public function update(Request $request, $id)
     // Return success response
     return response()->json(['status' => 'success', 'data' => $question]);
 }
+
 
 
     public function destroy($id)
