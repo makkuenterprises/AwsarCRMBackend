@@ -19,7 +19,7 @@ class QuestionController extends Controller
    public function store(Request $request)
 {
     try {
-       dd($request->all());
+    //    dd($request->all());
     $validator = Validator::make($request->all(), [
             'question_text' => 'required|string',
             'question_type' => 'required|in:MCQ,Short Answer,Fill in the Blanks',
