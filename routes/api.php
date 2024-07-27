@@ -460,11 +460,9 @@ Route::post('/student-result', [ExamResponseController::class, 'getStudentResult
 Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
 Route::get('zoom/callback', [ZoomController::class, 'handleProviderCallback'])->name('zoom.callback');
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
+Route::get('start', [ZoomController::class, 'index']);
+Route::any('zoom-meeting-create', [ZoomController::class, 'index']);
 
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
-
-Route::get('auth/google/callback', 'GoogleController@handleGoogleCallback');
-Route::post('create-meeting', 'GoogleController@createMeeting');
 
 
 
