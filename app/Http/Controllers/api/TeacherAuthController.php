@@ -134,13 +134,21 @@ class TeacherAuthController extends Controller
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">settings</i>',
                         'content'=> [
+                            [
+                            'title'=> 'View Questions',
+                            'to'=> 'view-question',					
+                        ],
+                        [
+                            'title'=> 'Create Question',
+                            'to'=> 'create-question',
+                        ],
                         [
                             'title'=> 'View Exam',
-                            'to'=> 'page-lock-screen',					
+                            'to'=> 'view-exam',					
                         ],
                         [
                             'title'=> 'Create Exam',
-                            'to'=> 'page-lock-screen',
+                            'to'=> 'create-exam',
                         ],
                       
            
@@ -348,7 +356,6 @@ public function teacherList()
                 $constraint->aspectRatio();
             })->save($destinationPath . '/' . $fileName);
         }
-
         // Create new Teacher
         $teacher = new Teacher();
         $teacher->name = $request->input('name'); 
