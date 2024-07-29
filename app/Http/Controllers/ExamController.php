@@ -6,6 +6,8 @@ use App\Models\Section;
 use App\Models\Question;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 class ExamController extends Controller 
 { 
     
@@ -75,8 +77,11 @@ class ExamController extends Controller
 //         ], 500);
 //     }
 // }
+
 public function createExam(Request $request)
 {
+    DB::beginTransaction();
+
     try {
         // Validate the request
         $request->validate([
@@ -140,6 +145,8 @@ public function createExam(Request $request)
         // Update the exam with the total marks
         $exam->update(['total_marks' => $totalMarks]);
 
+        DB::commit();
+
         // Return success response
         return response()->json([
             'status' => true,
@@ -149,6 +156,7 @@ public function createExam(Request $request)
         ], 201);
         
     } catch (\Illuminate\Validation\ValidationException $e) {
+        DB::rollBack();
         // Handle validation errors
         return response()->json([
             'status' => false,
@@ -158,6 +166,7 @@ public function createExam(Request $request)
         ], 422);
         
     } catch (\Exception $e) {
+        DB::rollBack();
         // Handle other errors
         return response()->json([
             'status' => false,
@@ -166,8 +175,7 @@ public function createExam(Request $request)
             'error' => $e->getMessage()
         ], 500);
     }
-} 
-
+}
 
 public function listExamsForBatch($batchId)
 {
