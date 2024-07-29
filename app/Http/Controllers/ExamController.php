@@ -168,7 +168,8 @@ public function listExamsForBatch($batchId)
         // Fetch exams associated with the specific batch
         $exams = Exam::where('batch_id', $batchId)
             ->with(['questions' => function ($query) {
-                $query->select('id', 'exam_id', 'marks'); // Only select relevant fields
+                // Specify table names to avoid ambiguity
+                $query->select('questions.id', 'exam_questions.exam_id', 'questions.marks');
             }])
             ->orderBy('id', 'desc')
             ->get()
@@ -212,6 +213,7 @@ public function listExamsForBatch($batchId)
         ], 500);
     }
 }
+
 
 public function listQuestionsForExam($examId)
 {
