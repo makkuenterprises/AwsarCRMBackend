@@ -141,7 +141,7 @@ public function createExam(Request $request)
             // Add section total marks to overall total
             $totalMarks += $sectionTotalMarks;
         }
-dd($totalMarks);
+// dd($totalMarks);
         // Update the exam with the total marks
         // $exam->update(['total_marks' => $totalMarks]);
         $exam->total_marks= $totalMarks;
@@ -183,8 +183,7 @@ public function listExamsForBatch($batchId)
 {
     try {
         // Fetch all exams associated with the specific batch
-        $exams = Exam::where('batch_id', $batchId)->get();
-
+        $exams = Exam::where('batch_id', $batchId)->orderBy('created_at', 'desc')->get();
         // Check if exams are found
         if ($exams->isEmpty()) {
             return response()->json([
