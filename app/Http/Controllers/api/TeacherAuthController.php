@@ -139,10 +139,6 @@ class TeacherAuthController extends Controller
                             'to'=> 'view-question',					
                         ],
                         [
-                            'title'=> 'Create Question',
-                            'to'=> 'create-question',
-                        ],
-                        [
                             'title'=> 'View Exam',
                             'to'=> 'view-exam',					
                         ],

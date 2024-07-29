@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Exam;
 use App\Models\Section;
 use App\Models\Question;
-use App\Models\ExamQuestion;
+use App\Models\ExamQuestion; 
 use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
 use App\Models\ExamQuestionResponse;
@@ -563,9 +563,11 @@ public function getStudentResult(Request $request)
             'status' => false,
             'message' => 'An error occurred',
             'error' => $e->getMessage()
-        ], 500);
+        ], 500); 
     }
 }
+
+
 public function getStudentAllResult(Request $request)
 {
     try {
