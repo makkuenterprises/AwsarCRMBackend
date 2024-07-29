@@ -143,7 +143,9 @@ public function createExam(Request $request)
         }
 dd($totalMarks);
         // Update the exam with the total marks
-        $exam->update(['total_marks' => $totalMarks]);
+        // $exam->update(['total_marks' => $totalMarks]);
+        $exam->total_marks= $totalMarks;
+        $exam->save();
 
         DB::commit();
 
