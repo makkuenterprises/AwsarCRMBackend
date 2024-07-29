@@ -113,24 +113,46 @@ public function createExam(Request $request)
 //     }
 // }
 
-public function listExamsFosrBatch($batchId)
+public function listExamResponsesForBatch($batchId)
 {
     try {
-        // Fetch all exams associated with the specific batch along with question count and marks
+        // Fetch exams and their responses associated with the specific batch
         $exams = Exam::where('batch_id', $batchId)
-            ->with(['questions' => function($query) {
-                $query->select('questions.id', 'exam_id', 'marks', 'negative_marks');
+            ->with(['responses' => function ($query) {
+                $query->select(
+                    'id', 
+                    'exam_id', 
+                    'student_id', 
+                    'total_marks', 
+                    'gained_marks', 
+                    'passing_marks', 
+                    'negative_marks', 
+                    'total_correct_answers', 
+                    'total_wrong_answers', 
+                    'total_question'
+                );
             }])
             ->orderBy('id', 'desc')
             ->get()
-            ->map(function($exam) {
-                // Calculate the total marks for the exam
-                $totalMarks = $exam->questions->sum('marks');
-                
-                // Include total marks in the exam data
-                $exam->total_marks = $totalMarks;
-                
-                return $exam;
+            ->map(function ($exam) {
+                // Map each exam to include its responses
+                return [
+                    'id' => $exam->id,
+                    'name' => $exam->name,
+                    'responses' => $exam->responses->map(function ($response) {
+                        return [
+                            'id' => $response->id,
+                            'student_id' => $response->student_id,
+                            'total_marks' => $response->total_marks,
+                            'gained_marks' => $response->gained_marks,
+                            'passing_marks' => $response->passing_marks,
+                            'negative_marks' => $response->negative_marks,
+                            'total_correct_answers' => $response->total_correct_answers,
+                            'total_wrong_answers' => $response->total_wrong_answers,
+                            'total_question' => $response->total_question,
+                        ];
+                    })
+                ];
             });
 
         // Check if exams are found
@@ -142,11 +164,11 @@ public function listExamsFosrBatch($batchId)
             ], 404);
         }
 
-        // Return success response with exams data including total marks
+        // Return success response with exams and responses data
         return response()->json([
             'status' => true,
             'code' => 200,
-            'message' => 'Exams retrieved successfully',
+            'message' => 'Exams and responses retrieved successfully',
             'data' => $exams
         ], 200);
 
@@ -155,11 +177,12 @@ public function listExamsFosrBatch($batchId)
         return response()->json([
             'status' => false,
             'code' => 500,
-            'message' => 'An error occurred while retrieving exams',
+            'message' => 'An error occurred while retrieving exams and responses',
             'error' => $e->getMessage()
         ], 500);
     }
 }
+
 
 
 public function listExamsForBatch($batchId)
