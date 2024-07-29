@@ -455,6 +455,7 @@ Route::post('student/responses/mcq', [ExamResponseController::class, 'getRespons
 Route::post('student/responses/short-answer', [ExamResponseController::class, 'gradeShortAnswerResponses']);
 
 Route::post('/student-result', [ExamResponseController::class, 'getStudentResult']);
+Route::post('all/student-result', [ExamResponseController::class, 'getStudentAllResult']);
 
 
 Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
