@@ -141,7 +141,7 @@ public function createExam(Request $request)
             // Add section total marks to overall total
             $totalMarks += $sectionTotalMarks;
         }
-
+dd($totalMarks);
         // Update the exam with the total marks
         $exam->update(['total_marks' => $totalMarks]);
 
