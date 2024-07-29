@@ -113,7 +113,7 @@ public function createExam(Request $request)
 //     }
 // }
 
-public function listExamsForBatch($batchId)
+public function listExamsFosrBatch($batchId)
 {
     try {
         // Fetch all exams associated with the specific batch along with question count and marks
@@ -162,6 +162,56 @@ public function listExamsForBatch($batchId)
 }
 
 
+public function listExamsForBatch($batchId)
+{
+    try {
+        // Fetch exams associated with the specific batch
+        $exams = Exam::where('batch_id', $batchId)
+            ->with(['questions' => function ($query) {
+                $query->select('id', 'exam_id', 'marks'); // Only select relevant fields
+            }])
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function ($exam) {
+                // Calculate the total marks for the exam
+                $totalMarks = $exam->questions->sum('marks');
+                
+                // Include total marks and passing marks in the response data
+                return [
+                    'id' => $exam->id,
+                    'name' => $exam->name,
+                    'total_marks' => $totalMarks,
+                    'passing_marks' => $exam->passing_marks
+                ];
+            });
+
+        // Check if exams are found
+        if ($exams->isEmpty()) {
+            return response()->json([
+                'status' => false, 
+                'code' => 404,
+                'message' => 'No exams found for the specified batch'
+            ], 404);
+        }
+
+        // Return success response with exams data including total and passing marks
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Exams retrieved successfully',
+            'data' => $exams
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving exams',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
 public function listQuestionsForExam($examId)
 {
