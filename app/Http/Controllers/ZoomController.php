@@ -182,7 +182,6 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
             }
         }
     }
-
 public function updateMeeting(Request $request, $meetingId)
 {
     $request->validate([
@@ -190,6 +189,12 @@ public function updateMeeting(Request $request, $meetingId)
         'start_time' => 'nullable|date_format:Y-m-d\TH:i:s\Z',
         'agenda' => 'nullable|string',
         'duration' => 'nullable|integer|min:1',
+        'host_video' => 'nullable|boolean',
+        'participant_video' => 'nullable|boolean',
+        'join_before_host' => 'nullable|boolean',
+        'mute_upon_entry' => 'nullable|boolean',
+        'waiting_room' => 'nullable|boolean',
+        'auto_recording' => 'nullable|string|in:none,local,cloud',
     ]);
 
     $accessToken = $this->zoomService->getAccessToken();
@@ -210,9 +215,11 @@ public function updateMeeting(Request $request, $meetingId)
         ],
     ];
 
+
     $client = new Client();
+
     try {
-        $response = $client->request('PUT', "https://api.zoom.us/v2/meetings/$meetingId", [
+        $response = $client->request('PATCH', "https://api.zoom.us/v2/meetings/$meetingId", [
             'headers' => [
                 'Authorization' => "Bearer $accessToken",
                 'Content-Type'  => 'application/json',

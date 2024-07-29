@@ -567,7 +567,6 @@ public function getStudentResult(Request $request)
     }
 }
 
-
 public function getStudentAllResult(Request $request)
 {
     try {
@@ -579,7 +578,7 @@ public function getStudentAllResult(Request $request)
         ]);
 
         // Query to fetch exams for the specified course, optionally filtered by exam_id
-        $examsQuery = Exam::select('id')
+        $examsQuery = Exam::select('id', 'title')
             ->where('batch_id', $validated['course_id']);
 
         if (isset($validated['exam_id'])) {
@@ -588,10 +587,11 @@ public function getStudentAllResult(Request $request)
 
         $examIds = $examsQuery->pluck('id');
 
-        // Fetch exam responses for the student in the specified course
-        $examResponses = ExamResponse::select('id', 'exam_id', 'student_id', 'total_marks', 'gained_marks', 'passing_marks', 'negative_marks', 'total_correct_answers', 'total_wrong_answers', 'created_at', 'updated_at')
-            ->whereIn('exam_id', $examIds)
-            ->where('student_id', $validated['student_id'])
+        // Fetch exam responses for the student in the specified course with exam titles
+        $examResponses = ExamResponse::select('exam_responses.id', 'exam_responses.exam_id', 'exam_responses.student_id', 'exam_responses.total_marks', 'exam_responses.gained_marks', 'exam_responses.passing_marks', 'exam_responses.negative_marks', 'exam_responses.total_correct_answers', 'exam_responses.total_wrong_answers', 'exam_responses.created_at', 'exam_responses.updated_at', 'exams.title')
+            ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
+            ->whereIn('exam_responses.exam_id', $examIds)
+            ->where('exam_responses.student_id', $validated['student_id'])
             ->get();
 
         return response()->json([
@@ -613,5 +613,6 @@ public function getStudentAllResult(Request $request)
         ], 500);
     }
 }
+
 
 }

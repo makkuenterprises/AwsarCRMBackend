@@ -458,16 +458,13 @@ Route::post('/student-result', [ExamResponseController::class, 'getStudentResult
 Route::post('all/student-result', [ExamResponseController::class, 'getStudentAllResult']);
 
 
-Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
-Route::get('zoom/callback', [ZoomController::class, 'handleProviderCallback'])->name('zoom.callback');
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
 Route::delete('/zoom/meeting/{id}', [ZoomController::class, 'deleteMeeting']);
 
 Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
 
-Route::get('start', [ZoomController::class, 'index']);
-Route::any('zoom-meeting-create', [ZoomController::class, 'index']);
+
 
 
 // subject ======================================================================================
