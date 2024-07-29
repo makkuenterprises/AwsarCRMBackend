@@ -13,10 +13,10 @@ public function createExam(Request $request)
 {
     try { 
         // Validate the request
-        $request->validate([
-            'name' => 'required|string',
+        $request->validate([ 
+            'name' => 'required|string', 
             'start_time' => 'required|date_format:Y-m-d H:i:s',
-            'end_time' => 'required|date_format:Y-m-d H:i:s',
+            'end_time' => 'required|date_format:Y-m-d H:i:s|after:start_time',
             'batch_id' => 'required|exists:courses,id',
             'passing_marks' => 'required|numeric',
             'sections' => 'required|array',
@@ -73,15 +73,65 @@ public function createExam(Request $request)
             'message' => 'An error occurred while creating the exam',
             'error' => $e->getMessage()
         ], 500);
-    }
+    } 
 }
 
+
+// public function listExamsForBatch($batchId)
+// {
+//     try {
+//         // Fetch all exams associated with the specific batch
+//        $exams = Exam::where('batch_id', $batchId)
+//              ->orderBy('id', 'desc')
+//              ->get();
+
+//         // Check if exams are found
+//         if ($exams->isEmpty()) {
+//             return response()->json([
+//                 'status' => false, 
+//                 'code' => 404,
+//                 'message' => 'No exams found for the specified batch'
+//             ], 404);
+//         }
+
+//         // Return success response with exams data
+//         return response()->json([
+//             'status' => true,
+//             'code' => 200,
+//             'message' => 'Exams retrieved successfully',
+//             'data' => $exams
+//         ], 200);
+
+//     } catch (\Exception $e) {
+//         // Handle any errors
+//         return response()->json([
+//             'status' => false,
+//             'code' => 500,
+//             'message' => 'An error occurred while retrieving exams',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
 
 public function listExamsForBatch($batchId)
 {
     try {
-        // Fetch all exams associated with the specific batch
-        $exams = Exam::where('batch_id', $batchId)->get();
+        // Fetch all exams associated with the specific batch along with question count and marks
+        $exams = Exam::where('batch_id', $batchId)
+            ->with(['questions' => function($query) {
+                $query->select('id', 'exam_id', 'marks', 'negative_marks');
+            }])
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function($exam) {
+                // Calculate the total marks for the exam
+                $totalMarks = $exam->questions->sum('marks');
+                
+                // Include total marks in the exam data
+                $exam->total_marks = $totalMarks;
+                
+                return $exam;
+            });
 
         // Check if exams are found
         if ($exams->isEmpty()) {
@@ -92,7 +142,7 @@ public function listExamsForBatch($batchId)
             ], 404);
         }
 
-        // Return success response with exams data
+        // Return success response with exams data including total marks
         return response()->json([
             'status' => true,
             'code' => 200,
@@ -110,6 +160,7 @@ public function listExamsForBatch($batchId)
         ], 500);
     }
 }
+
 
 public function listQuestionsForExam($examId)
 {

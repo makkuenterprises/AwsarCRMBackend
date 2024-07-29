@@ -1,46 +1,62 @@
 <?php
 namespace App\Services;
 
-use League\OAuth2\Client\Provider\GenericProvider;
+use App\Models\ZoomToken;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
 
 class ZoomService
 {
-    protected $provider;
+    private $clientId;
+    private $clientSecret; 
+    private $accountId;
 
     public function __construct()
     {
-        $this->provider = new GenericProvider([
-            'clientId'                => config('zoom.client_id'),
-            'clientSecret'            => config('zoom.client_secret'),
-            'redirectUri'             => config('zoom.redirect_uri'),
-            'urlAuthorize'            => config('zoom.auth_url'),
-            'urlAccessToken'          => config('zoom.token_url'),
-            'urlResourceOwnerDetails' => ''
+        // Load credentials from config or environment
+        $this->clientId = '2sRe8kjIRHi3m0gqmDqMrQ';
+        $this->clientSecret = 'eOkWtXLchTSEHg8jV1ywqISRTDzLb34p';
+        $this->accountId = 'w_RHU_PQSMu_EoUd_ke9bA';
+    }
+
+    public function generateToken()
+    {
+        $credentials = base64_encode($this->clientId . ':' . $this->clientSecret);
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Basic ' . $credentials,
+            'Host' => 'zoom.us',
+        ])->asForm()->post('https://zoom.us/oauth/token', [
+            'grant_type' => 'account_credentials',
+            'account_id' => $this->accountId,
         ]);
+
+        if ($response->ok()) {
+            $data = $response->json();
+            $this->storeToken($data['access_token'], $data['expires_in']);
+            return $data;
+        }
+
+        return null;
     }
 
-    public function getAuthorizationUrl()
+    private function storeToken($accessToken, $expiresIn)
     {
-        $authorizationUrl = $this->provider->getAuthorizationUrl();
-        Session::put('oauth2state', $this->provider->getState());
-
-        return $authorizationUrl;
+        $expiresAt = now()->addSeconds($expiresIn);
+        ZoomToken::updateOrCreate(
+            ['id' => 1], // Assuming only one record is stored
+            ['access_token' => $accessToken, 'expires_at' => $expiresAt]
+        );
     }
 
-    public function getAccessToken($code)
+    public function getAccessToken()
     {
-        return $this->provider->getAccessToken('authorization_code', [
-            'code' => $code
-        ]);
-    }
+        $token = ZoomToken::find(1); // Assuming only one record is stored
+        if ($token && $token->expires_at > now()) {
+            return $token->access_token;
+        }
 
-    public function createMeeting($accessToken, $data)
-    {
-        $response = Http::withToken($accessToken)
-            ->post(config('zoom.api_url') . '/users/me/meetings', $data);
-
-        return $response->json();
+        // Token is expired or not present; generate a new one
+        $this->generateToken();
+        return ZoomToken::find(1)->access_token;
     }
 }

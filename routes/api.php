@@ -8,7 +8,7 @@ use App\Http\Controllers\api\TeacherAuthController;
 use App\Http\Controllers\api\StaffAuthController;
 use App\Http\Controllers\api\CourseController;
 use App\Http\Controllers\api\NotificationController;
-// use App\Http\Controllers\api\MeetingCreateController;
+// use App\Http\Controllers\api\MeetingCreateController; 
 use App\Http\Controllers\api\AttendanceController;
 use App\Http\Controllers\api\CourseEnrollementController;
 use App\Http\Controllers\api\StudyMaterialsController;
@@ -439,7 +439,7 @@ Route::get('questions/{id}', [QuestionController::class, 'show']);
 Route::post('questions/{id}', [QuestionController::class, 'update']);
 Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
 
-
+ 
 // EXAMS====================================================================================================
  
 
@@ -460,10 +460,13 @@ Route::post('/student-result', [ExamResponseController::class, 'getStudentResult
 Route::get('zoom/redirect', [ZoomController::class, 'redirectToProvider'])->name('zoom.redirect');
 Route::get('zoom/callback', [ZoomController::class, 'handleProviderCallback'])->name('zoom.callback');
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
+Route::delete('/zoom/meeting/{id}', [ZoomController::class, 'deleteMeeting']);
+
+Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
+Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
+
 Route::get('start', [ZoomController::class, 'index']);
 Route::any('zoom-meeting-create', [ZoomController::class, 'index']);
-
-
 
 
 // subject ======================================================================================
