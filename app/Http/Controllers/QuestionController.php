@@ -68,6 +68,9 @@ class QuestionController extends Controller
     public function show($id)
     {
         $question = Questions::find($id);
+         if ($question->image) {
+        $question->image = url(Storage::url($question->image));
+    }
         if (!$question) {
             return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
         }
