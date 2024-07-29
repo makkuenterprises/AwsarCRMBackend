@@ -119,7 +119,7 @@ public function listExamsForBatch($batchId)
         // Fetch all exams associated with the specific batch along with question count and marks
         $exams = Exam::where('batch_id', $batchId)
             ->with(['questions' => function($query) {
-                $query->select('id', 'exam_id', 'marks', 'negative_marks');
+                $query->select('questions.id', 'exam_id', 'marks', 'negative_marks');
             }])
             ->orderBy('id', 'desc')
             ->get()
@@ -160,6 +160,7 @@ public function listExamsForBatch($batchId)
         ], 500);
     }
 }
+
 
 
 public function listQuestionsForExam($examId)
