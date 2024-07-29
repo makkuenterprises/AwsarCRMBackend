@@ -166,7 +166,7 @@ public function createExam(Request $request)
             'error' => $e->getMessage()
         ], 500);
     }
-}
+} 
 
 
 public function listExamsForBatch($batchId)
