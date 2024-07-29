@@ -13,6 +13,12 @@ class QuestionController extends Controller
     public function index()
     {
           $questions = Questions::orderBy('created_at', 'desc')->get();
+             $questions->transform(function ($question) {
+        if ($question->image) {
+            $question->image = url(Storage::url($question->image));
+        }
+        return $question;
+    });
         return response()->json(['status' => 'success', 'data' => $questions]);
     }
 
