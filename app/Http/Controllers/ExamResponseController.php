@@ -577,43 +577,25 @@ public function getStudentAllResult(Request $request)
         ]);
 
         // Query to fetch exams for the specified course, optionally filtered by exam_id
-        $examsQuery = Exam::select('id', 'name', 'batch_id', 'start_time', 'end_time')
+        $examsQuery = Exam::select('id')
             ->where('batch_id', $validated['course_id']);
 
         if (isset($validated['exam_id'])) {
             $examsQuery->where('id', $validated['exam_id']);
         }
 
-        $exams = $examsQuery->get();
+        $examIds = $examsQuery->pluck('id');
 
-        $results = [];
-
-        foreach ($exams as $exam) {
-            // Fetch the student's exam response
-            $examResponse = ExamResponse::select('id', 'exam_id', 'student_id', 'total_marks', 'gained_marks', 'passing_marks', 'negative_marks', 'total_correct_answers', 'total_wrong_answers', 'created_at', 'updated_at')
-                ->where('exam_id', $exam->id)
-                ->where('student_id', $validated['student_id'])
-                ->first();
-
-            if ($examResponse) {
-                // Fetch question responses for the exam
-                $questionResponses = ExamQuestionResponse::select('id', 'exam_response_id', 'question_id', 'response', 'marks', 'negative_marks', 'your_marks', 'status')
-                    ->where('exam_response_id', $examResponse->id)
-                    ->with('question:id,question_text,question_type,options,correct_answers')
-                    ->get();
-
-                $results[] = [
-                    'exam' => $exam,
-                    'exam_response' => $examResponse,
-                    'question_responses' => $questionResponses
-                ];
-            }
-        }
+        // Fetch exam responses for the student in the specified course
+        $examResponses = ExamResponse::select('id', 'exam_id', 'student_id', 'total_marks', 'gained_marks', 'passing_marks', 'negative_marks', 'total_correct_answers', 'total_wrong_answers', 'created_at', 'updated_at')
+            ->whereIn('exam_id', $examIds)
+            ->where('student_id', $validated['student_id'])
+            ->get();
 
         return response()->json([
             'status' => true,
             'message' => 'Student result fetched successfully',
-            'data' => $results
+            'data' => $examResponses
         ], 200);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
