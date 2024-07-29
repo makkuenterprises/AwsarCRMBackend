@@ -215,8 +215,7 @@ public function updateMeeting(Request $request, $meetingId)
         ],
     ];
 
-
-    $client = new Client();
+    $client = new \GuzzleHttp\Client();
 
     try {
         $response = $client->request('PATCH', "https://api.zoom.us/v2/meetings/$meetingId", [
@@ -229,6 +228,26 @@ public function updateMeeting(Request $request, $meetingId)
 
         $body = $response->getBody();
         $zoomData = json_decode($body, true);
+
+        // Update meeting details in the database
+        $zoomMeeting = \App\Models\ZoomMeeting::where('meeting_id', $meetingId)->first();
+        if ($zoomMeeting) {
+            $zoomMeeting->update([
+                'uuid'         => $zoomData['uuid'] ?? null,
+                'host_id'      => $zoomData['host_id'],
+                'host_email'   => $zoomData['host_email'],
+                'topic'        => $zoomData['topic'],
+                'type'         => $zoomData['type'],
+                'status'       => $zoomData['status'],
+                'start_time'   => $zoomData['start_time'],
+                'duration'     => $zoomData['duration'],
+                'timezone'     => $zoomData['timezone'],
+                'agenda'       => $zoomData['agenda'],
+                'start_url'    => $zoomData['start_url'] ?? null,
+                'join_url'     => $zoomData['join_url'] ?? null,
+                'password'     => $zoomData['password'] ?? null,
+            ]);
+        }
 
         return response()->json([
             'success'  => true,

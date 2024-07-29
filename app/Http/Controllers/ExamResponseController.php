@@ -588,7 +588,7 @@ public function getStudentAllResult(Request $request)
         $examIds = $examsQuery->pluck('id');
 
         // Fetch exam responses for the student in the specified course with exam titles
-        $examResponses = ExamResponse::select('exam_responses.id', 'exam_responses.exam_id', 'exam_responses.student_id', 'exam_responses.total_marks', 'exam_responses.gained_marks', 'exam_responses.passing_marks', 'exam_responses.negative_marks', 'exam_responses.total_correct_answers', 'exam_responses.total_wrong_answers', 'exam_responses.created_at', 'exam_responses.updated_at', 'exams.title')
+        $examResponses = ExamResponse::select('exam_responses.id', 'exam_responses.exam_id', 'exam_responses.student_id', 'exam_responses.total_marks', 'exam_responses.gained_marks', 'exam_responses.passing_marks', 'exam_responses.negative_marks', 'exam_responses.total_correct_answers', 'exam_responses.total_wrong_answers', 'exam_responses.created_at', 'exam_responses.updated_at', 'exams.name')
             ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
             ->whereIn('exam_responses.exam_id', $examIds)
             ->where('exam_responses.student_id', $validated['student_id'])
