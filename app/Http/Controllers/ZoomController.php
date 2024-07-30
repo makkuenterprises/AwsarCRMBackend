@@ -53,7 +53,7 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
         'settings'   => [
             'host_video'        => false,
             'participant_video' => true,
-            'join_before_host'  => true,
+            'join_before_host'  => true, 
             'mute_upon_entry'   => true,
             'waiting_room'      => false,
             'auto_recording'    => 'none',
@@ -116,8 +116,7 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
     {
         try {
             // Fetch all records from the zoom_meetings table
-            $meetings = ZoomMeeting::all();
-
+            $meetings = ZoomMeeting::orderBy('created_at', 'desc')->get();
             return response()->json([
                 'success' => true,
                 'data' => $meetings
@@ -226,48 +225,57 @@ public function updateMeeting(Request $request, $meetingId)
             'json' => $meetingConfig,
         ]);
 
-        $body = $response->getBody();
+        $body = $response->getBody()->getContents();
         $zoomData = json_decode($body, true);
 
-        // Update meeting details in the database
+        // if (json_last_error() !== JSON_ERROR_NONE || empty($zoomData)) {
+        //     // Log the response for debugging
+        //     \Log::error('Invalid JSON response from Zoom API', ['response' => $body]);
+
+        //     return response()->json([
+        //         'success' => false,
+        //         'msg'     => 'Failed to update meeting',
+        //         'error'   => 'Invalid JSON response from API',
+        //     ], 500);
+        // }
+
+        // Update meeting details in the database using available data
         $zoomMeeting = \App\Models\ZoomMeeting::where('meeting_id', $meetingId)->first();
         if ($zoomMeeting) {
             $zoomMeeting->update([
-                'uuid'         => $zoomData['uuid'] ?? null,
-                'host_id'      => $zoomData['host_id'],
-                'host_email'   => $zoomData['host_email'],
-                'topic'        => $zoomData['topic'],
-                'type'         => $zoomData['type'],
-                'status'       => $zoomData['status'],
-                'start_time'   => $zoomData['start_time'],
-                'duration'     => $zoomData['duration'],
-                'timezone'     => $zoomData['timezone'],
-                'agenda'       => $zoomData['agenda'],
-                'start_url'    => $zoomData['start_url'] ?? null,
-                'join_url'     => $zoomData['join_url'] ?? null,
-                'password'     => $zoomData['password'] ?? null,
+                'topic'      => $request->input('topic', $zoomMeeting->topic),
+                'agenda'     => $request->input('agenda', $zoomMeeting->agenda),
+                'start_time' => $request->input('start_time', $zoomMeeting->start_time),
+                'duration'   => $request->input('duration', $zoomMeeting->duration),
+                'settings'   => json_encode($meetingConfig['settings']),
             ]);
         }
 
         return response()->json([
             'success'  => true,
             'msg'      => 'Meeting updated successfully',
-            'response' => $zoomData,
         ]);
     } catch (\GuzzleHttp\Exception\ClientException $e) {
+        $responseBody = $e->getResponse()->getBody()->getContents();
+        \Log::error('Client error from Zoom API', ['response' => $responseBody]);
+
         return response()->json([
             'success'  => false,
             'msg'      => 'Failed to update meeting',
-            'error'    => $e->getMessage(),
+            'error'    => 'Client error: ' . $e->getMessage(),
         ], $e->getResponse()->getStatusCode());
     } catch (\Exception $e) {
+        \Log::error('General error while updating Zoom meeting', ['error' => $e->getMessage()]);
+
         return response()->json([
             'success'  => false,
             'msg'      => 'Failed to update meeting',
-            'error'    => $e->getMessage(),
+            'error'    => 'General error: ' . $e->getMessage(),
         ], 500);
     }
 }
+
+
 
 
 } 

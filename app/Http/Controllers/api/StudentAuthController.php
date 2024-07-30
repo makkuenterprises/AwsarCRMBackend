@@ -115,7 +115,7 @@ class StudentAuthController extends Controller
                 [
                     'title' => 'Exams',
                     'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'settings',
+                    'to' => 'view-exam',
                 ],
                  [
                     'title' => 'Institute',
