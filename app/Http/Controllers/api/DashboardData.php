@@ -128,4 +128,95 @@ class DashboardData extends Controller
         }
         return $counts;
     }
+    public function getStudentOvervieww(Request $request)
+{
+    try {
+        $duration = $request->query('duration', 'month'); // default to monthly data
+        $data = $this->fetchChartDataa($duration);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Failed to fetch student data',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+private function fetchChartDataa($duration)
+{
+    if ($duration === 'week') {
+        return $this->getWeeklyDataa();
+    } elseif ($duration === 'year') {
+        return $this->getYearlyDataa();
+    } else {
+        return $this->getMonthlyDataa();
+    }
+}
+
+private function getMonthlyDataa()
+{
+    $counts = [];
+    $monthNames = [];
+
+    for ($month = 1; $month <= 12; $month++) {
+        $monthName = date('F', mktime(0, 0, 0, $month, 1));
+        $monthNames[] = $monthName;
+
+        $counts['total'][] = Student::whereMonth('created_at', $month)->count();
+        $counts['partial'][] = Student::whereMonth('created_at', $month)->where('payment_status', 'partial')->count();
+        $counts['full'][] = Student::whereMonth('created_at', $month)->where('payment_status', 'full')->count();
+        $counts['unpaid'][] = Student::whereMonth('created_at', $month)->where('payment_status', 'unpaid')->count();
+    }
+
+    return [
+        'months' => $monthNames,
+        'counts' => $counts
+    ];
+}
+
+private function getWeeklyDataa()
+{
+    $counts = [];
+    $weeks = range(1, 52);
+
+    foreach ($weeks as $week) {
+        $counts['total'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->count();
+        $counts['partial'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->where('payment_status', 'partial')->count();
+        $counts['full'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->where('payment_status', 'full')->count();
+        $counts['unpaid'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->where('payment_status', 'unpaid')->count();
+    }
+
+    return [
+        'weeks' => $weeks,
+        'counts' => $counts
+    ];
+}
+
+private function getYearlyDataa()
+{
+    $counts = [];
+    $years = [];
+    $currentYear = date('Y');
+    $startYear = $currentYear - 4; // last 5 years including current
+
+    for ($year = $startYear; $year <= $currentYear; $year++) {
+        $years[] = $year;
+
+        $counts['total'][] = Student::whereYear('created_at', $year)->count();
+        $counts['partial'][] = Student::whereYear('created_at', $year)->where('payment_status', 'partial')->count();
+        $counts['full'][] = Student::whereYear('created_at', $year)->where('payment_status', 'full')->count();
+        $counts['unpaid'][] = Student::whereYear('created_at', $year)->where('payment_status', 'unpaid')->count();
+    }
+
+    return [
+        'years' => $years,
+        'counts' => $counts
+    ];
+}
+
 }
