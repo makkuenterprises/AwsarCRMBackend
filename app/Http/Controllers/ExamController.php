@@ -234,7 +234,7 @@ public function listQuestionsForExam($examId)
                         'question_text' => $examQuestion->question->question_text,
                         'question_type' => $examQuestion->question->question_type,
                         'options' => $examQuestion->question->options,
-                        'correct_answers' => $examQuestion->question->correct_answers,
+                        // 'correct_answers' => $examQuestion->question->correct_answers,
                         'marks' => $examQuestion->marks,
                         'negative_marks' => $examQuestion->negative_marks,
                     ];
