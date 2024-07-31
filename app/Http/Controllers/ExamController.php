@@ -296,12 +296,7 @@ public function getExamDetails(Request $request)
         $endTime = Carbon::parse($exam->end_time);
         $durationInMinutes = $startTime->diffInMinutes($endTime);
 
-        // Retrieve related data for total marks, negative marks, and total questions
-        $totalMarks = ExamQuestion::where('exam_id', $exam->id)->sum('marks');
-        $negativeMarks = ExamQuestion::where('exam_id', $exam->id)->sum('negative_marks');
-        $totalQuestions = ExamQuestion::where('exam_id', $exam->id)->count();
-
-        // Retrieve sections for the exam and the number of questions per section
+        // Retrieve sections for the exam and calculate marks and question count per section
         $sections = Section::where('exam_id', $exam->id)->get(['id', 'name']);
 
         $sectionDetails = $sections->map(function ($section) use ($exam) {
@@ -309,11 +304,27 @@ public function getExamDetails(Request $request)
             $questionCount = ExamQuestion::where('exam_id', $exam->id)
                                          ->where('section_id', $section->id)
                                          ->count();
+
+            // Calculate total marks and negative marks for each section
+            $totalMarks = ExamQuestion::where('exam_id', $exam->id)
+                                      ->where('section_id', $section->id)
+                                      ->sum('marks');
+            $negativeMarks = ExamQuestion::where('exam_id', $exam->id)
+                                         ->where('section_id', $section->id)
+                                         ->sum('negative_marks');
+
             return [
                 'name' => $section->name,
-                'total_questions' => $questionCount
+                'total_questions' => $questionCount,
+                'total_marks' => $totalMarks,
+                'negative_marks' => $negativeMarks
             ];
         });
+
+        // Calculate total marks, negative marks, and total questions for the entire exam
+        $totalMarksExam = ExamQuestion::where('exam_id', $exam->id)->sum('marks');
+        $negativeMarksExam = ExamQuestion::where('exam_id', $exam->id)->sum('negative_marks');
+        $totalQuestionsExam = ExamQuestion::where('exam_id', $exam->id)->count();
 
         // Format the exam details
         $examDetails = [
@@ -324,10 +335,10 @@ public function getExamDetails(Request $request)
             'passing_marks' => $exam->passing_marks,
             'created_at' => $exam->created_at,
             'duration' => $durationInMinutes . ' minutes',
-            'total_marks' => $totalMarks,
-            'negative_marks' => $negativeMarks,
-            'total_questions' => $totalQuestions,
-            'sections' => $sectionDetails // Include sections with question counts
+            'total_marks' => $totalMarksExam,
+            'negative_marks' => $negativeMarksExam,
+            'total_questions' => $totalQuestionsExam,
+            'sections' => $sectionDetails // Include sections with question counts and marks
         ];
 
         // Return success response with exam data
