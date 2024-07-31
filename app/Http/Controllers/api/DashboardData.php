@@ -128,6 +128,7 @@ class DashboardData extends Controller
         }
         return $counts;
     }
+    
     public function getStudentOvervieww(Request $request)
 {
     try {
