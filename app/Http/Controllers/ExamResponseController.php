@@ -9,6 +9,7 @@ use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
 use App\Models\ExamQuestionResponse;
+use Carbon\Carbon;
 
 class ExamResponseController extends Controller
 {
@@ -26,6 +27,34 @@ public function storeExamResponse(Request $request)
             'responses.*.negative_marks' => 'nullable|numeric',
             'passing_marks' => 'nullable|numeric'
         ]);
+
+        // Fetch the exam details
+        $exam = Exam::find($validated['exam_id']);
+
+        // Parse the start and end time into Carbon instances
+        $startTime = Carbon::parse($exam->start_time);
+        $endTime = Carbon::parse($exam->end_time);
+
+        // Get the current time and date
+        $currentTime = Carbon::now();
+        $currentDate = $currentTime->toDateString(); // Get date in "Y-m-d" format
+        $examDate = $startTime->toDateString();      // Get exam date in "Y-m-d" format
+
+        // Check if the current date matches the exam date
+        if ($currentDate !== $examDate) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Exam submission is only allowed on the exam date',
+            ], 403);
+        }
+
+        // Check if the current time is within the allowed time frame
+        if ($currentTime->lt($startTime) || $currentTime->gt($endTime)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Exam submission is not allowed outside the designated time period',
+            ], 403);
+        }
 
         // Initialize counters
         $totalMarks = 0;

@@ -211,8 +211,8 @@ public function listExamsForBatch($batchId)
         ], 500);
     }
 }
-
-public function listQuestionsForExam($examId)
+ 
+public function listQuestionsForExam($examId) 
 {
     try {
         // Fetch the exam
