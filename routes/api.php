@@ -444,6 +444,7 @@ Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
  
 
 Route::post('/exams', [ExamController::class, 'createExam']);
+Route::post('/exam/priview', [ExamController::class, 'getExamDetails']);
 Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch']);
 Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
  

@@ -7,6 +7,8 @@ use App\Models\Question;
 use App\Models\ExamQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 
 class ExamController extends Controller 
 { 
@@ -259,6 +261,77 @@ public function listQuestionsForExam($examId)
         ], 500);
     }
 }
+public function getExamDetails(Request $request)
+{
+    try {
+        // Retrieve batchId and examId from the request
+        $batchId = $request->input('batchId');
+        $examId = $request->input('examId');
 
+        // Validate the inputs (optional but recommended)
+        if (!$batchId || !$examId) {
+            return response()->json([
+                'status' => false,
+                'code' => 400,
+                'message' => 'batchId and examId are required'
+            ], 400);
+        }
+
+        // Fetch the exam associated with the specific batch and exam ID
+        $exam = Exam::where('batch_id', $batchId)
+                    ->where('id', $examId)
+                    ->first(['id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at']);
+
+        // Check if the exam is found
+        if (!$exam) {
+            return response()->json([
+                'status' => false, 
+                'code' => 404,
+                'message' => 'No exam found for the specified batch and exam ID'
+            ], 404);
+        }
+
+        // Calculate the duration
+        $startTime = Carbon::parse($exam->start_time);
+        $endTime = Carbon::parse($exam->end_time);
+        $durationInMinutes = $startTime->diffInMinutes($endTime);
+
+        // Retrieve related data for total marks, negative marks, and total questions
+        $totalMarks = ExamQuestion::where('exam_id', $exam->id)->sum('marks');
+        $negativeMarks = ExamQuestion::where('exam_id', $exam->id)->sum('negative_marks');
+        $totalQuestions = ExamQuestion::where('exam_id', $exam->id)->count();
+
+        // Format the exam details
+        $examDetails = [
+            'id' => $exam->id,
+            'name' => $exam->name,
+            'start_time' => $exam->start_time,
+            'end_time' => $exam->end_time,
+            'passing_marks' => $exam->passing_marks,
+            'created_at' => $exam->created_at,
+            'duration' => $durationInMinutes . ' minutes',
+            'total_marks' => $totalMarks,
+            'negative_marks' => $negativeMarks,
+            'total_questions' => $totalQuestions
+        ];
+
+        // Return success response with exam data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Exam retrieved successfully',
+            'data' => $examDetails
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving the exam',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 }
 
