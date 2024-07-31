@@ -268,7 +268,7 @@ public function getExamDetails(Request $request)
         $batchId = $request->input('batchId');
         $examId = $request->input('examId');
 
-        // Validate the inputs (optional but recommended)
+        // Validate the inputs
         if (!$batchId || !$examId) {
             return response()->json([
                 'status' => false,
@@ -285,7 +285,7 @@ public function getExamDetails(Request $request)
         // Check if the exam is found
         if (!$exam) {
             return response()->json([
-                'status' => false, 
+                'status' => false,
                 'code' => 404,
                 'message' => 'No exam found for the specified batch and exam ID'
             ], 404);
@@ -301,6 +301,20 @@ public function getExamDetails(Request $request)
         $negativeMarks = ExamQuestion::where('exam_id', $exam->id)->sum('negative_marks');
         $totalQuestions = ExamQuestion::where('exam_id', $exam->id)->count();
 
+        // Retrieve sections for the exam and the number of questions per section
+        $sections = Section::where('exam_id', $exam->id)->get(['id', 'name']);
+
+        $sectionDetails = $sections->map(function ($section) use ($exam) {
+            // Count questions in each section
+            $questionCount = ExamQuestion::where('exam_id', $exam->id)
+                                         ->where('section_id', $section->id)
+                                         ->count();
+            return [
+                'name' => $section->name,
+                'total_questions' => $questionCount
+            ];
+        });
+
         // Format the exam details
         $examDetails = [
             'id' => $exam->id,
@@ -312,7 +326,8 @@ public function getExamDetails(Request $request)
             'duration' => $durationInMinutes . ' minutes',
             'total_marks' => $totalMarks,
             'negative_marks' => $negativeMarks,
-            'total_questions' => $totalQuestions
+            'total_questions' => $totalQuestions,
+            'sections' => $sectionDetails // Include sections with question counts
         ];
 
         // Return success response with exam data
@@ -333,5 +348,6 @@ public function getExamDetails(Request $request)
         ], 500);
     }
 }
+
 }
 
