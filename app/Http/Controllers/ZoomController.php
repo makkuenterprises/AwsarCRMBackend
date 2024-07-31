@@ -181,6 +181,33 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
             }
         }
     }
+
+    public function viewMeeting($meetingId)
+{
+    // Retrieve the meeting data from the database using the meeting ID
+    $zoomMeeting = \App\Models\ZoomMeeting::where('meeting_id', $meetingId)->first();
+
+    // Check if the meeting exists
+    if (!$zoomMeeting) {
+        return response()->json([
+            'success' => false,
+            'msg'     => 'Meeting not found',
+        ], 404);
+    }
+
+    // Return the meeting data
+    return response()->json([
+        'success' => true,
+        'data'    => [
+            'topic'      => $zoomMeeting->topic,
+            'agenda'     => $zoomMeeting->agenda,
+            'start_time' => $zoomMeeting->start_time,
+            'duration'   => $zoomMeeting->duration,
+            'settings'   => json_decode($zoomMeeting->settings, true), // Assuming settings are stored as JSON
+        ],
+    ]);
+}
+
 public function updateMeeting(Request $request, $meetingId)
 {
     $request->validate([

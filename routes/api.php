@@ -457,11 +457,12 @@ Route::post('student/responses/short-answer', [ExamResponseController::class, 'g
 Route::post('/student-result', [ExamResponseController::class, 'getStudentResult']);
 Route::post('all/student-result', [ExamResponseController::class, 'getStudentAllResult']);
 
-
+ 
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
 Route::delete('/zoom/meeting/{id}', [ZoomController::class, 'deleteMeeting']);
 
 Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
+Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']);
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
 
 
