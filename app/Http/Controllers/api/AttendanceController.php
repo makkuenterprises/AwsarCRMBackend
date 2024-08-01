@@ -637,7 +637,6 @@ public function getAttendanceByDateStudent(Request $request)
 
 
 
-
 public function getStudentBatchDetails(Request $request)
 {
     // Validate request data
@@ -683,10 +682,15 @@ public function getStudentBatchDetails(Request $request)
         $currentMonth = date('m');
         $currentYear = date('Y');
 
-        // Count the number of days the student was absent in the current month
+        // Count the number of days the student was absent and present in the current month
         $daysAbsentCurrentMonth = $attendances->filter(function ($attendance) use ($currentMonth, $currentYear) {
             $attendanceDate = \DateTime::createFromFormat('Y-m-d', $attendance->date);
             return $attendance->status === 'absent' && $attendanceDate->format('m') == $currentMonth && $attendanceDate->format('Y') == $currentYear;
+        })->count();
+
+        $daysPresentCurrentMonth = $attendances->filter(function ($attendance) use ($currentMonth, $currentYear) {
+            $attendanceDate = \DateTime::createFromFormat('Y-m-d', $attendance->date);
+            return $attendance->status === 'present' && $attendanceDate->format('m') == $currentMonth && $attendanceDate->format('Y') == $currentYear;
         })->count();
 
         // Return success response with student batch details and attendance info
@@ -698,12 +702,13 @@ public function getStudentBatchDetails(Request $request)
                     'student_name' => $studentBatchDetails->student_name,
                     'phone' => $studentBatchDetails->phone,
                     'course_name' => $studentBatchDetails->course_name,
-                    'father_name' => $studentBatchDetails->fname, // Make sure 'fname' is present in the 'students' table
-                    'father_phone' => $studentBatchDetails->fphone, // Make sure 'fphone' is present in the 'students' table
+                    'father_name' => $studentBatchDetails->fname, // Ensure 'fname' is correct and in the 'students' table
+                    'father_phone' => $studentBatchDetails->fphone, // Ensure 'fphone' is correct and in the 'students' table
                 ],
                 'days_absent' => $daysAbsent,
                 'days_present' => $daysPresent,
-                'days_absent_current_month' => $daysAbsentCurrentMonth
+                'days_absent_current_month' => $daysAbsentCurrentMonth,
+                'days_present_current_month' => $daysPresentCurrentMonth
             ]
         ]);
     } catch (\Exception $e) {
