@@ -623,19 +623,65 @@ public function teacherList()
             $query->where('teachers.id', $teacherId); // Explicitly specify teacher's table id
         })->pluck('courses.id'); // Explicitly specify course's table id
 
-        // Retrieve students enrolled in these courses
+        // Retrieve students enrolled in these courses with all relevant fields
         $students = DB::table('students')
             ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
             ->whereIn('courses_enrollements.course_id', $courses)
-            ->select('students.id as student_id', 'students.name as student_name', 'students.email as student_email', 'students.phone as student_phone') // Add more fields if needed
+            ->select(
+                'students.id',
+                'students.name',
+                'students.email',
+                'students.phone',
+                'students.street',
+                'students.postal_code',
+                'students.city',
+                'students.state',
+                'students.image',
+                'students.fname',
+                'students.femail',
+                'students.fphone',
+                'students.fstreet',
+                'students.fpostal_code',
+                'students.fcity',
+                'students.fstate',
+                'students.paymentType',
+                'students.dob',
+                'students.payment_status'
+            )
             ->distinct()
             ->get();
+
+        // Map the student data
+        $studentList = $students->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'street' => $user->street,
+                'postal_code' => $user->postal_code,
+                'city' => $user->city,
+                'state' => $user->state,
+                'image' => $user->image ? url('/Student/' . $user->image) : null, // Assuming $user->image contains the relative path
+                'fname' => $user->fname,
+                'femail' => $user->femail,
+                'fphone' => $user->fphone,
+                'fstreet' => $user->fstreet,
+                'fpostal_code' => $user->fpostal_code,
+                'fcity' => $user->fcity,
+                'fstate' => $user->fstate,
+                'paymentType' => $user->paymentType,
+                'dob' => $user->dob,
+                'payment_status' => $user->payment_status,
+                'course' => $user->course_names ?? 'Not Enrolled'
+            ];
+        });
 
         return response()->json([
             'status' => true,
             'code' => 200,
             'message' => 'Students enrolled in the courses retrieved successfully',
-            'students' => $students
+            'students' => $studentList
         ], 200);
     } catch (\Exception $e) {
         return response()->json([
