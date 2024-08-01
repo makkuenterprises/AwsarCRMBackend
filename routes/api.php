@@ -487,3 +487,5 @@ Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
 Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
 
 
+
+Route::get('/student-list-of-teacher/{id}', [ImagesSlidesController::class, 'studentListForTeacher']);

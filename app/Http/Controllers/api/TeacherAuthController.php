@@ -614,4 +614,37 @@ public function teacherList()
 
         
     }
+
+    public function studentListForTeacher($teacherId)
+{
+    try {
+        // Retrieve all courses taught by the teacher
+        $courses = Course::whereHas('teachers', function($query) use ($teacherId) {
+            $query->where('id', $teacherId);
+        })->pluck('id');
+
+        // Retrieve students enrolled in these courses
+        $students = DB::table('students')
+            ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+            ->whereIn('courses_enrollements.course_id', $courses)
+            ->select('students.id as student_id', 'students.name as student_name', 'students.email as student_email', 'students.phone as student_phone') // Add more fields if needed
+            ->distinct()
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Students enrolled in the courses retrieved successfully',
+            'students' => $students
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving students',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }
