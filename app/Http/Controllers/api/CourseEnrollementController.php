@@ -210,7 +210,7 @@ public function PaymentHistory(Request $request)
         // Retrieve the total fee for the course
         $course = DB::table('courses')
             ->where('id', $request->course_id)
-            ->first(['total_fee']); // Assuming the column is named 'total_fee'
+            ->first(['fee']); // Assuming the column is named 'total_fee'
 
         if (!$course) {
             return response()->json([
@@ -253,7 +253,7 @@ public function PaymentHistory(Request $request)
         // Calculate total paid amount
         $totalPaidAmount = $paymentHistory->sum('paid_amount');
         // Calculate outstanding balance
-        $outstandingAmount = $course->total_fee - $totalPaidAmount;
+        $outstandingAmount = $course->fee - $totalPaidAmount;
 
         // Return success response with payment history and additional data
         return response()->json([
@@ -262,7 +262,7 @@ public function PaymentHistory(Request $request)
             'data' => [
                 'payment_history' => $paymentHistory,
                 'fee_paid' => $totalPaidAmount,
-                'fee_payable' => $course->total_fee,
+                'fee_payable' => $course->fee,
                 'outstanding' => $outstandingAmount,
                 'due_date' => $enrollment->due_date
             ]
