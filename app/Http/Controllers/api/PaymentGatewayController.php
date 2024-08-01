@@ -123,98 +123,196 @@ $otherPaymentStatusStudentsCount = DB::table('students')
         }
     }
 
-    public function getStudentOverview(Request $request)
-    {
-        try {
-            $data = $this->fetchChartData();
+    // public function getStudentOverview(Request $request)
+    // {
+    //     try {
+    //         $data = $this->fetchChartData();
 
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Failed to fetch student data',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $data,
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'error' => 'Failed to fetch student data',
+    //             'message' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    // private function fetchChartData()
+    // {
+    //     $data = [];
+
+    //     // Fetch data for week
+    //     $data['week'] = [
+    //         'studentsCount' => $this->getWeeklyCounts('total'),
+    //         'paidPayments' => $this->getWeeklyCounts('full'),
+    //         'pendingPayments' => $this->getWeeklyCounts('partial'),
+    //     ];
+
+    //     // Fetch data for month
+    //     $data['month'] = [
+    //         'studentsCount' => $this->getMonthlyCounts('total'),
+    //         'paidPayments' => $this->getMonthlyCounts('full'),
+    //         'pendingPayments' => $this->getMonthlyCounts('partial'),
+    //     ];
+
+    //     // Fetch data for year
+    //     $data['year'] = [
+    //         'studentsCount' => $this->getYearlyCounts('total'),
+    //         'paidPayments' => $this->getYearlyCounts('full'),
+    //         'pendingPayments' => $this->getYearlyCounts('partial'),
+    //     ];
+
+    //     return $data;
+    // }
+
+    // private function getMonthlyCounts($type)
+    // {
+    //     $counts = [];
+    //     for ($month = 1; $month <= 12; $month++) {
+    //         $query = DB::table('students')
+    //             ->whereMonth('students.created_at', $month);
+
+    //         if ($type !== 'total') {
+    //             $query->where('students.payment_status', $type);
+    //         }
+
+    //         $counts[] = $query->count('students.id');
+    //     }
+    //     return $counts;
+    // }
+
+    // private function getWeeklyCounts($type)
+    // {
+    //     $counts = [];
+    //     for ($week = 1; $week <= 52; $week++) {
+    //         $query = DB::table('students')
+    //             ->whereRaw('WEEKOFYEAR(students.created_at) = ?', [$week]);
+
+    //         if ($type !== 'total') {
+    //             $query->where('students.payment_status', $type);
+    //         }
+
+    //         $counts[] = $query->count('students.id');
+    //     }
+    //     return $counts;
+    // }
+
+    // private function getYearlyCounts($type)
+    // {
+    //     $counts = [];
+    //     $currentYear = date('Y');
+    //     for ($year = $currentYear - 4; $year <= $currentYear; $year++) {
+    //         $query = DB::table('students')
+    //             ->whereYear('students.created_at', $year);
+
+    //         if ($type !== 'total') { 
+    //             $query->where('students.payment_status', $type);
+    //         }
+
+    //         $counts[] = $query->count('students.id');
+    //     }
+    //     return $counts;
+    // }
+    private function fetchChartData($duration)
+{
+    switch ($duration) {
+        case 'week':
+            return ['week' => $this->getWeeklyData()];
+        case 'year':
+            return ['year' => $this->getYearlyData()];
+        default:
+            return ['month' => $this->getMonthlyData()];
+    }
+}
+private function getMonthlyData()
+{
+    $counts = [];
+    $months = [];
+    $currentYear = date('Y');
+
+    for ($month = 1; $month <= 12; $month++) {
+        $monthName = date('F', mktime(0, 0, 0, $month, 10)); // Get month name
+        $months[] = $monthName;
+
+        $counts['studentsCount'][] = Student::whereYear('created_at', $currentYear)
+                                            ->whereMonth('created_at', $month)
+                                            ->count();
+        $counts['paidPayments'][] = Student::whereYear('created_at', $currentYear)
+                                           ->whereMonth('created_at', $month)
+                                           ->where('payment_status', 'paid')
+                                           ->count();
+        $counts['pendingPayments'][] = Student::whereYear('created_at', $currentYear)
+                                              ->whereMonth('created_at', $month)
+                                              ->where('payment_status', 'pending')
+                                              ->count();
     }
 
-    private function fetchChartData()
-    {
-        $data = [];
+    return [
+        'labels' => $months,
+        'studentsCount' => $counts['studentsCount'],
+        'paidPayments' => $counts['paidPayments'],
+        'pendingPayments' => $counts['pendingPayments']
+    ];
+}
+private function getWeeklyData()
+{
+    $counts = [];
+    $weeks = [];
+    $currentYear = date('Y');
 
-        // Fetch data for week
-        $data['week'] = [
-            'studentsCount' => $this->getWeeklyCounts('total'),
-            'paidPayments' => $this->getWeeklyCounts('full'),
-            'pendingPayments' => $this->getWeeklyCounts('partial'),
-        ];
+    for ($week = 1; $week <= 52; $week++) {
+        $weekLabel = sprintf('%02d, %s', $week, $currentYear); // Format week with leading zero and year
+        $weeks[] = $weekLabel;
 
-        // Fetch data for month
-        $data['month'] = [
-            'studentsCount' => $this->getMonthlyCounts('total'),
-            'paidPayments' => $this->getMonthlyCounts('full'),
-            'pendingPayments' => $this->getMonthlyCounts('partial'),
-        ];
-
-        // Fetch data for year
-        $data['year'] = [
-            'studentsCount' => $this->getYearlyCounts('total'),
-            'paidPayments' => $this->getYearlyCounts('full'),
-            'pendingPayments' => $this->getYearlyCounts('partial'),
-        ];
-
-        return $data;
+        $counts['studentsCount'][] = Student::whereYear('created_at', $currentYear)
+                                            ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week])
+                                            ->count();
+        $counts['paidPayments'][] = Student::whereYear('created_at', $currentYear)
+                                           ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week])
+                                           ->where('payment_status', 'paid')
+                                           ->count();
+        $counts['pendingPayments'][] = Student::whereYear('created_at', $currentYear)
+                                              ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week])
+                                              ->where('payment_status', 'pending')
+                                              ->count();
     }
 
-    private function getMonthlyCounts($type)
-    {
-        $counts = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $query = DB::table('students')
-                ->whereMonth('students.created_at', $month);
+    return [
+        'labels' => $weeks,
+        'studentsCount' => $counts['studentsCount'],
+        'paidPayments' => $counts['paidPayments'],
+        'pendingPayments' => $counts['pendingPayments']
+    ];
+}
+private function getYearlyData()
+{
+    $counts = [];
+    $years = [];
+    $currentYear = date('Y');
+    $startYear = $currentYear - 4; // last 5 years including current
 
-            if ($type !== 'total') {
-                $query->where('students.payment_status', $type);
-            }
+    for ($year = $startYear; $year <= $currentYear; $year++) {
+        $years[] = (string)$year;
 
-            $counts[] = $query->count('students.id');
-        }
-        return $counts;
+        $counts['studentsCount'][] = Student::whereYear('created_at', $year)->count();
+        $counts['paidPayments'][] = Student::whereYear('created_at', $year)
+                                           ->where('payment_status', 'paid')
+                                           ->count();
+        $counts['pendingPayments'][] = Student::whereYear('created_at', $year)
+                                              ->where('payment_status', 'pending')
+                                              ->count();
     }
 
-    private function getWeeklyCounts($type)
-    {
-        $counts = [];
-        for ($week = 1; $week <= 52; $week++) {
-            $query = DB::table('students')
-                ->whereRaw('WEEKOFYEAR(students.created_at) = ?', [$week]);
+    return [
+        'labels' => $years,
+        'studentsCount' => $counts['studentsCount'],
+        'paidPayments' => $counts['paidPayments'],
+        'pendingPayments' => $counts['pendingPayments']
+    ];
+}
 
-            if ($type !== 'total') {
-                $query->where('students.payment_status', $type);
-            }
-
-            $counts[] = $query->count('students.id');
-        }
-        return $counts;
-    }
-
-    private function getYearlyCounts($type)
-    {
-        $counts = [];
-        $currentYear = date('Y');
-        for ($year = $currentYear - 4; $year <= $currentYear; $year++) {
-            $query = DB::table('students')
-                ->whereYear('students.created_at', $year);
-
-            if ($type !== 'total') { 
-                $query->where('students.payment_status', $type);
-            }
-
-            $counts[] = $query->count('students.id');
-        }
-        return $counts;
-    }
 }
