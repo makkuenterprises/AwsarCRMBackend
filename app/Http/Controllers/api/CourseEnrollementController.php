@@ -210,7 +210,7 @@ public function PaymentHistory(Request $request)
         // Retrieve the total fee for the course
         $course = DB::table('courses')
             ->where('id', $request->course_id)
-            ->first(['fee']); // Assuming the column is named 'total_fee'
+            ->first(['fee']); // Column for total fee
 
         if (!$course) {
             return response()->json([
@@ -224,7 +224,7 @@ public function PaymentHistory(Request $request)
         $enrollment = DB::table('courses_enrollements')
             ->where('student_id', $request->student_id)
             ->where('course_id', $request->course_id)
-            ->first(['due_date']); // Assuming the column is named 'due_date'
+            ->first(['due_date']); // Column for due date
 
         if (!$enrollment) {
             return response()->json([
@@ -277,6 +277,5 @@ public function PaymentHistory(Request $request)
         ], 500);
     }
 }
-
 
 }
