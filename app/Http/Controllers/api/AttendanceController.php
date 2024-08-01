@@ -703,7 +703,7 @@ $studentBatchDetails = DB::table('students')
                     'father_name' => $studentBatchDetails->fname,
                     'father_phone' => $studentBatchDetails->fphone,
                 ],
-                'days_absent' => $daysAbsent,
+                // 'days_absent' => $daysAbsent,
                 'days_absent_current_month' => $daysAbsentCurrentMonth
             ]
         ]);
