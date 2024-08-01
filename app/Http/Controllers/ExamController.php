@@ -261,6 +261,7 @@ public function listQuestionsForExam($examId)
         ], 500);
     }
 }
+
 public function getExamDetails(Request $request)
 {
     try {
@@ -359,6 +360,58 @@ public function getExamDetails(Request $request)
         ], 500);
     }
 }
+
+public function getExamsForStudent(Request $request)
+{
+    try {
+        // Retrieve the student ID from the request
+        $studentId = $request->input('student_id');
+
+        // Validate the student ID
+        if (!$studentId) {
+            return response()->json([
+                'status' => false,
+                'code' => 400,
+                'message' => 'Student ID is required'
+            ], 400);
+        }
+
+        // Fetch the exams for the courses the student is enrolled in
+        $exams = DB::table('courses_enrollments')
+            ->join('courses', 'courses_enrollments.course_id', '=', 'courses.id')
+            ->join('exams', 'courses.id', '=', 'exams.course_id')
+            ->where('courses_enrollments.student_id', $studentId)
+            ->select('exams.id', 'exams.name', 'exams.start_time', 'exams.end_time', 'exams.passing_marks', 'exams.created_at')
+            ->get();
+
+        // Check if exams are found
+        if ($exams->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'No exams found for the specified student'
+            ], 404);
+        }
+
+        // Return success response with exam data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Exams retrieved successfully',
+            'data' => $exams
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving exams',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 }
 
