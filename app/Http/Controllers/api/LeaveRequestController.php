@@ -433,7 +433,7 @@ public function viewLeaveRequestListForFaculty(Request $request)
         // Format the leave requests data
         $formattedLeaveRequests = $leaveRequests->map(function ($request) {
             return [
-                'lr@ID' => 'lr@' . $request->id,
+                'lr@ID' => 'LR@' . $request->id,
                 'teacher_id' => $request->teacher_id,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
