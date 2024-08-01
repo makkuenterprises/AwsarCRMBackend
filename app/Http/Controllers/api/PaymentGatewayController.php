@@ -217,8 +217,10 @@ $otherPaymentStatusStudentsCount = DB::table('students')
     //     }
     //     return $counts;
     // }
+
     private function fetchChartData($duration)
 {
+    dd($duration);
     switch ($duration) {
         case 'week':
             return ['week' => $this->getWeeklyData()];
