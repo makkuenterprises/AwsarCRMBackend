@@ -637,6 +637,7 @@ public function getAttendanceByDateStudent(Request $request)
 
 
 
+
 public function getStudentBatchDetails(Request $request)
 {
     // Validate request data
@@ -661,7 +662,7 @@ public function getStudentBatchDetails(Request $request)
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('students.id', $studentId)
             ->where('courses.id', $courseId)
-            ->select('students.*', 'students.name as student_name', 'courses_enrollements.*', 'courses.name as course_name', 'courses.fname', 'courses.fphone')
+            ->select('students.*', 'students.name as student_name', 'courses_enrollements.*', 'courses.name as course_name')
             ->first();
 
         if (!$studentBatchDetails) {
@@ -697,8 +698,8 @@ public function getStudentBatchDetails(Request $request)
                     'student_name' => $studentBatchDetails->student_name,
                     'phone' => $studentBatchDetails->phone,
                     'course_name' => $studentBatchDetails->course_name,
-                    'father_name' => $studentBatchDetails->fname,
-                    'father_phone' => $studentBatchDetails->fphone,
+                    'father_name' => $studentBatchDetails->fname, // Make sure 'fname' is present in the 'students' table
+                    'father_phone' => $studentBatchDetails->fphone, // Make sure 'fphone' is present in the 'students' table
                 ],
                 'days_absent' => $daysAbsent,
                 'days_present' => $daysPresent,
