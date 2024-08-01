@@ -349,33 +349,80 @@ public function viewLeaveRequestList()
 // list for faculty
 
 
-public function viewLeaveRequestListForFaculty(Request $request)
-{
-    try {
+// public function viewLeaveRequestListForFaculty(Request $request)
+// {
+//     try {
 
-        $validation = Validator::make($request->all(), [
-        'user_id' => ['required', 'string'],
-        'role' => ['required', 'string'],
-    ]);
+//         $validation = Validator::make($request->all(), [
+//         'user_id' => ['required', 'string'],
+//         'role' => ['required', 'string'],
+//     ]);
 
-    // Check if validation fails
-    if ($validation->fails()) {
-        return response()->json([ 
-            'status' => 'error',
-            'message' => 'Validation Error',
-            'errors' => $validation->errors(),
-        ], 400);
-    }
+//     // Check if validation fails
+//     if ($validation->fails()) {
+//         return response()->json([ 
+//             'status' => 'error',
+//             'message' => 'Validation Error',
+//             'errors' => $validation->errors(),
+//         ], 400);
+//     }
 
-        // Retrieve leave requests for the specified faculty ID
-       $leave_requests = LeaveRequest::where('role', $request->input('role'))
-                              ->where('teacher_id', $request->input('user_id'))
-                              ->orderBy('created_at', 'asc')->get();
+//         // Retrieve leave requests for the specified faculty ID
+//        $leave_requests = LeaveRequest::where('role', $request->input('role'))
+//                               ->where('teacher_id', $request->input('user_id'))
+//                               ->orderBy('created_at', 'asc')->get();
                               
 
 
+//         // Check if leave requests exist
+//         if ($leave_requests->isEmpty()) {
+//             return response()->json([
+//                 'status' => 'success',
+//                 'message' => 'No leave requests found for the faculty',
+//                 'data' => [],
+//             ], 200);
+//         }
+
+//         // Return JSON response with leave requests data
+//         return response()->json([
+//             'status' => 'success',
+//             'data' => $leave_requests,
+//         ], 200);
+//     } catch (\Exception $e) {
+//         // Return error response if an exception occurs
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Failed to fetch leave requests',
+//             'error' => $e->getMessage(),
+//         ], 500); 
+//     }
+// }
+public function viewLeaveRequestListForFaculty(Request $request)
+{
+    try {
+        // Validate the request data
+        $validation = Validator::make($request->all(), [
+            'user_id' => ['required', 'string'],
+            'role' => ['required', 'string'],
+        ]);
+
+        // Check if validation fails
+        if ($validation->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation Error',
+                'errors' => $validation->errors(),
+            ], 400);
+        }
+
+        // Retrieve leave requests for the specified faculty ID
+        $leaveRequests = LeaveRequest::where('role', $request->input('role'))
+                                     ->where('teacher_id', $request->input('user_id'))
+                                     ->orderBy('created_at', 'asc')
+                                     ->get();
+
         // Check if leave requests exist
-        if ($leave_requests->isEmpty()) {
+        if ($leaveRequests->isEmpty()) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'No leave requests found for the faculty',
@@ -383,18 +430,38 @@ public function viewLeaveRequestListForFaculty(Request $request)
             ], 200);
         }
 
-        // Return JSON response with leave requests data
+        // Format the leave requests data
+        $formattedLeaveRequests = $leaveRequests->map(function ($request) {
+            return [
+                'lr@ID' => 'lr@' . $request->id,
+                'teacher_id' => $request->teacher_id,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'message' => $request->message,
+                'status' => $request->status,
+                'created_at' => $request->created_at->toIso8601String(),
+                'updated_at' => $request->updated_at->toIso8601String(),
+                'approved_by' => $request->approved_by,
+                'role' => $request->role,
+                'remark' => $request->remark,
+                'rejected_by' => $request->rejected_by
+            ];
+        });
+
+        // Return JSON response with formatted leave requests data
         return response()->json([
             'status' => 'success',
-            'data' => $leave_requests,
+            'data' => $formattedLeaveRequests,
         ], 200);
+
     } catch (\Exception $e) {
         // Return error response if an exception occurs
         return response()->json([
             'status' => 'error',
             'message' => 'Failed to fetch leave requests',
             'error' => $e->getMessage(),
-        ], 500); 
+        ], 500);
     }
 }
+
 } 
