@@ -398,8 +398,7 @@ public function getExamsForStudent(Request $request)
         // Fetch exams associated with the found courses
         $exams = DB::table('exams')
             ->whereIn('batch_id', $courseIds)
-            ->select('id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at')
-            ->get();
+            ->get(['id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at']);
 
         // Check if exams are found
         if ($exams->isEmpty()) {
@@ -410,12 +409,65 @@ public function getExamsForStudent(Request $request)
             ], 404);
         }
 
+        // Prepare the exam details
+        $examDetails = $exams->map(function ($exam) {
+            // Calculate the duration in minutes
+            $startTime = Carbon::parse($exam->start_time);
+            $endTime = Carbon::parse($exam->end_time);
+            $durationInMinutes = $startTime->diffInMinutes($endTime);
+
+            // Retrieve sections for the exam and calculate marks and question count per section
+            $sections = Section::where('exam_id', $exam->id)->get(['id', 'name']);
+
+            $sectionDetails = $sections->map(function ($section) use ($exam) {
+                // Count questions in each section
+                $questionCount = ExamQuestion::where('exam_id', $exam->id)
+                                             ->where('section_id', $section->id)
+                                             ->count();
+
+                // Calculate total marks and negative marks for each section
+                $totalMarks = ExamQuestion::where('exam_id', $exam->id)
+                                          ->where('section_id', $section->id)
+                                          ->sum('marks');
+                $negativeMarks = ExamQuestion::where('exam_id', $exam->id)
+                                             ->where('section_id', $section->id)
+                                             ->sum('negative_marks');
+
+                return [
+                    'name' => $section->name,
+                    'total_questions' => $questionCount,
+                    'total_marks' => $totalMarks,
+                    'negative_marks' => $negativeMarks
+                ];
+            });
+
+            // Calculate total marks, negative marks, and total questions for the entire exam
+            $totalMarksExam = ExamQuestion::where('exam_id', $exam->id)->sum('marks');
+            $negativeMarksExam = ExamQuestion::where('exam_id', $exam->id)->sum('negative_marks');
+            $totalQuestionsExam = ExamQuestion::where('exam_id', $exam->id)->count();
+
+            // Format the exam details
+            return [
+                'id' => $exam->id,
+                'name' => $exam->name,
+                'start_time' => $exam->start_time,
+                'end_time' => $exam->end_time,
+                'passing_marks' => $exam->passing_marks,
+                'created_at' => $exam->created_at,
+                'duration' => $durationInMinutes . ' minutes',
+                'total_marks' => $totalMarksExam,
+                'negative_marks' => $negativeMarksExam,
+                'total_questions' => $totalQuestionsExam,
+                'sections' => $sectionDetails // Include sections with question counts and marks
+            ];
+        });
+
         // Return success response with exam data
         return response()->json([
             'status' => true,
             'code' => 200,
             'message' => 'Exams retrieved successfully',
-            'data' => $exams
+            'data' => $examDetails
         ], 200);
 
     } catch (\Exception $e) {
@@ -428,6 +480,7 @@ public function getExamsForStudent(Request $request)
         ], 500);
     }
 }
+
 
 
 
