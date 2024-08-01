@@ -240,6 +240,7 @@ Route::prefix('teacher')->group(function () {
 
 }); 
 
+Route::get('/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
 
 
 Route::prefix('student')->group(function () {
@@ -488,4 +489,3 @@ Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
 
 
 
-Route::get('/student-list-of-teacher/{id}', [ImagesSlidesController::class, 'studentListForTeacher']);
