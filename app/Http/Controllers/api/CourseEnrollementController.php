@@ -349,26 +349,7 @@ public function restPayment(Request $request)
         $paymentHistory->payment_date = $paymentDate;
         $paymentHistory->save();
 
-        // Notify relevant parties
-        $student = Student::find($request->student_id);
-        if ($student) {
-            $course = Course::with('teachers')->find($request->course_id);
-            if ($course) {
-                $teachers = $course->teachers;
-                foreach ($teachers as $teacher) {
-                    $teacher->notify(new CoursePaymentNotification($course->name, $enrollment->enrollment_no, $enrollment->created_at, $student->name));
-                }
-                $admins = Admin::all();
-                foreach ($admins as $admin) {
-                    $admin->notify(new CoursePaymentNotification($course->name, $enrollment->enrollment_no, $enrollment->created_at, $student->name));
-                }
-                $staffMembers = StaffModel::all();
-                foreach ($staffMembers as $staff) {
-                    $staff->notify(new CoursePaymentNotification($course->name, $enrollment->enrollment_no, $enrollment->created_at, $student->name));
-                }
-                $student->notify(new CoursePaymentNotification($course->name, $enrollment->enrollment_no, $enrollment->created_at, $student->name));
-            }
-        }
+    
 
         DB::commit(); // Commit the transaction
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Rest payment processed successfully'], 200);

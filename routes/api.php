@@ -304,10 +304,10 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 // ------------------------------------------------------------------------------------------------
 // COURSE ENROLL ROUTES
 // ------------------------------------------------------------------------------------------------
-Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
+Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']); 
 Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
 Route::post('payment-details', [CourseEnrollementController::class, 'PaymentHistory']);
-
+Route::post('/rest-payment', [CourseEnrollementController::class, 'restPayment']);
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
 // ------------------------------------------------------------------------------------------------

@@ -184,7 +184,7 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
 
     public function viewMeeting($meetingId)
 {
-    // Retrieve the meeting data from the database using the meeting ID
+    // Retrieve the meeting data from the database using the meeting ID 
     $zoomMeeting = \App\Models\ZoomMeeting::where('meeting_id', $meetingId)->first();
 
     // Check if the meeting exists
