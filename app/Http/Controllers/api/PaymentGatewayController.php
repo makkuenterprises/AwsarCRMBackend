@@ -334,4 +334,5 @@ $otherPaymentStatusStudentsCount = DB::table('students')
             'pendingPayments' => $counts['pendingPayments']
         ];
     }
+    
 }

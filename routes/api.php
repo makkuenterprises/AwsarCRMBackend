@@ -305,6 +305,7 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 // ------------------------------------------------------------------------------------------------
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
 Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
+Route::post('payment-Details', [CourseEnrollementController::class, 'PaymentHistory']);
 
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES

@@ -189,6 +189,94 @@ public function getPaymentHistory(Request $request)
 }
 
 
-   
+public function PaymentHistory(Request $request)
+{
+    // Validate the request data
+    $validator = Validator::make($request->all(), [
+        'student_id' => 'required|exists:students,id',
+        'course_id' => 'required|exists:courses,id',
+    ]);
+
+    // Check if validation fails
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'code' => 400,
+            'errors' => $validator->errors()
+        ], 400);
+    }
+
+    try {
+        // Retrieve the total fee for the course
+        $course = DB::table('courses')
+            ->where('id', $request->course_id)
+            ->first(['total_fee']); // Assuming the column is named 'total_fee'
+
+        if (!$course) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'Course not found'
+            ], 404);
+        }
+
+        // Retrieve the enrollment details to get due date
+        $enrollment = DB::table('courses_enrollements')
+            ->where('student_id', $request->student_id)
+            ->where('course_id', $request->course_id)
+            ->first(['due_date']); // Assuming the column is named 'due_date'
+
+        if (!$enrollment) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'Enrollment not found'
+            ], 404);
+        }
+
+        // Retrieve the payment history for the specific course and student
+        $paymentHistory = DB::table('payment_histories')
+            ->join('courses_enrollements', 'payment_histories.enrollment_id', '=', 'courses_enrollements.id')
+            ->where('courses_enrollements.student_id', $request->student_id)
+            ->where('courses_enrollements.course_id', $request->course_id)
+            ->select('payment_histories.transaction_id', 'payment_histories.payment_type', 'payment_histories.payment_status', 'payment_histories.paid_amount', 'payment_histories.payment_date')
+            ->get(); 
+
+        if ($paymentHistory->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'No payment history found for the specified course and student'
+            ], 404);
+        }
+
+        // Calculate total paid amount
+        $totalPaidAmount = $paymentHistory->sum('paid_amount');
+        // Calculate outstanding balance
+        $outstandingAmount = $course->total_fee - $totalPaidAmount;
+
+        // Return success response with payment history and additional data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => [
+                'payment_history' => $paymentHistory,
+                'fee_paid' => $totalPaidAmount,
+                'fee_payable' => $course->total_fee,
+                'outstanding' => $outstandingAmount,
+                'due_date' => $enrollment->due_date
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'Failed to retrieve payment history',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 }
