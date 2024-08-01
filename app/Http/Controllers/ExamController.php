@@ -377,10 +377,10 @@ public function getExamsForStudent(Request $request)
         }
 
         // Fetch the exams for the courses the student is enrolled in
-        $exams = DB::table('courses_enrollments')
-            ->join('courses', 'courses_enrollments.course_id', '=', 'courses.id')
+        $exams = DB::table('courses_enrollements')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->join('exams', 'courses.id', '=', 'exams.course_id')
-            ->where('courses_enrollments.student_id', $studentId)
+            ->where('courses_enrollements.student_id', $studentId)
             ->select('exams.id', 'exams.name', 'exams.start_time', 'exams.end_time', 'exams.passing_marks', 'exams.created_at')
             ->get();
 
