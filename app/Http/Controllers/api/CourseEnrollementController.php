@@ -31,6 +31,7 @@ class CourseEnrollementController extends Controller
         'payment_type' => ['required', 'string', 'min:1', 'max:250'],
         'payment_status' => ['required', 'string', 'min:1', 'max:250'],
         'paid_amount' => ['required', 'numeric', 'min:0'],
+        'due_date' => 'required|date_format:Y-m-d'
     ]); 
 
     // Check if validation fails
@@ -83,6 +84,7 @@ class CourseEnrollementController extends Controller
         $enrollcourse->payment_type = $request->input('payment_type'); 
         $enrollcourse->payment_status = $request->input('payment_status');
         $enrollcourse->paid_amount = $request->input('paid_amount');
+        $enrollcourse->due_date = $request->input('due_date');
         
         $timestamp = time(); // Get the current Unix timestamp
         sleep(1);

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('courses_enrollements', function (Blueprint $table) {
             //
-              $table->date('due_date')->nullable()->after('enrollment_date');
+              $table->string('due_date')->nullable()->after('enrollment_date');
         });
     }
 
