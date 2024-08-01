@@ -128,50 +128,62 @@ class DashboardData extends Controller
     //     }
     //     return $counts;
     // }
+public function getStudentOverview(Request $request)
+{
+    try {
+        $duration = $request->query('duration', 'month'); // default to monthly data
+        $data = $this->fetchChartData($duration);
 
- public function getStudentOverview(Request $request)
-    {
-        try {
-            $duration = $request->query('duration', 'month'); // default to monthly data
-            $data = $this->fetchChartData($duration);
-
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Failed to fetch student data',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Failed to fetch student data',
+            'message' => $e->getMessage(),
+        ], 500);
     }
-
-    private function fetchChartData($duration)
-    {
-        if ($duration === 'week') {
+}
+private function fetchChartData($duration)
+{
+    switch ($duration) {
+        case 'week':
             return $this->getWeeklyData();
-        } elseif ($duration === 'year') {
+        case 'year':
             return $this->getYearlyData();
-        } else {
+        case 'all_years':
+            return $this->getAllYearlyData();
+        default:
             return $this->getMonthlyData();
-        }
     }
-
-   private function getMonthlyData()
+}
+private function getMonthlyData()
 {
     $counts = [];
     $months = [];
+    $currentYear = date('Y');
 
     for ($month = 1; $month <= 12; $month++) {
         $monthName = date('F', mktime(0, 0, 0, $month, 10)); // Get month name
         $months[] = $monthName;
 
-        $counts['total'][] = Student::whereMonth('created_at', $month)->count();
-        $counts['partial'][] = Student::whereMonth('created_at', $month)->where('payment_status', 'partial')->count();
-        $counts['full'][] = Student::whereMonth('created_at', $month)->where('payment_status', 'full')->count();
-        $counts['unpaid'][] = Student::whereMonth('created_at', $month)->where('payment_status', 'unpaid')->count();
+        $counts['total'][] = Student::whereYear('created_at', $currentYear)
+                                    ->whereMonth('created_at', $month)
+                                    ->count();
+        $counts['partial'][] = Student::whereYear('created_at', $currentYear)
+                                      ->whereMonth('created_at', $month)
+                                      ->where('payment_status', 'partial')
+                                      ->count();
+        $counts['full'][] = Student::whereYear('created_at', $currentYear)
+                                   ->whereMonth('created_at', $month)
+                                   ->where('payment_status', 'full')
+                                   ->count();
+        $counts['unpaid'][] = Student::whereYear('created_at', $currentYear)
+                                     ->whereMonth('created_at', $month)
+                                     ->where('payment_status', 'unpaid')
+                                     ->count();
     }
 
     return [
@@ -179,22 +191,31 @@ class DashboardData extends Controller
         'counts' => $counts
     ];
 }
-
-
-   private function getWeeklyData()
+private function getWeeklyData()
 {
     $counts = [];
     $weeks = [];
     $currentYear = date('Y');
 
     for ($week = 1; $week <= 52; $week++) {
-        $weekStartDate = Carbon::now()->setISODate($currentYear, $week)->startOfWeek()->format('W, Y');
-        $weeks[] = $weekStartDate;
+        $weekLabel = "Week $week, $currentYear";
+        $weeks[] = $weekLabel;
 
-        $counts['total'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->count();
-        $counts['partial'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->where('payment_status', 'partial')->count();
-        $counts['full'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->where('payment_status', 'full')->count();
-        $counts['unpaid'][] = Student::whereRaw('WEEKOFYEAR(created_at) = ?', [$week])->where('payment_status', 'unpaid')->count();
+        $counts['total'][] = Student::whereYear('created_at', $currentYear)
+                                    ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week])
+                                    ->count();
+        $counts['partial'][] = Student::whereYear('created_at', $currentYear)
+                                      ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week])
+                                      ->where('payment_status', 'partial')
+                                      ->count();
+        $counts['full'][] = Student::whereYear('created_at', $currentYear)
+                                   ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week])
+                                   ->where('payment_status', 'full')
+                                   ->count();
+        $counts['unpaid'][] = Student::whereYear('created_at', $currentYear)
+                                     ->whereRaw('WEEKOFYEAR(created_at) = ?', [$week])
+                                     ->where('payment_status', 'unpaid')
+                                     ->count();
     }
 
     return [
@@ -202,16 +223,33 @@ class DashboardData extends Controller
         'counts' => $counts
     ];
 }
-
- private function getYearlyData()
+private function getYearlyData()
 {
     $counts = [];
     $years = [];
     $currentYear = date('Y');
-    $startYear = $currentYear - 4; // last 5 years including current
 
-    for ($year = $startYear; $year <= $currentYear; $year++) {
-        $years[] = (string)$year; // store years as strings for consistency
+    $years[] = (string)$currentYear;
+    $counts['total'][] = Student::whereYear('created_at', $currentYear)->count();
+    $counts['partial'][] = Student::whereYear('created_at', $currentYear)->where('payment_status', 'partial')->count();
+    $counts['full'][] = Student::whereYear('created_at', $currentYear)->where('payment_status', 'full')->count();
+    $counts['unpaid'][] = Student::whereYear('created_at', $currentYear)->where('payment_status', 'unpaid')->count();
+
+    return [
+        'labels' => $years,
+        'counts' => $counts
+    ];
+}
+private function getAllYearlyData()
+{
+    $counts = [];
+    $years = [];
+
+    $firstYear = Student::orderBy('created_at', 'asc')->first()->created_at->year;
+    $lastYear = Student::orderBy('created_at', 'desc')->first()->created_at->year;
+
+    for ($year = $firstYear; $year <= $lastYear; $year++) {
+        $years[] = (string)$year;
 
         $counts['total'][] = Student::whereYear('created_at', $year)->count();
         $counts['partial'][] = Student::whereYear('created_at', $year)->where('payment_status', 'partial')->count();
@@ -224,6 +262,7 @@ class DashboardData extends Controller
         'counts' => $counts
     ];
 }
+
 
 
 }
