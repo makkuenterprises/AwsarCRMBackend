@@ -397,7 +397,7 @@ public function getExamsForStudent(Request $request)
 
         // Fetch exams associated with the found courses
         $exams = DB::table('exams')
-            ->whereIn('course_id', $courseIds)
+            ->whereIn('batch_id', $courseIds)
             ->select('id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at')
             ->get();
 
