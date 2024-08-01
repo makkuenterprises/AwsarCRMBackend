@@ -330,7 +330,7 @@ Route::post('/mark/all/as/read/role', [Notification::class, 'markAllAsReadforRol
 // ATTENDANCE ROUTE
 // ------------------------------------------------------------------------------------------------
 
-Route::get('/student-batch-details', [AttendanceController::class, 'getStudentBatchDetails']);
+Route::post('/student-batch-details', [AttendanceController::class, 'getStudentBatchDetails']);
 Route::get('/all-student-batch-details', [AttendanceController::class, 'getAllStudentBatchDetails']);
 
 // ATTENDANCE ADMIN=============================================================================================
