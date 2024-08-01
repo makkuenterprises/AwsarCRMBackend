@@ -376,12 +376,29 @@ public function getExamsForStudent(Request $request)
             ], 400);
         }
 
-        // Fetch the exams for the courses the student is enrolled in
-        $exams = DB::table('courses_enrollements')
+        // Fetch the courses the student is enrolled in
+        $courses = DB::table('courses_enrollements')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-            ->join('exams', 'courses.id', '=', 'exams.course_id')
             ->where('courses_enrollements.student_id', $studentId)
-            ->select('exams.id', 'exams.name', 'exams.start_time', 'exams.end_time', 'exams.passing_marks', 'exams.created_at')
+            ->select('courses.id as course_id')
+            ->get();
+
+        // Extract course IDs
+        $courseIds = $courses->pluck('course_id')->toArray();
+
+        // Check if any courses are found
+        if (empty($courseIds)) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'No courses found for the specified student'
+            ], 404);
+        }
+
+        // Fetch exams associated with the found courses
+        $exams = DB::table('exams')
+            ->whereIn('course_id', $courseIds)
+            ->select('id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at')
             ->get();
 
         // Check if exams are found
@@ -389,7 +406,7 @@ public function getExamsForStudent(Request $request)
             return response()->json([
                 'status' => false,
                 'code' => 404,
-                'message' => 'No exams found for the specified student'
+                'message' => 'No exams found for the courses the student is enrolled in'
             ], 404);
         }
 
@@ -411,6 +428,7 @@ public function getExamsForStudent(Request $request)
         ], 500);
     }
 }
+
 
 
 }
