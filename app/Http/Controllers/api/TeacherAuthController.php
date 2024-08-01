@@ -618,10 +618,10 @@ public function teacherList()
     public function studentListForTeacher($teacherId)
 {
     try {
-        // Retrieve all courses taught by the teacher
+        // Retrieve the IDs of courses taught by the teacher
         $courses = Course::whereHas('teachers', function($query) use ($teacherId) {
-            $query->where('id', $teacherId);
-        })->pluck('id');
+            $query->where('teachers.id', $teacherId); // Explicitly specify teacher's table id
+        })->pluck('courses.id'); // Explicitly specify course's table id
 
         // Retrieve students enrolled in these courses
         $students = DB::table('students')
@@ -646,5 +646,6 @@ public function teacherList()
         ], 500);
     }
 }
+
 
 }
