@@ -149,7 +149,7 @@ class BlogController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'The Community was successfully updated.',
-                'data' => $blog,
+                // 'data' => $blog,
             ], 200);
         } else {
             return response()->json([
@@ -169,9 +169,9 @@ class BlogController extends Controller
         // Append the thumbnail URL to each blog
         $blogs->transform(function ($blog) {
             if ($blog->thumbnail) {
-                $blog->thumbnail_url = url(Storage::url($blog->thumbnail));
+                $blog->thumbnail= url(Storage::url($blog->thumbnail));
             } else {
-                $blog->thumbnail_url = null; // or set a default image URL
+                $blog->thumbnail = null; // or set a default image URL
             }
             return $blog;
         });
