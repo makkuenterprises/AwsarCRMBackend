@@ -81,54 +81,42 @@ class StudentAuthController extends Controller
   
 
             $code = 200;
-
-            $iconMapping = [
-    'Dashboard' => '<i className="material-icons">home</i>',
-    'Teachers' => '<i className="material-icons">person</i>',
-    'Enrolled Batch' => '<i className="material-icons">article</i>',
-    'Live Classes' => '<i className="material-icons">live_tv</i>',
-    'Fees System' => '<i className="material-icons">money</i>',
-    'Exams' => '<i className="material-icons">assessment</i>',
-    'Institute' => '<i className="material-icons">school</i>',
-    'Settings' => '<i className="material-icons">settings</i>',
-];
-
-            $menuList = [
+$menuList = [
     [
         'title' => 'Dashboard',
-        'iconStyle' => $iconMapping['Dashboard'],
+        'iconStyle' => '<i class="material-icons">dashboard</i>',
         'to' => 'dashboard',
     ],
     [
         'title' => 'Teachers',
-        'iconStyle' => $iconMapping['Teachers'],
+        'iconStyle' => '<i class="material-icons">school</i>',
         'to' => 'teacher',
     ],
     [
         'title' => 'Enrolled Batch',
-        'iconStyle' => $iconMapping['Enrolled Batch'],
+        'iconStyle' => '<i class="material-icons">assignment</i>',
         'to' => 'batch',
     ],
     [
         'title' => 'Live Classes',
-        'classsChange' => 'mm-collapse',
-        'iconStyle' => $iconMapping['Live Classes'],
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i class="material-icons">live_tv</i>',
         'to' => 'live-classes',
     ],
     [
         'title' => 'Fees System',
-        'iconStyle' => $iconMapping['Fees System'],
+        'iconStyle' => '<i class="material-icons">attach_money</i>',
         'to' => 'settings',
     ],
     [
         'title' => 'Exams',
-        'iconStyle' => $iconMapping['Exams'],
+        'iconStyle' => '<i class="material-icons">grade</i>',
         'to' => 'view-exam',
     ],
     [
         'title' => 'Institute',
-        'classsChange' => 'mm-collapse',
-        'iconStyle' => $iconMapping['Institute'],
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i class="material-icons">school</i>',
         'content' => [
             [
                 'title' => 'Notice',
@@ -150,7 +138,7 @@ class StudentAuthController extends Controller
     ],
     [
         'title' => 'Settings',
-        'iconStyle' => $iconMapping['Settings'],
+        'iconStyle' => '<i class="material-icons">settings</i>',
         'to' => 'student/settings',
     ],
 ];
