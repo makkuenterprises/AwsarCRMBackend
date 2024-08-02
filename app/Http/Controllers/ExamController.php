@@ -400,7 +400,7 @@ public function getExamsForStudent(Request $request)
         // Fetch exams associated with the found courses
         $exams = DB::table('exams')
             ->whereIn('batch_id', $courseIds)
-            ->get(['id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at']);
+            ->get(['id', 'name', 'start_time', 'end_time', 'passing_marks', 'batch_id', 'created_at']);
 
         // Check if exams are found
         if ($exams->isEmpty()) {
@@ -451,12 +451,12 @@ public function getExamsForStudent(Request $request)
             // Format the exam details
             return [
                 'id' => $exam->id,
-                'batch_id' => $exam->batch_id, // Include batch ID
                 'name' => $exam->name,
                 'start_time' => $exam->start_time,
                 'end_time' => $exam->end_time,
                 'passing_marks' => $exam->passing_marks,
                 'created_at' => $exam->created_at,
+                'batch_id' => $exam->batch_id, // Include batch ID
                 'duration' => $durationInMinutes . ' minutes',
                 'total_marks' => $totalMarksExam,
                 'negative_marks' => $negativeMarksExam,
