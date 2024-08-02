@@ -626,7 +626,7 @@ public function getStudentAllResult(Request $request)
             'message' => 'Validation failed',
             'errors' => $e->errors()
         ], 422);
-    } catch (\Exception $e) {
+    } catch (\Exception $e) { 
         return response()->json([
             'status' => false,
             'message' => 'An error occurred',
