@@ -60,143 +60,128 @@ class TeacherAuthController extends Controller
            $token = $user->createToken('AwsarClass')->plainTextToken;
            $code = 200;
            $imagePath = url('/Teachers/' . $user->image);
-
-           $menuList = [
-                [
-                    'title' => 'Dashboard',
-                    'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
-                    'to' => 'dashboard',
-                ],
-                [
-                    'title' => 'Students',
-                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
-                    'to'=> 'student',	
-                ],
-                [
-                    'title' => 'Courses (Batch)',
-                    'iconStyle' => '<i className="merial-icons">article</i>',
-                        'to'=> 'batch',		
-                ],
-               
-                 [
-                    'title' => 'Live Classes',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="material-icons">live_tv</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Live Classes',
-                            'to'=> 'live-classes',					
-                        ],
-                        [
-                            'title'=> 'Create Live Class',
-                            'to'=> 'page-lock-screen',
-                        ],
-                      
-           
-                        ],
-                ],
-              
-                 [
-                    'title' => 'Attendance',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Attendance',
-                            'to'=> 'attendance-list-for-teacher',					
-                        ],
-                        [
-                            'title'=> 'Create Attendance',
-                            'to'=> 'create-attendance',
-                        ],
-                      
-           
-                        ],
-                ],
-                 [
-                    'title' => 'Study Material',
-                    'classsChange' => 'mm-collapse',	
-                    'iconStyle' => '<i className="material-symbols-outlined">article</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Study Materials',
-                            'to'=> 'study-materials',					
-                        ],
-                        [
-                            'title'=> 'Upload Study Material',
-                            'to'=> 'add-study-material',
-                        ],
-           
-                        ],
-                ], 
-                 [
-                    'title' => 'Exams',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                            [
-                            'title'=> 'View Questions',
-                            'to'=> 'view-question',					
-                        ],
-                        [
-                            'title'=> 'View Exam',
-                            'to'=> 'view-exam',					
-                        ],
-                        [
-                            'title'=> 'Create Exam',
-                            'to'=> 'create-exam',
-                        ],
-                      
-           
-                        ],
-                ], 
-                  [
-                    'title' => 'Class Routine',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                     'to'=> 'view-class-routine',		
-               ],
-                 [
-                    'title' => 'Notice',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'View Notice',
-                            'to'=> 'view-notice',					
-                        ],
-                        [
-                            'title'=> 'Create Notice',
-                            'to'=> 'create-notice',
-                        ],
-                      
-           
-                        ],
-                ],
-               
-                   [
-                    'title' => 'Leave Request',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'lists Of Leave Request',
-                            'to'=> 'view-leave-request',					
-                        ],
-                        [
-                            'title'=> 'Create Leave Request',
-                            'to'=> 'create-leave-request',
-                        ],
-                      
-           
-                        ],
-                ],
-                [
-                    'title' => 'Settings',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'teacher/settings',
-                ],
-            ];
+$menuList = [
+    [
+        'title' => 'Dashboard',
+        'iconStyle' => '<i className="material-icons">dashboard</i>',
+        'to' => 'dashboard',
+    ],
+    [
+        'title' => 'Students',
+        'iconStyle' => '<i className="material-icons">person</i>',
+        'to' => 'student',
+    ],
+    [
+        'title' => 'Courses (Batch)',
+        'iconStyle' => '<i className="material-icons">book</i>',
+        'to' => 'batch',
+    ],
+    [
+        'title' => 'Live Classes',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">live_tv</i>',
+        'content' => [
+            [
+                'title' => 'Live Classes',
+                'to' => 'live-classes',
+            ],
+            [
+                'title' => 'Create Live Class',
+                'to' => 'create-live-class',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Attendance',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">event_note</i>',
+        'content' => [
+            [
+                'title' => 'Attendance',
+                'to' => 'attendance-list-for-teacher',
+            ],
+            [
+                'title' => 'Create Attendance',
+                'to' => 'create-attendance',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Study Material',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">library_books</i>',
+        'content' => [
+            [
+                'title' => 'Study Materials',
+                'to' => 'study-materials',
+            ],
+            [
+                'title' => 'Upload Study Material',
+                'to' => 'add-study-material',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Exams',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">assessment</i>',
+        'content' => [
+            [
+                'title' => 'View Questions',
+                'to' => 'view-question',
+            ],
+            [
+                'title' => 'View Exam',
+                'to' => 'view-exam',
+            ],
+            [
+                'title' => 'Create Exam',
+                'to' => 'create-exam',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Class Routine',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">schedule</i>',
+        'to' => 'view-class-routine',
+    ],
+    [
+        'title' => 'Notice',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">announcement</i>',
+        'content' => [
+            [
+                'title' => 'View Notice',
+                'to' => 'view-notice',
+            ],
+            [
+                'title' => 'Create Notice',
+                'to' => 'create-notice',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Leave Request',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">request_quote</i>',
+        'content' => [
+            [
+                'title' => 'List Of Leave Requests',
+                'to' => 'view-leave-request',
+            ],
+            [
+                'title' => 'Create Leave Request',
+                'to' => 'create-leave-request',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Settings',
+        'iconStyle' => '<i className="material-icons">settings</i>',
+        'to' => 'teacher/settings',
+    ],
+];
 
             
             $data = [
