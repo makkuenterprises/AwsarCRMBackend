@@ -606,10 +606,25 @@ public function getStudentAllResult(Request $request)
 
         // Collect all exam IDs from these courses
         $examIds = Exam::whereIn('batch_id', $courses->pluck('course_id'))->pluck('id');
-        // dd($examIds);
 
         // Fetch exam responses for the student in the specified courses
-        $examResponses = ExamResponse::select('exam_responses.id', 'exam_responses.exam_id', 'exam_responses.student_id', 'exam_responses.total_marks', 'exam_responses.gained_marks', 'exam_responses.passing_marks', 'exam_responses.negative_marks', 'exam_responses.total_correct_answers', 'exam_responses.total_wrong_answers', 'exam_responses.created_at', 'exam_responses.updated_at', 'exams.name as exam_name', 'courses.name as course_name') // Alias 'name' as 'exam_name'
+        $examResponses = ExamResponse::select(
+                'exam_responses.id',
+                'exam_responses.exam_id',
+                'exam_responses.student_id',
+                'exam_responses.total_marks',
+                'exam_responses.gained_marks',
+                'exam_responses.passing_marks',
+                'exam_responses.negative_marks',
+                'exam_responses.total_correct_answers',
+                'exam_responses.total_wrong_answers',
+                'exam_responses.created_at',
+                'exam_responses.updated_at',
+                'exams.name as exam_name',
+                'exams.start_date',
+                'exams.end_date',
+                'courses.name as course_name'
+            )
             ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
             ->join('courses', 'exams.batch_id', '=', 'courses.id')
             ->whereIn('exam_responses.exam_id', $examIds)
