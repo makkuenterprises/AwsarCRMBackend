@@ -540,27 +540,71 @@ public function gradeShortAnswerResponses(Request $request)
 //     }
 // } 
 
+// public function getStudentAllResult(Request $request)
+// {
+//     try {
+//         // Validate the request data
+//         $validated = $request->validate([
+//             'course_id' => 'required|exists:courses,id',
+//             'student_id' => 'required|exists:students,id',
+//             'exam_id' => 'nullable|exists:exams,id' // Optional filter for exam ID
+//         ]);
+
+//         // Query to fetch exams for the specified course, optionally filtered by exam_id
+//         $examsQuery = Exam::select('id', 'name') // Use 'name' instead of 'title'
+//             ->where('batch_id', $validated['course_id']);
+
+//         if (isset($validated['exam_id'])) {
+//             $examsQuery->where('id', $validated['exam_id']);
+//         }
+
+//         $examIds = $examsQuery->pluck('id');
+
+//         // Fetch exam responses for the student in the specified course with exam names
+//         $examResponses = ExamResponse::select('exam_responses.id', 'exam_responses.exam_id', 'exam_responses.student_id', 'exam_responses.total_marks', 'exam_responses.gained_marks', 'exam_responses.passing_marks', 'exam_responses.negative_marks', 'exam_responses.total_correct_answers', 'exam_responses.total_wrong_answers', 'exam_responses.created_at', 'exam_responses.updated_at', 'exams.name as exam_name') // Alias 'name' as 'exam_name'
+//             ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
+//             ->whereIn('exam_responses.exam_id', $examIds)
+//             ->where('exam_responses.student_id', $validated['student_id'])
+//             ->get();
+
+//         return response()->json([
+//             'status' => true,
+//             'message' => 'Student result fetched successfully',
+//             'data' => $examResponses
+//         ], 200);
+//     } catch (\Illuminate\Validation\ValidationException $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Validation failed',
+//             'errors' => $e->errors()
+//         ], 422);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'An error occurred',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
 public function getStudentAllResult(Request $request)
 {
     try {
         // Validate the request data
         $validated = $request->validate([
-            'course_id' => 'required|exists:courses,id',
-            'student_id' => 'required|exists:students,id',
-            'exam_id' => 'nullable|exists:exams,id' // Optional filter for exam ID
+            'student_id' => 'required|exists:students,id'
         ]);
 
-        // Query to fetch exams for the specified course, optionally filtered by exam_id
-        $examsQuery = Exam::select('id', 'name') // Use 'name' instead of 'title'
-            ->where('batch_id', $validated['course_id']);
+        // Fetch all course IDs associated with the student
+        $courseIds = DB::table('student_courses')
+            ->where('student_id', $validated['student_id'])
+            ->pluck('course_id');
 
-        if (isset($validated['exam_id'])) {
-            $examsQuery->where('id', $validated['exam_id']);
-        }
+        // Fetch all exam IDs related to these courses
+        $examIds = Exam::select('id')
+            ->whereIn('batch_id', $courseIds)
+            ->pluck('id');
 
-        $examIds = $examsQuery->pluck('id');
-
-        // Fetch exam responses for the student in the specified course with exam names
+        // Fetch exam responses for the student in the specified exams
         $examResponses = ExamResponse::select('exam_responses.id', 'exam_responses.exam_id', 'exam_responses.student_id', 'exam_responses.total_marks', 'exam_responses.gained_marks', 'exam_responses.passing_marks', 'exam_responses.negative_marks', 'exam_responses.total_correct_answers', 'exam_responses.total_wrong_answers', 'exam_responses.created_at', 'exam_responses.updated_at', 'exams.name as exam_name') // Alias 'name' as 'exam_name'
             ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
             ->whereIn('exam_responses.exam_id', $examIds)
@@ -586,6 +630,7 @@ public function getStudentAllResult(Request $request)
         ], 500);
     }
 }
+
 
 public function getAllStudentsResults(Request $request)
 {
