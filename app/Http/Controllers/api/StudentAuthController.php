@@ -81,72 +81,145 @@ class StudentAuthController extends Controller
   
 
             $code = 200;
+            $iconMapping = [
+    'Dashboard' => '<i class="material-symbols-outlined">home</i>',
+    'Teachers' => '<i class="material-symbols-outlined">person</i>',
+    'Enrolled Batch' => '<i class="material-icons">article</i>',
+    'Live Classes' => '<i class="material-icons">live_tv</i>',
+    'Fees System' => '<i class="material-icons">money</i>',
+    'Exams' => '<i class="material-icons">assessment</i>',
+    'Institute' => '<i class="material-icons">school</i>',
+    'Settings' => '<i class="material-icons">settings</i>',
+];
+
+            $menuList = [
+    [
+        'title' => 'Dashboard',
+        'iconStyle' => $iconMapping['Dashboard'],
+        'to' => 'dashboard',
+    ],
+    [
+        'title' => 'Teachers',
+        'iconStyle' => $iconMapping['Teachers'],
+        'to' => 'teacher',
+    ],
+    [
+        'title' => 'Enrolled Batch',
+        'iconStyle' => $iconMapping['Enrolled Batch'],
+        'to' => 'batch',
+    ],
+    [
+        'title' => 'Live Classes',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => $iconMapping['Live Classes'],
+        'to' => 'live-classes',
+    ],
+    [
+        'title' => 'Fees System',
+        'iconStyle' => $iconMapping['Fees System'],
+        'to' => 'settings',
+    ],
+    [
+        'title' => 'Exams',
+        'iconStyle' => $iconMapping['Exams'],
+        'to' => 'view-exam',
+    ],
+    [
+        'title' => 'Institute',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => $iconMapping['Institute'],
+        'content' => [
+            [
+                'title' => 'Notice',
+                'to' => 'view-notice',
+            ],
+            [
+                'title' => 'Study Materials',
+                'to' => 'view-study-materials',
+            ],
+            [
+                'title' => 'Attendance',
+                'to' => 'attendance-list-for-student',
+            ],
+            [
+                'title' => 'Class Routine',
+                'to' => 'view-class-routine',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Settings',
+        'iconStyle' => $iconMapping['Settings'],
+        'to' => 'student/settings',
+    ],
+];
+
             // Fetch unread notifications for the student
 
-                            $menuList = [
-                [
-                    'title' => 'Dashboard',
-                    'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
-                    'to' => 'dashboard',
-                ],
-                [     
-                    'title' => 'Teachers',
-                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
-                     'to'=> 'teacher',	
-                ],  
-                [
-                    'title' => 'Enrolled Batch',
-                    'iconStyle' => '<i className="merial-icons">article</i>',
-                    'to' => 'batch', 
+            //                 $menuList = [
+            //     [
+            //         'title' => 'Dashboard',
+            //         'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
+            //         'to' => 'dashboard',
+            //     ],
+            //     [     
+            //         'title' => 'Teachers',
+            //         'iconStyle' => '<i className="material-symbols-outlined">person</i>',
+            //          'to'=> 'teacher',	
+            //     ],  
+            //     [
+            //         'title' => 'Enrolled Batch',
+            //         'iconStyle' => '<i className="merial-icons">article</i>',
+            //         'to' => 'batch', 
 
-                ],          
-                 [
-                    'title' => 'Live Classes',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                       'to'=> 'live-classes',
-                ],
+            //     ],          
+            //      [
+            //         'title' => 'Live Classes',
+            //          'classsChange' => 'mm-collapse',
+            //          'iconStyle' => '<i className="merial-icons">article</i>',
+            //            'to'=> 'live-classes',
+            //     ],
                
-                [
-                    'title' => 'Fees System',
-                    'iconStyle' => '<i className="material-icons">money</i>',
-                    'to' => 'settings',
-                ],
-                [
-                    'title' => 'Exams',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'view-exam',
-                ],
-                 [
-                    'title' => 'Institute',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Notice',
-                            'to'=> 'view-notice',					
-                        ],
-                        [
-                            'title'=> 'Study Materials',
-                            'to'=> 'view-study-materials',
-                        ],
-                        [
-                          'title' => 'Attendance',
+            //     [
+            //         'title' => 'Fees System',
+            //         'iconStyle' => '<i className="material-icons">money</i>',
+            //         'to' => 'settings',
+            //     ],
+            //     [
+            //         'title' => 'Exams',
+            //         'iconStyle' => '<i className="material-icons">settings</i>',
+            //         'to' => 'view-exam',
+            //     ],
+            //      [
+            //         'title' => 'Institute',
+            //          'classsChange' => 'mm-collapse',
+            //          'iconStyle' => '<i className="merial-icons">settings</i>',
+            //             'content'=> [
+            //             [
+            //                 'title'=> 'Notice',
+            //                 'to'=> 'view-notice',					
+            //             ],
+            //             [
+            //                 'title'=> 'Study Materials',
+            //                 'to'=> 'view-study-materials',
+            //             ],
+            //             [
+            //               'title' => 'Attendance',
                  
-                        'to' => 'attendance-list-for-student',				
-                        ],
-                         [
-                            'title'=> 'Class Routine',
-                            'to'=> 'view-class-routine',					
-                        ],
-                        ],
-                ],
-                [
-                    'title' => 'Settings',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'student/settings',
-                ],
-            ];
+            //             'to' => 'attendance-list-for-student',				
+            //             ],
+            //              [
+            //                 'title'=> 'Class Routine',
+            //                 'to'=> 'view-class-routine',					
+            //             ],
+            //             ],
+            //     ],
+            //     [
+            //         'title' => 'Settings',
+            //         'iconStyle' => '<i className="material-icons">settings</i>',
+            //         'to' => 'student/settings',
+            //     ],
+            // ];
             $data = [
             'student' => [
             'id' => $user->id,
