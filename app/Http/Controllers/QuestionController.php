@@ -33,6 +33,7 @@ class QuestionController extends Controller
             'options' => 'nullable|array',
             'correct_answers' => 'nullable|array',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+               'batch_id' =>  'required|exists:courses,id', // Validate batch_id
         ]);
 
         if ($validator->fails()) {
@@ -48,6 +49,7 @@ class QuestionController extends Controller
         $question->question_type = $request->input('question_type');
         $question->options = $request->input('options');
         $question->correct_answers = $request->input('correct_answers');
+         $question->batch_id = $request->input('batch_id'); 
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('questions', 'public');

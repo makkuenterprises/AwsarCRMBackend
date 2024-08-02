@@ -594,11 +594,11 @@ public function getAllStudentsResults(Request $request)
 
         // Fetch exam responses for all students
         $examResponses = ExamResponse::select(
+             'exam_responses.id', 
              'students.id as student_id',
                 'students.name as student_name', 
                 'students.email as student_email', 
                 'students.phone as student_phone',
-                'exam_responses.id', 
                 'exam_responses.exam_id', 
                 'exam_responses.student_id', 
                 'exam_responses.total_marks', 
