@@ -81,6 +81,7 @@ class StudentAuthController extends Controller
   
 
             $code = 200;
+            
             $iconMapping = [
     'Dashboard' => '<i class="material-icons">home</i>',
     'Teachers' => '<i class="material-icons">person</i>',
