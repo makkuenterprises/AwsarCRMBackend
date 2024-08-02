@@ -198,7 +198,7 @@ class BlogController extends Controller
             // Retrieve the blog by ID
             $blog = Blog::findOrFail($id);
              if ($blog->thumbnail) {
-            $thumbnailUrl = \Illuminate\Support\Facades\Storage::url($blog->thumbnail);
+            $thumbnailUrl = url(Storage::url($blog->thumbnail));
         } else {
             $thumbnailUrl = null; // or you can set a default image URL
         }
