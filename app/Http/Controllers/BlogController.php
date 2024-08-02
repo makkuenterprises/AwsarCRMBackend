@@ -111,7 +111,7 @@ class BlogController extends Controller
             'summary' => ['required', 'string', 'min:1', 'max:500'],
             'description' => ['nullable', 'string', 'min:1', 'max:1000000'],
             'thumbnail' => ['required', 'file', 'mimes:png,jpg,jpeg,webp'],
-                       'slug' => ['required', 'string', Rule::unique('blogs')->ignore($blog->id, 'id')],
+                       'slug' => ['nullable', 'string', Rule::unique('blogs')->ignore($blog->id, 'id')],
 
             'meta_title' => ['nullable', 'string', 'min:5', 'max:250'],
             'meta_description' => ['nullable', 'string', 'min:1', 'max:500'],
