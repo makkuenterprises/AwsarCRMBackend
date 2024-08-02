@@ -69,7 +69,7 @@ class TeacherAuthController extends Controller
                 ],
                 [
                     'title' => 'Students',
-                    'iconStyle' => '<i className="material-symbols-outlined">school</i>',
+                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
                     'to'=> 'student',	
                 ],
                 [
