@@ -49,7 +49,7 @@ class BlogController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'The Community is successfully created.',
-                'data' => $blog
+                // 'data' => $blog
             ], 201);
             
         } catch (\Exception $e) {
@@ -158,32 +158,49 @@ class BlogController extends Controller
         }
     }
 
-      public function list()
-    {
-        try {
-            // Retrieve all blogs
-            $blogs = Blog::all();
 
-            // Return a success response with the blog data
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Community list retrieved successfully',
-                'data' => $blogs
-            ], 200);
-        } catch (\Exception $e) {
-            // Return an error response if something goes wrong
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred while retrieving the blog list',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+ public function list()
+{
+    try {
+        // Retrieve all blogs
+        $blogs = Blog::all();
+
+        // Append the thumbnail URL to each blog
+        $blogs->transform(function ($blog) {
+            if ($blog->thumbnail) {
+                $blog->thumbnail_url = url(Storage::url($blog->thumbnail));
+            } else {
+                $blog->thumbnail_url = null; // or set a default image URL
+            }
+            return $blog;
+        });
+
+        // Return a success response with the blog data
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Community list retrieved successfully',
+            'data' => $blogs
+        ], 200);
+    } catch (\Exception $e) {
+        // Return an error response if something goes wrong
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An error occurred while retrieving the blog list',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
         public function show($id)
     {
         try {
             // Retrieve the blog by ID
             $blog = Blog::findOrFail($id);
+             if ($blog->thumbnail) {
+            $thumbnailUrl = \Illuminate\Support\Facades\Storage::url($blog->thumbnail);
+        } else {
+            $thumbnailUrl = null; // or you can set a default image URL
+        }
 
             // Return a success response with the blog data
             return response()->json([
