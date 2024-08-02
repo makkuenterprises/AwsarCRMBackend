@@ -81,7 +81,7 @@ class TeacherAuthController extends Controller
                  [
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
+                     'iconStyle' => '<i className="merial-icons">live_tv</i>',
                         'content'=> [
                         [
                             'title'=> 'Live Classes',
