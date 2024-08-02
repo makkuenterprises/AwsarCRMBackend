@@ -27,6 +27,7 @@ use App\Http\Controllers\Notification;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamResponseController;
+use App\Http\Controllers\BlogController;
 
 
 /* 
@@ -487,6 +488,14 @@ Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 // Slides Images
 Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
 Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
+
+
+Route::post('create/blog', [BlogController::class, 'store']);
+Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
+Route::put('/blogs/{id}', [BlogController::class, 'update']);
+Route::get('/blogs', [BlogController::class, 'list']);
+Route::get('/blogs/{id}', [BlogController::class, 'show']);
+
 
 
 
