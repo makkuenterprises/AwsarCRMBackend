@@ -81,67 +81,70 @@ class StudentAuthController extends Controller
   
 
             $code = 200;
-$menuList = [
-    [
-        'title' => 'Dashboard',
-        'iconStyle' => '<i class="material-symbols-outlined">dashboard</i>',
-        'to' => 'dashboard',
-    ],
-    [
-        'title' => 'Teachers',
-        'iconStyle' => '<i class="material-symbols-outlined">school</i>',
-        'to' => 'teacher',
-    ],
-    [
-        'title' => 'Enrolled Batch',
-        'iconStyle' => '<i class="material-symbols-outlined">assignment</i>',
-        'to' => 'batch',
-    ],
-    [
-        'title' => 'Live Classes',
-        'classChange' => 'mm-collapse',
-        'iconStyle' => '<i class="material-symbols-outlined">live_tv</i>',
-        'to' => 'live-classes',
-    ],
-    [
-        'title' => 'Fees System',
-        'iconStyle' => '<i class="material-symbols-outlined">attach_money</i>',
-        'to' => 'settings',
-    ],
-    [
-        'title' => 'Exams',
-        'iconStyle' => '<i class="material-symbols-outlined">grade</i>',
-        'to' => 'view-exam',
-    ],
-    [
-        'title' => 'Institute',
-        'classChange' => 'mm-collapse',
-        'iconStyle' => '<i class="material-symbols-outlined">school</i>',
-        'content' => [
-            [
-                'title' => 'Notice',
-                'to' => 'view-notice',
-            ],
-            [
-                'title' => 'Study Materials',
-                'to' => 'view-study-materials',
-            ],
-            [
-                'title' => 'Attendance',
-                'to' => 'attendance-list-for-student',
-            ],
-            [
-                'title' => 'Class Routine',
-                'to' => 'view-class-routine',
-            ],
-        ],
-    ],
-    [
-        'title' => 'Settings',
-        'iconStyle' => '<i class="material-symbols-outlined">settings</i>',
-        'to' => 'student/settings',
-    ],
-];
+      $menuList = [
+                [
+                    'title' => 'Dashboard',
+                    'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
+                    'to' => 'dashboard',
+                ],
+                [     
+                    'title' => 'Teachers',
+                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
+                     'to'=> 'teacher',	
+                ],  
+                [
+                    'title' => 'Enrolled Batch',
+                    'iconStyle' => '<i className="merial-icons">article</i>',
+                    'to' => 'batch', 
+
+                ],          
+                 [
+                    'title' => 'Live Classes',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">article</i>',
+                       'to'=> 'live-classes',
+                ],
+               
+                [
+                    'title' => 'Fees System',
+                    'iconStyle' => '<i className="material-icons">money</i>',
+                    'to' => 'settings',
+                ],
+                [
+                    'title' => 'Exams',
+                    'iconStyle' => '<i className="material-icons">settings</i>',
+                    'to' => 'view-exam',
+                ],
+                 [
+                    'title' => 'Institute',
+                     'classsChange' => 'mm-collapse',
+                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                        'content'=> [
+                        [
+                            'title'=> 'Notice',
+                            'to'=> 'view-notice',					
+                        ],
+                        [
+                            'title'=> 'Study Materials',
+                            'to'=> 'view-study-materials',
+                        ],
+                        [
+                          'title' => 'Attendance',
+                 
+                        'to' => 'attendance-list-for-student',				
+                        ],
+                         [
+                            'title'=> 'Class Routine',
+                            'to'=> 'view-class-routine',					
+                        ],
+                        ],
+                ],
+                [
+                    'title' => 'Settings',
+                    'iconStyle' => '<i className="material-icons">settings</i>',
+                    'to' => 'student/settings',
+                ],
+            ]; 
 
  
             $data = [
