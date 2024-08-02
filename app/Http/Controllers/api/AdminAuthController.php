@@ -181,20 +181,8 @@ class AdminAuthController extends Controller
                 ],
                  [
                     'title' => 'Exams',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'View Exam',
-                            'to'=> 'page-lock-screen',					
-                        ],
-                        [
-                            'title'=> 'Create Exam',
-                            'to'=> 'page-lock-screen',
-                        ],
-                      
-           
-                        ],
+                      'iconStyle' => '<i className="merial-icons">article</i>',
+                    'to' => 'view-exam',
                 ],
                  [
                     'title' => 'Class Routine',
