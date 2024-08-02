@@ -11,6 +11,7 @@ use App\Models\ExamResponse;
 use App\Models\ExamQuestionResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use DB;
 class ExamResponseController extends Controller
 {
 public function storeExamResponse(Request $request)
