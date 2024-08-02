@@ -451,6 +451,7 @@ public function getExamsForStudent(Request $request)
             // Format the exam details
             return [
                 'id' => $exam->id,
+                'batch_id' => $exam->batch_id, // Include batch ID
                 'name' => $exam->name,
                 'start_time' => $exam->start_time,
                 'end_time' => $exam->end_time,
