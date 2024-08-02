@@ -594,6 +594,10 @@ public function getAllStudentsResults(Request $request)
 
         // Fetch exam responses for all students
         $examResponses = ExamResponse::select(
+             'students.id as student_id',
+                'students.name as student_name', 
+                'students.email as student_email', 
+                'students.phone as student_phone',
                 'exam_responses.id', 
                 'exam_responses.exam_id', 
                 'exam_responses.student_id', 
@@ -606,7 +610,7 @@ public function getAllStudentsResults(Request $request)
                 'exam_responses.created_at', 
                 'exam_responses.updated_at', 
                 'exams.name as exam_name',
-                'students.name as student_name' // Include student name
+               
             )
             ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
             ->join('students', 'exam_responses.student_id', '=', 'students.id')
