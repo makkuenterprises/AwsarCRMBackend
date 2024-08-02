@@ -15,7 +15,7 @@ class BlogController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => ['required', 'string', 'min:1', 'max:250'],
             'summary' => ['required', 'string', 'min:1', 'max:500'],
-            'description' => ['required', 'string', 'min:1', 'max:1000000'],
+            'description' => ['nullable', 'string', 'min:1', 'max:1000000'],
             'thumbnail' => ['required', 'file', 'mimes:png,jpg,jpeg,webp'],
             'slug' => ['nullable', 'string', 'unique:blogs'],
             'meta_title' => ['nullable', 'string', 'min:5', 'max:250'],
