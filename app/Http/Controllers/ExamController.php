@@ -103,13 +103,15 @@ public function createExam(Request $request)
 
         // Initialize total marks
         $totalMarks = 0;
+           // Set timezone to Asia/Kolkata
+        $timezone = 'Asia/Kolkata';
 
         // Create the exam
         $exam = Exam::create([
             'name' => $request->name,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'batch_id' => $request->batch_id,
+            'start_time' => Carbon::createFromFormat('Y-m-d H:i:s', $request->start_time, $timezone),
+            'end_time' => Carbon::createFromFormat('Y-m-d H:i:s', $request->end_time, $timezone),
+           'batch_id' => $request->batch_id,
             'passing_marks' => $request->passing_marks,
             'total_marks' => 0, // Placeholder for total marks
         ]);
