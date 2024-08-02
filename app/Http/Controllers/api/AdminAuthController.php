@@ -42,189 +42,158 @@ class AdminAuthController extends Controller
             $imagePath = url('/Admin/' . $user->image);
             $code = 200;
 
-                $menuList = [
-                [
-                    'title' => 'Dashboard',
-                    'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
-                    'to' => 'dashboard',
-                ],
-                [
-                    'title' => 'Student',
-                    'classsChange'=> 'mm-collapse',
-                    'iconStyle' => '<i className="material-symbols-outlined">school</i>',
-                            'content'=> [
-                        [
-                            'title'=> 'Student',
-                            'to'=> 'student',					
-                        ],
-                      
-                        [
-                            'title'=> 'Add New Student',
-                            'to'=> 'add-student',
-                        ],
-           
-                        ],
-                ],
-                [
-                    'title' => 'Teacher',
-                    'classsChange' => 'mm-collapse',	
-                    'iconStyle' => '<i className="material-symbols-outlined">person</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Teacher',
-                            'to'=> 'teacher',					
-                        ],
-                        [
-                            'title'=> 'Teacher Detail',
-                            'to'=> 'teacher-detail',
-                        ],
-                        [
-                            'title'=> 'Add New Teacher',
-                            'to'=> 'add-teacher',
-                        ],
-                        ],
-                ],
-                [
-                    'title' => 'Courses (Batch)',
-                    'classsChange' => 'mm-collapse',
-                    'iconStyle' => '<i className="merial-icons">article</i>',
-                                            'content'=> [
-                        [
-                            'title'=> 'Batch',
-                            'to'=> 'batch',					
-                        ],
-                        [
-                            'title'=> 'Add New Batch',
-                            'to'=> 'add-batch',
-                        ],
-                      
-           
-                        ],
-                ],
-                [
-                    'title' => 'Staff',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Staff',
-                            'to'=> 'staff',					
-                        ],
-                        [
-                            'title'=> 'Add New staff',
-                            'to'=> 'add-staff',
-                        ],
-                      
-           
-                        ],
-                ],
-                // [
-                //     'title' => 'Reports',
-                //      'classsChange' => 'mm-collapse',
-                //      'iconStyle' => '<i className="merial-icons">article</i>',
-                //         'content'=> [
-                //         [
-                //             'title'=> 'Live Classes',
-                //             'to'=> 'live-classes',					
-                //         ],
-                //         [
-                //             'title'=> 'Create Live Class',
-                //             'to'=> 'page-lock-screen',
-                //         ],
-                      
-           
-                //         ],
-                // ],
-                 [
-                    'title' => 'Live Classes',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Live Classes',
-                            'to'=> 'live-classes',					
-                        ],
-                        [
-                            'title'=> 'Create Live Class',
-                            'to'=> 'page-lock-screen',
-                        ],
-                      
-           
-                        ],
-                ],
-                [
-                    'title' => 'Attendance',
-                    'iconStyle' => '<i className="merial-icons">article</i>',
-                    'to' => 'attendance-list-for-admin',
-                      
-                ],
-                
-                [
-                    'title' => 'Study Material',
-                    'classsChange' => 'mm-collapse',	
-                    'iconStyle' => '<i className="material-symbols-outlined">article</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'Study Materials',
-                            'to'=> 'study-materials',					
-                        ],
-                        [
-                            'title'=> 'Upload Study Material',
-                            'to'=> 'add-study-material',
-                        ],
-           
-                        ],
-                ],
-                 [
-                    'title' => 'Exams',
-                      'iconStyle' => '<i className="merial-icons">article</i>',
-                    'to' => 'view-exam',
-                ],
-                 [
-                    'title' => 'Class Routine',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'View Routine',
-                            'to'=> 'view-class-routine',					
-                        ],
-                        [
-                            'title'=> 'Create Routine',
-                            'to'=> 'create-class-routine',
-                        ],
-                      
-           
-                        ],
-                ],
-                 [
-                    'title' => 'Notice',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'View Notice',
-                            'to'=> 'view-notice',					
-                        ],
-                        [
-                            'title'=> 'Create Notice',
-                            'to'=> 'create-notice',
-                        ],
-                      
-           
-                        ],
-                ],
-                 [
-                    'title' => 'Leave Request',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'leave-request',
-                ],
-                [
-                    'title' => 'Settings',
-                    'iconStyle' => '<i className="material-icons">settings</i>',
-                    'to' => 'settings',
-                ],
-            ]; 
+           $menuList = [
+    [
+        'title' => 'Dashboard',
+        'iconStyle' => '<i className="material-symbols-outlined">home</i>',
+        'to' => 'dashboard',
+    ],
+    [
+        'title' => 'Student',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-symbols-outlined">school</i>',
+        'content' => [
+            [
+                'title' => 'Student',
+                'to' => 'student',
+            ],
+            [
+                'title' => 'Add New Student',
+                'to' => 'add-student',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Teacher',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-symbols-outlined">person</i>',
+        'content' => [
+            [
+                'title' => 'Teacher',
+                'to' => 'teacher',
+            ],
+            [
+                'title' => 'Teacher Detail',
+                'to' => 'teacher-detail',
+            ],
+            [
+                'title' => 'Add New Teacher',
+                'to' => 'add-teacher',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Courses (Batch)',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">menu_book</i>',
+        'content' => [
+            [
+                'title' => 'Batch',
+                'to' => 'batch',
+            ],
+            [
+                'title' => 'Add New Batch',
+                'to' => 'add-batch',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Staff',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">people</i>',
+        'content' => [
+            [
+                'title' => 'Staff',
+                'to' => 'staff',
+            ],
+            [
+                'title' => 'Add New Staff',
+                'to' => 'add-staff',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Live Classes',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">videocam</i>',
+        'content' => [
+            [
+                'title' => 'Live Classes',
+                'to' => 'live-classes',
+            ],
+            [
+                'title' => 'Create Live Class',
+                'to' => 'create-live-class',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Attendance',
+        'iconStyle' => '<i className="material-icons">check_circle</i>',
+        'to' => 'attendance-list-for-admin',
+    ],
+    [
+        'title' => 'Study Material',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">library_books</i>',
+        'content' => [
+            [
+                'title' => 'Study Materials',
+                'to' => 'study-materials',
+            ],
+            [
+                'title' => 'Upload Study Material',
+                'to' => 'add-study-material',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Exams',
+        'iconStyle' => '<i className="material-icons">assignment</i>',
+        'to' => 'view-exam',
+    ],
+    [
+        'title' => 'Class Routine',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">schedule</i>',
+        'content' => [
+            [
+                'title' => 'View Routine',
+                'to' => 'view-class-routine',
+            ],
+            [
+                'title' => 'Create Routine',
+                'to' => 'create-class-routine',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Notice',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">notifications</i>',
+        'content' => [
+            [
+                'title' => 'View Notice',
+                'to' => 'view-notice',
+            ],
+            [
+                'title' => 'Create Notice',
+                'to' => 'create-notice',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Leave Request',
+        'iconStyle' => '<i className="material-icons">request_page</i>',
+        'to' => 'leave-request',
+    ],
+    [
+        'title' => 'Settings',
+        'iconStyle' => '<i className="material-icons">settings</i>',
+        'to' => 'settings',
+    ],
+];
+
 
             $data = [
             'admin' => [
