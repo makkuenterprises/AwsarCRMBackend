@@ -492,7 +492,7 @@ Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
 
 Route::post('create/community', [BlogController::class, 'store']);
 Route::delete('/community/{id}', [BlogController::class, 'destroy']);
-Route::put('/community/{id}', [BlogController::class, 'update']);
+Route::post('/community/{id}', [BlogController::class, 'update']);
 Route::get('all/community', [BlogController::class, 'list']);
 Route::get('/community/{id}', [BlogController::class, 'show']);
 
