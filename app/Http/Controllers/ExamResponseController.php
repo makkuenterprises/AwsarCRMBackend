@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
 use App\Models\ExamQuestionResponse;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log;
 class ExamResponseController extends Controller
 {
 public function storeExamResponse(Request $request)
@@ -29,18 +29,21 @@ public function storeExamResponse(Request $request)
         ]);
 
       
+       $timezone = 'Asia/Kolkata';
+
+        // Find the exam
         $exam = Exam::find($validated['exam_id']);
 
-        // Parse the start and end time into Carbon instances
-        $startTime = Carbon::parse($exam->start_time);
-        $endTime = Carbon::parse($exam->end_time);
+        // Parse the start and end time into Carbon instances with the specified timezone
+        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->start_time, $timezone);
+        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->end_time, $timezone);
 
-        // Get the current time and date
-        $currentTime = Carbon::now();
+        // Get the current time and date in the specified timezone
+        $currentTime = Carbon::now($timezone);
         $currentDate = $currentTime->toDateString(); // Get date in "Y-m-d" format
         $examDate = $startTime->toDateString();      // Get exam date in "Y-m-d" format
 
-        // Log the dates and times for troubleshooting
+        // // Log the dates and times for troubleshooting
         // Log::info('Exam Date: ' . $examDate);
         // Log::info('Current Date: ' . $currentDate);
         // Log::info('Start Time: ' . $startTime);
