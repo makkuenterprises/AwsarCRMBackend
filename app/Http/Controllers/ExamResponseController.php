@@ -41,11 +41,11 @@ public function storeExamResponse(Request $request)
         $examDate = $startTime->toDateString();      // Get exam date in "Y-m-d" format
 
         // Log the dates and times for troubleshooting
-        Log::info('Exam Date: ' . $examDate);
-        Log::info('Current Date: ' . $currentDate);
-        Log::info('Start Time: ' . $startTime);
-        Log::info('End Time: ' . $endTime);
-        Log::info('Current Time: ' . $currentTime);
+        // Log::info('Exam Date: ' . $examDate);
+        // Log::info('Current Date: ' . $currentDate);
+        // Log::info('Start Time: ' . $startTime);
+        // Log::info('End Time: ' . $endTime);
+        // Log::info('Current Time: ' . $currentTime);
 
         // Check if the current date matches the exam date
         if ($currentDate !== $examDate) {
