@@ -48,7 +48,7 @@ class BlogController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'The blog is successfully created.',
+                'message' => 'The Community is successfully created.',
                 'data' => $blog
             ], 201);
             
@@ -75,13 +75,13 @@ class BlogController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'The blog is successfully deleted'
+                'message' => 'The Community is successfully deleted'
             ], 200);
             
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Blog not found',
+                'message' => 'Community not found',
             ], 404);
             
         } catch (\Exception $e) {
@@ -147,7 +147,7 @@ class BlogController extends Controller
         if ($result) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'The blog was successfully updated.',
+                'message' => 'The Community was successfully updated.',
                 'data' => $blog,
             ], 200);
         } else {
@@ -167,7 +167,7 @@ class BlogController extends Controller
             // Return a success response with the blog data
             return response()->json([
                 'status' => 'success',
-                'message' => 'Blog list retrieved successfully',
+                'message' => 'Community list retrieved successfully',
                 'data' => $blogs
             ], 200);
         } catch (\Exception $e) {
@@ -188,14 +188,14 @@ class BlogController extends Controller
             // Return a success response with the blog data
             return response()->json([
                 'status' => 'success',
-                'message' => 'Blog retrieved successfully',
+                'message' => 'Community retrieved successfully',
                 'data' => $blog
             ], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Return an error response if the blog is not found
             return response()->json([
                 'status' => 'error',
-                'message' => 'Blog not found',
+                'message' => 'Community not found',
             ], 404);
         } catch (\Exception $e) {
             // Return an error response for other exceptions
