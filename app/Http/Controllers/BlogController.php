@@ -7,7 +7,7 @@ use App\Models\Blog;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Validation\Rule;
 class BlogController extends Controller
 {
     public function store(Request $request)
