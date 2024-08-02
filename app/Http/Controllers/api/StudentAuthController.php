@@ -81,16 +81,16 @@ class StudentAuthController extends Controller
   
 
             $code = 200;
-            
+
             $iconMapping = [
-    'Dashboard' => '<i class="material-icons">home</i>',
-    'Teachers' => '<i class="material-icons">person</i>',
-    'Enrolled Batch' => '<i class="material-icons">article</i>',
-    'Live Classes' => '<i class="material-icons">live_tv</i>',
-    'Fees System' => '<i class="material-icons">money</i>',
-    'Exams' => '<i class="material-icons">assessment</i>',
-    'Institute' => '<i class="material-icons">school</i>',
-    'Settings' => '<i class="material-icons">settings</i>',
+    'Dashboard' => '<i className="material-icons">home</i>',
+    'Teachers' => '<i className="material-icons">person</i>',
+    'Enrolled Batch' => '<i className="material-icons">article</i>',
+    'Live Classes' => '<i className="material-icons">live_tv</i>',
+    'Fees System' => '<i className="material-icons">money</i>',
+    'Exams' => '<i className="material-icons">assessment</i>',
+    'Institute' => '<i className="material-icons">school</i>',
+    'Settings' => '<i className="material-icons">settings</i>',
 ];
 
             $menuList = [
