@@ -17,9 +17,9 @@ class BlogController extends Controller
             'summary' => ['required', 'string', 'min:1', 'max:500'],
             'description' => ['required', 'string', 'min:1', 'max:1000000'],
             'thumbnail' => ['required', 'file', 'mimes:png,jpg,jpeg,webp'],
-            'slug' => ['required', 'string', 'unique:blogs'],
-            'meta_title' => ['required', 'string', 'min:5', 'max:250'],
-            'meta_description' => ['required', 'string', 'min:1', 'max:500'],
+            'slug' => ['nullable', 'string', 'unique:blogs'],
+            'meta_title' => ['nullable', 'string', 'min:5', 'max:250'],
+            'meta_description' => ['nullable', 'string', 'min:1', 'max:500'],
         ]);
 
         if ($validator->fails()) {
@@ -106,13 +106,14 @@ class BlogController extends Controller
 
         // Validate the request data
         $validation = Validator::make($request->all(), [
-            'title' => ['required', 'string', 'min:1', 'max:250'],
+           'title' => ['required', 'string', 'min:1', 'max:250'],
             'summary' => ['required', 'string', 'min:1', 'max:500'],
             'description' => ['required', 'string', 'min:1', 'max:1000000'],
-            'thumbnail' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp'],
+            'thumbnail' => ['required', 'file', 'mimes:png,jpg,jpeg,webp'],
             'slug' => ['required', 'string', Rule::unique('blogs')->ignore($blog->id, 'id')],
-            'meta_title' => ['required', 'string', 'min:5', 'max:250'],
-            'meta_description' => ['required', 'string', 'min:1', 'max:500'],
+            'meta_title' => ['nullable', 'string', 'min:5', 'max:250'],
+            'meta_description' => ['nullable', 'string', 'min:1', 'max:500'],
+           
         ]);
 
         if ($validation->fails()) {

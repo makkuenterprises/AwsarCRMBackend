@@ -490,11 +490,11 @@ Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
 Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
 
 
-Route::post('create/blog', [BlogController::class, 'store']);
-Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
-Route::put('/blogs/{id}', [BlogController::class, 'update']);
-Route::get('/blogs', [BlogController::class, 'list']);
-Route::get('/blogs/{id}', [BlogController::class, 'show']);
+Route::post('create/community', [BlogController::class, 'store']);
+Route::delete('/community/{id}', [BlogController::class, 'destroy']);
+Route::put('/community/{id}', [BlogController::class, 'update']);
+Route::get('all/community', [BlogController::class, 'list']);
+Route::get('/community/{id}', [BlogController::class, 'show']);
 
 
 
