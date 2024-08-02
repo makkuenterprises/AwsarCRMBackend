@@ -583,24 +583,14 @@ public function getAllStudentsResults(Request $request)
     try {
         // Validate the request data
         $validated = $request->validate([
-            'course_id' => 'nullable|exists:courses,id', // Optional filter for course ID
-            'exam_id' => 'nullable|exists:exams,id' // Optional filter for exam ID
+            'course_id' => 'required|exists:courses,id', // Required course ID
+            'exam_id' => 'required|exists:exams,id' // Required exam ID
         ]);
 
-        // Base query to fetch all exams, optionally filtered by course_id
-        $examsQuery = Exam::select('id', 'name');
-
-        // Filter by course ID if provided
-        if (isset($validated['course_id'])) {
-            $examsQuery->where('batch_id', $validated['course_id']);
-        }
-
-        // Filter by exam ID if provided
-        if (isset($validated['exam_id'])) {
-            $examsQuery->where('id', $validated['exam_id']);
-        }
-
-        $examIds = $examsQuery->pluck('id');
+        // Base query to fetch all exams filtered by course_id and exam_id
+        $examIds = Exam::where('batch_id', $validated['course_id'])
+            ->where('id', $validated['exam_id'])
+            ->pluck('id');
 
         // Fetch exam responses for all students
         $examResponses = ExamResponse::select(
