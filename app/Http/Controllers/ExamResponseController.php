@@ -28,7 +28,7 @@ public function storeExamResponse(Request $request)
             'passing_marks' => 'nullable|numeric'
         ]);
 
-        // Fetch the exam details
+      
         $exam = Exam::find($validated['exam_id']);
 
         // Parse the start and end time into Carbon instances
@@ -39,6 +39,13 @@ public function storeExamResponse(Request $request)
         $currentTime = Carbon::now();
         $currentDate = $currentTime->toDateString(); // Get date in "Y-m-d" format
         $examDate = $startTime->toDateString();      // Get exam date in "Y-m-d" format
+
+        // Log the dates and times for troubleshooting
+        Log::info('Exam Date: ' . $examDate);
+        Log::info('Current Date: ' . $currentDate);
+        Log::info('Start Time: ' . $startTime);
+        Log::info('End Time: ' . $endTime);
+        Log::info('Current Time: ' . $currentTime);
 
         // Check if the current date matches the exam date
         if ($currentDate !== $examDate) {
@@ -55,7 +62,6 @@ public function storeExamResponse(Request $request)
                 'message' => 'Exam submission is not allowed outside the designated time period',
             ], 403);
         }
-
         // Initialize counters
         $totalMarks = 0;
         $gainedMarks = 0;
