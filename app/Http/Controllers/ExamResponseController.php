@@ -621,8 +621,8 @@ public function getStudentAllResult(Request $request)
                 'exam_responses.created_at',
                 'exam_responses.updated_at',
                 'exams.name as exam_name',
-                'exams.start_date',
-                'exams.end_date',
+                'exams.start_time',
+                'exams.end_time',
                 'courses.name as course_name'
             )
             ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
