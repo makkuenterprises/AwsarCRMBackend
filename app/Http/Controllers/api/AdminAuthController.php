@@ -57,10 +57,7 @@ class AdminAuthController extends Controller
                             'title'=> 'Student',
                             'to'=> 'student',					
                         ],
-                        // [
-                        //     'title'=> 'Student Detail',
-                        //     'to'=> 'student-detail',
-                        // ],
+                      
                         [
                             'title'=> 'Add New Student',
                             'to'=> 'add-student',
@@ -85,7 +82,6 @@ class AdminAuthController extends Controller
                             'title'=> 'Add New Teacher',
                             'to'=> 'add-teacher',
                         ],
-           
                         ],
                 ],
                 [
