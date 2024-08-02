@@ -81,7 +81,7 @@ class TeacherAuthController extends Controller
                  [
                     'title' => 'Live Classes',
                      'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i class="material-icons">live_tv</i>',
+                     'iconStyle' => '<i className="material-icons">live_tv</i>',
                         'content'=> [
                         [
                             'title'=> 'Live Classes',
