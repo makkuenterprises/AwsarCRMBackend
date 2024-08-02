@@ -462,6 +462,7 @@ Route::post('student/responses/short-answer', [ExamResponseController::class, 'g
 
 Route::post('/student-result', [ExamResponseController::class, 'getStudentResult']);
 Route::post('all/student-result', [ExamResponseController::class, 'getStudentAllResult']);
+Route::post('exam/student-result', [ExamResponseController::class, 'getAllStudentsResults']);
 
  
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);

@@ -518,7 +518,7 @@ public function gradeShortAnswerResponses(Request $request)
 //         ], 200);
 //     } catch (\Illuminate\Validation\ValidationException $e) {
 //         return response()->json([
-//             'status' => false,
+//             'status' => false, 
 //             'message' => 'Validation failed',
 //             'errors' => $e->errors()
 //         ], 422);
@@ -577,6 +577,72 @@ public function getStudentAllResult(Request $request)
         ], 500);
     }
 }
+
+public function getAllStudentsResults(Request $request)
+{
+    try {
+        // Validate the request data
+        $validated = $request->validate([
+            'course_id' => 'nullable|exists:courses,id', // Optional filter for course ID
+            'exam_id' => 'nullable|exists:exams,id' // Optional filter for exam ID
+        ]);
+
+        // Base query to fetch all exams, optionally filtered by course_id
+        $examsQuery = Exam::select('id', 'name');
+
+        // Filter by course ID if provided
+        if (isset($validated['course_id'])) {
+            $examsQuery->where('batch_id', $validated['course_id']);
+        }
+
+        // Filter by exam ID if provided
+        if (isset($validated['exam_id'])) {
+            $examsQuery->where('id', $validated['exam_id']);
+        }
+
+        $examIds = $examsQuery->pluck('id');
+
+        // Fetch exam responses for all students
+        $examResponses = ExamResponse::select(
+                'exam_responses.id', 
+                'exam_responses.exam_id', 
+                'exam_responses.student_id', 
+                'exam_responses.total_marks', 
+                'exam_responses.gained_marks', 
+                'exam_responses.passing_marks', 
+                'exam_responses.negative_marks', 
+                'exam_responses.total_correct_answers', 
+                'exam_responses.total_wrong_answers', 
+                'exam_responses.created_at', 
+                'exam_responses.updated_at', 
+                'exams.name as exam_name',
+                'students.name as student_name' // Include student name
+            )
+            ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
+            ->join('students', 'exam_responses.student_id', '=', 'students.id')
+            ->whereIn('exam_responses.exam_id', $examIds)
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'All student results fetched successfully',
+            'data' => $examResponses
+        ], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'An error occurred',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 
 }

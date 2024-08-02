@@ -705,8 +705,8 @@ public function getStudentBatchDetails(Request $request)
                     'father_name' => $studentBatchDetails->fname, // Ensure 'fname' is correct and in the 'students' table
                     'father_phone' => $studentBatchDetails->fphone, // Ensure 'fphone' is correct and in the 'students' table
                 ],
-                'days_absent' => $daysAbsent,
-                'days_present' => $daysPresent,
+                // 'days_absent' => $daysAbsent,
+                // 'days_present' => $daysPresent,
                 'days_absent_current_month' => $daysAbsentCurrentMonth,
                 'days_present_current_month' => $daysPresentCurrentMonth
             ]
