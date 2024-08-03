@@ -33,7 +33,7 @@ class QuestionController extends Controller
             'options' => 'nullable|array',
             'correct_answers' => 'nullable|array',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-               'batch_id' =>  'required|exists:courses,id', // Validate batch_id
+            'batch_id' =>  'required', // Validate batch_id
         ]);
 
         if ($validator->fails()) {

@@ -499,3 +499,7 @@ Route::get('/community/{id}', [BlogController::class, 'show']);
 
 
 
+
+
+
+
