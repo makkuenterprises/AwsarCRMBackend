@@ -185,7 +185,7 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
         ];
     } else {
         $zoomData = json_decode($response, true);
-              dd($meetingConfig['batch_id']);
+            //   dd($meetingConfig['batch_id']);
         // Save meeting details in the database
         \App\Models\ZoomMeeting::create([
             'uuid'         => $zoomData['uuid'] ?? null,

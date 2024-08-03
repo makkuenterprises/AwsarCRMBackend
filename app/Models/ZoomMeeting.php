@@ -24,6 +24,7 @@ class ZoomMeeting extends Model
         'start_url',
         'join_url',
         'password',
+        'batch_id',
     ];
 
     protected $casts = [
