@@ -25,33 +25,44 @@ class QuestionController extends Controller
 
 public function index2(Request $request)
 {
-    // Validate the incoming request
-    $validated = $request->validate([
-        'stream' => 'nullable|string|max:255',
-    ]);
+    try {
+        // Validate the incoming request
+        $validated = $request->validate([
+            'stream' => 'nullable|string|max:255',
+        ]);
+        
+        // Retrieve the validated stream parameter
+        $stream = $validated['stream'] ?? null;
 
-    // Retrieve the validated stream parameter
-    $stream = $validated['stream'] ?? null;
+        // Query the questions table
+        $query = Questions::orderBy('created_at', 'desc');
 
-    // Query the questions table
-    $query = Questions::orderBy('created_at', 'desc');
-
-    if ($stream) {
-        $query->where('stream', $stream);
-    }
-
-    $questions = $query->get();
-
-    // Transform the questions to include the full image URL
-    $questions->transform(function ($question) {
-        if ($question->image) {
-            $question->image = url(Storage::url($question->image));
+        if ($stream) {
+            $query->where('stream', $stream);
         }
-        return $question;
-    });
 
-    return response()->json(['status' => 'success', 'data' => $questions]);
+        $questions = $query->get();
+
+        // Transform the questions to include the full image URL
+        $questions->transform(function ($question) {
+            if ($question->image) {
+                $question->image = url(Storage::url($question->image));
+            }
+            return $question;
+        });
+
+        return response()->json(['status' => 'success', 'data' => $questions]);
+
+    } catch (ValidationException $e) {
+        // Return a validation error response
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation failed',
+            'errors' => $e->errors(),
+        ], 422);
+    }
 }
+
    public function store(Request $request)  
 {
     try {
