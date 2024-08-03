@@ -141,7 +141,7 @@ public function createMeeting(Request $request)
 
 private function create_a_zoom_meeting($meetingConfig, $accessToken)
 {
-    dd($meetingConfig);
+    // dd($meetingConfig);
     $requestBody = [
         'topic'      => $meetingConfig['topic'] ?? 'New Meeting',
         'type'       => 2, // Scheduled meeting
@@ -202,13 +202,14 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
             'start_url'    => $zoomData['start_url'] ?? null,
             'join_url'     => $zoomData['join_url'] ?? null,
             'password'     => $zoomData['password'] ?? null,
-            'batch_id'     => $meetingConfig['batch_id'] ?? null,
+            'batch_id'     => $meetingConfig['batch_id'],
         ]);
 
         return [
+            'code'  => 200,
             'success'  => true,
             'msg'      => 'Meeting created and saved successfully',
-            'response' => $zoomData,
+            // 'response' => $zoomData,
         ];
     }
 }
