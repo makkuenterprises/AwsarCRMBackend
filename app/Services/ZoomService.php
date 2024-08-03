@@ -13,13 +13,13 @@ class ZoomService
     public function __construct()
     {
         // Load credentials from config or environment
-        // $this->clientId = '2sRe8kjIRHi3m0gqmDqMrQ';
-        // $this->clientSecret = 'eOkWtXLchTSEHg8jV1ywqISRTDzLb34p';
-        // $this->accountId = 'w_RHU_PQSMu_EoUd_ke9bA';
+        $this->clientId = '2sRe8kjIRHi3m0gqmDqMrQ';
+        $this->clientSecret = 'eOkWtXLchTSEHg8jV1ywqISRTDzLb34p';
+        $this->accountId = 'w_RHU_PQSMu_EoUd_ke9bA';
 
-    $this->clientId = env('ZOOM_CLIENT_ID');
-    $this->clientSecret = env('ZOOM_CLIENT_SECRET');
-    $this->accountId = env('ZOOM_ACCOUNT_ID');
+    // $this->clientId = env('ZOOM_CLIENT_ID');
+    // $this->clientSecret = env('ZOOM_CLIENT_SECRET');
+    // $this->accountId = env('ZOOM_ACCOUNT_ID');
     }
 
     public function generateToken()
