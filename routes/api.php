@@ -471,7 +471,7 @@ Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
 Route::delete('/zoom/meeting/{id}', [ZoomController::class, 'deleteMeeting']);
 
 Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
-Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']);
+Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']); 
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
 
 

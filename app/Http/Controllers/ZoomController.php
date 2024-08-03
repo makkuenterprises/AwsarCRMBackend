@@ -225,7 +225,7 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
                 'data' => $meetings
             ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json([ 
                 'success' => false,
                 'message' => 'Failed to retrieve meetings',
                 'error' => $e->getMessage()
@@ -306,7 +306,8 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
             'agenda'     => $zoomMeeting->agenda,
             'start_time' => $zoomMeeting->start_time,
             'duration'   => $zoomMeeting->duration,
-            'settings'   => json_decode($zoomMeeting->settings, true), // Assuming settings are stored as JSON
+            'batch_id'   => $zoomMeeting->batch_id,
+           
         ],
     ]);
 }
