@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('questions', function (Blueprint $table) {
             //
-               $table->renameColumn('batch_id', 'stream');
+               DB::statement('ALTER TABLE questions CHANGE batch_id stream VARCHAR(255)');
         });
     }
 
@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('questions', function (Blueprint $table) {
             //
-             $table->renameColumn('stream', 'batch_id');
+              DB::statement('ALTER TABLE questions CHANGE stream batch_id VARCHAR(255)');
         });
     }
 };

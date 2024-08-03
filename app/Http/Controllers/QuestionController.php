@@ -23,7 +23,7 @@ class QuestionController extends Controller
         return response()->json(['status' => 'success', 'data' => $questions]);
     }
 
-   public function store(Request $request)
+   public function store(Request $request)  
 {
     try {
     //    dd($request->all());
@@ -49,7 +49,7 @@ class QuestionController extends Controller
         $question->question_type = $request->input('question_type');
         $question->options = $request->input('options');
         $question->correct_answers = $request->input('correct_answers');
-         $question->batch_id = $request->input('batch_id'); 
+         $question->stream = $request->input('stream'); 
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('questions', 'public');
