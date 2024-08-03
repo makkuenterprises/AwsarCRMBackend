@@ -141,6 +141,7 @@ public function createMeeting(Request $request)
 
 private function create_a_zoom_meeting($meetingConfig, $accessToken)
 {
+    dd($$meetingConfig);
     $requestBody = [
         'topic'      => $meetingConfig['topic'] ?? 'New Meeting',
         'type'       => 2, // Scheduled meeting
