@@ -87,6 +87,7 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
         ];
     } else {
         $zoomData = json_decode($response, true);
+        dd($zoomData);
 
         // Save meeting details in the database
         \App\Models\ZoomMeeting::create([
