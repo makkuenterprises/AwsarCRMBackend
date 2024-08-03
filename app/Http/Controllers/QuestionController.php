@@ -71,7 +71,7 @@ public function index2(Request $request)
             'options' => 'nullable|array',
             'correct_answers' => 'nullable|array',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'stream' =>  'required', // Validate batch_id
+            'stream' =>  'required', 
         ]);
 
         if ($validator->fails()) {
@@ -140,6 +140,7 @@ public function update(Request $request, $id)
         'options' => 'nullable|array',
         'correct_answers' => 'nullable|array',
         'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+         'stream' =>  'required', 
     ]);
 
     // Check if validation failed
@@ -165,6 +166,10 @@ public function update(Request $request, $id)
         $question->correct_answers = $request->input('correct_answers');
     }
 
+     if ($request->has('stream')) {
+        $question->stream = $request->input('stream');
+    }
+    
     // Handle image upload
     if ($request->hasFile('image')) {
         // Delete old image if exists
