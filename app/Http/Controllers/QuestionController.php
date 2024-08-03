@@ -26,20 +26,18 @@ class QuestionController extends Controller
 public function index2(Request $request)
 {
     try {
-        // Validate the incoming request
+        // Validate the incoming request with 'stream' as a required parameter
         $validated = $request->validate([
-            'stream' => 'nullable|string|max:255',
+            'stream' => 'required|string|max:255',
         ]);
         
         // Retrieve the validated stream parameter
-        $stream = $validated['stream'] ?? null;
+        $stream = $validated['stream'];
 
         // Query the questions table
         $query = Questions::orderBy('created_at', 'desc');
 
-        if ($stream) {
-            $query->where('stream', $stream);
-        }
+        $query->where('stream', $stream);
 
         $questions = $query->get();
 
