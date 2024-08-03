@@ -22,11 +22,18 @@ class QuestionController extends Controller
     });
         return response()->json(['status' => 'success', 'data' => $questions]);
     }
-    
+
 public function index2(Request $request)
 {
-    $stream = $request->input('stream');
+    // Validate the incoming request
+    $validated = $request->validate([
+        'stream' => 'nullable|string|max:255',
+    ]);
 
+    // Retrieve the validated stream parameter
+    $stream = $validated['stream'] ?? null;
+
+    // Query the questions table
     $query = Questions::orderBy('created_at', 'desc');
 
     if ($stream) {
@@ -35,6 +42,7 @@ public function index2(Request $request)
 
     $questions = $query->get();
 
+    // Transform the questions to include the full image URL
     $questions->transform(function ($question) {
         if ($question->image) {
             $question->image = url(Storage::url($question->image));
