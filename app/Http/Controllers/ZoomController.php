@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class ZoomController extends Controller
 {
 
-  private $zoomService;
+  private $zoomService; 
 
     public function __construct(ZoomService $zoomService)
     {
@@ -26,6 +26,7 @@ class ZoomController extends Controller
             'topic' => 'required|string',
             'start_time' => 'required|date_format:Y-m-d\TH:i:s\Z',
             'agenda' => 'required|string',
+              'batch_id' => 'required|exists:courses,id',
         ]);
 
         $accessToken = $this->zoomService->getAccessToken();
@@ -33,6 +34,7 @@ class ZoomController extends Controller
             'topic' => $request->input('topic'),
             'start_time' => $request->input('start_time'),
             'agenda' => $request->input('agenda'),
+            'batch_id' => $request->input('batch_id'),
         ];
 
         $zoomDetails = $this->create_a_zoom_meeting($meetingConfig, $accessToken);
@@ -102,6 +104,8 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
             'start_url'    => $zoomData['start_url'] ?? null,
             'join_url'     => $zoomData['join_url'] ?? null,
             'password'     => $zoomData['password'] ?? null,
+            'batch_id'     => $meetingConfig['agenda'] ?? null,
+            
         ]);
 
         return [

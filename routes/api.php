@@ -150,6 +150,7 @@ Route::prefix('course')->group(function () {
 
 
 Route::post('details/add', [DetailsController::class, 'index']);
+Route::post('details/add', [DetailsController::class, 'index']);
 Route::get('details/view/update/{id}', [DetailsController::class, 'show']);
 Route::post('details/update/{id}', [DetailsController::class, 'update']);
 

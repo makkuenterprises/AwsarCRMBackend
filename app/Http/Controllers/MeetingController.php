@@ -20,6 +20,7 @@ class MeetingController extends Controller
             'start_time' => 'required|date',
             'duration'   => 'required|integer',
             'agenda'     => 'nullable|string',
+          
         ]);
 
         $meeting = $this->zoomService->createMeeting($data);
