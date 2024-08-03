@@ -226,6 +226,8 @@ public function updateMeeting(Request $request, $meetingId)
         'mute_upon_entry' => 'nullable|boolean',
         'waiting_room' => 'nullable|boolean',
         'auto_recording' => 'nullable|string|in:none,local,cloud',
+        'batch_id' => 'required|exists:courses,id',
+        
     ]);
 
     $accessToken = $this->zoomService->getAccessToken();
@@ -235,6 +237,7 @@ public function updateMeeting(Request $request, $meetingId)
         'start_time' => $request->input('start_time'),
         'agenda'     => $request->input('agenda'),
         'duration'   => $request->input('duration'),
+        'batch_id' => $request->input('batch_id'),
         'timezone'   => 'Asia/Kolkata',
         'settings'   => [
             'host_video'        => $request->input('host_video', false),
@@ -260,18 +263,6 @@ public function updateMeeting(Request $request, $meetingId)
         $body = $response->getBody()->getContents();
         $zoomData = json_decode($body, true);
 
-        // if (json_last_error() !== JSON_ERROR_NONE || empty($zoomData)) {
-        //     // Log the response for debugging
-        //     \Log::error('Invalid JSON response from Zoom API', ['response' => $body]);
-
-        //     return response()->json([
-        //         'success' => false,
-        //         'msg'     => 'Failed to update meeting',
-        //         'error'   => 'Invalid JSON response from API',
-        //     ], 500);
-        // }
-
-        // Update meeting details in the database using available data
         $zoomMeeting = \App\Models\ZoomMeeting::where('meeting_id', $meetingId)->first();
         if ($zoomMeeting) {
             $zoomMeeting->update([
@@ -279,6 +270,7 @@ public function updateMeeting(Request $request, $meetingId)
                 'agenda'     => $request->input('agenda', $zoomMeeting->agenda),
                 'start_time' => $request->input('start_time', $zoomMeeting->start_time),
                 'duration'   => $request->input('duration', $zoomMeeting->duration),
+                'batch_id' => $request->input('batch_id',$zoomMeeting->batch_id),
                 'settings'   => json_encode($meetingConfig['settings']),
             ]);
         }

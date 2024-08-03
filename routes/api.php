@@ -150,7 +150,6 @@ Route::prefix('course')->group(function () {
 
 
 Route::post('details/add', [DetailsController::class, 'index']);
-Route::post('details/add', [DetailsController::class, 'index']);
 Route::get('details/view/update/{id}', [DetailsController::class, 'show']);
 Route::post('details/update/{id}', [DetailsController::class, 'update']);
 
@@ -440,6 +439,7 @@ Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOv
 // questions-----------------------------------------------------------------------------------------------
 
 Route::get('questions', [QuestionController::class, 'index']);
+Route::get('all/questions', [QuestionController::class, 'index2']);
 Route::post('questions', [QuestionController::class, 'store']);
 Route::get('questions/{id}', [QuestionController::class, 'show']);
 Route::post('questions/{id}', [QuestionController::class, 'update']);
