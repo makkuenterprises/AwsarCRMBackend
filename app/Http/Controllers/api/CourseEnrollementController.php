@@ -400,6 +400,7 @@ public function restPayment(Request $request)
         // Find the existing enrollment record
         $enrollment = CoursesEnrollement::where('student_id', $request->student_id)
             ->where('course_id', $request->course_id)
+            ->with('student') // Ensure student relation is loaded
             ->first();
 
         if (!$enrollment) {
@@ -449,7 +450,7 @@ public function restPayment(Request $request)
         $invoice->student_id = $request->student_id;
         $invoice->course_id = $request->course_id;
         $invoice->invoice_no = 'INV' . $timestamp . Str::upper(Str::random(6)); // Generating a unique invoice number
-        $invoice->student_name = $enrollment->student->name; // Assuming `student` relation exists
+        $invoice->student_name = $enrollment->student ? $enrollment->student->name : 'Unknown Student'; // Handle null case
         $invoice->course_name = $course->name;
         $invoice->total_amount = $course->fee;
         $invoice->paid_amount = $request->paid_amount;
@@ -464,5 +465,6 @@ public function restPayment(Request $request)
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to process rest payment', 'error' => $e->getMessage()], 500);
     }
 }
+
 
 }
