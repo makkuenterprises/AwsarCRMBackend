@@ -14,6 +14,8 @@ use App\Models\StaffModel;
 use App\Models\Teacher;
 use Illuminate\Support\Str;
 use App\Models\PaymentHistory;
+
+use App\Models\Invoice;
 use App\Notifications\CourseEnrollmentNotification;
 use App\Notifications\CourseEnrollmentNotificationForAdmin;
 
