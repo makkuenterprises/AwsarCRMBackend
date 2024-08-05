@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\api\AdminAuthController;
+use App\Http\Controllers\api\AdminAuthController; 
 use App\Http\Controllers\api\StudentAuthController; 
 use App\Http\Controllers\api\TeacherAuthController;
 use App\Http\Controllers\api\StaffAuthController;
@@ -502,6 +502,8 @@ Route::get('/community/{id}', [BlogController::class, 'show']);
 
 
 Route::get('/invoices', [InvoiceController::class, 'getAllInvoices']);
+Route::get('/invoices/student', [InvoiceController::class, 'getAllInvoicesByStudent']);
+
 
 
 
