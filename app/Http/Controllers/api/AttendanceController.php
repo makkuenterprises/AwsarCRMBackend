@@ -511,6 +511,16 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
             ->select('students.id', 'students.name', 'attendances.status as attendance_status')
             ->get();
 
+              $existingAttendance = Attendance::where('date', $date)
+            ->where('course_id', $courseId)
+            ->exists();
+
+            if($existingAttendance){
+                $attendance="true";
+            }else{
+                 $attendance="false"; 
+            }
+
         // Set default status to 'absent' if no record is found
         foreach ($students as $student) {
             if (is_null($student->attendance_status)) {
