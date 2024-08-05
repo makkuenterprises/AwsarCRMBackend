@@ -128,22 +128,24 @@ class StaffAuthController extends Controller
                         'to' => 'attendance-list-for-staff',
                 ],
                  [
-                    'title' => 'Exams',
-                     'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
-                        'content'=> [
-                        [
-                            'title'=> 'View Exam',
-                            'to'=> 'page-lock-screen',					
-                        ],
-                        [
-                            'title'=> 'Create Exam',
-                            'to'=> 'page-lock-screen',
-                        ],
-                      
-           
-                        ],
-                ],
+        'title' => 'Exams',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">assessment</i>',
+        'content' => [
+            [
+                'title' => 'View Questions',
+                'to' => 'view-question',
+            ],
+            [
+                'title' => 'View Exam',
+                'to' => 'view-exam',
+            ],
+            [
+                'title' => 'Create Exam',
+                'to' => 'create-exam',
+            ],
+        ],
+    ],
                  [
                     'title' => 'Class Routine',
                      'classsChange' => 'mm-collapse',

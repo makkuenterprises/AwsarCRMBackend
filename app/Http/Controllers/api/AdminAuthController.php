@@ -147,10 +147,24 @@ class AdminAuthController extends Controller
             ],
         ],
     ],
-    [
+     [
         'title' => 'Exams',
-        'iconStyle' => '<i className="material-icons">assignment</i>',
-        'to' => 'view-exam',
+        'classChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">assessment</i>',
+        'content' => [
+            [
+                'title' => 'View Questions',
+                'to' => 'view-question',
+            ],
+            [
+                'title' => 'View Exam',
+                'to' => 'view-exam',
+            ],
+            [
+                'title' => 'Create Exam',
+                'to' => 'create-exam',
+            ],
+        ],
     ],
     [
         'title' => 'Class Routine',
