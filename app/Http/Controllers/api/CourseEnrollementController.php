@@ -397,10 +397,15 @@ public function restPayment(Request $request)
     try {
         DB::beginTransaction(); // Start the transaction
 
-        // Find the existing enrollment record with student details
-        $enrollment = CoursesEnrollement::where('student_id', $request->student_id)
-            ->where('course_id', $request->course_id)
+        // Find the existing enrollment record with student details using join
+        $enrollment = DB::table('courses_enrollements')
+            ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('courses_enrollements.student_id', $request->student_id)
+            ->where('courses_enrollements.course_id', $request->course_id)
+            ->select('courses_enrollements.*', 'students.name as student_name', 'courses.name as course_name', 'courses.fee as course_fee')
             ->first();
+
 
         if (!$enrollment) {
             DB::rollBack(); // Rollback the transaction
