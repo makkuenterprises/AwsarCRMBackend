@@ -503,6 +503,7 @@ Route::get('/community/{id}', [BlogController::class, 'show']);
 
 Route::get('/invoices', [InvoiceController::class, 'getAllInvoices']);
 Route::post('/invoices/student', [InvoiceController::class, 'getAllInvoicesByStudent']);
+Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
 
 
 

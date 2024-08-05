@@ -69,13 +69,14 @@ class InvoiceController extends Controller
 public function getAllInvoicesByStudentDownload(Request $request)
 {
     // Validate the request
-    $request->validate([
+   
+
+    try {
+         $request->validate([
         'student_id' => 'required|integer|exists:students,id',
         'course_id' => 'required|integer|exists:courses,id',
         'invoice_id' => 'required|integer|exists:invoices,id',
     ]);
-
-    try {
         // Build query to fetch invoices for the specified student, course, and invoice ID
         $invoices = Invoice::where('student_id', $request->input('student_id'))
             ->where('course_id', $request->input('course_id'))
