@@ -4,7 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -110,14 +110,14 @@ class StaffAuthController extends Controller
                      'classsChange' => 'mm-collapse',
                      'iconStyle' => '<i className="merial-icons">article</i>',
                         'content'=> [
-                        [
-                            'title'=> 'Live Classes',
-                            'to'=> 'live-classes',					
-                        ],
-                        [
-                            'title'=> 'Create Live Class',
-                            'to'=> 'page-lock-screen',
-                        ],
+                     [
+                'title' => 'Live Classes',
+                'to' => 'live-classes',
+            ],
+            [
+                'title' => 'Create Live Class',
+                'to' => 'create-live-class',
+            ],
                       
            
                         ],

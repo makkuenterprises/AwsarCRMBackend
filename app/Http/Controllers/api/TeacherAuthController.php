@@ -151,13 +151,13 @@ $menuList = [
         'classChange' => 'mm-collapse',
         'iconStyle' => '<i className="material-icons">announcement</i>',
         'content' => [
-            [
-                'title' => 'View Notice',
-                'to' => 'view-notice',
+          [
+                'title' => 'Live Classes',
+                'to' => 'live-classes',
             ],
             [
-                'title' => 'Create Notice',
-                'to' => 'create-notice',
+                'title' => 'Create Live Class',
+                'to' => 'create-live-class',
             ],
         ],
     ],
