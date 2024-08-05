@@ -29,40 +29,49 @@ class InvoiceController extends Controller
         }
     }
 
-    public function getAllInvoicesByStudent(Request $request)
-    {
-        // Validate the request
-      
+  public function getAllInvoicesByStudent(Request $request)
+{
+    // Validate the request
+    $request->validate([
+        'student_id' => 'required|integer|exists:students,id',
+    ]);
 
-        try {
-              $request->validate([
-            'student_id' => 'required|integer',
-        ]);
-            // Fetch all invoices for the specified student
-            $invoices = Invoice::where('student_id', $request->input('student_id'))
-                ->get();
+    try {
+        // Fetch the student with specific fields
+        $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
+                          ->findOrFail($request->input('student_id'));
 
-            return response()->json([
-                'status' => true,
-                'code' => 200,
-                'data' => $invoices,
-            ], 200);
-        }  catch (\Illuminate\Validation\ValidationException $e) {
-    return response()->json([
-        'status' => false,
-        'code' => 422,
-        'message' => 'Validation failed',
-        'errors' => $e->errors(),
-    ], 422);
-}catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'code' => 500,
-                'message' => 'Failed to retrieve ',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        // Fetch all invoices for the specified student with course and enrollment details
+        $invoices = Invoice::where('student_id', $request->input('student_id'))
+                           ->with(['course:id,name', 'enrollment.course:id,name'])
+                           ->get();
+
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => [
+                'student' => $student,
+                'invoices' => $invoices,
+            ],
+        ], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => false,
+            'code' => 422,
+            'message' => 'Validation failed',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'Failed to retrieve invoices',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
+
 
 
 
