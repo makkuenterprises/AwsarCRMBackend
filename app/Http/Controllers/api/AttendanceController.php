@@ -530,7 +530,7 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
 
         return response()->json([
             'status' => true,
-            'atendance'=> $attendance,
+            'attendance'=> $attendance,
             'code' => 200,
             'data' => $students
         ], 200);
