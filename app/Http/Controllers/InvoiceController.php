@@ -84,22 +84,29 @@ public function getAllInvoicesByStudent(Request $request)
 
 
 
-
 public function getAllInvoicesByStudentDownload(Request $request)
 {
     // Validate the request
-   
-
-    try {
-         $request->validate([
+    $request->validate([
         'student_id' => 'required|integer|exists:students,id',
         'course_id' => 'required|integer|exists:courses,id',
         'invoice_id' => 'required|integer|exists:invoices,id',
     ]);
-        // Build query to fetch invoices for the specified student, course, and invoice ID
-        $invoices = Invoice::where('student_id', $request->input('student_id'))
-            ->where('course_id', $request->input('course_id'))
-            ->where('id', $request->input('invoice_id'))
+
+    try {
+        // Build query to fetch invoices for the specified student, course, and invoice ID using join
+        $invoices = DB::table('invoices')
+            ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('invoices.student_id', $request->input('student_id'))
+            ->where('courses_enrollements.course_id', $request->input('course_id'))
+            ->where('invoices.id', $request->input('invoice_id'))
+            ->select(
+                'invoices.*',
+                'courses_enrollements.student_id',
+                'courses_enrollements.course_id',
+                'courses.name as course_name'
+            )
             ->get();
 
         // Check if any invoices are found
@@ -110,12 +117,23 @@ public function getAllInvoicesByStudentDownload(Request $request)
                 'message' => 'No invoices found for the given criteria.',
             ], 404);
         }
-        return response()->json(['data'=> $invoices]);
 
-        // Generate PDF
+        // Fetch the student details
+        $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
+                          ->findOrFail($request->input('student_id'));
+
+        // Return response with the student details and invoices
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'data' => [
+                'student' => $student,
+                'invoices' => $invoices,
+            ],
+        ], 200);
+
+        // Generate PDF (Uncomment if you want to generate and download the PDF)
         // $pdf = PDF::loadView('invoices.pdf', ['invoices' => $invoices]);
-
-        // Download the PDF
         // return $pdf->download('invoices.pdf');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -134,4 +152,5 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
 }
