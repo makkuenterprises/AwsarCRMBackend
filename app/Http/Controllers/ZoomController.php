@@ -487,20 +487,16 @@ public function updateMeeting(Request $request, $meetingId)
         ], 500);
     }
 }
-
-
+  
 public function getUserMeetings(Request $request)
     {
         // Validate the request data
-       
-
-        try {
-
-            $request->validate([
+        $request->validate([
             'role' => 'required|string|in:teacher,student',
             'user_id' => 'required|integer',
-           ]);
-           
+        ]);
+
+        try {
             $courseIds = [];
 
             $role = $request->input('role');
@@ -511,13 +507,17 @@ public function getUserMeetings(Request $request)
                 $teacher = Teacher::findOrFail($userId);
 
                 // Get all courses the teacher is assigned to
-                $courseIds = $teacher->courses()->pluck('id')->toArray();
+                $courseIds = DB::table('courses')
+                    ->join('course_teacher', 'courses.id', '=', 'course_teacher.course_id')
+                    ->where('course_teacher.teacher_id', $userId)
+                    ->pluck('courses.id')
+                    ->toArray();
             } elseif ($role === 'student') {
                 // Fetch the student
                 $student = Student::findOrFail($userId);
 
                 // Get all courses the student is enrolled in
-                $courseIds = DB::table('courses_enrollements')
+                $courseIds = DB::table('courses_enrollments')
                     ->where('student_id', $userId)
                     ->pluck('course_id')
                     ->toArray();
@@ -537,14 +537,7 @@ public function getUserMeetings(Request $request)
                 'code' => 200,
                 'data' => $meetings,
             ], 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'status' => false,
-            'code' => 422, // Unprocessable Entity
-            'message' => 'Validation Error',
-            'errors' => $e->errors()
-        ], 422);
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'code' => 500,
@@ -552,6 +545,5 @@ public function getUserMeetings(Request $request)
                 'error' => $e->getMessage(),
             ], 500);
         }
-    }
-
+    } 
 } 
