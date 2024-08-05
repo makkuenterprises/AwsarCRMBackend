@@ -122,8 +122,13 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
                           ->findOrFail($request->input('student_id'));
 
-        // Return response with the student details and invoices
-        return response()->json([
+        // Generate PDF
+        // $pdf = PDF::loadView('invoices.pdf', [
+        //     'student' => $student,
+        //     'invoices' => $invoices,
+        // ]);
+
+          return response()->json([
             'status' => true,
             'code' => 200,
             'data' => [
@@ -132,9 +137,9 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ],
         ], 200);
 
-        // Generate PDF (Uncomment if you want to generate and download the PDF)
-        // $pdf = PDF::loadView('invoices.pdf', ['invoices' => $invoices]);
-        // return $pdf->download('invoices.pdf');
+
+        // Download the PDF
+        return $pdf->download('invoices.pdf');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
@@ -152,5 +157,6 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
 
 }
