@@ -7,6 +7,8 @@ use App\Models\ZoomToken;
 use App\Services\ZoomService; 
 use Illuminate\Support\Facades\Http; 
 use App\Models\ZoomMeeting;
+use App\Models\Teacher;
+use App\Models\Student;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
@@ -487,6 +489,59 @@ public function updateMeeting(Request $request, $meetingId)
 }
 
 
+public function getUserMeetings(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'role' => 'required|string|in:teacher,student',
+            'user_id' => 'required|integer',
+        ]);
 
+        try {
+            $courseIds = [];
+
+            $role = $request->input('role');
+            $userId = $request->input('user_id');
+
+            if ($role === 'teacher') {
+                // Fetch the teacher
+                $teacher = Teacher::findOrFail($userId);
+
+                // Get all courses the teacher is assigned to
+                $courseIds = $teacher->courses()->pluck('id')->toArray();
+            } elseif ($role === 'student') {
+                // Fetch the student
+                $student = Student::findOrFail($userId);
+
+                // Get all courses the student is enrolled in
+                $courseIds = DB::table('courses_enrollements')
+                    ->where('student_id', $userId)
+                    ->pluck('course_id')
+                    ->toArray();
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'code' => 400,
+                    'message' => 'Invalid role specified'
+                ], 400);
+            }
+
+            // Retrieve all meetings associated with these courses
+            $meetings = ZoomMeeting::whereIn('batch_id', $courseIds)->get();
+
+            return response()->json([
+                'status' => true,
+                'code' => 200,
+                'data' => $meetings,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => 500,
+                'message' => 'Failed to retrieve meetings',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
 } 

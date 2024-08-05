@@ -20,7 +20,7 @@ use App\Notifications\CourseEnrollmentNotificationForAdmin;
 use DB;
  
 class CourseEnrollementController extends Controller
-{
+{ 
 
    public function enrollCourse(Request $request)
 {
@@ -141,7 +141,21 @@ class CourseEnrollementController extends Controller
         } 
 
         $student->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
-
+      
+        // Create an invoice
+        $invoice = new Invoice();
+        $invoice->enrollment_id = $enrollcourse->id; 
+        $invoice->student_id = $student->id;
+        $invoice->course_id = $course->id;
+        $invoice->invoice_no = 'INV' . $timestamp . $randomInteger . Str::upper(Str::random(6));
+        $invoice->student_name = $student->name;
+        $invoice->course_name = $course->name;
+        $invoice->total_amount = $course->fee;
+        $invoice->paid_amount = $request->input('paid_amount');
+        $invoice->remaining_amount = $course->fee - $request->input('paid_amount');
+        $invoice->invoice_date = Carbon::now()->toDateString();
+        $invoice->save(); 
+       
         DB::commit(); // Commit the transaction
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Student enrolled in the course successfully'], 200);
     } catch (\Exception $e) {

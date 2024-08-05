@@ -28,6 +28,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamResponseController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\InvoiceController;
 
 
 /* 
@@ -474,6 +475,8 @@ Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
 Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']); 
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
 
+Route::post('/user/meetings', [MeetingController::class, 'getUserMeetings']);
+
 
 
 
@@ -496,6 +499,9 @@ Route::delete('/community/{id}', [BlogController::class, 'destroy']);
 Route::post('/community/{id}', [BlogController::class, 'update']);
 Route::get('all/community', [BlogController::class, 'list']);
 Route::get('/community/{id}', [BlogController::class, 'show']);
+
+
+Route::get('/invoices', [InvoiceController::class, 'getAllInvoices']);
 
 
 
