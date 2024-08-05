@@ -124,6 +124,7 @@ public function createMeeting(Request $request)
         'start_time' => 'required|date_format:Y-m-d\TH:i:s\Z',
         'agenda' => 'required|string',
         'batch_id' => 'required|exists:courses,id',
+        'duration' => 'required',
     ]);
 
     $accessToken = $this->zoomService->getAccessToken();
@@ -132,6 +133,7 @@ public function createMeeting(Request $request)
         'start_time' => $request->input('start_time'),
         'agenda' => $request->input('agenda'),
         'batch_id' => $request->input('batch_id'),
+        'duration' => $request->input('duration'),
     ];
 
     $zoomDetails = $this->create_a_zoom_meeting($meetingConfig, $accessToken);
@@ -146,7 +148,7 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
         'topic'      => $meetingConfig['topic'] ?? 'New Meeting',
         'type'       => 2, // Scheduled meeting
         'start_time' => $meetingConfig['start_time'],
-        'duration'   => 30, // Default duration in minutes
+        'duration'   =>  $meetingConfig['duration'], // Default duration in minutes
         'password'   => mt_rand(), // Random password
         'timezone'   => 'Asia/Kolkata',
         'agenda'     => $meetingConfig['agenda'],
