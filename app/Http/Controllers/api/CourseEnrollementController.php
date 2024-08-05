@@ -397,12 +397,9 @@ public function restPayment(Request $request)
     try {
         DB::beginTransaction(); // Start the transaction
 
-          // Find the existing enrollment record with student details
-        $enrollment = DB::table('courses_enrollements')
-            ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
-            ->where('courses_enrollements.student_id', $request->student_id)
-            ->where('courses_enrollements.course_id', $request->course_id)
-            ->select('courses_enrollements.*', 'students.name as student_name')
+        // Find the existing enrollment record with student details
+        $enrollment = CoursesEnrollement::where('student_id', $request->student_id)
+            ->where('course_id', $request->course_id)
             ->first();
 
         if (!$enrollment) {
@@ -430,7 +427,7 @@ public function restPayment(Request $request)
 
         // Update enrollment with new payment details
         $enrollment->paid_amount = $totalPaidAmount;
-        $enrollment->save();
+        $enrollment->save(); // Save changes to the enrollment
 
         // Generate transaction ID and save payment history
         $timestamp = time();
@@ -452,7 +449,7 @@ public function restPayment(Request $request)
         $invoice->student_id = $request->student_id;
         $invoice->course_id = $request->course_id;
         $invoice->invoice_no = 'INV' . $timestamp . Str::upper(Str::random(6)); // Generating a unique invoice number
-        $invoice->student_name = $enrollment->student ? $enrollment->student->name : 'Unknown Student'; // Handle null case
+        $invoice->student_name = $enrollment->student->name; // Ensure you have a `student` relationship in CoursesEnrollement
         $invoice->course_name = $course->name;
         $invoice->total_amount = $course->fee;
         $invoice->paid_amount = $request->paid_amount;
