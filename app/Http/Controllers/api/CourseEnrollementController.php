@@ -398,18 +398,27 @@ public function restPayment(Request $request)
         DB::beginTransaction(); // Start the transaction
 
         // Find the existing enrollment record with student details using join
-        $enrollment = DB::table('courses_enrollements')
-            ->join('students', 'courses_enrollements.student_id', '=', 'students.id')
-            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-            ->where('courses_enrollements.student_id', $request->student_id)
-            ->where('courses_enrollements.course_id', $request->course_id)
-            ->select('courses_enrollements.*', 'students.name as student_name', 'courses.name as course_name', 'courses.fee as course_fee')
+        $enrollment = CoursesEnrollement::with(['student', 'course'])
+            ->where('student_id', $request->student_id)
+            ->where('course_id', $request->course_id)
             ->first();
+
+
 
 
         if (!$enrollment) {
             DB::rollBack(); // Rollback the transaction
             return response()->json(['status' => false, 'code' => 404, 'message' => 'Enrollment not found'], 404);
+        }
+
+         // Retrieve the course and student details
+        $course = $enrollment->course;
+        $student = $enrollment->student;
+
+        // Check if the course and student are retrieved
+        if (!$course || !$student) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course or Student not found'], 404);
         }
 
         // Retrieve the course fee
