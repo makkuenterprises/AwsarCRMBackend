@@ -411,10 +411,18 @@ public function restPayment(Request $request)
             return response()->json(['status' => false, 'code' => 404, 'message' => 'Enrollment not found'], 404);
         }
 
-         // Retrieve the course and student details
-        $course = $enrollment->course;
-        $student = $enrollment->student;
+        // Find the student and course
+        $student = Student::find($request->student_id);
+        if (!$student) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Student not found'], 404);
+        }
 
+        $course = Course::find($request->course_id);
+        if (!$course) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+        }
         // Check if the course and student are retrieved
         if (!$course || !$student) {
             DB::rollBack(); // Rollback the transaction
