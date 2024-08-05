@@ -398,8 +398,7 @@ public function restPayment(Request $request)
         DB::beginTransaction(); // Start the transaction
 
         // Find the existing enrollment record with student details using join
-        $enrollment = CoursesEnrollement::with(['student', 'course'])
-            ->where('student_id', $request->student_id)
+       $enrollment = CoursesEnrollement::where('student_id', $request->student_id)
             ->where('course_id', $request->course_id)
             ->first();
 
