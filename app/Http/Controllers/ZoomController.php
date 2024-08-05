@@ -492,12 +492,15 @@ public function updateMeeting(Request $request, $meetingId)
 public function getUserMeetings(Request $request)
     {
         // Validate the request data
-        $request->validate([
-            'role' => 'required|string|in:teacher,student',
-            'user_id' => 'required|integer',
-        ]);
+       
 
         try {
+
+            $request->validate([
+            'role' => 'required|string|in:teacher,student',
+            'user_id' => 'required|integer',
+           ]);
+           
             $courseIds = [];
 
             $role = $request->input('role');
@@ -534,7 +537,14 @@ public function getUserMeetings(Request $request)
                 'code' => 200,
                 'data' => $meetings,
             ], 200);
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => false,
+            'code' => 422, // Unprocessable Entity
+            'message' => 'Validation Error',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'code' => 500,

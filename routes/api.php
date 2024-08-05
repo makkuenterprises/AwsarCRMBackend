@@ -29,7 +29,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamResponseController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\InvoiceController;
-
+ 
 
 /* 
 |--------------------------------------------------------------------------
@@ -475,7 +475,7 @@ Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
 Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']); 
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
 
-Route::post('/user/meetings', [MeetingController::class, 'getUserMeetings']);
+Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
 
 
 
