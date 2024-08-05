@@ -6,6 +6,7 @@ use App\Models\Invoice;
 // use Barryvdh\DomPDF\Facade as PDF;
 use App\Models\Student;
 use App\Models\Course;
+use DB;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller 
@@ -30,8 +31,7 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
-
-  public function getAllInvoicesByStudent(Request $request)
+public function getAllInvoicesByStudent(Request $request)
 {
     // Validate the request
     $request->validate([
@@ -43,10 +43,18 @@ class InvoiceController extends Controller
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
                           ->findOrFail($request->input('student_id'));
 
-        // Fetch all invoices for the specified student with course and enrollment details
-        $invoices = Invoice::where('student_id', $request->input('student_id'))
-                           ->with(['course:id,name', 'enrollment.course:id,name'])
-                           ->get();
+        // Fetch all invoices for the specified student with course and enrollment details using join
+        $invoices = DB::table('invoices')
+            ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->select(
+                'invoices.*',
+                'courses_enrollements.student_id',
+                'courses_enrollements.course_id',
+                'courses.name as course_name'
+            )
+            ->where('invoices.student_id', $request->input('student_id'))
+            ->get();
 
         return response()->json([
             'status' => true,
