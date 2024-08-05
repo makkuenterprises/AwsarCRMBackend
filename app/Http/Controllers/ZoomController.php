@@ -518,7 +518,7 @@ public function getUserMeetings(Request $request)
                 $student = Student::findOrFail($userId);
 
                 // Get all courses the student is enrolled in
-                $courseIds = DB::table('courses_enrollments')
+                $courseIds = DB::table('courses_enrollements')
                     ->where('student_id', $userId)
                     ->pluck('course_id')
                     ->toArray();
