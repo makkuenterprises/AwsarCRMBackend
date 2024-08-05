@@ -470,7 +470,7 @@ public function restPayment(Request $request)
         $invoice->student_id = $request->student_id;
         $invoice->course_id = $request->course_id;
         $invoice->invoice_no = 'INV' . $timestamp . Str::upper(Str::random(6)); // Generating a unique invoice number
-        $invoice->student_name = $enrollment->student->name; // Ensure you have a `student` relationship in CoursesEnrollement
+        $invoice->student_name = $student->name; // Ensure you have a `student` relationship in CoursesEnrollement
         $invoice->course_name = $course->name;
         $invoice->total_amount = $course->fee;
         $invoice->paid_amount = $request->paid_amount;
