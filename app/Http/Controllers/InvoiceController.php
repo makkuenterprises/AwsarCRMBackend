@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-// use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade as PDF;
 use App\Models\Student;
 use App\Models\Course;
 use DB;
@@ -192,7 +192,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
-        // Fetch the student details
+        // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
                           ->findOrFail($request->input('student_id'));
 
@@ -219,18 +219,26 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // $enrollmentDetails = [
         //     'enrollment_id' => $invoices->first()->enrollment_id
         // ];
+  // Generate PDF
+        $pdf = PDF::loadView('invoice', [
+            'student' => $student,
+            'invoices' => $invoices,
+            'paymentHistories' => $paymentHistories,
+        ]);
 
-        return response()->json([
-            'status' => true,
-            'code' => 200,
-            'data' => [
-                'student' => $student,
-                // 'courseDetails' => $courseDetails,
-                // 'enrollmentDetails' => $enrollmentDetails,
-                'invoices' => $invoices,
-                'paymentHistories' => $paymentHistories,
-            ],
-        ], 200);
+        // Download the PDF
+        return $pdf->download('invoice.pdf');
+        // return response()->json([
+        //     'status' => true,
+        //     'code' => 200,
+        //     'data' => [
+        //         'student' => $student,
+        //         // 'courseDetails' => $courseDetails,
+        //         // 'enrollmentDetails' => $enrollmentDetails,
+        //         'invoices' => $invoices,
+        //         'paymentHistories' => $paymentHistories,
+        //     ],
+        // ], 200);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
