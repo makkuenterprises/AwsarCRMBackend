@@ -12,9 +12,9 @@
         }
         .container {
             width: 100%;
-            margin: 0 auto;
+            margin:  auto;
             background: #fff;
-            padding: 20px;
+            padding: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
@@ -165,7 +165,7 @@
         </div>
 
         <div class="footer">
-            <p>Thank you for your enrollment with AWSARCLASSES. We hope you find our services valuable and enriching.</p>
+            <p>Thank you for your enrollment with AWSAR CLASSES. We hope you find our services valuable and enriching.</p>
         </div>
     </div>
 </body>

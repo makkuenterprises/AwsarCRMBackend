@@ -225,7 +225,10 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ]);
 
         // Download the PDF
-        return $pdf->download('invoice.pdf');
+        // return $pdf->download('invoice.pdf');
+
+         // Stream the PDF to the browser
+          return $pdf->stream('invoice.pdf');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
