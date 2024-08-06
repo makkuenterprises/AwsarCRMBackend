@@ -91,7 +91,7 @@
 
         <div class="company-info">
             <h2>Company Details</h2>
-            <p><strong>Company Name:</strong> Your Company Ltd.</p>
+            <p><strong>Company Name:</strong> Awsar Classes</p>
             <p><strong>Address:</strong> 123 Business Road, Business City, BC 12345</p>
             <p><strong>Phone:</strong> +1 (234) 567-8900</p>
             <p><strong>Email:</strong> contact@yourcompany.com</p>
