@@ -220,7 +220,7 @@ $otherPaymentStatusStudentsCount = DB::table('students')
    public function fetchChartData(Request $request)
     {
         try {
-            $duration = $request->query('duration', 'year'); // default to monthly data
+            $duration = $request->query('duration', 'month'); // default to monthly data
             $data = $this->getChartData($duration);
 
             return response()->json([
@@ -310,29 +310,49 @@ $otherPaymentStatusStudentsCount = DB::table('students')
         ];
     }
 
-    private function getYearlyData()
-    {
-        $counts = [];
-        $years = [];
-        $currentYear = date('Y');
-        $startYear = $currentYear - 4;
+ private function getYearlyData()
+{
+    $counts = [
+        'studentsCount' => [],
+        'paidPayments' => [],
+        'pendingPayments' => []
+    ];
+    $years = [];
+    $currentYear = date('Y');
+    $startYear = $currentYear - 4;
 
-        for ($year = $startYear; $year <= $currentYear; $years[] = (string)$year) {
-            $counts['studentsCount'][] = Student::whereYear('created_at', $year)->count();
-            $counts['paidPayments'][] = Student::whereYear('created_at', $year)
-                                               ->where('payment_status', 'paid')
-                                               ->count();
-            $counts['pendingPayments'][] = Student::whereYear('created_at', $year)
-                                                  ->where('payment_status', 'pending')
-                                                  ->count();
-        }
+    // Iterate over the range of years
+    for ($year = $startYear; $year <= $currentYear; $year++) {
+        $years[] = (string)$year;
 
-        return [
-            'labels' => $years,
-            'studentsCount' => $counts['studentsCount'],
-            'paidPayments' => $counts['paidPayments'],
-            'pendingPayments' => $counts['pendingPayments']
-        ];
+        // Debugging: Check the queries
+        \Log::info("Fetching data for year: $year");
+
+        $studentsCount = Student::whereYear('created_at', $year)->count();
+        $paidPayments = Student::whereYear('created_at', $year)
+                                ->where('payment_status', 'paid')
+                                ->count();
+        $pendingPayments = Student::whereYear('created_at', $year)
+                                   ->where('payment_status', 'pending')
+                                   ->count();
+
+        // Log results for debugging
+        \Log::info("Students Count: $studentsCount");
+        \Log::info("Paid Payments: $paidPayments");
+        \Log::info("Pending Payments: $pendingPayments");
+
+        $counts['studentsCount'][] = $studentsCount;
+        $counts['paidPayments'][] = $paidPayments;
+        $counts['pendingPayments'][] = $pendingPayments;
     }
+
+    return [
+        'labels' => $years,
+        'studentsCount' => $counts['studentsCount'],
+        'paidPayments' => $counts['paidPayments'],
+        'pendingPayments' => $counts['pendingPayments']
+    ];
+}
+
     
 }
