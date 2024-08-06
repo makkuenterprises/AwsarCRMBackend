@@ -11,8 +11,7 @@
             background-color: #f9f9f9;
         }
         .container {
-            width: 90%;
-            max-width: 800px;
+            width: 80%;
             margin: auto;
             background: #fff;
             padding: 20px;
@@ -34,17 +33,15 @@
             justify-content: space-between;
             margin-bottom: 20px;
         }
-        .company-info, .student-info {
+        .info div {
             width: 48%;
-            padding: 20px;
-            border: 1px solid #e2e2e2;
-            border-radius: 8px;
         }
-        .company-info h2, .student-info h2 {
+        .company-info h2,
+        .student-info h2 {
             color: #0044cc;
             margin-top: 0;
         }
-        .invoice-details, .payment-details {
+        .invoice-details, .payment-details, .totals {
             margin-top: 20px;
         }
         table {
@@ -62,11 +59,11 @@
             background-color: #f4f4f4;
             color: #333;
         }
-        .totals {
-            margin-top: 10px;
+        .totals div {
             font-size: 18px;
             font-weight: bold;
             color: #0044cc;
+            margin-top: 10px;
         }
         .footer {
             text-align: center;
@@ -95,7 +92,6 @@
                 <p><strong>Phone:</strong> +1 (234) 567-8900</p>
                 <p><strong>Email:</strong> contact@yourcompany.com</p>
             </div>
-
             <div class="student-info">
                 <h2>Student Information</h2>
                 <p><strong>Name:</strong> {{ $student->name }}</p>
@@ -154,9 +150,15 @@
         </div>
 
         <div class="totals">
-            <p><strong>Total Amount: </strong> {{ $totalAmount }}</p>
-            <p><strong>Paid Amount: </strong> {{ $paidAmount }}</p>
-            <p><strong>Outstanding Amount: </strong> {{ $outstandingAmount }}</p>
+            <div>
+                <strong>Total Amount: </strong> {{ $totalAmount }}
+            </div>
+            <div>
+                <strong>Paid Amount: </strong> {{ $paidAmount }}
+            </div>
+            <div>
+                <strong>Outstanding Amount: </strong> {{ $outstandingAmount }}
+            </div>
         </div>
 
         <div class="footer">
