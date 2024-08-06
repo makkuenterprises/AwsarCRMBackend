@@ -21,7 +21,7 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
-            margin-right: 20px;
+            margin-right: 22px;
             padding-bottom: 20px;
             border-bottom: 2px solid #e2e2e2;
         }
@@ -75,11 +75,13 @@
             padding-top: 10px;
             border-top: 2px solid #e2e2e2;
             font-size: 14px;
+            margin-right: 22px;
         }
         .footer p {
             text-align: center;
             margin: 0;
             color: #666;
+            margin-right: 22px;
         }
     </style>
 </head>
