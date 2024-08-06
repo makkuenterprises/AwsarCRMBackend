@@ -156,7 +156,7 @@
         </div>
 
         <div class="footer">
-            <p>Thank you for your business!</p>
+            <p>Thank you for your enrollment with AWSARCLASSES. We hope you find our services valuable and enriching.</p>
         </div>
     </div>
 </body>
