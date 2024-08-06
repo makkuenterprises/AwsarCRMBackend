@@ -168,10 +168,10 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-         Intervention\Image\ImageServiceProvider::class,
-           Barryvdh\DomPDF\ServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
+        // Barryvdh\DomPDF\ServiceProvider::class,
         
-    ])->toArray(),
+    ])->toArray(), 
 
     /* 
     |--------------------------------------------------------------------------
@@ -184,10 +184,10 @@ return [
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge([
+        'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-         'Image' => Intervention\Image\Facades\Image::class,
-          'PDF' => Barryvdh\DomPDF\Facade::class, 
+        'Image' => Intervention\Image\Facades\Image::class,
+        // 'PDF' => Barryvdh\DomPDF\Facade::class, 
          
     ])->toArray(),
 
