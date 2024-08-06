@@ -225,7 +225,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
             'code' => 200,
             'data' => [
                 'student' => $student,
-                'courseDetails' => $courseDetails,
+                // 'courseDetails' => $courseDetails,
                 'enrollmentDetails' => $enrollmentDetails,
                 'invoices' => $invoices,
                 'paymentHistories' => $paymentHistories,
