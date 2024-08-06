@@ -12,9 +12,9 @@
         }
         .container {
             width: 100%;
-            margin:  auto;
+            margin: 0 auto;
             background: #fff;
-            padding: 10px;
+            padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
