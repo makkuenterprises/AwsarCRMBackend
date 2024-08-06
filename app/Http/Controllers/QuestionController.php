@@ -95,11 +95,13 @@ public function index2(Request $request)
         }
 
         $question->save();
+        $question->image = url(Storage::url($imagePath));
 
         return response()->json(['status' => 'success', 'data' => $question], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
             'status' => 'error',
+            'data' => $question,
             'message' => 'Validation Error',
             'errors' => $e->errors(),
         ], 422);
