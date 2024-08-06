@@ -95,7 +95,11 @@ public function index2(Request $request)
         }
 
         $question->save();
+         if ($question->image) {
         $question->image = url(Storage::url($question->image));
+    } else {
+        $question->image = null; // Ensure image is set to null if not present
+    }
 
         return response()->json(['status' => 'success', 'data' => $question], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -119,6 +123,8 @@ public function index2(Request $request)
         $question = Questions::find($id);
          if ($question->image) {
         $question->image = url(Storage::url($question->image));
+    } else {
+        $question->image = null; // Ensure image is set to null if not present
     }
         if (!$question) {
             return response()->json(['status' => 'error', 'message' => 'Question not found'], 404);
