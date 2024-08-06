@@ -80,31 +80,16 @@ $menuList = [
         'title' => 'Live Classes',
         'classChange' => 'mm-collapse',
         'iconStyle' => '<i className="material-icons">live_tv</i>',
-        'content' => [
-            [
-                'title' => 'Live Classes',
+       
                 'to' => 'live-classes',
-            ],
-            [
-                'title' => 'Create Live Class',
-                'to' => 'create-live-class',
-            ],
-        ],
+          
     ],
     [
         'title' => 'Attendance',
         'classChange' => 'mm-collapse',
         'iconStyle' => '<i className="material-icons">event_note</i>',
-        'content' => [
-            [
-                'title' => 'Attendance',
-                'to' => 'attendance-list-for-teacher',
-            ],
-            [
-                'title' => 'Create Attendance',
-                'to' => 'create-attendance',
-            ],
-        ],
+         'to' => 'attendance-list-for-teacher',
+         
     ],
     [
         'title' => 'Study Material',
@@ -127,16 +112,12 @@ $menuList = [
         'iconStyle' => '<i className="material-icons">assessment</i>',
         'content' => [
             [
-                'title' => 'View Questions',
+                'title' => 'Question Bank',
                 'to' => 'view-question',
             ],
             [
                 'title' => 'View Exam',
                 'to' => 'view-exam',
-            ],
-            [
-                'title' => 'Create Exam',
-                'to' => 'create-exam',
             ],
         ],
     ],
@@ -146,20 +127,12 @@ $menuList = [
         'iconStyle' => '<i className="material-icons">schedule</i>',
         'to' => 'view-class-routine',
     ],
-    [
+    [ 
         'title' => 'Notice',
         'classChange' => 'mm-collapse',
-        'iconStyle' => '<i className="material-icons">announcement</i>',
-        'content' => [
-          [
-                'title' => 'Live Classes',
-                'to' => 'live-classes',
-            ],
-            [
-                'title' => 'Create Live Class',
-                'to' => 'create-live-class',
-            ],
-        ],
+         'iconStyle' => '<i className="material-icons">assessment</i>',
+          'to' => 'view-notice',
+        
     ],
     [
         'title' => 'Leave Request',
