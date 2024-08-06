@@ -220,7 +220,7 @@ $otherPaymentStatusStudentsCount = DB::table('students')
    public function fetchChartData(Request $request)
     {
         try {
-            $duration = $request->query('duration', 'month'); // default to monthly data
+            $duration = $request->query('duration', 'year'); // default to monthly data
             $data = $this->getChartData($duration);
 
             return response()->json([
@@ -235,7 +235,7 @@ $otherPaymentStatusStudentsCount = DB::table('students')
             ], 500);
         }
     }
-
+ 
     private function getChartData($duration)
     {
         switch ($duration) {
