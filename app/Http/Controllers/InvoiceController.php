@@ -160,7 +160,7 @@ public function getAllInvoicesByStudent(Request $request)
 
 public function getAllInvoicesByStudentDownload(Request $request)
 {
-    // Validate the request
+    // Validate the request 
     $request->validate([ 
         'student_id' => 'required|integer|exists:students,id',
         'course_id' => 'required|integer|exists:courses,id',
@@ -192,6 +192,9 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
+        // Calculate the total amount
+        $totalAmount = $invoices->sum('total_amount');
+
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
                           ->findOrFail($request->input('student_id'));
@@ -204,41 +207,19 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->where('courses_enrollements.course_id', $request->input('course_id'))
             ->select(
                 'payment_histories.*'
-                // 'courses_enrollements.student_id',
-                // 'courses_enrollements.course_id',
-                // 'courses.name as course_name'
             )
             ->get();
 
-        // Extract the course and enrollment details
-        // $courseDetails = [
-        //     'course_id' => $request->input('course_id'),
-        //     'course_name' => $invoices->first()->course_name
-        // ];
-        
-        // $enrollmentDetails = [
-        //     'enrollment_id' => $invoices->first()->enrollment_id
-        // ];
-  // Generate PDF
+        // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
             'invoices' => $invoices,
             'paymentHistories' => $paymentHistories,
+            'totalAmount' => $totalAmount,  // Pass the total amount to the view
         ]);
 
         // Download the PDF
         return $pdf->download('invoice.pdf');
-        // return response()->json([
-        //     'status' => true,
-        //     'code' => 200,
-        //     'data' => [
-        //         'student' => $student,
-        //         // 'courseDetails' => $courseDetails,
-        //         // 'enrollmentDetails' => $enrollmentDetails,
-        //         'invoices' => $invoices,
-        //         'paymentHistories' => $paymentHistories,
-        //     ],
-        // ], 200);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
@@ -256,7 +237,6 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
-
 
 
 }
