@@ -169,7 +169,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
     ]);
 
     try {
-        // Build query to fetch invoices for the specified student, course, and invoice ID using join
+        // Fetch invoices for the specified student, course, and invoice ID
         $invoices = DB::table('invoices')
             ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
@@ -177,12 +177,15 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->where('courses_enrollements.course_id', $request->input('course_id'))
             ->where('invoices.id', $request->input('invoice_id'))
             ->select(
-                'invoices.*',
+                'invoices.enrollment_id',
+                DB::raw('GROUP_CONCAT(invoices.id) as invoice_ids'),
+                DB::raw('GROUP_CONCAT(invoices.amount) as invoice_amounts'),
+                DB::raw('GROUP_CONCAT(invoices.date) as invoice_dates'),
                 'courses_enrollements.student_id',
                 'courses_enrollements.course_id',
                 'courses.name as course_name'
             )
-            ->groupBy('invoices.enrollment_id')
+            ->groupBy('invoices.enrollment_id', 'courses_enrollements.student_id', 'courses_enrollements.course_id', 'courses.name')
             ->get();
 
         // Check if any invoices are found
@@ -205,12 +208,17 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
             ->select(
-                'payment_histories.*',
+                'payment_histories.enrollment_id',
+                DB::raw('GROUP_CONCAT(payment_histories.transaction_id) as transaction_ids'),
+                DB::raw('GROUP_CONCAT(payment_histories.payment_type) as payment_types'),
+                DB::raw('GROUP_CONCAT(payment_histories.payment_status) as payment_statuses'),
+                DB::raw('GROUP_CONCAT(payment_histories.paid_amount) as paid_amounts'),
+                DB::raw('GROUP_CONCAT(payment_histories.payment_date) as payment_dates'),
                 'courses_enrollements.student_id',
                 'courses_enrollements.course_id',
                 'courses.name as course_name'
             )
-            ->groupBy('payment_histories.enrollment_id')
+            ->groupBy('payment_histories.enrollment_id', 'courses_enrollements.student_id', 'courses_enrollements.course_id', 'courses.name')
             ->get();
 
         // Generate PDF
@@ -249,6 +257,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
 
 
 }
