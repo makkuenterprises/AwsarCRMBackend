@@ -182,6 +182,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
                 'courses_enrollements.course_id',
                 'courses.name as course_name'
             )
+            ->groupBy('invoices.enrollment_id')
             ->get();
 
         // Check if any invoices are found
@@ -209,6 +210,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
                 'courses_enrollements.course_id',
                 'courses.name as course_name'
             )
+            ->groupBy('payment_histories.enrollment_id')
             ->get();
 
         // Generate PDF
