@@ -30,19 +30,19 @@
             color: #0044cc;
         }
         .info {
-            display: flex;
-            justify-content: space-between;
             margin-bottom: 20px;
         }
-        .info div {
-            width: 48%;
+        .company-info, .student-info {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
         }
-        .info h2 {
+        .company-info h2, .student-info h2 {
             color: #0044cc;
             margin-top: 0;
         }
-        .invoice-details,
-        .payment-details {
+        .invoice-details, .payment-details {
             margin-top: 20px;
         }
         table {
@@ -51,8 +51,7 @@
             margin-bottom: 20px;
             border: 1px solid #ddd;
         }
-        th,
-        td {
+        th, td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
@@ -87,14 +86,15 @@
         </div>
 
         <div class="info">
-            <div>
+            <div class="company-info">
                 <h2>Company Details</h2>
                 <p><strong>Company Name:</strong> Awsar Classes</p>
                 <p><strong>Address:</strong> 123 Business Road, Business City, BC 12345</p>
                 <p><strong>Phone:</strong> +1 (234) 567-8900</p>
                 <p><strong>Email:</strong> contact@yourcompany.com</p>
             </div>
-            <div>
+
+            <div class="student-info">
                 <h2>Student Information</h2>
                 <p><strong>Name:</strong> {{ $student->name }}</p>
                 <p><strong>Email:</strong> {{ $student->email }}</p>
