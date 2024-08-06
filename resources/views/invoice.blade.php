@@ -30,10 +30,12 @@
             color: #0044cc;
         }
         .info {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
         .company-info, .student-info {
-            margin-bottom: 20px;
+            width: 48%;
             padding: 20px;
             border: 1px solid #e2e2e2;
             border-radius: 8px;
