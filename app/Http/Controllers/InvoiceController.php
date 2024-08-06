@@ -203,10 +203,10 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
             ->select(
-                'payment_histories.*',
-                'courses_enrollements.student_id',
-                'courses_enrollements.course_id',
-                'courses.name as course_name'
+                'payment_histories.*'
+                // 'courses_enrollements.student_id',
+                // 'courses_enrollements.course_id',
+                // 'courses.name as course_name'
             )
             ->get();
 
