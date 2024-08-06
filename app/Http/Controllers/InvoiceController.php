@@ -197,16 +197,14 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
                           ->findOrFail($request->input('student_id'));
 
-        // Fetch all transactions related to the specified criteria
-        $transactions = DB::table('transactions')
-            ->join('invoices', 'transactions.invoice_id', '=', 'invoices.id')
-            ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
+        // Fetch all payment histories related to the specified criteria
+        $paymentHistories = DB::table('payment_histories')
+            ->join('courses_enrollements', 'payment_histories.enrollment_id', '=', 'courses_enrollements.id')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
-            ->where('invoices.id', $request->input('invoice_id'))
             ->select(
-                'transactions.*',
+                'payment_histories.*',
                 'courses_enrollements.student_id',
                 'courses_enrollements.course_id',
                 'courses.name as course_name'
@@ -217,7 +215,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // $pdf = PDF::loadView('invoices.pdf', [
         //     'student' => $student,
         //     'invoices' => $invoices,
-        //     'transactions' => $transactions,
+        //     'paymentHistories' => $paymentHistories,
         // ]);
 
         return response()->json([
@@ -226,12 +224,12 @@ public function getAllInvoicesByStudentDownload(Request $request)
             'data' => [
                 'student' => $student,
                 'invoices' => $invoices,
-                'transactions' => $transactions,
+                'paymentHistories' => $paymentHistories,
             ],
         ], 200);
 
         // Download the PDF
-        return $pdf->download('invoices.pdf');
+        // return $pdf->download('invoices.pdf');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
