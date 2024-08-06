@@ -11,7 +11,8 @@
             background-color: #f9f9f9;
         }
         .container {
-            width: 80%;
+            width: 90%;
+            max-width: 800px;
             margin: auto;
             background: #fff;
             padding: 20px;
@@ -28,43 +29,39 @@
             margin: 0;
             color: #0044cc;
         }
-        .company-info,
-        .student-info {
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .info div {
             width: 48%;
-            display: inline-block;
-            vertical-align: top;
         }
-        .company-info {
-            text-align: left;
-        }
-        .student-info {
-            text-align: right;
-        }
-        .company-info h2,
-        .student-info h2 {
+        .info h2 {
             color: #0044cc;
             margin-top: 0;
         }
-        .invoice-details {
+        .invoice-details,
+        .payment-details {
             margin-top: 20px;
         }
-        .invoice-details table {
+        table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             border: 1px solid #ddd;
         }
-        .invoice-details th,
-        .invoice-details td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
         }
-        .invoice-details th {
+        th {
             background-color: #f4f4f4;
             color: #333;
         }
-        .total-amount { 
+        .totals {
             margin-top: 10px;
             font-size: 18px;
             font-weight: bold;
@@ -89,25 +86,26 @@
             <h1>Invoice</h1>
         </div>
 
-        <div class="company-info">
-            <h2>Company Details</h2>
-            <p><strong>Company Name:</strong> Awsar Classes</p>
-            <p><strong>Address:</strong> 123 Business Road, Business City, BC 12345</p>
-            <p><strong>Phone:</strong> +1 (234) 567-8900</p>
-            <p><strong>Email:</strong> contact@yourcompany.com</p>
+        <div class="info">
+            <div>
+                <h2>Company Details</h2>
+                <p><strong>Company Name:</strong> Awsar Classes</p>
+                <p><strong>Address:</strong> 123 Business Road, Business City, BC 12345</p>
+                <p><strong>Phone:</strong> +1 (234) 567-8900</p>
+                <p><strong>Email:</strong> contact@yourcompany.com</p>
+            </div>
+            <div>
+                <h2>Student Information</h2>
+                <p><strong>Name:</strong> {{ $student->name }}</p>
+                <p><strong>Email:</strong> {{ $student->email }}</p>
+                <p><strong>Phone:</strong> {{ $student->phone }}</p>
+                <p><strong>City:</strong> {{ $student->city }}</p>
+                <p><strong>Father's Name:</strong> {{ $student->fname }}</p>
+                <p><strong>Father's Phone:</strong> {{ $student->fphone }}</p>
+            </div>
         </div>
 
-        <div class="student-info">
-            <h2>Student Information</h2>
-            <p><strong>Name:</strong> {{ $student->name }}</p>
-            <p><strong>Email:</strong> {{ $student->email }}</p>
-            <p><strong>Phone:</strong> {{ $student->phone }}</p>
-            <p><strong>City:</strong> {{ $student->city }}</p>
-            <p><strong>Father's Name:</strong> {{ $student->fname }}</p>
-            <p><strong>Father's Phone:</strong> {{ $student->fphone }}</p>
-        </div>
-
-        <div class="invoice-details">
+        <div class="payment-details">
             <h2>Payment Histories</h2>
             <table>
                 <tr>
@@ -127,7 +125,9 @@
                 </tr>
                 @endforeach
             </table>
+        </div>
 
+        <div class="invoice-details">
             <h2>Invoice Details</h2>
             <table>
                 <tr>
@@ -149,18 +149,12 @@
                 </tr>
                 @endforeach
             </table>
+        </div>
 
-              <div class="totals">
-                <div class="total-amount">
-                    <strong>Total Amount: </strong> {{ $totalAmount }}
-                </div>
-                <div class="paid-amount">
-                    <strong>Paid Amount: </strong> {{ $paidAmount }}
-                </div>
-                <div class="outstanding-amount">
-                    <strong>Outstanding Amount: </strong> {{ $outstandingAmount }}
-                </div>
-            </div>
+        <div class="totals">
+            <p><strong>Total Amount: </strong> {{ $totalAmount }}</p>
+            <p><strong>Paid Amount: </strong> {{ $paidAmount }}</p>
+            <p><strong>Outstanding Amount: </strong> {{ $outstandingAmount }}</p>
         </div>
 
         <div class="footer">
