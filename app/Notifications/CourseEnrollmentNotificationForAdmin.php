@@ -56,7 +56,7 @@ class CourseEnrollmentNotificationForAdmin extends Notification
 
         return [   
             'material_id' => $this->enrollmentNo, 
-            'material_title' => $this->name . ' has been enrolled in ' . $this->courseName . 'Batch.',
+            'material_title' => $this->name . ' has been enrolled in ' . $this->courseName . ' Batch.',
             'material_from' => 'Course_Enrollment',
             'created_at' => $this->created_at,
         ]; 
