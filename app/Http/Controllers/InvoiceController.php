@@ -179,7 +179,6 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->select(
                 'invoices.enrollment_id',
                 DB::raw('GROUP_CONCAT(invoices.id) as invoice_ids'),
-                DB::raw('GROUP_CONCAT(invoices.amount) as invoice_amounts'),
                 DB::raw('GROUP_CONCAT(invoices.date) as invoice_dates'),
                 'courses_enrollements.student_id',
                 'courses_enrollements.course_id',
