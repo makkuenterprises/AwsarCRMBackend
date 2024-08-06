@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Teacher;
 use Image;
-use App\Models\Student;
+use App\Models\Student; 
 use App\Models\Course;
 use DB;
 use Carbon\Carbon;
@@ -41,11 +41,8 @@ class TeacherAuthController extends Controller
            
         $courses = $user->courses()->get();
         $courseCount = $courses->count();
-        
-
           // Extract course IDs
         $courseIds = $courses->pluck('id')->toArray();
- 
         // Get the students enrolled in these courses
         $students = DB::table('students')
             ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
@@ -337,7 +334,7 @@ public function teacherList()
             'teacher' => $teacher,
             'image' => $imagePath
         ], 200);
-    } catch (\Exception $e) {
+    } catch (\Exception $e) { 
         // Rollback transaction if any error occurs
         DB::rollBack();
 
@@ -349,6 +346,7 @@ public function teacherList()
         ], 500);
     }
 }
+
 
     
     public function updateTeacher(Request $request, $id)
