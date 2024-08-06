@@ -158,7 +158,6 @@ public function getAllInvoicesByStudent(Request $request)
 //     }
 // }
 
-
 public function getAllInvoicesByStudentDownload(Request $request)
 {
     // Validate the request
@@ -179,7 +178,10 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->select(
                 'invoices.enrollment_id',
                 DB::raw('GROUP_CONCAT(invoices.id) as invoice_ids'),
-                DB::raw('GROUP_CONCAT(invoices.date) as invoice_dates'),
+                DB::raw('GROUP_CONCAT(invoices.total_amount) as total_amounts'),
+                DB::raw('GROUP_CONCAT(invoices.paid_amount) as paid_amounts'),
+                DB::raw('GROUP_CONCAT(invoices.remaining_amount) as remaining_amounts'),
+                DB::raw('GROUP_CONCAT(invoices.invoice_date) as invoice_dates'),
                 'courses_enrollements.student_id',
                 'courses_enrollements.course_id',
                 'courses.name as course_name'
