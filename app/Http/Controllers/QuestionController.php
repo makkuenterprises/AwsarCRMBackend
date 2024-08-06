@@ -150,7 +150,7 @@ public function update(Request $request, $id)
             'message' => 'Validation failed',
             'errors' => $validator->errors()
         ], 422);
-    }
+    } 
 
     // Update fields only if they are present in the request
     if ($request->has('question_text')) {
