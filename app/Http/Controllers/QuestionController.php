@@ -95,7 +95,7 @@ public function index2(Request $request)
         }
 
         $question->save();
-        $question->image = url(Storage::url($imagePath));
+        $question->image = url(Storage::url($question->image));
 
         return response()->json(['status' => 'success', 'data' => $question], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
