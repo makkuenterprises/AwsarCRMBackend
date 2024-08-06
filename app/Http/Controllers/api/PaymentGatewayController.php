@@ -446,14 +446,12 @@ private function getWeeklyData()
         'pendingPayments' => $counts['pendingPayments']
     ];
 }
-
 private function getYearlyData()
 {
     $counts = [
         'studentsCount' => [],
         'paidPayments' => [],
-        'pendingPayments' => [],
-        'bornToDeath' => [] // Add new key for born to death data
+        'pendingPayments' => []
     ];
     $years = [];
     $currentYear = date('Y');
@@ -482,29 +480,20 @@ private function getYearlyData()
                                    ->where('payment_status', 'pending')
                                    ->count();
 
-        // Calculate born to death
-        $bornToDeath = Student::whereYear('created_at', $year)
-                              ->where(function($query) {
-                                  $query->whereNull('deleted_at')
-                                        ->orWhereYear('deleted_at', date('Y'));
-                              })
-                              ->count();
-
         // Collect counts
         $counts['studentsCount'][] = $studentsCount;
         $counts['paidPayments'][] = $paidPayments;
         $counts['pendingPayments'][] = $pendingPayments;
-        $counts['bornToDeath'][] = $bornToDeath; // Add data to counts
     }
 
     return [
         'labels' => $years,
         'studentsCount' => $counts['studentsCount'],
         'paidPayments' => $counts['paidPayments'],
-        'pendingPayments' => $counts['pendingPayments'],
-        'bornToDeath' => $counts['bornToDeath'] // Return born to death data
+        'pendingPayments' => $counts['pendingPayments']
     ];
 }
+
 
 
     
