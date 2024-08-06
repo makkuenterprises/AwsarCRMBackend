@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-use Barryvdh\DomPDF\Facade as PDF;
+use PDF;
 use App\Models\Student;
 use App\Models\Course;
 use DB;
