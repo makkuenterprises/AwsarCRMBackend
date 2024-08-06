@@ -150,8 +150,16 @@
                 @endforeach
             </table>
 
-            <div class="total-amount">
-                <strong>Total Amount: </strong> {{ $totalAmount }}
+              <div class="totals">
+                <div class="total-amount">
+                    <strong>Total Amount: </strong> {{ $totalAmount }}
+                </div>
+                <div class="paid-amount">
+                    <strong>Paid Amount: </strong> {{ $paidAmount }}
+                </div>
+                <div class="outstanding-amount">
+                    <strong>Outstanding Amount: </strong> {{ $outstandingAmount }}
+                </div>
             </div>
         </div>
 

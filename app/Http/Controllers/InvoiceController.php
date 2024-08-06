@@ -192,8 +192,10 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
-        // Calculate the total amount
+        // Calculate totals
         $totalAmount = $invoices->sum('total_amount');
+        $paidAmount = $invoices->sum('paid_amount');
+        $outstandingAmount = $totalAmount - $paidAmount;
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
@@ -215,7 +217,9 @@ public function getAllInvoicesByStudentDownload(Request $request)
             'student' => $student,
             'invoices' => $invoices,
             'paymentHistories' => $paymentHistories,
-            'totalAmount' => $totalAmount,  // Pass the total amount to the view
+            'totalAmount' => $totalAmount,
+            'paidAmount' => $paidAmount,
+            'outstandingAmount' => $outstandingAmount,
         ]);
 
         // Download the PDF
@@ -237,6 +241,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
 
 
 }
