@@ -527,8 +527,7 @@ public function getStudentsEnrolledInCourse(Request $request, $courseId)
                 $student->attendance_status = 'null';
             }
         }
-
-        return response()->json([
+        return response()->json([ 
             'status' => true,
             'attendance'=> $attendance,
             'code' => 200,
