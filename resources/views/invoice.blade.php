@@ -48,7 +48,7 @@
             margin-top: 20px;
         }
         table {
-            width: 90%;
+            width: 98%;
             border-collapse: collapse;
             margin-bottom: 20px;
             border: 1px solid #ddd;
