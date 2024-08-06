@@ -211,14 +211,14 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->get();
 
         // Extract the course and enrollment details
-        $courseDetails = [
-            'course_id' => $request->input('course_id'),
-            'course_name' => $invoices->first()->course_name
-        ];
+        // $courseDetails = [
+        //     'course_id' => $request->input('course_id'),
+        //     'course_name' => $invoices->first()->course_name
+        // ];
         
-        $enrollmentDetails = [
-            'enrollment_id' => $invoices->first()->enrollment_id
-        ];
+        // $enrollmentDetails = [
+        //     'enrollment_id' => $invoices->first()->enrollment_id
+        // ];
 
         return response()->json([
             'status' => true,
@@ -226,7 +226,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
             'data' => [
                 'student' => $student,
                 // 'courseDetails' => $courseDetails,
-                'enrollmentDetails' => $enrollmentDetails,
+                // 'enrollmentDetails' => $enrollmentDetails,
                 'invoices' => $invoices,
                 'paymentHistories' => $paymentHistories,
             ],
