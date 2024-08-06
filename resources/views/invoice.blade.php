@@ -29,12 +29,13 @@
             color: #0044cc;
         }
         .info {
-            display: flex;
-            justify-content: space-between;
+            display: table;
+            width: 100%;
             margin-bottom: 20px;
         }
         .info div {
-            width: 48%;
+            display: table-cell;
+            width: 50%;
             padding: 10px;
             vertical-align: top;
         }
