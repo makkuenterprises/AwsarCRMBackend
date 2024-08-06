@@ -48,7 +48,7 @@
             margin-top: 20px;
         }
         table {
-            width: 96%;
+            width: 95%;
             border-collapse: collapse;
             margin-bottom: 20px;
             border: 1px solid #ddd;
@@ -76,6 +76,7 @@
             font-size: 14px;
         }
         .footer p {
+            text-align: center;
             margin: 0;
             color: #666;
         }
