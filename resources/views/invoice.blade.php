@@ -145,6 +145,12 @@
                 </tr>
                 @foreach ($invoices as $invoice)
                 <tr>
+                    @php
+    // Function to format number as currency
+    function formatCurrency($amount) {
+        return number_format(floatval(str_replace(',', '', $amount)), 2, '.', ',');
+    }
+@endphp
                     <td>{{ $invoice->invoice_no }}</td>
                     <td>{{ $invoice->course_name }}</td>
                     <td>{{ $invoice->total_amount }}</td>
