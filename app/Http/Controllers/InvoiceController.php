@@ -191,18 +191,15 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
-        // Format amounts in invoices
-        $formattedInvoices = $invoices->map(function($invoice) {
-            $invoice->total_amount = number_format((float) $invoice->total_amount, 2, '.', ',');
-            $invoice->paid_amount = number_format((float) $invoice->paid_amount, 2, '.', ',');
-            $invoice->remaining_amount = number_format((float) ($invoice->total_amount - $invoice->paid_amount), 2, '.', ',');
+         $formattedInvoices = $invoices->map(function($invoice) {
+            $invoice->total_amount = is_numeric($invoice->total_amount) ? number_format((float) $invoice->total_amount, 2, '.', ',') : '0.00';
+            $invoice->paid_amount = is_numeric($invoice->paid_amount) ? number_format((float) $invoice->paid_amount, 2, '.', ',') : '0.00'; // Assuming invoices table has paid_amount
+            $invoice->remaining_amount = number_format((float) $invoice->total_amount - (float) $invoice->paid_amount, 2, '.', ',');
             return $invoice;
         });
 
         // Calculate totals from the invoices
-        $totalAmount = $invoices->sum(function($invoice) {
-            return (float) $invoice->total_amount;
-        });
+        $totalAmount = $invoices->sum('total_amount');
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
@@ -218,21 +215,19 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->get();
 
         // Calculate total paid amount from payment histories
-        $paidAmount = $paymentHistories->sum(function($payment) {
-            return (float) $payment->paid_amount;
-        });
+        $paidAmount = $paymentHistories->sum('paid_amount');
 
         // Calculate outstanding amount
-        $outstandingAmount = (float) $totalAmount - (float) $paidAmount;
+        $outstandingAmount = $totalAmount - $paidAmount;
 
-        // Format totals
+        // Format amounts
         $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
         $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
         $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
 
         // Format paid_amount in paymentHistories
         $formattedPaymentHistories = $paymentHistories->map(function($payment) {
-            $payment->paid_amount = number_format((float) $payment->paid_amount, 2, '.', ',');
+            $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
             return $payment;
         });
 
@@ -265,8 +260,6 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
-
-
 
 
 
