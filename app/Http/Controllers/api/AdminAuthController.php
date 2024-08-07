@@ -130,7 +130,6 @@ class AdminAuthController extends Controller
     [
         'title' => 'Attendance',
         'iconStyle' => '<i className="material-icons">check_circle</i>',
-       
         'content' => [
             [
                 'title' => 'Attendance',
