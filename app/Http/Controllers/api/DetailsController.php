@@ -232,6 +232,9 @@ public function update(Request $request, $id)
         $details->email = $validator['email'];
         $details->smtp_host = $validator['smtp_host'];
         $details->smtp_ports = $validator['smtp_ports'];
+        
+         $details->phone = $validator['phone'];
+        $details->address = $validator['address']; 
 
         $details->base_url = $validator['base_url'];
         $details->method = $validator['method'];
