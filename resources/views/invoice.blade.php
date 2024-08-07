@@ -8,7 +8,7 @@
             color: #333;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+              background: #fff;
         }
         .container {
             width: 100%;
@@ -32,12 +32,12 @@
         .info {
             display: table;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .info div {
             display: table-cell;
             width: 50%;
-            padding: 5px;
+            padding: 2px;
             vertical-align: top;
         }
         .company-info h2,
