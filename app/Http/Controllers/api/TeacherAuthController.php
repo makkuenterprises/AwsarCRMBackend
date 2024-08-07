@@ -602,7 +602,8 @@ public function teacherList()
                 'students.fstate',
                 'students.paymentType',
                 'students.dob',
-                'students.payment_status'
+                'students.payment_status',
+                 DB::raw('GROUP_CONCAT(courses.name) as course_names')
             )
             ->distinct()
             ->get(); 

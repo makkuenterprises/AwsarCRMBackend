@@ -545,7 +545,7 @@ public function TeachersLists($student_id) {
         return response()->json(['status'=>true,'code'=>200,'message' => 'Student deleted successfully'], 200);
     }
 
-    public function profileUpdateView($id){
+    public function profileUpdateView($id){ 
 
         $student = Student::find($id); 
          $student->image = $student->image ? url('/Student/' . $student->image) : null;
