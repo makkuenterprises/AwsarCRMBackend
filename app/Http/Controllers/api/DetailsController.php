@@ -33,6 +33,8 @@ public function index(Request $request){
         'smtp_password' => 'nullable|string|max:255', // Validation for SMTP password as a string up to 255 characters
   
             'base_url' => 'nullable|string|max:255',
+             'phone' => 'nullable',
+              'address' => 'nullable',
             'method' => 'nullable|string|max:255',
             'gst_number' => ['nullable', 'string', 'max:255', 'regex:/\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/'], // GST number validation
             'gst_percentage' => [
@@ -181,7 +183,8 @@ public function update(Request $request, $id)
         'smtp_ports' => 'nullable|integer', // Validate smtp_ports as an array
         'smtp_username' => 'nullable|string|max:255', // Validation for SMTP username as a string up to 255 characters
         'smtp_password' => 'nullable|string|max:255', // Validation for SMTP password as a string up to 255 characters
-   
+         'phone' => 'nullable',
+              'address' => 'nullable',
             'base_url' => 'nullable|string|max:255',
             'method' => 'nullable|string|max:255',
             'gst_number' => ['nullable', 'string', 'max:255', 'regex:/\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/'], // GST number validation
@@ -205,7 +208,7 @@ public function update(Request $request, $id)
 
         // Find the existing Details model instance by ID
         $details = Details::findOrFail($id);
-        dd($details);
+        // dd($details);
 
         // Handle file uploads if provided
         $filePaths = [];
