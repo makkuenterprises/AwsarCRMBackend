@@ -125,7 +125,7 @@
                     <td>{{ $paymentHistory->transaction_id }}</td>
                     <td>{{ $paymentHistory->payment_type }}</td>
                     <td>{{ $paymentHistory->payment_status }}</td>
-                    <td>RS :- {{ $paymentHistory->paid_amount }}</td>
+                    <td>₹  {{ $paymentHistory->paid_amount }}</td>
                     <td>{{ $paymentHistory->payment_date }}</td>
                 </tr>
                 @endforeach
@@ -153,9 +153,9 @@
 @endphp
                     <td>{{ $invoice->invoice_no }}</td>
                     <td>{{ $invoice->course_name }}</td>
-                    <td>RS :-{{ formatCurrency($invoice->total_amount) }}</td>
-<td>RS :-{{ formatCurrency($invoice->paid_amount) }}</td>
-<td>RS :-{{ formatCurrency($invoice->remaining_amount) }}</td>
+                    <td>₹ {{ formatCurrency($invoice->total_amount) }}</td>
+<td>₹ {{ formatCurrency($invoice->paid_amount) }}</td>
+<td>₹ {{ formatCurrency($invoice->remaining_amount) }}</td>
                     <td>{{ $invoice->invoice_date }}</td>
                 </tr>
                 @endforeach
@@ -164,13 +164,13 @@
 
         <div class="totals">
             <div>
-                <strong>Total Amount: </strong>RS :- {{ $totalAmount }}
+                <strong>Total Amount: </strong>₹  {{ $totalAmount }}
             </div>
             <div>
-                <strong>Paid Amount: </strong>RS :- {{ $paidAmount }}
+                <strong>Paid Amount: </strong>₹  {{ $paidAmount }}
             </div>
             <div>
-                <strong>Outstanding Amount: </strong>RS :- {{ $outstandingAmount }}
+                <strong>Outstanding Amount: </strong>₹  {{ $outstandingAmount }}
             </div>
         </div>
 
