@@ -37,7 +37,7 @@
         .info div {
             display: table-cell;
             width: 50%;
-            padding: 10px;
+            padding: 5px;
             vertical-align: top;
         }
         .company-info h2,
@@ -143,7 +143,7 @@
                     <th>Remaining Amount</th>
                     <th>Invoice Date</th>
                 </tr>
-                @foreach ($invoices as $invoice)
+                @foreach ($invoices as $invoice) 
                 <tr>
                     @php
     // Function to format number as currency
