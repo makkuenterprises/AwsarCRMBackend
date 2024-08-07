@@ -188,11 +188,7 @@ if ($request->hasFile('image')) {
     $imagePath = $request->file('image')->store('questions', 'public');
     $question->image = $imagePath;
 } elseif ($request->input('image') && filter_var($request->input('image'), FILTER_VALIDATE_URL)) {
-    // If the image input is a valid URL, update the question image with the URL
-    if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
-        \Storage::disk('public')->delete($question->image);
-    }
-    $question->image = $request->input('image');
+   
 } elseif ($request->input('image') === null) {
     // If no new image file is uploaded and image input is null, delete the old image if it exists
     if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
