@@ -157,7 +157,6 @@ public function getAllInvoicesByStudent(Request $request)
 //         ], 500);
 //     }
 // }
-
 public function getAllInvoicesByStudentDownload(Request $request)
 {
     // Validate the request 
@@ -214,21 +213,23 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Calculate outstanding amount
         $outstandingAmount = $totalAmount - $paidAmount;
 
+        // Format amounts
+        $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
+        $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
+        $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
+
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
             'invoices' => $invoices,
             'paymentHistories' => $paymentHistories,
-            'totalAmount' => $totalAmount,
-            'paidAmount' => $paidAmount,
-            'outstandingAmount' => $outstandingAmount,
+            'totalAmount' => $totalAmountFormatted,
+            'paidAmount' => $paidAmountFormatted,
+            'outstandingAmount' => $outstandingAmountFormatted,
         ]);
 
-        // Download the PDF
-        // return $pdf->download('invoice.pdf');
-
-         // Stream the PDF to the browser
-          return $pdf->stream('invoice.pdf');
+        // Stream the PDF to the browser
+        return $pdf->stream('invoice.pdf');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([

@@ -682,7 +682,7 @@ public function destroy($id)
             // Fetch the class routines for today for the teacher's courses
             $classRoutines = ClassRoutine::whereIn('batch_id', $courseIds)
                 ->where('day_of_week', $todayDay)
-                ->get();
+                ->get(); 
 
             // Return the class routines
             return response()->json([

@@ -27,7 +27,7 @@
         }
         .header h1 {
             margin: 0;
-            color: #0044cc;
+            color: #000000;
         }
         .info {
             display: table;
@@ -42,7 +42,7 @@
         }
         .company-info h2,
         .student-info h2 {
-            color: #0044cc;
+            color: #000000;
             margin-top: 0;
         }
         .invoice-details, .payment-details, .totals {
@@ -66,7 +66,7 @@
         .totals div {
             font-size: 18px;
             font-weight: bold;
-            color: #0044cc;
+            color: #000000;
             margin-top: 10px;
         }
         .footer {
