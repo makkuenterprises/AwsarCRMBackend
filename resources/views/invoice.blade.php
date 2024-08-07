@@ -91,12 +91,10 @@
             <h1>Invoice</h1>
         </div>
 
-        <div class="logo">
-    @if ($details->logo)
-        <img src="https://awasarbackend.makkuenterprises.com/storage/uploads/xvrbUqJMcsV8cLBeHUaZD8YjQ9ABNf9COoZOOcBc.png" alt="Company Logo" style="max-width: 200px; height: auto;">
-    @else
-        <img src="{{ asset('storage/' . $details->logo) }}" alt="Company Logo" style="max-width: 200px; height: auto;">
-    @endif
+        <div class="logo" style="width:50%">
+   
+        <img src="{{$details->logo}}" alt="Company Logo" style="max-width: 200px; height: auto;">
+    
 </div>
    
            <div class="company-info">
