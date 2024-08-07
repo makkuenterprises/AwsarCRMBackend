@@ -32,7 +32,7 @@
         .info {
             display: table;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         .info div {
             display: table-cell;
@@ -46,7 +46,7 @@
             margin-top: 0;
         }
         .invoice-details, .payment-details, .totals {
-            margin-top: 20px;
+            margin-top: 10px;
         }
         table {
             width: 95%;
