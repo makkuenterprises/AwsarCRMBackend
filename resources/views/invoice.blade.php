@@ -98,9 +98,7 @@
         <img src="{{ asset('storage/' . $details->logo) }}" alt="Company Logo" style="max-width: 200px; height: auto;">
     @endif
 </div>
-    @else
-        <p>No logo available</p>
-    @endif 
+   
            <div class="company-info">
     <h2>Institute Details</h2>
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
