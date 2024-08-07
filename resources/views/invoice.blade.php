@@ -92,13 +92,20 @@
         </div>
 
         <div class="info">
-            <div class="company-info">
-                <h2>Company Details</h2>
-                <p><strong>Company Name:</strong> Awsar Classes</p>
-                <p><strong>Address:</strong> 123 Business Road, Business City, BC 12345</p>
-                <p><strong>Phone:</strong> +1 (234) 567-8900</p>
-                <p><strong>Email:</strong> contact@yourcompany.com</p>
-            </div>
+             @if($details->logo)
+        <div class="logo">
+            <img src="{{ asset('storage/' . $details->logo) }}" alt="Company Logo" style="max-width: 200px; height: auto;">
+        </div>
+    @else
+        <p>No logo available</p>
+    @endif
+           <div class="company-info">
+    <h2>Institute Details</h2>
+    <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
+    <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
+    <p><strong>Phone:</strong> {{ $details->phone ?? 'Phone' }}</p>
+    <p><strong>Email:</strong> {{ $details->email ?? 'Email' }}</p>
+</div>
             <div class="student-info">
                 <h2>Student Information</h2>
                 <p><strong>Name:</strong> {{ $student->name }}</p>

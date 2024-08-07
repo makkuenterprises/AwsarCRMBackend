@@ -6,6 +6,8 @@ use App\Models\Invoice;
 use PDF;
 use App\Models\Student;
 use App\Models\Course;
+use App\Models\Detail;
+
 use DB;
 use Illuminate\Http\Request;
 
@@ -182,6 +184,8 @@ public function getAllInvoicesByStudentDownload(Request $request)
             )
             ->get();
 
+
+
         // Check if any invoices are found
         if ($invoices->isEmpty()) {
             return response()->json([
@@ -230,9 +234,11 @@ public function getAllInvoicesByStudentDownload(Request $request)
             $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
             return $payment;
         });
+          $details = Detail::first();
 
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
+            'details' => $details,
             'student' => $student,
             'invoices' => $invoices,
             'paymentHistories' => $formattedPaymentHistories,
