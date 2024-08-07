@@ -8,7 +8,7 @@ use App\Models\Course;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
-use Image; 
+use Image;  
 use App\Models\Teacher;
 use App\Rules\DateFormat;
 use App\Models\SlidesImages;
@@ -18,6 +18,7 @@ use Illuminate\Validation\ValidationException;
 
 class ImagesSlidesController extends Controller
 {
+
  public function storeMultiple(Request $request)
 {
     try {
@@ -87,8 +88,8 @@ class ImagesSlidesController extends Controller
             'status' => false,
             'message' => 'Image upload failed',
             'error' => $e->getMessage(),
-        ], 500);
-    }
+        ], 500); 
+    } 
 }
 
     public function showImages()

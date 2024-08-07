@@ -177,27 +177,33 @@ public function update(Request $request, $id)
      if ($request->has('stream')) {
         $question->stream = $request->input('stream');
     }
-    // dd($request->image);
-    // Handle image upload
+   
   // Handle image upload or URL
-    if ($request->hasFile('image')) {
-        // Delete old image if exists and not a URL
-        if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
-            \Storage::disk('public')->delete($question->image);
-        }
-        // Store new image and update the path
-        $imagePath = $request->file('image')->store('questions', 'public');
-        $question->image = $imagePath;
-    } elseif ($request->has('image') && filter_var($request->input('image'), FILTER_VALIDATE_URL)) {
-        // If the image input is a valid URL, update the question image with the URL
-        $question->image = $request->input('image');
-    } elseif ($request->input('image') === null) {
-        // If no new image file is uploaded and image input is null, keep the old image path or set to null
-        if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
-            \Storage::disk('public')->delete($question->image);
-        }
-        $question->image = null;
+if ($request->hasFile('image')) {
+    // Delete old image if it exists and is not a URL
+    if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
+        \Storage::disk('public')->delete($question->image);
     }
+    // Store new image and update the path
+    $imagePath = $request->file('image')->store('questions', 'public');
+    $question->image = $imagePath;
+} elseif ($request->input('image') && filter_var($request->input('image'), FILTER_VALIDATE_URL)) {
+    // If the image input is a valid URL, update the question image with the URL
+    if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
+        \Storage::disk('public')->delete($question->image);
+    }
+    $question->image = $request->input('image');
+} elseif ($request->input('image') === null) {
+    // If no new image file is uploaded and image input is null, delete the old image if it exists
+    if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
+        \Storage::disk('public')->delete($question->image);
+    }
+    $question->image = null;
+}
+
+// Save the question
+$question->save();
+
 
     // Save the updated question
     $question->save();
