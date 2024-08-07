@@ -668,7 +668,9 @@ public function destroy($id)
         ], 404);
     }
 }
- public function getTodayClasses($teacherId)
+
+
+public function getTodayClasses($teacherId)
     {
         try {
             // Get today's day of the week in short format (e.g., mon, tue)
@@ -681,7 +683,7 @@ public function destroy($id)
             $courseIds = $teacher->courses->pluck('id');
 
             // Fetch the class routines for today for the teacher's courses with course names
-        $classRoutines = ClassRoutine::whereIn('batch_id', $courseIds)
+            $classRoutines = ClassRoutine::whereIn('batch_id', $courseIds)
             ->where('day_of_week', $todayDay)
             ->join('courses', 'class_routines.batch_id', '=', 'courses.id')
             ->select('class_routines.*', 'courses.name as course_name')
