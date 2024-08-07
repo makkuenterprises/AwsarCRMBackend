@@ -7,6 +7,7 @@ use PDF;
 use App\Models\Student;
 use App\Models\Course;
 use App\Models\Details;
+use Illuminate\Support\Facades\Storage;
 
 use DB;
 use Illuminate\Http\Request;
