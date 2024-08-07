@@ -413,6 +413,9 @@ Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
 Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
 Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
 
+Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
+
+
 
 Route::post('create/class-routines', [ClassRoutineController::class, 'createTimeSlot']);
 Route::post('update/class-routines', [ClassRoutineController::class, 'updateTimeSlot']);

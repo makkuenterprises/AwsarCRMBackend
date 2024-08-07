@@ -4,107 +4,13 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClassRoutine;
+use App\Models\Teacher;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ClassRoutineController extends Controller
 {
- 
-// public function store(Request $request)
-// {
-//     // Validate request data
-//     // dd($request->all());
 
-//     try {  
-//         $validatedData = $request->validate([
-//         'subject' => 'required|string',
-//         'batch_id' => 'required|exists:courses,id',
-//         'day_of_week' => 'required|in:mon,tue,wed,thu,fri,sat',
-//         'start_time' => 'required|date_format:H:i:s', // Ensure time is in 24-hour format
-//         'end_time' => 'required|date_format:H:i:s|after:start_time', // Ensure end time is after start time
-//     ]);
-//         // Check if start_time and end_time are in 24-hour format
-//         if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/', $validatedData['start_time']) ||
-//     !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/', $validatedData['end_time'])) {
-//     return response()->json([
-//         'status' => 'error',
-//         'message' => 'Invalid time format. Please use 24-hour format (HH:MM) or (HH:MM:SS).',
-//     ], 400);
-// }
-//         // Check if there's already a routine with overlapping time for the same day, batch, and subject
-//         $existingRoutine = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
-//                                         ->where('batch_id', $validatedData['batch_id'])
-//                                         ->where('subject', $validatedData['subject'])
-//                                         ->where(function ($query) use ($validatedData) {
-//                                             $query->where(function ($q) use ($validatedData) {
-//                                                 $q->where(function ($qq) use ($validatedData) {
-//                                                     $qq->where('start_time', '<=', $validatedData['start_time'])
-//                                                        ->where('end_time', '>', $validatedData['start_time']);
-//                                                 })->orWhere(function ($qq) use ($validatedData) {
-//                                                     $qq->where('start_time', '<', $validatedData['end_time'])
-//                                                        ->where('end_time', '>=', $validatedData['end_time']);
-//                                                 })->orWhere(function ($qq) use ($validatedData) {
-//                                                     $qq->where('start_time', '>=', $validatedData['start_time'])
-//                                                        ->where('end_time', '<=', $validatedData['end_time']);
-//                                                 });
-//                                             });
-//                                         })
-//                                         ->exists();
-
-//         if ($existingRoutine) {
-//             return response()->json([
-//                 'status' => 'error',
-//                 'errors' => [
-//                     'subject' => ['A routine with the same subject, day, and overlapping time already exists.'],
-//                 ]
-//             ], 400);
-//         }
-// // Check if there's already a routine with overlapping time for the same day and batch
-//         $existingRoutineTime = ClassRoutine::where('day_of_week', $validatedData['day_of_week'])
-//                                         ->where('batch_id', $validatedData['batch_id'])
-//                                         ->where(function ($query) use ($validatedData) {
-//                                             $query->where(function ($q) use ($validatedData) {
-//                                                 $q->where(function ($qq) use ($validatedData) {
-//                                                     $qq->where('start_time', '<=', $validatedData['start_time'])
-//                                                        ->where('end_time', '>', $validatedData['start_time']);
-//                                                 })->orWhere(function ($qq) use ($validatedData) {
-//                                                     $qq->where('start_time', '<', $validatedData['end_time'])
-//                                                        ->where('end_time', '>=', $validatedData['end_time']);
-//                                                 })->orWhere(function ($qq) use ($validatedData) {
-//                                                     $qq->where('start_time', '>=', $validatedData['start_time'])
-//                                                        ->where('end_time', '<=', $validatedData['end_time']);
-//                                                 });
-//                                             });
-//                                         })
-//                                         ->exists();
-
-//         if ($existingRoutineTime) {
-//             return response()->json([
-//                 'status' => 'error',
-//                 'errors' => [
-//                     'subject' => ['A routine with the same day, time, and batch already exists.'],
-//                 ]
-//             ], 400);
-//         }
-//         // Create the class routine if validation passes
-//         $classRoutine = ClassRoutine::create($validatedData);
-
-//         return response()->json([
-//             'status' => 'success',
-//             'message' => 'Class routine created successfully',
-//             'data' => $classRoutine->toArray(), // Convert model to array for response
-//         ], 201);
-
-//     } catch (\Exception $e) {
-//         // Return a JSON response with an error message
-//         return response()->json([
-//             'status' => 'error',
-//             'message' => 'Failed to create class routine',
-//             'errors' => [
-//                 'exception' => ['Failed to create class routine.'],
-//             ]
-//         ], 500);
-//     }
-// }
 
 
 public function store(Request $request)
@@ -761,7 +667,40 @@ public function destroy($id)
         ], 404);
     }
 }
+ public function getTodayClasses($teacherId)
+    {
+        try {
+            // Get today's day of the week in short format (e.g., mon, tue)
+            $todayDay = strtolower(Carbon::now()->format('D'));
 
+            // Get the teacher with their courses
+            $teacher = Teacher::with('courses')->findOrFail($teacherId);
+
+            // Get the course IDs for the teacher
+            $courseIds = $teacher->courses->pluck('id');
+
+            // Fetch the class routines for today for the teacher's courses
+            $classRoutines = ClassRoutine::whereIn('batch_id', $courseIds)
+                ->where('day_of_week', $todayDay)
+                ->get();
+
+            // Return the class routines
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Class routines retrieved successfully',
+                'data' => $classRoutines
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve class routines',
+                'errors' => [
+                    'exception' => [$e->getMessage()]
+                ]
+            ], 500);
+        }
+    }
  
 }
  
