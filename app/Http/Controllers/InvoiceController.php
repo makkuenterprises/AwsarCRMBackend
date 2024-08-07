@@ -192,10 +192,13 @@ public function getAllInvoicesByStudentDownload(Request $request)
         }
 
         // Format amounts for each invoice
+      // Format amounts for each invoice
         $formattedInvoices = $invoices->map(function($invoice) {
-            $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
-            $invoice->paid_amount = number_format($invoice->paid_amount, 2, '.', ',');
-            $invoice->remaining_amount = number_format($invoice->remaining_amount, 2, '.', ',');
+            $invoice->total_amount = is_numeric($invoice->total_amount) ? number_format((float) $invoice->total_amount, 2, '.', ',') : '0.00';
+            $invoice->paid_amount = is_numeric($invoice->paid_amount) ? number_format((float) $invoice->paid_amount, 2, '.', ',') : '0.00';
+            $invoice->remaining_amount = is_numeric($invoice->total_amount) && is_numeric($invoice->paid_amount) 
+                ? number_format((float) $invoice->total_amount - (float) $invoice->paid_amount, 2, '.', ',') 
+                : '0.00';
             return $invoice;
         });
 
