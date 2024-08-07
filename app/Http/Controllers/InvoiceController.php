@@ -191,12 +191,12 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
-       $formattedInvoices = $invoices->map(function($invoice) {
-            $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
-            $invoice->paid_amount = number_format($invoice->paid_amount, 2, '.', ',');
-            $invoice->remaining_amount = number_format($invoice->remaining_amount, 2, '.', ',');
-            return $invoice;
-        });
+    //    $formattedInvoices = $invoices->map(function($invoice) {
+    //         $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
+    //         $invoice->paid_amount = number_format($invoice->paid_amount, 2, '.', ',');
+    //         $invoice->remaining_amount = number_format($invoice->remaining_amount, 2, '.', ',');
+    //         return $invoice;
+    //     });
 
         // Calculate totals from the invoices
         $totalAmount = $invoices->sum('total_amount');
