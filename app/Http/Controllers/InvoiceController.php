@@ -200,7 +200,9 @@ public function getAllInvoicesByStudentDownload(Request $request)
         });
 
         // Calculate totals from the invoices
-        $totalAmount = $invoices->sum('total_amount');
+        $totalAmount = $invoices->sum(function($invoice) {
+            return (float) $invoice->total_amount;
+        });
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
@@ -216,10 +218,12 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->get();
 
         // Calculate total paid amount from payment histories
-        $paidAmount = $paymentHistories->sum('paid_amount');
+        $paidAmount = $paymentHistories->sum(function($payment) {
+            return (float) $payment->paid_amount;
+        });
 
         // Calculate outstanding amount
-        $outstandingAmount = $totalAmount - $paidAmount;
+        $outstandingAmount = (float) $totalAmount - (float) $paidAmount;
 
         // Format totals
         $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
@@ -228,7 +232,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
 
         // Format paid_amount in paymentHistories
         $formattedPaymentHistories = $paymentHistories->map(function($payment) {
-            $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
+            $payment->paid_amount = number_format((float) $payment->paid_amount, 2, '.', ',');
             return $payment;
         });
 
@@ -261,6 +265,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
 
 
 
