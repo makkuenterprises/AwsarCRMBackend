@@ -177,7 +177,7 @@ public function update(Request $request, $id)
      if ($request->has('stream')) {
         $question->stream = $request->input('stream');
     }
-    
+    dd($request->hasFile('image'));
     // Handle image upload
 if ($request->hasFile('image')) {
     // Check if the current image is not null and is not a link
