@@ -605,7 +605,7 @@ public function teacherList()
                 'students.payment_status'
             )
             ->distinct()
-            ->get();
+            ->get(); 
 
         // Map the student data
         $studentList = $students->map(function ($user) {

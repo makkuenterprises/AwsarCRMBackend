@@ -179,15 +179,13 @@ public function update(Request $request, $id)
     }
     
     // Handle image upload
-    if ($request->hasFile('image')) {
-        // Delete old image if exists
+        // Delete old image if exists  
         if ($question->image) {
             \Storage::disk('public')->delete($question->image);
         }
         // Store new image and update the path
         $imagePath = $request->file('image')->store('questions', 'public');
         $question->image = $imagePath;
-    }
 
     // Save the updated question
     $question->save();
