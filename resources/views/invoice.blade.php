@@ -153,9 +153,9 @@
 @endphp
                     <td>{{ $invoice->invoice_no }}</td>
                     <td>{{ $invoice->course_name }}</td>
-                    <td>{{ $invoice->total_amount }}</td>
-                    <td>{{ $invoice->paid_amount }}</td>
-                    <td>{{ $invoice->remaining_amount }}</td>
+                    <td>{{ formatCurrency($invoice->total_amount) }}</td>
+<td>{{ formatCurrency($invoice->paid_amount) }}</td>
+<td>{{ formatCurrency($invoice->remaining_amount) }}</td>
                     <td>{{ $invoice->invoice_date }}</td>
                 </tr>
                 @endforeach
