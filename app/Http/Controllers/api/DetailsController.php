@@ -205,6 +205,7 @@ public function update(Request $request, $id)
 
         // Find the existing Details model instance by ID
         $details = Details::findOrFail($id);
+        dd($details);
 
         // Handle file uploads if provided
         $filePaths = [];
