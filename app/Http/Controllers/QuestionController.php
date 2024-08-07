@@ -179,13 +179,23 @@ public function update(Request $request, $id)
     }
     
     // Handle image upload
-        // Delete old image if exists  
-        if ($question->image) {
-            \Storage::disk('public')->delete($question->image);
-        }
-        // Store new image and update the path
-        $imagePath = $request->file('image')->store('questions', 'public');
-        $question->image = $imagePath;
+if ($request->hasFile('image')) {
+    // Check if the current image is not null and is not a link
+    if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
+        // Delete old image from storage
+        \Storage::disk('public')->delete($question->image);
+    }
+    // Store new image and update the path
+    $imagePath = $request->file('image')->store('questions', 'public');
+    $question->image = $imagePath;
+} elseif ($request->input('image') && filter_var($request->input('image'), FILTER_VALIDATE_URL)) {
+    // If the image input is a valid URL, update the question image with the URL
+    $question->image = $request->input('image');
+} else {
+    // If no new image file is uploaded, keep the old image path or null
+    $question->image = $question->image ?? null;
+}
+
 
     // Save the updated question
     $question->save();
