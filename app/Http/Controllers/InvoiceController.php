@@ -191,8 +191,18 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
+        // Format amounts in invoices
+        $formattedInvoices = $invoices->map(function($invoice) {
+            $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
+            $invoice->paid_amount = number_format($invoice->paid_amount, 2, '.', ','); // Assuming invoices table has paid_amount
+            $invoice->remaining_amount = number_format($invoice->total_amount - $invoice->paid_amount, 2, '.', ',');
+            return $invoice;
+        });
+
         // Calculate totals from the invoices
         $totalAmount = $invoices->sum('total_amount');
+        $paidAmount = $invoices->sum('paid_amount');
+        $outstandingAmount = $totalAmount - $paidAmount;
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
@@ -207,27 +217,21 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->select('payment_histories.*')
             ->get();
 
-        // Calculate total paid amount from payment histories
-        $paidAmount = $paymentHistories->sum('paid_amount');
-
-        // Calculate outstanding amount
-        $outstandingAmount = $totalAmount - $paidAmount;
-
-        // Format amounts
-        $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
-        $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
-        $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
-
         // Format paid_amount in paymentHistories
         $formattedPaymentHistories = $paymentHistories->map(function($payment) {
             $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
             return $payment;
         });
 
+        // Format amounts
+        $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
+        $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
+        $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
+
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
-            'invoices' => $invoices,
+            'invoices' => $formattedInvoices,
             'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
             'paidAmount' => $paidAmountFormatted,
