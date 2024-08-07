@@ -122,11 +122,20 @@ class StaffAuthController extends Controller
            
                         ],
                 ],
-                [
-                 'title' => 'Attendance',
-                     'iconStyle' => '<i className="merial-icons">article</i>',
-                        'to' => 'attendance-list-for-staff',
-                ],
+               [
+        'title' => 'Attendance',
+        'iconStyle' => '<i className="material-icons">check_circle</i>',
+        'content' => [
+            [
+                'title' => 'Attendance',
+                'to' => 'attendance-list-for-admin',
+            ],
+            [
+                'title' => 'Create Attendance',
+                'to' => 'create-attendance',
+            ],
+        ],
+    ],
                  [
         'title' => 'Exams',
         'classChange' => 'mm-collapse',
