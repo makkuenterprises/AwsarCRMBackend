@@ -191,13 +191,6 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
-        // Format amounts in invoices
-        $formattedInvoices = $invoices->map(function($invoice) {
-            $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
-            $invoice->paid_amount = number_format($invoice->paid_amount, 2, '.', ','); // Assuming invoices table has paid_amount
-            return $invoice;
-        });
-
         // Calculate totals from the invoices
         $totalAmount = $invoices->sum('total_amount');
 
@@ -234,7 +227,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
-            'invoices' => $formattedInvoices,
+            'invoices' => $invoices,
             'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
             'paidAmount' => $paidAmountFormatted,
@@ -260,6 +253,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
 
 
 
