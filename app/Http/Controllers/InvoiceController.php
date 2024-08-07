@@ -191,12 +191,13 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
-        //  $formattedInvoices = $invoices->map(function($invoice) {
-        //     $invoice->total_amount = is_numeric($invoice->total_amount) ? number_format((float) $invoice->total_amount, 2, '.', ',') : '0.00';
-        //     $invoice->paid_amount = is_numeric($invoice->paid_amount) ? number_format((float) $invoice->paid_amount, 2, '.', ',') : '0.00'; // Assuming invoices table has paid_amount
-        //     $invoice->remaining_amount = number_format((float) $invoice->total_amount - (float) $invoice->paid_amount, 2, '.', ',');
-        //     return $invoice;
-        // });
+        // Format amounts for each invoice
+        $formattedInvoices = $invoices->map(function($invoice) {
+            $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
+            $invoice->paid_amount = number_format($invoice->paid_amount, 2, '.', ',');
+            $invoice->remaining_amount = number_format($invoice->remaining_amount, 2, '.', ',');
+            return $invoice;
+        });
 
         // Calculate totals from the invoices
         $totalAmount = $invoices->sum('total_amount');
@@ -234,7 +235,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
-            'invoices' => $invoices,
+            'invoices' => $formattedInvoices,
             'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
             'paidAmount' => $paidAmountFormatted,
