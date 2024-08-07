@@ -218,11 +218,17 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
         $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
 
+        // Format paid_amount in paymentHistories
+        $formattedPaymentHistories = $paymentHistories->map(function($payment) {
+            $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
+            return $payment;
+        });
+
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
             'invoices' => $invoices,
-            'paymentHistories' => $paymentHistories,
+            'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
             'paidAmount' => $paidAmountFormatted,
             'outstandingAmount' => $outstandingAmountFormatted,
@@ -247,7 +253,6 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
-
 
 
 
