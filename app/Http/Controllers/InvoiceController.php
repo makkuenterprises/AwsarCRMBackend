@@ -242,7 +242,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $details->logo = $details->logo;
     } else {
         // Generate a URL for the stored file
-        $details->logo = \Storage::url($details->logo);
+        $details->logo = url(Storage::url($details->logo));
     }
 }
 
