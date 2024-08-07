@@ -94,11 +94,11 @@
         <div class="info">
              @if($details->logo)
         <div class="logo">
-            <img src="{{ asset('storage/' . $details->logo) }}" alt="Company Logo" style="max-width: 200px; height: auto;">
+            <img src="{{$details->logo}}" alt="Company Logo" style="max-width: 200px; height: auto;">
         </div>
     @else
         <p>No logo available</p>
-    @endif
+    @endif 
            <div class="company-info">
     <h2>Institute Details</h2>
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
