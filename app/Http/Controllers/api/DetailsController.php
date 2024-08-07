@@ -232,7 +232,7 @@ public function update(Request $request, $id)
         $details->email = $validator['email'];
         $details->smtp_host = $validator['smtp_host'];
         $details->smtp_ports = $validator['smtp_ports'];
-        
+
          $details->phone = $validator['phone'];
         $details->address = $validator['address']; 
 
@@ -253,6 +253,6 @@ public function update(Request $request, $id)
         // Return error response with HTTP status code 500 (Internal Server Error) or handle specific exceptions
         return response()->json(['status'=>false, 'code'=>500,'error' => 'Failed to update details. ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
-}
+} 
 
 }
