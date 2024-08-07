@@ -234,7 +234,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
-            'invoices' => $formattedInvoices,
+            'invoices' => $invoices,
             'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
             'paidAmount' => $paidAmountFormatted,
