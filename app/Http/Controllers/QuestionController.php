@@ -147,7 +147,7 @@ public function update(Request $request, $id)
         'question_type' => 'required|in:MCQ,Short Answer,Fill in the Blanks',
         'options' => 'nullable|array',
         'correct_answers' => 'nullable|array',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048|url',
          'stream' =>  'required', 
     ]);
 
