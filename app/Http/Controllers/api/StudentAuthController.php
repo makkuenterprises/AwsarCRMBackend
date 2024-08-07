@@ -282,6 +282,7 @@ class StudentAuthController extends Controller
          
     }
     }
+
 public function TeachersLists($student_id) {
     try {
         $teachers = DB::table('courses_enrollements')
@@ -546,7 +547,8 @@ public function TeachersLists($student_id) {
 
     public function profileUpdateView($id){
 
-        $student = Student::find($id);
+        $student = Student::find($id); 
+         $student->image = $student->image ? url('/Student/' . $student->image) : null;
         if($student){
         return response()->json(['status'=>true,'code'=>200,'data'=>$student]);
         }else{
