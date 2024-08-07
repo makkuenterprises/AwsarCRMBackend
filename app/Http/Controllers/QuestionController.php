@@ -147,7 +147,7 @@ public function update(Request $request, $id)
         'question_type' => 'required|in:MCQ,Short Answer,Fill in the Blanks',
         'options' => 'nullable|array',
         'correct_answers' => 'nullable|array',
-       'image' => 'nullable|mimes:jpg,jpeg,png|max:2048|string|url',
+         'image' => 'nullable|string',
          'stream' =>  'required', 
     ]);
 
@@ -191,11 +191,13 @@ public function update(Request $request, $id)
     } elseif ($request->has('image') && filter_var($request->input('image'), FILTER_VALIDATE_URL)) {
         // If the image input is a valid URL, update the question image with the URL
         $question->image = $request->input('image');
-    } else {
-    // If no new image file is uploaded, keep the old image path or null
-    $question->image = null;
-}
-
+    } elseif ($request->input('image') === null) {
+        // If no new image file is uploaded and image input is null, keep the old image path or set to null
+        if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
+            \Storage::disk('public')->delete($question->image);
+        }
+        $question->image = null;
+    }
 
     // Save the updated question
     $question->save();
