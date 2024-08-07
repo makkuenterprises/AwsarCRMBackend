@@ -98,7 +98,7 @@
 </div>
    
            <div class="company-info">
-    <h2>Institute Details</h2>
+    <h2>Institute Details</h2>  
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
     <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
     <p><strong>Phone:</strong> {{ $details->phone ?? 'Phone' }}</p>
