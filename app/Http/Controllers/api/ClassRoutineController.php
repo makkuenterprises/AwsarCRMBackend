@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ClassRoutine;
 use App\Models\Teacher;
 use Carbon\Carbon;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class ClassRoutineController extends Controller
@@ -679,10 +680,12 @@ public function destroy($id)
             // Get the course IDs for the teacher
             $courseIds = $teacher->courses->pluck('id');
 
-            // Fetch the class routines for today for the teacher's courses
-            $classRoutines = ClassRoutine::whereIn('batch_id', $courseIds)
-                ->where('day_of_week', $todayDay)
-                ->get(); 
+            // Fetch the class routines for today for the teacher's courses with course names
+        $classRoutines = ClassRoutine::whereIn('batch_id', $courseIds)
+            ->where('day_of_week', $todayDay)
+            ->join('courses', 'class_routines.batch_id', '=', 'courses.id')
+            ->select('class_routines.*', 'courses.name as course_name')
+            ->get();
 
             // Return the class routines
             return response()->json([
