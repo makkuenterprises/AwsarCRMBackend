@@ -91,11 +91,13 @@
             <h1>Invoice</h1>
         </div>
 
-        <div class="info">
-             @if($details->logo)
         <div class="logo">
-            <img src="{{$details->logo}}" alt="Company Logo" style="max-width: 200px; height: auto;">
-        </div>
+    @if (filter_var($details->logo, FILTER_VALIDATE_URL))
+        <img src="{{ $details->logo }}" alt="Company Logo" style="max-width: 200px; height: auto;">
+    @else
+        <img src="{{ asset('storage/' . $details->logo) }}" alt="Company Logo" style="max-width: 200px; height: auto;">
+    @endif
+</div>
     @else
         <p>No logo available</p>
     @endif 
