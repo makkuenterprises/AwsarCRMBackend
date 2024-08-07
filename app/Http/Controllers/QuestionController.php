@@ -147,7 +147,7 @@ public function update(Request $request, $id)
         'question_type' => 'required|in:MCQ,Short Answer,Fill in the Blanks',
         'options' => 'nullable|array',
         'correct_answers' => 'nullable|array',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048|url',
+        'image' => 'nullable|string',
          'stream' =>  'required', 
     ]);
 
@@ -179,19 +179,19 @@ public function update(Request $request, $id)
     }
     // dd($request->image);
     // Handle image upload
-if ($request->image) {
-    // Check if the current image is not null and is not a link
-    if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
-        // Delete old image from storage
-        \Storage::disk('public')->delete($question->image);
-    }
-    // Store new image and update the path
-    $imagePath = $request->file('image')->store('questions', 'public');
-    $question->image = $imagePath;
-} elseif ($request->input('image') && filter_var($request->input('image'), FILTER_VALIDATE_URL)) {
-    // If the image input is a valid URL, update the question image with the URL
-    $question->image = $request->input('image');
-} else {
+  // Handle image upload or URL
+    if ($request->hasFile('image')) {
+        // Delete old image if exists and not a URL
+        if ($question->image && !filter_var($question->image, FILTER_VALIDATE_URL)) {
+            \Storage::disk('public')->delete($question->image);
+        }
+        // Store new image and update the path
+        $imagePath = $request->file('image')->store('questions', 'public');
+        $question->image = $imagePath;
+    } elseif ($request->has('image') && filter_var($request->input('image'), FILTER_VALIDATE_URL)) {
+        // If the image input is a valid URL, update the question image with the URL
+        $question->image = $request->input('image');
+    } else {
     // If no new image file is uploaded, keep the old image path or null
     $question->image = null;
 }
