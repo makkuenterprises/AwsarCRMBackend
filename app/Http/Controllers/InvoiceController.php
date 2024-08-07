@@ -236,6 +236,16 @@ public function getAllInvoicesByStudentDownload(Request $request)
         });
           $details = Details::first();
 
+          if ($details->logo) {
+    if (filter_var($details->logo, FILTER_VALIDATE_URL)) {
+        // It's a URL, use it directly
+        $details->logo = $details->logo;
+    } else {
+        // Generate a URL for the stored file
+        $details->logo = \Storage::url($details->logo);
+    }
+}
+
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'details' => $details,
