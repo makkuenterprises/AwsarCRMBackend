@@ -571,7 +571,86 @@ public function teacherList()
         
     }
 
-    public function studentListForTeacher($teacherId)
+//     public function studentListForTeacher($teacherId)
+// {
+//     try {
+//         // Retrieve the IDs of courses taught by the teacher
+//         $courses = Course::whereHas('teachers', function($query) use ($teacherId) {
+//             $query->where('teachers.id', $teacherId); // Explicitly specify teacher's table id
+//         })->pluck('courses.id'); // Explicitly specify course's table id
+
+//         // Retrieve students enrolled in these courses with all relevant fields
+//         $students = DB::table('students')
+//             ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+//             ->whereIn('courses_enrollements.course_id', $courses)
+//             ->select(
+//                 'students.id',
+//                 'students.name',
+//                 'students.email',
+//                 'students.phone',
+//                 'students.street',
+//                 'students.postal_code',
+//                 'students.city',
+//                 'students.state',
+//                 'students.image',
+//                 'students.fname',
+//                 'students.femail',
+//                 'students.fphone',
+//                 'students.fstreet',
+//                 'students.fpostal_code',
+//                 'students.fcity',
+//                 'students.fstate',
+//                 'students.paymentType',
+//                 'students.dob',
+//                 'students.payment_status'
+                
+//             )
+//             ->distinct()
+//             ->get(); 
+
+//         // Map the student data
+//         $studentList = $students->map(function ($user) {
+//             return [
+//                 'id' => $user->id,
+//                 'name' => $user->name,
+//                 'email' => $user->email,
+//                 'phone' => $user->phone,
+//                 'street' => $user->street,
+//                 'postal_code' => $user->postal_code,
+//                 'city' => $user->city,
+//                 'state' => $user->state,
+//                 'image' => $user->image ? url('/Student/' . $user->image) : null, // Assuming $user->image contains the relative path
+//                 'fname' => $user->fname,
+//                 'femail' => $user->femail,
+//                 'fphone' => $user->fphone,
+//                 'fstreet' => $user->fstreet,
+//                 'fpostal_code' => $user->fpostal_code,
+//                 'fcity' => $user->fcity,
+//                 'fstate' => $user->fstate,
+//                 'paymentType' => $user->paymentType,
+//                 'dob' => $user->dob,
+//                 'payment_status' => $user->payment_status,
+//                 'course' => $user->course_names ?? 'Not Enrolled'
+//             ];
+//         });
+
+//         return response()->json([
+//             'status' => true,
+//             'code' => 200,
+//             'message' => 'Students enrolled in the courses retrieved successfully',
+//             'students' => $studentList
+//         ], 200);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'code' => 500,
+//             'message' => 'An error occurred while retrieving students',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+
+public function studentListForTeacher($teacherId)
 {
     try {
         // Retrieve the IDs of courses taught by the teacher
@@ -582,6 +661,7 @@ public function teacherList()
         // Retrieve students enrolled in these courses with all relevant fields
         $students = DB::table('students')
             ->join('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->whereIn('courses_enrollements.course_id', $courses)
             ->select(
                 'students.id',
@@ -603,10 +683,31 @@ public function teacherList()
                 'students.paymentType',
                 'students.dob',
                 'students.payment_status',
-                 DB::raw('GROUP_CONCAT(courses.name) as course_names')
+                DB::raw('GROUP_CONCAT(courses.name) as course_names')
             )
-            ->distinct()
-            ->get(); 
+            ->groupBy(
+                'students.id',
+                'students.name',
+                'students.email',
+                'students.phone',
+                'students.street',
+                'students.postal_code',
+                'students.city',
+                'students.state',
+                'students.image',
+                'students.fname',
+                'students.femail',
+                'students.fphone',
+                'students.fstreet',
+                'students.fpostal_code',
+                'students.fcity',
+                'students.fstate',
+                'students.paymentType',
+                'students.dob',
+                'students.payment_status'
+            )
+            ->orderByDesc('students.id')
+            ->get();
 
         // Map the student data
         $studentList = $students->map(function ($user) {
@@ -649,6 +750,5 @@ public function teacherList()
         ], 500);
     }
 }
-
 
 }
