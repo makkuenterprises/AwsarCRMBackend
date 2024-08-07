@@ -193,7 +193,7 @@ if ($request->image) {
     $question->image = $request->input('image');
 } else {
     // If no new image file is uploaded, keep the old image path or null
-    $question->image = $question->image ?? null;
+    $question->image = null;
 }
 
 
