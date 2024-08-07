@@ -119,8 +119,7 @@ class StaffAuthController extends Controller
                 'to' => 'create-live-class',
             ],
                       
-           
-                        ],
+                        ], 
                 ],
                [
         'title' => 'Attendance',
