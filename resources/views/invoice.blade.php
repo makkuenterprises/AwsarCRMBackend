@@ -93,7 +93,7 @@
 
         <div class="logo" style="width:50%">
    
-        <img src="{{$details->logo}}" alt="Company Logo" style="max-width: 200px; height: auto;">
+       {{$details->logo}}
     
 </div>
    
