@@ -223,7 +223,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
             $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
             return $payment;
         });
-
+dd($invoices);
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
