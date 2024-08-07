@@ -191,6 +191,14 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
+        // Format amounts in invoices
+        $formattedInvoices = $invoices->map(function($invoice) {
+            $invoice->total_amount = number_format((float) $invoice->total_amount, 2, '.', ',');
+            $invoice->paid_amount = number_format((float) $invoice->paid_amount, 2, '.', ',');
+            $invoice->remaining_amount = number_format((float) ($invoice->total_amount - $invoice->paid_amount), 2, '.', ',');
+            return $invoice;
+        });
+
         // Calculate totals from the invoices
         $totalAmount = $invoices->sum('total_amount');
 
@@ -213,7 +221,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Calculate outstanding amount
         $outstandingAmount = $totalAmount - $paidAmount;
 
-        // Format amounts
+        // Format totals
         $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
         $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
         $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
@@ -223,11 +231,11 @@ public function getAllInvoicesByStudentDownload(Request $request)
             $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
             return $payment;
         });
-dd($invoices);
+
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'student' => $student,
-            'invoices' => $invoices,
+            'invoices' => $formattedInvoices,
             'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
             'paidAmount' => $paidAmountFormatted,
@@ -253,6 +261,7 @@ dd($invoices);
         ], 500);
     }
 }
+
 
 
 
