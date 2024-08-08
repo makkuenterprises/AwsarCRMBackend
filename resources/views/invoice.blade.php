@@ -90,11 +90,12 @@
         <div class="header">
             <h1>Invoice</h1>
         </div>
-
+{{-- /opt/lampp/htdocs/Awsar/AwsarCRMBackend/public/Student/logo-full.png --}}
      
      <div class="info">
            <div class="company-info">
-    <img src="{{ $details->side_logo }}" alt="Company Logo" style="max-width: 500px; height: auto;">
+    {{-- <img src="{{ $details->side_logo }}" alt="Company Logo" style="max-width: 500px; height: auto;"> --}}
+    <img src="{{ asset('Student/logo-full.png')}}" alt="Company Logo" style="max-width: 500px; height: auto;">
     <h2>Awsar Classes</h2>  
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
     <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
