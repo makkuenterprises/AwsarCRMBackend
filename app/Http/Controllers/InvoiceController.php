@@ -236,13 +236,13 @@ public function getAllInvoicesByStudentDownload(Request $request)
         }); 
         $details = Details::first(); 
 
-        if ($details->logo) {
-    if (filter_var($details->logo, FILTER_VALIDATE_URL)) {
+        if ($details->side_logo) {
+    if (filter_var($details->side_logo, FILTER_VALIDATE_URL)) {
         // It's a URL, use it directly
-        $details->logo = $details->logo; 
+        $details->side_logo = $details->side_logo; 
     } else {
         // Generate a URL for the stored file
-        $details->logo = url(Storage::url($details->logo));
+        $details->side_logo = url(Storage::url($details->side_logo));
     }
 }
 // dd($details->logo);
