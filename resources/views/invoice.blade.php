@@ -89,20 +89,18 @@
     <div class="container">
         <div class="header">
             <h1>Invoice</h1>
-        </div>  
+        </div>
 
-        {{-- <div class="logo" style="width:50%">
-    <img src="{{ $details->logo }}" alt="Company Logo" style="max-width: 200px; height: auto;">
-    
-</div> --}}
-      <div class="info">
+     
+     <div class="info">
            <div class="company-info">
-           <h2>Institute Details</h2>  
-           <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
-           <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
-           <p><strong>Phone:</strong> {{ $details->phone ?? 'Phone' }}</p>
-           <p><strong>Email:</strong> {{ $details->email ?? 'Email' }}</p>
-            </div>
+    <h2>Awsar Classes</h2>  
+    <img src="{{ $details->side_logo }}" alt="Company Logo" style="max-width: 200px; height: auto;">
+    <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
+    <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
+    <p><strong>Phone:</strong> {{ $details->phone ?? 'Phone' }}</p>
+    <p><strong>Email:</strong> {{ $details->email ?? 'Email' }}</p>
+    </div>
             <div class="student-info">
                 <h2>Student Information</h2>
                 <p><strong>Name:</strong> {{ $student->name }}</p>
@@ -151,15 +149,15 @@
                 <tr>
                     @php
     // Function to format number as currency
-                       function formatCurrency($amount) {
-                            return number_format(floatval(str_replace(',', '', $amount)), 2, '.', ',');
-                        }
-                        @endphp
+    function formatCurrency($amount) {
+        return number_format(floatval(str_replace(',', '', $amount)), 2, '.', ',');
+    }
+@endphp
                     <td>{{ $invoice->invoice_no }}</td>
                     <td>{{ $invoice->course_name }}</td>
                     <td>Rs. {{ formatCurrency($invoice->total_amount) }}</td>
-                    <td>Rs. {{ formatCurrency($invoice->paid_amount) }}</td>
-                    <td>Rs. {{ formatCurrency($invoice->remaining_amount) }}</td>
+<td>Rs. {{ formatCurrency($invoice->paid_amount) }}</td>
+<td>Rs. {{ formatCurrency($invoice->remaining_amount) }}</td>
                     <td>{{ $invoice->invoice_date }}</td>
                 </tr>
                 @endforeach
