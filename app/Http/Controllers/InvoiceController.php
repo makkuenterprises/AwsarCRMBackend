@@ -102,8 +102,8 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
-            // ->where('invoices.id', $request->input('invoice_id'))
-            ->latest('invoices.created_at')
+            ->where('invoices.id', $request->input('invoice_id'))
+            // ->latest('invoices.created_at')
             ->select(
                 'invoices.*',
                 'courses_enrollements.student_id',
