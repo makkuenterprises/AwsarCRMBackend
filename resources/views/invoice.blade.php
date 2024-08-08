@@ -106,7 +106,7 @@
     <p><strong>Email:</strong> {{ $details->email ?? 'Email' }}</p>
     </div>
             <div class="student-info">
-                <p><strong>Student Information</strong></p>
+                <h5>Student Information</h5>
                 <p><strong>Name:</strong> {{ $student->name }}</p>
                 <p><strong>Email:</strong> {{ $student->email }}</p>
                 <p><strong>Phone:</strong> {{ $student->phone }}</p>
