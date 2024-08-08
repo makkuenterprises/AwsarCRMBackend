@@ -98,7 +98,7 @@
      <div class="info">
            <div class="company-info">
     {{-- <img src="{{ $details->side_logo }}" alt="Company Logo" style="max-width: 500px; height: auto;"> --}}
-    <img src="{{ asset('Student/logo-full.png')}}" alt="Company Logo" style="max-width: 200px; height:80px;">
+    <img src="{{ asset('Student/logo-full.png')}}" alt="Company Logo" style="max-width: 200px; height:80px;margin-top:-3px">
     {{-- <h2>Awsar Classes</h2>   --}}
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
     <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
@@ -106,7 +106,7 @@
     <p><strong>Email:</strong> {{ $details->email ?? 'Email' }}</p>
     </div>
             <div class="student-info">
-                <h5>Student Information</h5>
+                <h3>Student Information</h3>
                 <p><strong>Name:</strong> {{ $student->name }}</p>
                 <p><strong>Email:</strong> {{ $student->email }}</p>
                 <p><strong>Phone:</strong> {{ $student->phone }}</p>
