@@ -194,14 +194,7 @@ if (!$invoices) {
 
 
 
-        // Check if any invoices are found
-        if ($invoices->isEmpty()) {
-            return response()->json([
-                'status' => false,
-                'code' => 404,
-                'message' => 'No invoices found for the given criteria.',
-            ], 404);
-        }
+ 
 
     //    $formattedInvoices = $invoices->map(function($invoice) {
     //         $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
