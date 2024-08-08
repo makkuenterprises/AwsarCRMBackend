@@ -90,10 +90,14 @@
         <div class="header">
             <h1>Invoice</h1>
         </div>
-<div class="company-info"> 
-    <h2>Awsar Classes</h2>  
-        {{-- <img src="{{ $details->side_logo}}" alt="Company Logo" style="max-width: 200px; height: auto;width:50;"> --}}
-{{-- {{ $details->side_logo}} --}}
+
+        {{-- <div class="logo" style="width:50%">
+    <img src="{{ $details->logo }}" alt="Company Logo" style="max-width: 200px; height: auto;">
+    
+</div> --}}
+   
+           <div class="company-info">
+    <h2>Institute Details</h2>  
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
     <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
     <p><strong>Phone:</strong> {{ $details->phone ?? 'Phone' }}</p>
