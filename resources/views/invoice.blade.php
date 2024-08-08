@@ -94,8 +94,8 @@
      
      <div class="info">
            <div class="company-info">
+    <img src="{{ $details->side_logo }}" alt="Company Logo" style="max-width: 500px; height: auto;">
     <h2>Awsar Classes</h2>  
-    <img src="{{ $details->side_logo }}" alt="Company Logo" style="max-width: 200px; height: auto;">
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
     <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
     <p><strong>Phone:</strong> {{ $details->phone ?? 'Phone' }}</p>
