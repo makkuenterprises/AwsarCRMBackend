@@ -94,7 +94,7 @@
 
 <div class="company-info">
     <h2>Awsar Classes</h2>  
-        <img src="https://awasarbackend.makkuenterprises.com/storage/uploads/ELiJ2giGI4fG2kzyIVCbVTNKocSqT9xGSS9J7txQ.png" alt="Company Logo" style="max-width: 200px; height: auto;width:50;">
+        <img src="{{ $details->side_logo}}" alt="Company Logo" style="max-width: 200px; height: auto;width:50;">
 
     <p><strong>Institute Name:</strong> {{ $details->business_name }}</p>
     <p><strong>Address:</strong> {{ $details->address ?? 'Address' }}</p>
