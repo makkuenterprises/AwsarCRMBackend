@@ -170,7 +170,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
 
     try {
         // Fetch invoices for the specified student, course, and invoice ID
-     $invoice = DB::table('invoices')
+     $invoices = DB::table('invoices')
     ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
     ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
     ->where('courses_enrollements.student_id', $request->input('student_id'))
@@ -184,7 +184,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
     ->latest('invoices.created_at') // or 'invoices.id' if 'created_at' is not available
     ->first();
 
-if (!$invoice) {
+if (!$invoices) {
     return response()->json([
         'status' => false,
         'code' => 404,
