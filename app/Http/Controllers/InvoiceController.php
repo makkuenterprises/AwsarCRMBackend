@@ -165,24 +165,32 @@ public function getAllInvoicesByStudentDownload(Request $request)
     $request->validate([ 
         'student_id' => 'required|integer|exists:students,id',
         'course_id' => 'required|integer|exists:courses,id',
-        'invoice_id' => 'required|integer|exists:invoices,id',
+        // 'invoice_id' => 'required|integer|exists:invoices,id',
     ]);
 
     try {
         // Fetch invoices for the specified student, course, and invoice ID
-        $invoices = DB::table('invoices')
-            ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
-            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-            ->where('courses_enrollements.student_id', $request->input('student_id'))
-            ->where('courses_enrollements.course_id', $request->input('course_id'))
-            ->where('invoices.id', $request->input('invoice_id'))
-            ->select(
-                'invoices.*',
-                'courses_enrollements.student_id',
-                'courses_enrollements.course_id',
-                'courses.name as course_name'
-            )
-            ->get();
+     $invoice = DB::table('invoices')
+    ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
+    ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+    ->where('courses_enrollements.student_id', $request->input('student_id'))
+    ->where('courses_enrollements.course_id', $request->input('course_id'))
+    ->select(
+        'invoices.*',
+        'courses_enrollements.student_id',
+        'courses_enrollements.course_id',
+        'courses.name as course_name'
+    )
+    ->latest('invoices.created_at') // or 'invoices.id' if 'created_at' is not available
+    ->first();
+
+if (!$invoice) {
+    return response()->json([
+        'status' => false,
+        'code' => 404,
+        'message' => 'Invoice not found'
+    ], 404);
+}
 
 
 
