@@ -46,7 +46,7 @@
             margin-top: 0;
         }
          .student-info p {
-         line-height: 1px;
+         line-height: 5px;
         }
         .invoice-details, .payment-details, .totals {
             margin-top: 10px;
