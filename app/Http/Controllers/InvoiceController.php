@@ -245,7 +245,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $details->logo = url(Storage::url($details->logo));
     }
 }
-
+dd($details->logo);
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'details' => $details,
