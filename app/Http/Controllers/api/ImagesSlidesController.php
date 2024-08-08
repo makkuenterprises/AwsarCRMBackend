@@ -19,20 +19,38 @@ use Illuminate\Validation\ValidationException;
 class ImagesSlidesController extends Controller
 {
 
- public function storeMultiple(Request $request)
+public function storeMultiple(Request $request)
 {
-    try { 
+    try {
         // Validate the incoming request data
         $request->validate([
             'images' => 'required|array',
             'images.*.image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'images.*.title' => 'required|string|max:255',
-            'images.*.link' => 'nullable|url', 
+            'images.*.link' => 'nullable|url',
             'images.*.role' => 'required|string',
         ]);
 
-        $uploadedImages = []; 
+        $uploadedImages = [];
+        $roles = [];
 
+        // Collect roles from the request
+        foreach ($request->images as $imageData) {
+            if (!in_array($imageData['role'], $roles)) {
+                $roles[] = $imageData['role'];
+            }
+        }
+
+        // Delete existing images for the specified roles
+        foreach ($roles as $role) {
+            $existingImages = SlidesImages::where('role', $role)->get();
+            foreach ($existingImages as $existingImage) {
+                Storage::disk('public')->delete($existingImage->path);
+                $existingImage->delete();
+            }
+        }
+
+        // Process and store new images
         foreach ($request->images as $imageData) {
             if (isset($imageData['image'])) {
                 // Process and store the image
@@ -52,7 +70,7 @@ class ImagesSlidesController extends Controller
                 Storage::disk('public')->put($path, $img);
 
                 $title = $imageData['title'];
-                $role = $imageData['role'] ?? null;
+                $role = $imageData['role'];
                 $link = $imageData['link'] ?? null;
 
                 // Save the data in the SlidesImages table
@@ -88,8 +106,8 @@ class ImagesSlidesController extends Controller
             'status' => false,
             'message' => 'Image upload failed',
             'error' => $e->getMessage(),
-        ], 500); 
-    } 
+        ], 500);
+    }
 }
 
     public function showImages()
