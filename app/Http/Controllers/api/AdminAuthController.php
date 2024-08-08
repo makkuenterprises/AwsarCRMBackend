@@ -73,10 +73,6 @@ class AdminAuthController extends Controller
                 'to' => 'teacher',
             ],
             [
-                'title' => 'Teacher Detail',
-                'to' => 'teacher-detail',
-            ],
-            [
                 'title' => 'Add New Teacher',
                 'to' => 'add-teacher',
             ],
@@ -162,7 +158,7 @@ class AdminAuthController extends Controller
         'iconStyle' => '<i className="material-icons">assessment</i>',
         'content' => [
             [
-                'title' => 'View Questions',
+                'title' => 'Question Bank',
                 'to' => 'view-question',
             ],
             [

@@ -76,10 +76,7 @@ class StaffAuthController extends Controller
                             'title'=> 'Teacher',
                             'to'=> 'teacher',					
                         ],
-                        [
-                            'title'=> 'Teacher Detail',
-                            'to'=> 'teacher-detail',
-                        ],
+                       
                         [
                             'title'=> 'Add New Teacher',
                             'to'=> 'add-teacher',
@@ -141,7 +138,7 @@ class StaffAuthController extends Controller
         'iconStyle' => '<i className="material-icons">assessment</i>',
         'content' => [
             [
-                'title' => 'View Questions',
+                'title' => 'Question Bank',
                 'to' => 'view-question',
             ],
             [
