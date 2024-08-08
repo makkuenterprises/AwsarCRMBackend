@@ -45,9 +45,9 @@
             color: #000000;
             margin-top: 0;
         }
-         /* .student-info p {
-           padding-bottom: 1px
-        } */
+         .student-info p {
+         line-height: 1px;
+        }
         .invoice-details, .payment-details, .totals {
             margin-top: 10px;
         }
