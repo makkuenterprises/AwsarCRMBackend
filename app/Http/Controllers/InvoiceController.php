@@ -97,21 +97,23 @@ public function getAllInvoicesByStudentDownload(Request $request)
 
     try {
         // Fetch invoices for the specified student, course, and invoice ID
-     $invoices = DB::table('invoices')
-    ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
-    ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
-    ->where('courses_enrollements.student_id', $request->input('student_id'))
-    ->where('courses_enrollements.course_id', $request->input('course_id'))
-    ->select(
-        'invoices.*',
-        'courses_enrollements.student_id',
-        'courses_enrollements.course_id',
-        'courses.name as course_name'
-    )
-    ->latest('invoices.created_at') // or 'invoices.id' if 'created_at' is not available
-    ->first();
+         $invoices = DB::table('invoices')
+            ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('courses_enrollements.student_id', $request->input('student_id'))
+            ->where('courses_enrollements.course_id', $request->input('course_id'))
+            // ->where('invoices.id', $request->input('invoice_id'))
+            ->latest('invoices.created_at')
+            ->select(
+                'invoices.*',
+                'courses_enrollements.student_id',
+                'courses_enrollements.course_id',
+                'courses.name as course_name'
+            )
+            ->get();
 
-if (!$invoices) {
+
+  if ($invoices->isEmpty()) {
     return response()->json([
         'status' => false,
         'code' => 404,
