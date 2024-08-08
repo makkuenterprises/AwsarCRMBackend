@@ -231,21 +231,21 @@ public function getAllInvoicesByStudentDownload(Request $request)
 
         // Format paid_amount in paymentHistories
         $formattedPaymentHistories = $paymentHistories->map(function($payment) {
-            $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');
+            $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');  
             return $payment;
-        });
-          $details = Details::first();
+        }); 
+        $details = Details::first(); 
 
-          if ($details->logo) {
+        if ($details->logo) {
     if (filter_var($details->logo, FILTER_VALIDATE_URL)) {
         // It's a URL, use it directly
-        $details->logo = $details->logo;
+        $details->logo = $details->logo; 
     } else {
         // Generate a URL for the stored file
         $details->logo = url(Storage::url($details->logo));
     }
 }
-dd($details->logo);
+// dd($details->logo);
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'details' => $details,
