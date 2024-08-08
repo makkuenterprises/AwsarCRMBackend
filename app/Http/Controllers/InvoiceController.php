@@ -86,7 +86,6 @@ public function getAllInvoicesByStudent(Request $request)
 
 
 
-
 // public function getAllInvoicesByStudentDownload(Request $request)
 // {
 //     // Validate the request

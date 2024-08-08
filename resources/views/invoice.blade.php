@@ -65,7 +65,7 @@
         }
         .totals div {
             font-size: 18px;
-            font-weight: bold;
+            /* font-weight: bold; */
             color: #000000;
             margin-top: 10px;
         }
@@ -93,7 +93,6 @@
 
         <div class="logo" style="width:50%">
     <img src="{{ $details->logo }}" alt="Company Logo" style="max-width: 200px; height: auto;">
-       {{-- {{$details->logo}} --}}
     
 </div>
    
