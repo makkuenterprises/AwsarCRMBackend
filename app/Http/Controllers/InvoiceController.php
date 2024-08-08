@@ -219,7 +219,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
 
     try {
         // Fetch the latest invoice for the specified student, course, and invoice ID
-        $invoice = DB::table('invoices')
+        $invoices = DB::table('invoices')
             ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
@@ -235,7 +235,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->first(); // Get the latest record
 
         // Check if any invoices are found
-        if (!$invoice) {
+        if (!$invoices) {
             return response()->json([
                 'status' => false,
                 'code' => 404,
@@ -244,7 +244,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         }
 
         // Calculate totals from the invoices
-        $totalAmount = $invoice->total_amount; // Directly use the single invoice's amount
+        $totalAmount = $invoices->total_amount; // Directly use the single invoice's amount
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
@@ -290,7 +290,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $pdf = PDF::loadView('invoice', [
             'details' => $details,
             'student' => $student,
-            'invoice' => $invoice,
+            'invoices' => $invoices,
             'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
             'paidAmount' => $paidAmountFormatted,
