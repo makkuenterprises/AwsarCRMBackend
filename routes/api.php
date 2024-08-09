@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //       Route::get('adminnnnn','Admin')->name('get');
 // });
 // });
-
+ 
 
 // ------------------------------------------------------------------------------------------------
 // ADMIN LOGIN AND SETTING ROUTES ROUTES
@@ -79,14 +79,14 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 
 }); 
  
-// });
+// }); 
 
 // Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
 
 
 
 
-Route::group(['middleware' => ['admin', 'staff']], function() {
+// Route::group(['middleware' => ['admin', 'staff']], function() {
 
 // ------------------------------------------------------------------------------------------------
 // STUDENT CREATE ROUTES
@@ -186,7 +186,7 @@ Route::prefix('notice')->group(function () {
 
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
 
-}); 
+// }); 
 
 
 
