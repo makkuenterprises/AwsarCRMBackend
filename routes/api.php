@@ -63,7 +63,7 @@ Route::prefix('admin')->group(function () {
 
 Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin.login');
 
-});
+}); 
 
 Route::group(['middleware'=>'admin'],function(){ 
 
