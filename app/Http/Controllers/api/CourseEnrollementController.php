@@ -47,7 +47,7 @@ class CourseEnrollementController extends Controller
     }
 
     try {
-        if($request->input('payment_status')==''){
+        if($request->input('payment_status')=='offline'){
 
         
         DB::beginTransaction(); // Start the transaction
@@ -166,7 +166,7 @@ class CourseEnrollementController extends Controller
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Student enrolled in the course successfully'], 200);
     } 
 
-    if($request->input('payment_status')){
+    if($request->input('payment_status')=='online'){
       DB::beginTransaction();
 
   
