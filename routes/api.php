@@ -65,7 +65,7 @@ Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin
 
 });
 
-// Route::group(['middleware'=>'admin'],function(){ 
+Route::group(['middleware'=>'admin'],function(){ 
 
 Route::prefix('admin')->group(function () {
 
@@ -77,14 +77,14 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 
 });
 
-// });
+});
 
 // Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
 
 
 
 
-// Route::group(['middleware' => ['admin', 'staff']], function() {
+Route::group(['middleware' => ['admin', 'staff']], function() {
 
 // ------------------------------------------------------------------------------------------------
 // STUDENT CREATE ROUTES
@@ -184,7 +184,7 @@ Route::prefix('notice')->group(function () {
 
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
 
-// }); 
+}); 
 
 
 
