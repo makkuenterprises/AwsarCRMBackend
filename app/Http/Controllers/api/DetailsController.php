@@ -144,6 +144,8 @@ public function show($id)
             'method' => $details->method,
             'gst_number' => $details->gst_number,
             'gst_percentage' => $details->gst_percentage,
+            'phone' => $details->phone,
+            'address' => $details->address,
         ];
 
         // Return success response with specific details data

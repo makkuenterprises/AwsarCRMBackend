@@ -115,8 +115,8 @@ class CourseEnrollementController extends Controller
         $student->paymentType = $request->input('payment_type');
         $student->save();
         $admins = Admin::all();
-        $staffMembers = StaffModel::all();
-         // Fetch and include the attached teachers
+        $staffMembers = StaffModel::all(); 
+        // Fetch and include the attached teachers
       
         $course = Course::with('teachers')->find($request->input('course_id'));
 
@@ -136,7 +136,7 @@ class CourseEnrollementController extends Controller
           foreach ($admins as $admin) {
             $admin->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
         }  
-
+     
         // Send notifications to staff members
         foreach ($staffMembers as $staff) {
             $staff->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
@@ -166,6 +166,7 @@ class CourseEnrollementController extends Controller
     }
 }
   
+
 public function getPaymentHistory(Request $request)
 {
     // Validate the request data
