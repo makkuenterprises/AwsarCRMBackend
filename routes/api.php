@@ -65,9 +65,11 @@ Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin
 
 }); 
 
-Route::group(['middleware'=>'admin'],function(){ 
+// Route::group(['middleware'=>'admin'],function(){ 
+ 
+// Route::prefix('admin')->group(function () {
 
-Route::prefix('admin')->group(function () {
+Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {
 
 // Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
 Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
@@ -77,7 +79,7 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 
 });
 
-});
+// });
 
 // Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
 
