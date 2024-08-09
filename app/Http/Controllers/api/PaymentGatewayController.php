@@ -14,7 +14,7 @@ use App\Models\PaymentGateway;
 class PaymentGatewayController extends Controller
 {
     //
-    public function index()
+    public function index() 
     {
         $gateway = PaymentGateway::first();
         if ($gateway) {
@@ -35,11 +35,11 @@ class PaymentGatewayController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validated = $request->validate([ 
             'name' => 'required|string|max:255',
             'api_key' => 'required|string|max:255',
             'api_secret' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            // 'description' => 'nullable|string',
         ]);
 
         $gateway = PaymentGateway::first();
@@ -57,9 +57,9 @@ class PaymentGatewayController extends Controller
             'message' => $message,
            'data' => [
                 'name' => $gateway->name,
-                'api_key' => $gateway->api_key,
+                'api_key' => $gateway->api_key,  
                 'api_secret' => $gateway->api_secret,
-                'description' => $gateway->description,
+                // 'description' => $gateway->description,
             ]
         ], 200);
     }
