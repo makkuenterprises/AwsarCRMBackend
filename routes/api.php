@@ -281,7 +281,7 @@ Route::get('student/study-materials/{course_id}', [StudyMaterialsController::cla
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 // });
-
+  
 
 
 // ------------------------------------------------------------------------------------------------
