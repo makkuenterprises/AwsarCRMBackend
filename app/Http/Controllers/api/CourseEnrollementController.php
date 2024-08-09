@@ -33,7 +33,7 @@ class CourseEnrollementController extends Controller
         'payment_type' => ['required', 'string', 'min:1', 'max:250'],
         'payment_status' => ['required', 'string', 'min:1', 'max:250'],
         'paid_amount' => ['required', 'numeric', 'min:0'],
-        'due_date' => 'nullable|date_format:Y-m-d'
+        'due_date' => 'nullable|date_format:d/m/y'
     ]); 
 
     // Check if validation fails
