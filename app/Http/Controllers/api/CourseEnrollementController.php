@@ -190,9 +190,9 @@ class CourseEnrollementController extends Controller
 protected function sendOneSignalNotification($oneSignalId, $title, $message)
 {
    
-    dd('fire');
+   
 
-    
+
     $content = [ 
         "en" => $message,
     ];
@@ -222,7 +222,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 
     $response = curl_exec($ch);
     curl_close($ch);
-
+ dd($response);
     return $response;
 
 }
