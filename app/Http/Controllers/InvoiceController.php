@@ -267,9 +267,9 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Total paid amount including previous payments
         $totalPaidAmount =  $previousPaymentsTotal;
         
-        $totalOT = $invoices->sum('total_amount');
+       
 
-        $PaymentsAlreadyMade = $previousPaymentsTotal - $totalOT;
+        $PaymentsAlreadyMade = $previousPaymentsTotal - $paidAmount;
 
         // Calculate outstanding amount considering all previous payments
 
