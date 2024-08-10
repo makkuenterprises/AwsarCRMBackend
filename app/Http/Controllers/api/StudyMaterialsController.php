@@ -130,7 +130,7 @@ public function store(Request $request)
             }
         } 
 
-          foreach ($teachersList as $teacher) {
+        foreach ($teachersList as $teacher) {
             // Assuming you have a notification class for notifying teachers about study materials
             $teacherModel = Teacher::find($teacher['id']);
             if ($teacherModel) {
@@ -146,7 +146,7 @@ public function store(Request $request)
             }
         }
 
-         foreach ($admins as $admin) {
+        foreach ($admins as $admin) {
             $admin->notify(new StudyMaterial($studyMaterial));
         }
 
@@ -180,7 +180,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 {
    
    
-
+dd('fire');
 
     $content = [ 
         "en" => $message,
