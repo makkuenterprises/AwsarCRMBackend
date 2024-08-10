@@ -122,6 +122,8 @@ public function store(Request $request)
         foreach ($students as $student) {
             $student->notify(new StudyMaterial($studyMaterial));
              if ($student->one_signal_id) {
+dd('fire1');
+
                 $this->sendOneSignalNotification(
                     $student->one_signal_id,
                     'New Material Added',
@@ -138,6 +140,8 @@ public function store(Request $request)
                 
             }
               if ($teacherModel->one_signal_id) {
+dd('fire2');
+
                 $this->sendOneSignalNotification(
                     $teacherModel->one_signal_id,
                     'New Material Added',
