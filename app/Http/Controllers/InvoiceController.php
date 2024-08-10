@@ -231,7 +231,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Calculate totals from the invoices
         // $totalAmount = $invoices->sum('total_amount');
          $course = Course::find($request->course_id);
-          $totalAmount->fee; 
+          $totalAmount=$course->fee; 
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
