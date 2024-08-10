@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Razorpay\Api\Api;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon; 
 
 class OnlinePaymentController extends Controller
 {
@@ -169,7 +172,81 @@ class OnlinePaymentController extends Controller
 
 //     return response()->json(['status' => true, 'message' => 'Payment successful']);
 // }
-public function payment(Request $request, $id)
+
+   public function createOrder(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'student_id' => 'required|exists:students,id',
+            'course_id' => 'required|exists:courses,id',
+            'payment_type' => ['required', 'string', 'min:1', 'max:250'],
+            'payment_status' => ['required', 'string', 'min:1', 'max:250'],
+            'paid_amount' => ['required', 'numeric', 'min:0'],
+            'due_date' => 'nullable|date_format:d/m/y'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'code' => 400,
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        try {
+           
+
+             // Find the student and course
+        $student = Student::find($request->student_id);
+        if (!$student) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Student not found'], 404);
+        }
+
+        $course = Course::find($request->course_id);
+        if (!$course) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+        }
+
+        // Check if the student is already enrolled in the course
+        $enrollCourse = CoursesEnrollement::where('student_id', $request->input('student_id'))
+                                          ->where('course_id', $request->input('course_id'))
+                                          ->first();
+        if ($enrollCourse) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 400, 'message' => 'Student is already enrolled in the course.'], 400);
+        }
+
+        if ($request->input('paid_amount') > $course->fee) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'code' => 400,
+                'message' => 'Paid amount should be less than or equal to the course fee.',
+            ], 400);
+        }
+
+            // Fetch Razorpay credentials
+            $gateway = PaymentGateway::first();
+            if (!$gateway) {
+                return response()->json(['status' => false, 'message' => 'Payment gateway configuration not found.'], 404);
+            }
+            $api = new Api($gateway->api_key, $gateway->api_secret);
+
+            // Create order
+            $order = $api->order->create([
+                'amount' => $request->paid_amount * 100, // Amount in paise
+                'currency' => 'INR',
+                'payment_capture' => 1 // Auto capture payment
+            ]);
+
+            return response()->json(['status' => true, 'payment' => $order]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Payment creation failed.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+public function confirmPayment(Request $request, $id)
 {
     $validator = Validator::make($request->all(), [
         'student_id' => 'required|exists:students,id',
@@ -178,7 +255,7 @@ public function payment(Request $request, $id)
         'payment_status' => ['required', 'string', 'min:1', 'max:250'],
         'paid_amount' => ['required', 'numeric', 'min:0'],
         'due_date' => 'nullable|date_format:d/m/y',
-        'razorpay_payment_id' => 'required|string',
+        'payment_id' =>'required',
     ]);
 
     // Check if validation fails
@@ -193,12 +270,7 @@ public function payment(Request $request, $id)
     DB::beginTransaction();
 
     try {
-        // Fetch the Razorpay credentials from the database
-        $gateway = PaymentGateway::first();
-        if (!$gateway) {
-            DB::rollBack();
-            return response()->json(['status' => false, 'message' => 'Payment gateway configuration not found.'], 404);
-        }
+        
 
         // Initialize Razorpay API with the fetched credentials
         $api = new Api($gateway->api_key, $gateway->api_secret);
@@ -252,8 +324,15 @@ public function payment(Request $request, $id)
         $enrollcourse->enrollment_no = $enrollmentno;
         $enrollcourse->save();
 
+        // Fetch the Razorpay credentials from the database
+        $gateway = PaymentGateway::first();
+        if (!$gateway) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'Payment gateway configuration not found.'], 404); 
+        }
+
         // Capture the payment
-        $payment = $api->payment->fetch($request->input('razorpay_payment_id'));
+        $payment = $api->payment->fetch($request->input('payment_id'));
         $response = $payment->capture(['amount' => $payment['amount']]);
 
         if ($response['status'] === 'captured') {
@@ -303,7 +382,7 @@ public function payment(Request $request, $id)
 
             // Create an invoice
             $invoice = new Invoice();
-            $invoice->enrollment_id = $enrollcourse->id; 
+            $invoice->enrollment_id = $enrollcourse->id;  
             $invoice->student_id = $student->id;
             $invoice->course_id = $course->id;
             $invoice->invoice_no = 'INV' . $timestamp . $randomInteger . Str::upper(Str::random(6));

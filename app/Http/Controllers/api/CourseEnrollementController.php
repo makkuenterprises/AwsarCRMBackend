@@ -296,7 +296,7 @@ public function PaymentHistory(Request $request)
         ], 500);
     }
 } 
-
+ 
 public function restPayment(Request $request)
 {
     // Validate the request data

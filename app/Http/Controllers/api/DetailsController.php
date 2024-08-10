@@ -128,7 +128,7 @@ public function show($id)
         // Add base URL to image paths
         $baseUrl = asset('storage');
 
-        // Prepare the specific details to return
+        // Prepare the specific details to return 
         $response = [
             'id' => $details->id,
             'logo' => $details->logo ? $baseUrl . '/' . $details->logo : null,

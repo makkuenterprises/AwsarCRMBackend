@@ -29,6 +29,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamResponseController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OnlinePaymentController;
  
 
 /* 
@@ -312,6 +313,12 @@ Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse'
 Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
 Route::post('payment-details', [CourseEnrollementController::class, 'PaymentHistory']);
 Route::post('/rest-payment', [CourseEnrollementController::class, 'restPayment']);
+
+
+
+Route::post('/enrollment-order', [OnlinePaymentController::class, 'createOrder']);
+Route::post('/confirm-payment', [OnlinePaymentController::class, 'confirmPayment']);
+
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
 // ------------------------------------------------------------------------------------------------
