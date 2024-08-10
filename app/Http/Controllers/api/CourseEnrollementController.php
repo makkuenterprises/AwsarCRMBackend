@@ -192,10 +192,10 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
     $fields = [
         'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
         // 'app_id' => config('services.onesignal.app_id'),
-        'include_aliases' => [$oneSignalId],
+        'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-    ];
+    ]; 
 
     $fields = json_encode($fields);
 
