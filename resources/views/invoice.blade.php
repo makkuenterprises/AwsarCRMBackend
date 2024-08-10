@@ -172,12 +172,15 @@
             <div>
                 <strong>Total Amount: </strong>Rs.  {{ $totalAmount }}
             </div>
+
+             <div>
+                <strong>Till Now Total Pyment: </strong>Rs.  {{ $privious_all_transaction }}
+            </div>
+
             <div>
                 <strong>Paid Amount: </strong>Rs.  {{ $paidAmount }}
             </div>
-            <div>
-                <strong>Previous Payments Total: </strong>Rs.  {{ $privious_all_transaction }}
-            </div>
+           
             <div>
                 <strong>Outstanding Amount: </strong>Rs.  {{ $outstandingAmount }}
             </div>

@@ -223,13 +223,15 @@ public function getAllInvoicesByStudentDownload(Request $request)
         if ($invoices->isEmpty()) {
             return response()->json([
                 'status' => false,
-                'code' => 404,
+                'code' => 404, 
                 'message' => 'Invoice not found'
             ], 404);
         }
 
         // Calculate totals from the invoices
-        $totalAmount = $invoices->sum('total_amount');
+        // $totalAmount = $invoices->sum('total_amount');
+         $course = Course::find($request->course_id);
+          $totalAmount->fee; 
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
