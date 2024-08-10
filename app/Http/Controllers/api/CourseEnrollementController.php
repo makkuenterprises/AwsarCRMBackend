@@ -222,7 +222,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 
     $response = curl_exec($ch);
     curl_close($ch);
- dd($response);
+//  dd($response);
     return $response;
 
 }
