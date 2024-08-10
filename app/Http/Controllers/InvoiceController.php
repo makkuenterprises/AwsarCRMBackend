@@ -249,16 +249,22 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $paidAmount = $paymentHistories->sum('paid_amount');
 
         // Fetch all previous payments for the course and student (excluding the current transaction)
+          // Fetch all previous payments for the same transaction ID, excluding the current one
+       // Fetch all previous payments up to and including the specified transaction ID
         $previousPayments = DB::table('payment_histories')
             ->join('courses_enrollements', 'payment_histories.enrollment_id', '=', 'courses_enrollements.id')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
-            ->where('payment_histories.transaction_id', '!=', $request->input('transaction_id')) // Exclude current transaction ID
-            ->sum('payment_histories.paid_amount');
+            ->where('payment_histories.transaction_id', '<=', $request->input('transaction_id')) // Include up to and including the specified transaction ID
+            ->select('payment_histories.*')
+            ->get();
 
-        // Total paid amount including all previous payments
-        $totalPaidAmount = $paidAmount + $previousPayments;
+       // Calculate the total amount of previous payments
+        $previousPaymentsTotal = $previousPayments->sum('paid_amount');
+
+        // Total paid amount including previous payments
+        $totalPaidAmount = $paidAmount + $previousPaymentsTotal;
 
         // Calculate outstanding amount considering all previous payments
         $outstandingAmount = $totalAmount - $totalPaidAmount;
@@ -266,6 +272,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         // Format amounts
         $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
         $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
+        $previousPaymentsTotalFormatted = number_format($previousPaymentsTotal, 2, '.', ',');
         $totalPaidAmountFormatted = number_format($totalPaidAmount, 2, '.', ',');
         $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
 
@@ -297,6 +304,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
             'paidAmount' => $paidAmountFormatted, // Current transaction paid amount
             'totalPaidAmount' => $totalPaidAmountFormatted, // All previous payments included
             'outstandingAmount' => $outstandingAmountFormatted,
+            'privious_all_transaction' => $previousPaymentsTotalFormatted,
         ]);
 
         // Stream the PDF to the browser

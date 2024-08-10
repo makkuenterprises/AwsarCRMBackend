@@ -176,6 +176,9 @@
                 <strong>Paid Amount: </strong>Rs.  {{ $paidAmount }}
             </div>
             <div>
+                <strong>Previous Payments Total: </strong>Rs.  {{ $previousPaymentsTotalFormatted }}
+            </div>
+            <div>
                 <strong>Outstanding Amount: </strong>Rs.  {{ $outstandingAmount }}
             </div>
         </div>
