@@ -333,7 +333,7 @@ public function TeachersLists($student_id) {
 
 
 
-     public function StudentList()
+public function StudentList()
 {
     $students = DB::table('students')
         ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')

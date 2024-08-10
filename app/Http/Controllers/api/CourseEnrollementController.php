@@ -179,12 +179,16 @@ class CourseEnrollementController extends Controller
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
     }
 }
+
+
 //  'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
 //         'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy',
 
 
 protected function sendOneSignalNotification($oneSignalId, $title, $message)
 {
+
+    dd('fire');
     $content = [ 
         "en" => $message,
     ];
@@ -216,6 +220,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
     curl_close($ch);
 
     return $response;
+
 }
 
   
