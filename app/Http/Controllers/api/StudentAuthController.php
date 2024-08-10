@@ -22,6 +22,7 @@ class StudentAuthController extends Controller
      $login = $request->validate([
         'email' => 'required|email',
         'password' => 'required|string',
+        'one_signal_id' => 'nullable',
     ]);
     try {
         $user = Student::whereEmail($login['email'])->first();
@@ -43,6 +44,9 @@ class StudentAuthController extends Controller
             $data = 'Invalid Login Credentials';
             $code = 401; 
         } else {
+
+            $user->one_signal_id=$request->input('one_signal_id');
+             $user->save(); 
 
            $imagePath = url('/Student/' . $user->image);
 
@@ -281,7 +285,7 @@ class StudentAuthController extends Controller
         return response()->json(['status'=> false,'code'=>500,'message' => 'An error occurred while registering students','data' => $data,], 500);
          
     }
-    }
+    } 
 
 public function TeachersLists($student_id) {
     try {

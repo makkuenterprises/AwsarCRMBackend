@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash; 
 use Illuminate\Support\Facades\Validator;
 use App\Models\Teacher;
 use Image;
@@ -22,13 +22,14 @@ class TeacherAuthController extends Controller
      $login = $request->validate([
         'email' => 'required|email',
         'password' => 'required|string',
+        'one_signal_id' => 'nullable',
     ]);
     try {
         $user = Teacher::whereEmail($login['email'])->first();
         if (!$user) {
           return response()->json(['status'=>false,'code'=>404,'message' => 'We could not find an account with that email address.Please check and try again.'], 404);
         }
-
+  
         if (!Hash::check($request->input('password'), $user->password)) {
         // Return error response for incorrect password
         return response()->json(['status'=>false,'code'=>401,'message' => 'The password you entered is incorrect. Please try again.'], 401);
@@ -38,6 +39,8 @@ class TeacherAuthController extends Controller
             $data = 'Invalid Login Credentials';
             $code = 401;
         } else {
+             $user->one_signal_id=$request->input('one_signal_id');
+             $user->save(); 
            
         $courses = $user->courses()->get();
         $courseCount = $courses->count();
@@ -538,7 +541,7 @@ public function teacherList()
         }
     }
 
-    public function passwordUpdate(Request $request){
+    public function passwordUpdate(Request $request){ 
 
         $validator = Validator::make($request->all(), [
         'email' => 'required|email',
