@@ -406,4 +406,140 @@ public function confirmPayment(Request $request, $id)
     }
 }
 
+
+public function restPaymentRazorpay(Request $request)
+{
+    // Validate the request data
+    $validator = Validator::make($request->all(), [
+        'student_id' => 'required|exists:students,id',
+        'course_id' => 'required|exists:courses,id',
+        'paid_amount' => ['required', 'numeric', 'min:0'],
+        'payment_type' => ['required', 'string', 'min:1', 'max:250'],
+        'payment_status' => ['required', 'string', 'min:1', 'max:250'],
+        'payment_id' => 'required|string', // Razorpay payment ID
+    ]);
+
+    // Check if validation fails
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'code' => 400,
+            'errors' => $validator->errors()
+        ], 400);
+    }
+
+    try {
+        DB::beginTransaction(); // Start the transaction
+
+        // Find the existing enrollment record
+        $enrollment = CoursesEnrollement::where('student_id', $request->student_id)
+            ->where('course_id', $request->course_id)
+            ->first();
+
+        if (!$enrollment) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Enrollment not found'], 404);
+        }
+
+        // Find the student and course
+        $student = Student::find($request->student_id);
+        if (!$student) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Student not found'], 404);
+        }
+
+        $course = Course::find($request->course_id);
+        if (!$course) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 404, 'message' => 'Course not found'], 404);
+        }
+
+        // Fetch the Razorpay credentials from the database
+        $gateway = PaymentGateway::first();
+        if (!$gateway) {
+            DB::rollBack();
+            return response()->json(['status' => false, 'message' => 'Payment gateway configuration not found.'], 404); 
+        }
+
+        // Initialize Razorpay API with the fetched credentials
+        $api = new Api($gateway->api_key, $gateway->api_secret);
+
+        // Capture the payment
+        $payment = $api->payment->fetch($request->payment_id);
+        $response = $payment->capture(['amount' => $payment['amount']]);
+
+        if ($response['status'] !== 'captured') {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json(['status' => false, 'code' => 400, 'message' => 'Failed to capture payment.'], 400);
+        }
+
+        // Calculate remaining amount
+        $totalPaidAmount = $enrollment->paid_amount + $request->paid_amount;
+        if ($totalPaidAmount > $course->fee) {
+            DB::rollBack(); // Rollback the transaction
+            return response()->json([
+                'status' => false,
+                'code' => 400,
+                'message' => 'Paid amount exceeds the course fee.',
+            ], 400);
+        }
+
+        // Update enrollment with new payment details
+        $enrollment->paid_amount = $totalPaidAmount;
+        $enrollment->save(); // Save changes to the enrollment
+
+        // Generate transaction ID and save payment history
+        $timestamp = time();
+        $transactionId = $response['id']; // Use Razorpay payment ID as transaction ID
+        $paymentDate = Carbon::now('Asia/Kolkata');
+
+        $paymentHistory = new PaymentHistory();
+        $paymentHistory->enrollment_id = $enrollment->id;
+        $paymentHistory->transaction_id = $transactionId;
+        $paymentHistory->payment_type = $request->payment_type;
+        $paymentHistory->payment_status = $request->payment_status;
+        $paymentHistory->paid_amount = $request->paid_amount;
+        $paymentHistory->payment_date = $paymentDate;
+        $paymentHistory->save();
+
+        // Create Invoice
+        $invoice = new Invoice();
+        $invoice->enrollment_id = $enrollment->id; 
+        $invoice->student_id = $request->student_id;
+        $invoice->course_id = $request->course_id;
+        $invoice->invoice_no = 'INV' . $timestamp . Str::upper(Str::random(6)); // Generating a unique invoice number
+        $invoice->student_name = $student->name; // Ensure you have a `student` relationship in CoursesEnrollement
+        $invoice->course_name = $course->name;
+        $invoice->total_amount = $course->fee;
+        $invoice->paid_amount = $request->paid_amount;
+        $invoice->remaining_amount = $course->fee - $totalPaidAmount;
+        $invoice->invoice_date = Carbon::now()->toDateString();
+        $invoice->save(); 
+
+        // Send notifications to relevant users
+        $teacherId = TeacherCourse::where('course_id', $request->course_id)->value('teacher_id');
+        if ($teacherId) {
+            Notification::create([
+                'user_id' => $teacherId,
+                'message' => 'A new payment has been made for your course.',
+            ]);
+        }
+
+        // Admin and staff notification logic should be implemented here
+
+        Notification::create([
+            'user_id' => $student->user_id,
+            'message' => 'Your payment was successful.',
+        ]);
+
+        DB::commit(); // Commit the transaction
+
+        return response()->json(['status' => true, 'code' => 200, 'message' => 'Payment processed successfully.'], 200);
+    } catch (\Exception $e) {
+        DB::rollBack(); // Rollback the transaction
+        return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to process payment', 'error' => $e->getMessage()], 500);
+    }
+}
+
+
 }

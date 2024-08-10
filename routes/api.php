@@ -318,6 +318,8 @@ Route::post('/rest-payment', [CourseEnrollementController::class, 'restPayment']
 
 Route::post('/enrollment-order', [OnlinePaymentController::class, 'createOrder']);
 Route::post('/confirm-payment', [OnlinePaymentController::class, 'confirmPayment']);
+Route::post('rest/confirm-payment', [OnlinePaymentController::class, 'restPaymentRazorpay']);
+
 
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
