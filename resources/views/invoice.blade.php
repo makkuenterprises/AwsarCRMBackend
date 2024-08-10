@@ -174,7 +174,7 @@
             </div>
 
              <div>
-                <strong>Till Now Total Pyment: </strong>Rs.  {{ $privious_all_transaction }}
+                <strong>Payments Already Made: </strong>Rs.  {{ $privious_all_transaction }}
             </div>
 
             <div>

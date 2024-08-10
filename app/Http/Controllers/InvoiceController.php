@@ -229,7 +229,6 @@ public function getAllInvoicesByStudentDownload(Request $request)
         }
 
         // Calculate totals from the invoices
-        // $totalAmount = $invoices->sum('total_amount');
          $course = Course::find($request->course_id);
           $totalAmount=$course->fee; 
 
@@ -266,15 +265,20 @@ public function getAllInvoicesByStudentDownload(Request $request)
         $previousPaymentsTotal = $previousPayments->sum('paid_amount');
 
         // Total paid amount including previous payments
-        $totalPaidAmount = $paidAmount + $previousPaymentsTotal;
+        $totalPaidAmount =  $previousPaymentsTotal;
+        
+        $totalOT = $invoices->sum('total_amount');
+
+        $PaymentsAlreadyMade = $previousPaymentsTotal - $totalOT;
 
         // Calculate outstanding amount considering all previous payments
+
         $outstandingAmount = $totalAmount - $totalPaidAmount;
 
         // Format amounts
         $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
         $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
-        $previousPaymentsTotalFormatted = number_format($previousPaymentsTotal, 2, '.', ',');
+        $previousPaymentsTotalFormatted = number_format($PaymentsAlreadyMade, 2, '.', ',');
         $totalPaidAmountFormatted = number_format($totalPaidAmount, 2, '.', ',');
         $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
 
