@@ -185,10 +185,14 @@ class CourseEnrollementController extends Controller
 //         'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy',
 
 
+
+
 protected function sendOneSignalNotification($oneSignalId, $title, $message)
 {
-
+   
     dd('fire');
+
+    
     $content = [ 
         "en" => $message,
     ];

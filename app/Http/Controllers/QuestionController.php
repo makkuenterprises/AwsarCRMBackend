@@ -117,7 +117,7 @@ public function index2(Request $request)
         ], 500);
     }
 }
-
+ 
     public function show($id)
     {
         $question = Questions::find($id);
