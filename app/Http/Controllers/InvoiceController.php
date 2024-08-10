@@ -85,25 +85,23 @@ public function getAllInvoicesByStudent(Request $request)
 }
 
 
-
 public function getAllInvoicesByStudentDownload(Request $request)
 {
     // Validate the request 
     $request->validate([ 
         'student_id' => 'required|integer|exists:students,id',
         'course_id' => 'required|integer|exists:courses,id',
-        // 'invoice_id' => 'required|integer|exists:invoices,id',
+        'transaction_id' => 'required|string|exists:invoices,transaction_id', // Validate the transaction ID
     ]);
 
     try {
-        // Fetch invoices for the specified student, course, and invoice ID
-         $invoices = DB::table('invoices')
+        // Fetch invoices for the specified student, course, and transaction ID
+        $invoices = DB::table('invoices')
             ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
-            ->where('invoices.id', $request->input('invoice_id'))
-            // ->latest('invoices.created_at')
+            ->where('invoices.transaction_id', $request->input('transaction_id')) // Filter by transaction ID
             ->select(
                 'invoices.*',
                 'courses_enrollements.student_id',
@@ -112,25 +110,13 @@ public function getAllInvoicesByStudentDownload(Request $request)
             )
             ->get();
 
-
-  if ($invoices->isEmpty()) {
-    return response()->json([
-        'status' => false,
-        'code' => 404,
-        'message' => 'Invoice not found'
-    ], 404);
-}
-
-
-
- 
-
-    //    $formattedInvoices = $invoices->map(function($invoice) {
-    //         $invoice->total_amount = number_format($invoice->total_amount, 2, '.', ',');
-    //         $invoice->paid_amount = number_format($invoice->paid_amount, 2, '.', ',');
-    //         $invoice->remaining_amount = number_format($invoice->remaining_amount, 2, '.', ',');
-    //         return $invoice;
-    //     });
+        if ($invoices->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'Invoice not found'
+            ], 404);
+        }
 
         // Calculate totals from the invoices
         $totalAmount = $invoices->sum('total_amount');
@@ -145,6 +131,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
+            ->where('payment_histories.transaction_id', $request->input('transaction_id')) // Filter by transaction ID
             ->select('payment_histories.*')
             ->get();
 
@@ -164,18 +151,19 @@ public function getAllInvoicesByStudentDownload(Request $request)
             $payment->paid_amount = number_format($payment->paid_amount, 2, '.', ',');  
             return $payment;
         }); 
+
         $details = Details::first(); 
 
         if ($details->side_logo) {
-    if (filter_var($details->side_logo, FILTER_VALIDATE_URL)) {
-        // It's a URL, use it directly
-        $details->side_logo = $details->side_logo; 
-    } else {
-        // Generate a URL for the stored file
-        $details->side_logo = url(Storage::url($details->side_logo));
-    }
-}
-// dd($details->logo);
+            if (filter_var($details->side_logo, FILTER_VALIDATE_URL)) {
+                // It's a URL, use it directly
+                $details->side_logo = $details->side_logo; 
+            } else {
+                // Generate a URL for the stored file
+                $details->side_logo = url(Storage::url($details->side_logo));
+            }
+        }
+
         // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'details' => $details,
@@ -206,6 +194,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
 
 
 
