@@ -71,7 +71,7 @@ public function create(Request $request)
                 ->whereIn('courses.name', $courseNames)
                 ->select('students.id', 'students.name', 'students.email')
                 ->distinct()
-                ->get();
+                ->get(); 
 
             foreach ($students as $student) {
                 $studentModel = Student::find($student->id);
