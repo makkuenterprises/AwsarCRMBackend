@@ -213,7 +213,6 @@ class AdminAuthController extends Controller
     ],
 ];
 
-
             $data = [
             'admin' => [
             'id' => $user->id,

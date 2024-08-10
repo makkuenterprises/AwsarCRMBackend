@@ -138,6 +138,8 @@ class CourseEnrollementController extends Controller
         $invoice->student_name = $student->name;
         $invoice->course_name = $course->name;
         $invoice->total_amount = $course->fee;
+        $invoice->transaction_id = $transactionId;
+
         $invoice->paid_amount = $request->input('paid_amount');
         $invoice->remaining_amount = $course->fee - $request->input('paid_amount');
         $invoice->invoice_date = Carbon::now()->toDateString();
@@ -501,6 +503,7 @@ public function restPayment(Request $request)
         $invoice->invoice_no = 'INV' . $timestamp . Str::upper(Str::random(6)); // Generating a unique invoice number
         $invoice->student_name = $student->name; // Ensure you have a `student` relationship in CoursesEnrollement
         $invoice->course_name = $course->name;
+        $invoice->transaction_id = $transactionId;
         $invoice->total_amount = $course->fee;
         $invoice->paid_amount = $request->paid_amount;
         $invoice->remaining_amount = $course->fee - $totalPaidAmount;

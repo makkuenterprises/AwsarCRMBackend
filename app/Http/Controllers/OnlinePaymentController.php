@@ -390,6 +390,7 @@ public function confirmPayment(Request $request, $id)
             $invoice->course_name = $course->name;
             $invoice->total_amount = $course->fee;
             $invoice->paid_amount = $request->input('paid_amount');
+            $invoice->transaction_id = $response['id'];
             $invoice->remaining_amount = $course->fee - $request->input('paid_amount');
             $invoice->invoice_date = Carbon::now()->toDateString();
             $invoice->save();
@@ -512,6 +513,8 @@ public function restPaymentRazorpay(Request $request)
         $invoice->course_name = $course->name;
         $invoice->total_amount = $course->fee;
         $invoice->paid_amount = $request->paid_amount;
+        $invoice->transaction_id = $transactionId;
+
         $invoice->remaining_amount = $course->fee - $totalPaidAmount;
         $invoice->invoice_date = Carbon::now()->toDateString();
         $invoice->save(); 

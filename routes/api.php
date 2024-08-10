@@ -305,10 +305,12 @@ Route::prefix('student')->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
-
+ 
 // ------------------------------------------------------------------------------------------------
 // COURSE ENROLL ROUTES
 // ------------------------------------------------------------------------------------------------
+
+
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']); 
 Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
 Route::post('payment-details', [CourseEnrollementController::class, 'PaymentHistory']);

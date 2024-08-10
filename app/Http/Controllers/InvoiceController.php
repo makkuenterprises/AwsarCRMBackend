@@ -81,7 +81,7 @@ public function getAllInvoicesByStudent(Request $request)
             'message' => 'Failed to retrieve invoices',
             'error' => $e->getMessage(),
         ], 500);
-    }
+    } 
 }
 
 
