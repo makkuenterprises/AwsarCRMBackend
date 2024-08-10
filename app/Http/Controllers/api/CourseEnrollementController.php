@@ -179,7 +179,7 @@ protected function sendOneSignalNotification($oneSignalId, $courseName, $enrollm
         "en" => "You have been successfully enrolled in the course: $courseName. Your enrollment number is $enrollmentNo."
     ]; 
 
-    $fields = [
+    $fields = [ 
         // 'app_id' => env('ONESIGNAL_APP_ID'),
         'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
         'include_player_ids' => [$oneSignalId],
