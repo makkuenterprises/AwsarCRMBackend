@@ -14,7 +14,7 @@ use App\Models\StaffModel;
 use App\Models\Teacher;
 use Illuminate\Support\Str;
 use App\Models\PaymentHistory;
-
+use OneSignal;
 use App\Models\Invoice;
 use App\Notifications\CourseEnrollmentNotification;
 use App\Notifications\CourseEnrollmentNotificationForAdmin;
@@ -144,8 +144,14 @@ class CourseEnrollementController extends Controller
         $invoice->save(); 
 
            $teachers = $course->teachers;
+
         foreach ($teachers as $teacher) {
             $teacher->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
+          
+            if ($teacher->one_signal_id) {
+          $this->sendOneSignalNotification($teacher->one_signal_id, 'New Course Enrollment', 'A new student has enrolled in your course: ' . $course->name);
+           }
+       
         }  
 
           foreach ($admins as $admin) {
@@ -161,8 +167,9 @@ class CourseEnrollementController extends Controller
 
         // Send OneSignal Notification
         if ($student->one_signal_id) {
-            $this->sendOneSignalNotification($student->one_signal_id, $course->name, $enrollmentno);
-        }
+         $this->sendOneSignalNotification($student->one_signal_id, 'Course Enrollment', 'You have been enrolled in ' . $course->name . ' with enrollment number: ' . $enrollmentno);
+       }
+
       
        
         DB::commit(); // Commit the transaction
@@ -172,34 +179,37 @@ class CourseEnrollementController extends Controller
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
     }
 }
+//  'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
+//         'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy',
 
-protected function sendOneSignalNotification($oneSignalId, $courseName, $enrollmentNo)
+
+protected function sendOneSignalNotification($oneSignalId, $title, $message)
 {
-    $content = [
-        "en" => "You have been successfully enrolled in the course: $courseName. Your enrollment number is $enrollmentNo."
-    ]; 
+    $content = [ 
+        "en" => $message,
+    ];
 
-    $fields = [ 
-        // 'app_id' => env('ONESIGNAL_APP_ID'),
+    $fields = [
         'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
-        'include_player_ids' => [$oneSignalId],
-        'contents' => $content
+        // 'app_id' => config('services.onesignal.app_id'),
+        'include_aliases' => [$oneSignalId],
+        'headings' => ["en" => $title],
+        'contents' => $content,
     ];
-    
-    $headers = [
-        'Authorization: Basic ' . env('ONESIGNAL_REST_API_KEY'),
-        'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy',
-        
-        'Content-Type: application/json; charset=utf-8'
-    ];
+
+    $fields = json_encode($fields);
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json; charset=utf-8',
+        'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy'
+        // 'Authorization: Basic ' . config('services.onesignal.rest_api_key')
+    ]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_HEADER, FALSE);
     curl_setopt($ch, CURLOPT_POST, TRUE);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 
     $response = curl_exec($ch);
@@ -207,6 +217,7 @@ protected function sendOneSignalNotification($oneSignalId, $courseName, $enrollm
 
     return $response;
 }
+
   
 
 public function getPaymentHistory(Request $request)
