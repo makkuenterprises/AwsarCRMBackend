@@ -68,8 +68,8 @@ Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin
 
 // Route::group(['middleware'=>'admin'],function(){ 
   
-// Route::prefix('admin')->group(function () {
-Route::middleware('auth:sanctum')->group(function () {
+Route::prefix('admin')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
 // Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {
 
 // Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
