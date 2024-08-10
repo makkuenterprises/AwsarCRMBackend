@@ -16,7 +16,7 @@ use App\Models\Teacher;
 use Illuminate\Support\Facades\Validator;
 use DB; 
 use App\Models\Admin; 
-
+use OneSignal;
 use Crypt;
 use App\Notifications\StudyMaterial;
 
@@ -116,11 +116,18 @@ public function store(Request $request)
             ];
         });
 
-          Log::info('Sending notifications to students', ['students' => $students->pluck('id')]);
+        //   Log::info('Sending notifications to students', ['students' => $students->pluck('id')]); 
 
         // Send notifications to the students
         foreach ($students as $student) {
             $student->notify(new StudyMaterial($studyMaterial));
+             if ($student->one_signal_id) {
+                $this->sendOneSignalNotification(
+                    $student->one_signal_id,
+                    'New Material Added',
+                    'New material "' . $studyMaterial->title . '" has been added to batch: ' . $course->name
+                );
+            }
         } 
 
           foreach ($teachersList as $teacher) {
@@ -128,6 +135,14 @@ public function store(Request $request)
             $teacherModel = Teacher::find($teacher['id']);
             if ($teacherModel) {
                 $teacherModel->notify(new StudyMaterial($studyMaterial));
+                
+            }
+              if ($teacherModel->one_signal_id) {
+                $this->sendOneSignalNotification(
+                    $teacherModel->one_signal_id,
+                    'New Material Added',
+                    'New material "' . $studyMaterial->title . '" has been added to batch: ' . $course->name
+                );
             }
         }
 
@@ -151,7 +166,7 @@ public function store(Request $request)
     } catch (\Exception $e) {
         // Return error response in case of exception
         return response()->json([
-            'status' => 'error',
+            'status' => 'error', 
             'code' => 500,
             'message' => 'Failed to save study material',
             'error' => $e->getMessage(),
@@ -159,6 +174,49 @@ public function store(Request $request)
     }
 }
 
+
+
+protected function sendOneSignalNotification($oneSignalId, $title, $message)
+{
+   
+   
+
+
+    $content = [ 
+        "en" => $message,
+    ];
+
+    $fields = [
+        'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
+        // 'app_id' => config('services.onesignal.app_id'),
+        'include_player_ids' => [$oneSignalId],
+        'headings' => ["en" => $title],
+        'contents' => $content,
+    ]; 
+
+    $fields = json_encode($fields);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json; charset=utf-8',
+        'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy'
+        // 'Authorization: Basic ' . config('services.onesignal.rest_api_key')
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    //  dd($response);
+    return $response;
+
+}
+
+ 
 
 // -------------------------------------------------------------------------------
 // DOWNLOADS STUDY MATERIALS-------------------------------------------------------------
