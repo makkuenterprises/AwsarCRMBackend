@@ -149,7 +149,7 @@ class CourseEnrollementController extends Controller
             $teacher->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
           
             if ($teacher->one_signal_id) {
-          $this->sendOneSignalNotification($teacher->one_signal_id, 'New Course Enrollment', 'A new student has enrolled in your course: ' . $course->name);
+          $this->sendOneSignalNotificationGuru($teacher->one_signal_id, 'New Course Enrollment', 'A new student has enrolled in your course: ' . $course->name);
            }
        
         }  
@@ -227,6 +227,46 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 
 }
 
+
+protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
+{
+   
+   
+// dd('fire');
+
+    $content = [ 
+        "en" => $message,
+    ];
+
+    $fields = [
+       'app_id' => '149b959a-2a36-49dd-bb40-973325a62dc7',
+        // 'app_id' => config('services.onesignal.app_id'),
+        'include_player_ids' => [$oneSignalId],
+        'headings' => ["en" => $title],
+        'contents' => $content,
+    ]; 
+
+    $fields = json_encode($fields);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json; charset=utf-8',
+        'Authorization: Basic ' . 'YzFmNDA2MDItNjZlZi00NTUzLWI0ZWMtZTViN2RhMmRhNmJi'
+        // 'Authorization: Basic ' . config('services.onesignal.rest_api_key')
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    //  dd($response);
+    return $response;
+
+}
   
 
 public function getPaymentHistory(Request $request)
