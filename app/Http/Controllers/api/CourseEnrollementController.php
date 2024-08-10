@@ -128,7 +128,22 @@ class CourseEnrollementController extends Controller
             ], 404);
         }
 
-        $teachers = $course->teachers;
+     
+        // Create an invoice
+        $invoice = new Invoice();
+        $invoice->enrollment_id = $enrollcourse->id; 
+        $invoice->student_id = $student->id;
+        $invoice->course_id = $course->id;
+        $invoice->invoice_no = 'INV' . $timestamp . $randomInteger . Str::upper(Str::random(6));
+        $invoice->student_name = $student->name;
+        $invoice->course_name = $course->name;
+        $invoice->total_amount = $course->fee;
+        $invoice->paid_amount = $request->input('paid_amount');
+        $invoice->remaining_amount = $course->fee - $request->input('paid_amount');
+        $invoice->invoice_date = Carbon::now()->toDateString();
+        $invoice->save(); 
+
+           $teachers = $course->teachers;
         foreach ($teachers as $teacher) {
             $teacher->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
         }  
@@ -143,20 +158,12 @@ class CourseEnrollementController extends Controller
         } 
 
         $student->notify(new CourseEnrollmentNotification($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name));
+
+        // Send OneSignal Notification
+        if ($student->one_signal_id) {
+            $this->sendOneSignalNotification($student->one_signal_id, $course->name, $enrollmentno);
+        }
       
-        // Create an invoice
-        $invoice = new Invoice();
-        $invoice->enrollment_id = $enrollcourse->id; 
-        $invoice->student_id = $student->id;
-        $invoice->course_id = $course->id;
-        $invoice->invoice_no = 'INV' . $timestamp . $randomInteger . Str::upper(Str::random(6));
-        $invoice->student_name = $student->name;
-        $invoice->course_name = $course->name;
-        $invoice->total_amount = $course->fee;
-        $invoice->paid_amount = $request->input('paid_amount');
-        $invoice->remaining_amount = $course->fee - $request->input('paid_amount');
-        $invoice->invoice_date = Carbon::now()->toDateString();
-        $invoice->save(); 
        
         DB::commit(); // Commit the transaction
         return response()->json(['status' => true, 'code' => 200, 'message' => 'Student enrolled in the course successfully'], 200);
@@ -164,6 +171,41 @@ class CourseEnrollementController extends Controller
         DB::rollBack(); // Rollback the transaction
         return response()->json(['status' => false, 'code' => 500, 'message' => 'Failed to enroll student in the course', 'error' => $e->getMessage()], 500);
     }
+}
+
+protected function sendOneSignalNotification($oneSignalId, $courseName, $enrollmentNo)
+{
+    $content = [
+        "en" => "You have been successfully enrolled in the course: $courseName. Your enrollment number is $enrollmentNo."
+    ]; 
+
+    $fields = [
+        // 'app_id' => env('ONESIGNAL_APP_ID'),
+        'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
+        'include_player_ids' => [$oneSignalId],
+        'contents' => $content
+    ];
+    
+    $headers = [
+        'Authorization: Basic ' . env('ONESIGNAL_REST_API_KEY'),
+        'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy',
+        
+        'Content-Type: application/json; charset=utf-8'
+    ];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
 }
   
 
