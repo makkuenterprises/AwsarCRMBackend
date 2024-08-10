@@ -172,6 +172,8 @@ $menuList = [
             'classes' => $user->classes,
             'courseCount' => $courseCount,
             'totalStudentCount' => $totalStudentCount,
+            'one_signal_id' => $user->one_signal_id, 
+
             ],
                 'token' => $token,
                 'message' => 'Login Successfully',
