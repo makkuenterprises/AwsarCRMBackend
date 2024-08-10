@@ -190,9 +190,6 @@ class CourseEnrollementController extends Controller
 protected function sendOneSignalNotification($oneSignalId, $title, $message)
 {
    
-   
-
-
     $content = [ 
         "en" => $message,
     ];
@@ -244,10 +241,10 @@ protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-    ]; 
+    ];  
 
     $fields = json_encode($fields);
-
+    
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
     curl_setopt($ch, CURLOPT_HTTPHEADER, [

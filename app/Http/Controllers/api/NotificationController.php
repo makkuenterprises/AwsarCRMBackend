@@ -4,7 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Validator; 
 use App\Notifications\NoticeNotification;
 use DB;
 use App\Models\Notice;
@@ -19,10 +19,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon; 
 use App\Models\StudyMaterials;
-
 use Crypt;
-use App\Notifications\StudyMaterial;
-
+use App\Notifications\StudyMaterial;   
 
 
 class NotificationController extends Controller
@@ -79,6 +77,11 @@ public function create(Request $request)
                 $studentModel = Student::find($student->id);
                 if ($studentModel) {
                     $studentModel->notify(new NoticeNotification($notification));
+                } 
+
+                // Send OneSignal Notification
+                if ($student->one_signal_id) {
+                $this->sendOneSignalNotification($student->one_signal_id, 'Course Enrollment', 'You have been enrolled in ' . $course->name . ' with enrollment number: ' . $enrollmentno);
                 }
             }
 
@@ -91,6 +94,11 @@ public function create(Request $request)
         $teachers = $teachers->unique('id');
         foreach ($teachers as $teacher) {
             $teacher->notify(new NoticeNotification($notification));
+
+             if ($teacher->one_signal_id) {
+          $this->sendOneSignalNotificationGuru($teacher->one_signal_id, 'New Course Enrollment', 'A new student has enrolled in your course: ' . $course->name);
+           }
+
         }
 
         // Send notifications to admins
@@ -127,7 +135,88 @@ public function create(Request $request)
 }
 
 
-public function list() 
+
+protected function sendOneSignalNotification($oneSignalId, $title, $message)
+{
+   
+    $content = [ 
+        "en" => $message,
+    ];
+
+    $fields = [
+        'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
+        // 'app_id' => config('services.onesignal.app_id'),
+        'include_player_ids' => [$oneSignalId],
+        'headings' => ["en" => $title],
+        'contents' => $content,
+    ]; 
+
+    $fields = json_encode($fields);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json; charset=utf-8',
+        'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy'
+        // 'Authorization: Basic ' . config('services.onesignal.rest_api_key')
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    //  dd($response);
+    return $response;
+
+}
+
+
+protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
+{
+   
+   
+// dd('fire');
+
+    $content = [ 
+        "en" => $message,
+    ];
+
+    $fields = [
+       'app_id' => '149b959a-2a36-49dd-bb40-973325a62dc7',
+        // 'app_id' => config('services.onesignal.app_id'),
+        'include_player_ids' => [$oneSignalId],
+        'headings' => ["en" => $title],
+        'contents' => $content,
+    ];  
+
+    $fields = json_encode($fields);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json; charset=utf-8',
+        'Authorization: Basic ' . 'YzFmNDA2MDItNjZlZi00NTUzLWI0ZWMtZTViN2RhMmRhNmJi'
+        // 'Authorization: Basic ' . config('services.onesignal.rest_api_key')
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    //  dd($response);
+    return $response;
+
+}
+  
+
+
+public function list()  
 {
     
      try {
