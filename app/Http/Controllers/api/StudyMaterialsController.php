@@ -122,7 +122,7 @@ public function store(Request $request)
         foreach ($students as $student) {
             $student->notify(new StudyMaterial($studyMaterial));
              if ($student->one_signal_id) {
-dd('fire1');
+// dd('fire1');
 
                 $this->sendOneSignalNotification(
                     $student->one_signal_id,
@@ -140,7 +140,7 @@ dd('fire1');
                 
             }
               if ($teacherModel->one_signal_id) {
-dd('fire2');
+// dd('fire2');
 
                 $this->sendOneSignalNotification(
                     $teacherModel->one_signal_id,
@@ -184,7 +184,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 {
    
    
-dd('fire');
+// dd('fire');
 
     $content = [ 
         "en" => $message,
@@ -215,7 +215,7 @@ dd('fire');
 
     $response = curl_exec($ch);
     curl_close($ch);
-     dd($response);
+    //  dd($response);
     return $response;
 
 }
