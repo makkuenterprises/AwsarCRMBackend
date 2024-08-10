@@ -196,6 +196,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
+         'data' => 'study_material' 
     ]; 
 
     $fields = json_encode($fields);
@@ -237,6 +238,7 @@ protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
+          'data' => 'study_material' 
     ]; 
 
     $fields = json_encode($fields);
