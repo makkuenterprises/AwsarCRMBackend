@@ -60,6 +60,11 @@ public function create(Request $request)
             $courses = Course::all(); // Fetch all courses if no batches specified (for admins and staff)
         }
 
+          $data = [
+           'type' => 'notice',
+            'notice_id' => $notification->id, // Example of additional data
+          ];
+
         // Send notifications to students
          if ($request->has('batch')) {
             $courseNames = $request->input('batch');
@@ -85,7 +90,8 @@ public function create(Request $request)
               $this->sendOneSignalNotification(
               $studentModel->one_signal_id,
               'New Notice Posted',
-              $message
+              $message ,
+              $data
               );
             }
             }
@@ -105,7 +111,8 @@ public function create(Request $request)
                    $this->sendOneSignalNotificationGuru(
               $teacher->one_signal_id,
               'New Notice Posted',
-              $message
+              $message ,
+              $data
               );
                   
            }
@@ -147,7 +154,7 @@ public function create(Request $request)
 
 
 
-protected function sendOneSignalNotification($oneSignalId, $title, $message)
+protected function sendOneSignalNotification($oneSignalId, $title, $message, $data)
 {
    
     $content = [ 
@@ -160,7 +167,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-        'data' => 'notice' 
+        'data' => $data 
         
         
  
@@ -190,7 +197,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 }
 
 
-protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
+protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message, $data)
 {
    
    
@@ -206,7 +213,7 @@ protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-         'data' => 'notice' 
+         'data' => $data 
     ];  
 
     $fields = json_encode($fields);

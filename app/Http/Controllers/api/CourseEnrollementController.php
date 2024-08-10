@@ -143,13 +143,18 @@ class CourseEnrollementController extends Controller
         $invoice->invoice_date = Carbon::now()->toDateString();
         $invoice->save(); 
 
+        $data = [
+           'type' => 'Course_enrollement',
+            'notice_id' => $course->id, // Example of additional data
+          ];
+
            $teachers = $course->teachers;
 
         foreach ($teachers as $teacher) {
             $teacher->notify(new CourseEnrollmentNotificationForAdmin($course->name, $enrollcourse->enrollment_no, $enrollcourse->created_at, $student->name ));
           
             if ($teacher->one_signal_id) {
-          $this->sendOneSignalNotificationGuru($teacher->one_signal_id, 'New Course Enrollment', 'A new student has enrolled in your course: ' . $course->name);
+          $this->sendOneSignalNotificationGuru($teacher->one_signal_id, 'New Course Enrollment', 'A new student has enrolled in your course: ' . $course->name, $data);
            }
        
         }  
@@ -167,7 +172,7 @@ class CourseEnrollementController extends Controller
 
         // Send OneSignal Notification
         if ($student->one_signal_id) {
-         $this->sendOneSignalNotification($student->one_signal_id, 'Course Enrollment', 'You have been enrolled in ' . $course->name . ' with enrollment number: ' . $enrollmentno);
+         $this->sendOneSignalNotification($student->one_signal_id, 'Course Enrollment', 'You have been enrolled in ' . $course->name . ' with enrollment number: ' . $enrollmentno, $data);
        }
 
       
@@ -187,7 +192,7 @@ class CourseEnrollementController extends Controller
 
 
 
-protected function sendOneSignalNotification($oneSignalId, $title, $message)
+protected function sendOneSignalNotification($oneSignalId, $title, $message,  $data)
 {
    
     $content = [ 
@@ -200,7 +205,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-          'data' => 'course_enroll' 
+         'data' => $data 
     ]; 
 
     $fields = json_encode($fields);
@@ -226,7 +231,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 }
 
 
-protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
+protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message, $data)
 {
    
    
@@ -242,7 +247,7 @@ protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-         'data' => 'course_enroll' 
+        'data' => $data 
     ];  
 
     $fields = json_encode($fields);

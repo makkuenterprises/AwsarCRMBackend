@@ -96,6 +96,11 @@ public function store(Request $request)
         // Save the study material
         $studyMaterial->save(); 
 
+         $data = [
+           'type' => 'study_material',
+            'notice_id' => $studyMaterial->id, // Example of additional data
+          ];
+
         // Get the student IDs enrolled in the course
         $studentIds = DB::table('courses_enrollements')
             ->where('course_id', $request['batch_id'])
@@ -127,7 +132,8 @@ public function store(Request $request)
                 $this->sendOneSignalNotification(
                     $student->one_signal_id,
                     'New Material Added',
-                    'New material "' . $studyMaterial->title . '" has been added to batch: ' . $course->name
+                    'New material "' . $studyMaterial->title . '" has been added to batch: ' . $course->name,
+                     $data
                 );
             }
         } 
@@ -145,7 +151,8 @@ public function store(Request $request)
                 $this->sendOneSignalNotificationGuru(
                     $teacherModel->one_signal_id,
                     'New Material Added',
-                    'New material "' . $studyMaterial->title . '" has been added to batch: ' . $course->name
+                    'New material "' . $studyMaterial->title . '" has been added to batch: ' . $course->name,
+                     $data
                 );
             }
         }
@@ -180,7 +187,7 @@ public function store(Request $request)
 
 
 
-protected function sendOneSignalNotification($oneSignalId, $title, $message)
+protected function sendOneSignalNotification($oneSignalId, $title, $message, $data)
 {
    
    
@@ -196,7 +203,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-         'data' => 'study_material' 
+         'data' => $data 
     ]; 
 
     $fields = json_encode($fields);
@@ -222,7 +229,7 @@ protected function sendOneSignalNotification($oneSignalId, $title, $message)
 }
 
 
-protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
+protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message, $data)
 {
    
    
@@ -238,7 +245,7 @@ protected function sendOneSignalNotificationGuru($oneSignalId, $title, $message)
         'include_player_ids' => [$oneSignalId],
         'headings' => ["en" => $title],
         'contents' => $content,
-          'data' => 'study_material' 
+         'data' => $data
     ]; 
 
     $fields = json_encode($fields);
