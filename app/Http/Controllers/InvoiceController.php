@@ -195,33 +195,32 @@ public function getAllInvoicesByStudent(Request $request)
 //     }
 // }
 
-
 public function getAllInvoicesByStudentDownload(Request $request)
 {
     // Validate the request 
     $request->validate([ 
         'student_id' => 'required|integer|exists:students,id',
         'course_id' => 'required|integer|exists:courses,id',
-        'invoice_id' => 'required|integer|exists:invoices,id',
+        'transaction_id' => 'required|string|exists:invoices,transaction_id', // Validate the transaction ID
     ]);
 
     try {
-        // Fetch the specified invoice for the student and course
-        $invoice = DB::table('invoices')
+        // Fetch invoices for the specified student, course, and transaction ID
+        $invoices = DB::table('invoices')
             ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
-            ->where('invoices.id', $request->input('invoice_id'))
+            ->where('invoices.transaction_id', $request->input('transaction_id')) // Filter by transaction ID
             ->select(
                 'invoices.*',
                 'courses_enrollements.student_id',
                 'courses_enrollements.course_id',
                 'courses.name as course_name'
             )
-            ->first();
+            ->get();
 
-        if (!$invoice) {
+        if ($invoices->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'code' => 404,
@@ -229,44 +228,46 @@ public function getAllInvoicesByStudentDownload(Request $request)
             ], 404);
         }
 
-        // Fetch all invoices for the specified student and course to calculate the total course fee
-        $invoices = DB::table('invoices')
-            ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
-            ->where('courses_enrollements.student_id', $request->input('student_id'))
-            ->where('courses_enrollements.course_id', $request->input('course_id'))
-            ->select('invoices.total_amount')
-            ->get();
-
-        // Calculate the total course fee from all invoices
+        // Calculate totals from the invoices
         $totalAmount = $invoices->sum('total_amount');
-
-        // Fetch all payments made by the student for the course
-        $paidAmount = DB::table('payment_histories')
-            ->join('courses_enrollements', 'payment_histories.enrollment_id', '=', 'courses_enrollements.id')
-            ->where('courses_enrollements.student_id', $request->input('student_id'))
-            ->where('courses_enrollements.course_id', $request->input('course_id'))
-            ->sum('payment_histories.paid_amount');
-
-        // Calculate the outstanding amount
-        $outstandingAmount = $totalAmount - $paidAmount;
-
-        // Format amounts
-        $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
-        $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
-        $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
 
         // Fetch the student details 
         $student = Student::select('id', 'name', 'email', 'phone', 'street', 'postal_code', 'city', 'state', 'fname', 'fphone')
                           ->findOrFail($request->input('student_id'));
 
-        // Fetch all payment histories related to the specified criteria
+        // Fetch all payment histories related to the specified criteria (current transaction)
         $paymentHistories = DB::table('payment_histories')
             ->join('courses_enrollements', 'payment_histories.enrollment_id', '=', 'courses_enrollements.id')
             ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
             ->where('courses_enrollements.student_id', $request->input('student_id'))
             ->where('courses_enrollements.course_id', $request->input('course_id'))
+            ->where('payment_histories.transaction_id', $request->input('transaction_id')) // Filter by transaction ID
             ->select('payment_histories.*')
             ->get();
+
+        // Calculate total paid amount from payment histories of current transaction
+        $paidAmount = $paymentHistories->sum('paid_amount');
+
+        // Fetch all previous payments for the course and student (excluding the current transaction)
+        $previousPayments = DB::table('payment_histories')
+            ->join('courses_enrollements', 'payment_histories.enrollment_id', '=', 'courses_enrollements.id')
+            ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+            ->where('courses_enrollements.student_id', $request->input('student_id'))
+            ->where('courses_enrollements.course_id', $request->input('course_id'))
+            ->where('payment_histories.transaction_id', '!=', $request->input('transaction_id')) // Exclude current transaction ID
+            ->sum('payment_histories.paid_amount');
+
+        // Total paid amount including all previous payments
+        $totalPaidAmount = $paidAmount + $previousPayments;
+
+        // Calculate outstanding amount considering all previous payments
+        $outstandingAmount = $totalAmount - $totalPaidAmount;
+
+        // Format amounts
+        $totalAmountFormatted = number_format($totalAmount, 2, '.', ',');
+        $paidAmountFormatted = number_format($paidAmount, 2, '.', ',');
+        $totalPaidAmountFormatted = number_format($totalPaidAmount, 2, '.', ',');
+        $outstandingAmountFormatted = number_format($outstandingAmount, 2, '.', ',');
 
         // Format paid_amount in paymentHistories
         $formattedPaymentHistories = $paymentHistories->map(function($payment) {
@@ -274,26 +275,27 @@ public function getAllInvoicesByStudentDownload(Request $request)
             return $payment;
         }); 
 
-        // Fetch details (assume this contains the logo and other info)
         $details = Details::first(); 
 
-        // Handle logo URL or storage path
         if ($details->side_logo) {
             if (filter_var($details->side_logo, FILTER_VALIDATE_URL)) {
+                // It's a URL, use it directly
                 $details->side_logo = $details->side_logo; 
             } else {
+                // Generate a URL for the stored file
                 $details->side_logo = url(Storage::url($details->side_logo));
             }
         }
 
-        // Generate PDF with the given variables
+        // Generate PDF
         $pdf = PDF::loadView('invoice', [
             'details' => $details,
             'student' => $student,
             'invoices' => $invoices,
             'paymentHistories' => $formattedPaymentHistories,
             'totalAmount' => $totalAmountFormatted,
-            'paidAmount' => $paidAmountFormatted,
+            'paidAmount' => $paidAmountFormatted, // Current transaction paid amount
+            'totalPaidAmount' => $totalPaidAmountFormatted, // All previous payments included
             'outstandingAmount' => $outstandingAmountFormatted,
         ]);
 
@@ -316,6 +318,8 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ], 500);
     }
 }
+
+
 
 
 
