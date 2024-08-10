@@ -79,10 +79,15 @@ public function create(Request $request)
                     $studentModel->notify(new NoticeNotification($notification));
                 } 
 
-                // Send OneSignal Notification
-                if ($student->one_signal_id) {
-                $this->sendOneSignalNotification($student->one_signal_id, 'Course Enrollment', 'You have been enrolled in ' . $course->name . ' with enrollment number: ' . $enrollmentno);
-                }
+                if ($studentModel->one_signal_id) {
+                  $message = 'A new notice has been posted: "' . $notification->title . '". ';
+
+              $this->sendOneSignalNotification(
+              $studentModel->one_signal_id,
+              'New Notice Posted',
+              $message
+              );
+            }
             }
 
         }
@@ -96,7 +101,13 @@ public function create(Request $request)
             $teacher->notify(new NoticeNotification($notification));
 
              if ($teacher->one_signal_id) {
-          $this->sendOneSignalNotificationGuru($teacher->one_signal_id, 'New Course Enrollment', 'A new student has enrolled in your course: ' . $course->name);
+                  $message = 'A new notice has been posted: "' . $notification->title . '". ';
+                   $this->sendOneSignalNotificationGuru(
+              $teacher->one_signal_id,
+              'New Notice Posted',
+              $message
+              );
+                  
            }
 
         }
