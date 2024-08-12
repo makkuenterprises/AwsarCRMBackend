@@ -246,7 +246,7 @@ class OnlinePaymentController extends Controller
         }
     }
 
-public function confirmPayment(Request $request, $id)
+public function confirmPayment(Request $request)
 {
     $validator = Validator::make($request->all(), [
         'student_id' => 'required|exists:students,id',

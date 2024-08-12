@@ -170,7 +170,7 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 
 // ------------------------------------------------------------------------------------------------
-// NOTIFICATION ROUTES
+// NOTIFICATION ROUTES 
 // ------------------------------------------------------------------------------------------------
 
 Route::prefix('notice')->group(function () {
@@ -309,6 +309,7 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 // ------------------------------------------------------------------------------------------------
 // COURSE ENROLL ROUTES
 // ------------------------------------------------------------------------------------------------
+ 
 
 
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']); 
