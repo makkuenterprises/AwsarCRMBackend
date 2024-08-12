@@ -233,6 +233,7 @@ Route::prefix('teacher')->group(function () {
 });  
 
 Route::middleware(['teacher'])->group(function () {
+
 Route::prefix('teacher')->group(function () {
 
       Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
@@ -292,7 +293,7 @@ Route::prefix('student')->group(function () {
 Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 });
 
-Route::middleware(['student'])->group(function () {
+// Route::middleware(['student'])->group(function () {
 
 Route::prefix('student')->group(function () {
 
@@ -305,7 +306,7 @@ Route::prefix('student')->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
-}); 
+// }); 
  
 // ------------------------------------------------------------------------------------------------
 // COURSE ENROLL ROUTES
