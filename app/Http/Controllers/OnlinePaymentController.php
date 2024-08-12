@@ -308,7 +308,7 @@ public function confirmPayment(Request $request)
 
         // Enroll the student in the course
         $enrollcourse = new CoursesEnrollement();
-        $enrollcourse->student_id = $request->input('student_id');
+        $enrollcourse->student_id = $request->input('student_id'); 
         $enrollcourse->course_id = $request->input('course_id');
         $enrollcourse->enrollment_date = Carbon::now()->toDateString(); 
         $enrollcourse->payment_type = $request->input('payment_type'); 
@@ -326,6 +326,9 @@ public function confirmPayment(Request $request)
 
         // Fetch the Razorpay credentials from the database
         $gateway = PaymentGateway::first();
+
+        dd($gateway);
+        
         if (!$gateway) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => 'Payment gateway configuration not found.'], 404); 
