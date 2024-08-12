@@ -101,7 +101,6 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
         Route::get('course/list', [StudentAuthController::class, 'courseList']);
         Route::post('teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
 
-        
     });
 
 // ------------------------------------------------------------------------------------------------
@@ -489,11 +488,9 @@ Route::post('exam/student-result', [ExamResponseController::class, 'getAllStuden
  
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
 Route::delete('/zoom/meeting/{id}', [ZoomController::class, 'deleteMeeting']);
-
 Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
 Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']); 
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
-
 Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
 
 
