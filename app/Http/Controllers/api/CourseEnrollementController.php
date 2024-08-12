@@ -405,7 +405,7 @@ public function PaymentHistory(Request $request)
     }
 } 
  
-public function restPayment(Request $request)
+public function restPayment(Request $request)  
 {
     // Validate the request data
     $validator = Validator::make($request->all(), [

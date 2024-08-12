@@ -502,7 +502,7 @@ public function restPaymentRazorpay(Request $request)
         $paymentHistory->paid_amount = $request->paid_amount;
         $paymentHistory->payment_date = $paymentDate;
         $paymentHistory->save();
-
+ 
         // Create Invoice
         $invoice = new Invoice();
         $invoice->enrollment_id = $enrollment->id; 
@@ -532,7 +532,7 @@ public function restPaymentRazorpay(Request $request)
 
         Notification::create([
             'user_id' => $student->user_id,
-            'message' => 'Your payment was successful.',
+            'message' => 'Your payment was successful.', 
         ]);
 
         DB::commit(); // Commit the transaction
