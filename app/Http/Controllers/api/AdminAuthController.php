@@ -246,15 +246,16 @@ class AdminAuthController extends Controller
     }
     
     public function profileUpdateView($id){
-
+        if(Auth::guard('admin')->check()){
         $admin = Admin::find($id);
         $imagePath = $admin->image ? url('/Admin/' . $admin->image) : null;
-
-
         if($admin){
         return response()->json(['status'=>true,'code'=>200,'data'=>$admin,'image'=>$imagePath]);
         }else{
         return response()->json(['status'=>false,'code'=>404,'message' => 'Admin not found'], 404);
+        }
+        }else{
+        return response()->json(['status' => false, 'code' => 401, 'message' => 'Unauthorized access'], 401);
         }
     }
 
