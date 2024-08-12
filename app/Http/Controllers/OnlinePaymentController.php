@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon; 
 
 class OnlinePaymentController extends Controller
-{
+{ 
 
 // public function payment(Request $request, $id)
 // {
@@ -173,7 +173,7 @@ class OnlinePaymentController extends Controller
 //     return response()->json(['status' => true, 'message' => 'Payment successful']);
 // }
 
-   public function createOrder(Request $request)
+    public function createOrder(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'student_id' => 'required|exists:students,id',
