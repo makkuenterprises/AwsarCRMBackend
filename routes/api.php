@@ -232,6 +232,8 @@ Route::prefix('teacher')->group(function () {
 
 });  
 
+Route::get('/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
+
 Route::middleware(['teacher'])->group(function () {
       
 Route::prefix('teacher')->group(function () {
@@ -317,8 +319,11 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']); 
 Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
 Route::post('payment-details', [CourseEnrollementController::class, 'PaymentHistory']);
+Route::middleware(['student'])->group(function () {
+
 Route::post('/rest-payment', [CourseEnrollementController::class, 'restPayment']);
 
+}); 
 
 
 Route::post('/enrollment-order', [OnlinePaymentController::class, 'createOrder']);
