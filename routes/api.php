@@ -232,6 +232,8 @@ Route::prefix('teacher')->group(function () {
 
 });  
 
+Route::get('teacher/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
+
 Route::middleware(['teacher','admin'])->group(function () {
       
 Route::prefix('teacher')->group(function () {
