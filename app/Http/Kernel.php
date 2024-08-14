@@ -83,6 +83,7 @@ class Kernel extends HttpKernel
         'student' =>  \App\Http\Middleware\StudentMiddleware::class,
         'teacher' =>  \App\Http\Middleware\TeacherMiddleware::class,
         'staff' =>  \App\Http\Middleware\StaffMiddleware::class,
+        'api' => \App\Http\Middleware\CheckMultipleGuards::class,
 
         
     ];
