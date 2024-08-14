@@ -26,6 +26,10 @@ use App\Notifications\StudyMaterial;
 
 class StudyMaterialsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('api');
+    }
 
 // -------------------------------------------------------------------------------
 // upload study materials

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminAuthController extends Controller
 {
+   
 
     public function adminAuthLogin(Request $request){
      $login = $request->validate([

@@ -21,6 +21,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AttendanceController extends Controller 
 {
+    public function __construct()
+    {
+        $this->middleware('api');
+    }
+   
 
 // all Course Lists===================================================================
 
