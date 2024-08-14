@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Auth;
 
 class QuestionController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('api');
+    }
     public function index()
     {
           $questions = Questions::orderBy('created_at', 'desc')->get();
