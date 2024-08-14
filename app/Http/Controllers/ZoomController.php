@@ -23,7 +23,7 @@ class ZoomController extends Controller
     {
 
      
-        $this->middleware('check.multiple.guards');
+        $this->middleware('api');
         $this->zoomService = $zoomService;
     }
 
