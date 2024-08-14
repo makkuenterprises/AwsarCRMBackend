@@ -559,7 +559,10 @@ Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']);
 
 Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
 
+Route::middleware(['api'])->group(function () {
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']); 
+}); 
+
 
 Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
 
