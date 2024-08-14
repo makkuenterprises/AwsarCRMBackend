@@ -262,9 +262,6 @@ Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
 Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
 Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
 
-Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
-
-
 
 Route::post('create/class-routines', [ClassRoutineController::class, 'createTimeSlot']);
 Route::post('update/class-routines', [ClassRoutineController::class, 'updateTimeSlot']);
@@ -275,7 +272,6 @@ Route::post('assign/subject/update', [ClassRoutineController::class, 'assignSubj
 Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
 
 
- 
 }); 
 
 // ------------------------------------------------------------------------------------------------
@@ -344,6 +340,8 @@ Route::prefix('teacher')->group(function () {
 
 // adminmiddleware
 Route::middleware(['teacher'])->group(function () {
+Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
+
       
 Route::prefix('teacher')->group(function () {
 
