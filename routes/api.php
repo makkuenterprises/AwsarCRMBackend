@@ -269,7 +269,6 @@ Route::get('delete/class-routines/{course_id}', [ClassRoutineController::class, 
 Route::get('class-routines/time/{course_id}', [ClassRoutineController::class, 'showClassTimeRoutine']);
 Route::post('assign/subject', [ClassRoutineController::class, 'assignSubject']);
 Route::post('assign/subject/update', [ClassRoutineController::class, 'assignSubjectUpdate']);
-Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
 
 
 }); 
@@ -281,7 +280,6 @@ Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 's
 
 Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
 Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
-Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 // Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
@@ -413,6 +411,7 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 });
 
 Route::middleware(['student'])->group(function () {
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 
 Route::prefix('student')->group(function () {
 
@@ -421,12 +420,12 @@ Route::prefix('student')->group(function () {
       Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
       Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
 
-}); 
+});  
 
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
-
+ 
 // ATTENDANCE STUDENT=============================================================================================
 
 Route::prefix('attendance')->group(function () { 
@@ -452,6 +451,7 @@ Route::prefix('notice')->group(function () {
       Route::get('/list', [NotificationController::class, 'List']);
       Route::post('/list/student', [NotificationController::class, 'studentNoticelist']);
 }); 
+ 
 Route::get('/notify/{Student_id}', [Notification::class, 'fetchNotifications']);
 Route::post('/mark/as/read', [Notification::class, 'markAsRead']);
 Route::post('/mark/all/as/read', [Notification::class, 'markAllAsRead']);
@@ -522,7 +522,7 @@ Route::prefix('leave-request')->group(function () {
 
 Route::get('questions', [QuestionController::class, 'index']);
 Route::get('all/questions', [QuestionController::class, 'index2']);
-Route::post('questions', [QuestionController::class, 'store']);
+Route::post('questions', [QuestionController::class, 'store']); 
 Route::get('questions/{id}', [QuestionController::class, 'show']);
 Route::post('questions/{id}', [QuestionController::class, 'update']);
 Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
@@ -533,7 +533,9 @@ Route::delete('questions/{id}', [QuestionController::class, 'destroy']);
 
 Route::post('/exams', [ExamController::class, 'createExam']);
 Route::post('/exam/preview', [ExamController::class, 'getExamDetails']);
+
 Route::post('all/exam', [ExamController::class, 'getExamsForStudent']);
+
 Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch']);
 Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
  
@@ -554,10 +556,13 @@ Route::post('exam/student-result', [ExamResponseController::class, 'getAllStuden
  
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);
 Route::delete('/zoom/meeting/{id}', [ZoomController::class, 'deleteMeeting']);
-Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']);
-Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']); 
-Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']);
+Route::put('/zoom/meeting/{id}', [ZoomController::class, 'updateMeeting']); 
+Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']);  
+
 Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
+
+Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']); 
+Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
 
 
 
