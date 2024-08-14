@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\CoursesEnrollement;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\Course;
 use Illuminate\Support\Facades\Validator;
 

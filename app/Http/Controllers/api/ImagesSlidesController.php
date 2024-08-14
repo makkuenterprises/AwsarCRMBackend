@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Image;  
 use App\Models\Teacher;
+use Illuminate\Support\Facades\Auth;
+
 use App\Rules\DateFormat;
 use App\Models\SlidesImages;
 use Illuminate\Support\Facades\Storage;

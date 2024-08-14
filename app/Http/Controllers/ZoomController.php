@@ -10,6 +10,8 @@ use App\Models\ZoomMeeting;
 use App\Models\Teacher;
 use App\Models\Student;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Log;
 
 class ZoomController extends Controller
@@ -218,16 +220,28 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
     }
 }
 
-
+ 
   public function getAllMeetings()
     {
         try {
+              $staff = Auth::guard('staff')->user();
+         $student = Auth::guard('student')->user();
+         $teacher = Auth::guard('teacher')->user();
+        $admin = Auth::guard('admin')->user();
+
+          if ($student || $admin || $staff || $teacher) {
             // Fetch all records from the zoom_meetings table
             $meetings = ZoomMeeting::orderBy('created_at', 'desc')->get();
             return response()->json([
                 'success' => true,
                 'data' => $meetings
             ], 200);
+            }else{
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 401);
+        }
         } catch (\Exception $e) {
             return response()->json([ 
                 'success' => false,

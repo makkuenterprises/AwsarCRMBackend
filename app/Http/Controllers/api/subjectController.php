@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Validator;
 use Exception;
 use App\Models\Subject;
 use Illuminate\Http\Request; 
+use Illuminate\Support\Facades\Auth;
+
  
 
 class subjectController extends Controller

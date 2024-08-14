@@ -8,6 +8,8 @@ use App\Models\Student;
 use App\Models\Course;
 use App\Models\Details;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+
 
 use DB;
 use Illuminate\Http\Request;

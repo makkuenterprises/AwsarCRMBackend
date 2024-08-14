@@ -21,6 +21,8 @@ use Carbon\Carbon;
 use App\Models\StudyMaterials;
 use Crypt;
 use App\Notifications\StudyMaterial;   
+use Illuminate\Support\Facades\Auth;
+
 
 
 class NotificationController extends Controller

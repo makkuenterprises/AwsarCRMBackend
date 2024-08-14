@@ -9,6 +9,8 @@ use App\Models\Student;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Models\PaymentGateway;
+use Illuminate\Support\Facades\Auth;
+
 
 // 
 class PaymentGatewayController extends Controller

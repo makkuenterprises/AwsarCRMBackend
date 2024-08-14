@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Response; // Import Response facade for returning
 use App\Models\Admin;
 use App\Models\StaffModel;
 use App\Models\Teacher;
+use Illuminate\Support\Facades\Auth;
 
 class Notification extends Controller
 {

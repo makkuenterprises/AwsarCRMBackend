@@ -13,6 +13,8 @@ use App\Models\Admin;
 use App\Models\StaffModel;
 use App\Models\Teacher;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\PaymentHistory;
 use OneSignal;
 use App\Models\Invoice;

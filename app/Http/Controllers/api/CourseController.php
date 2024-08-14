@@ -9,6 +9,8 @@ use App\Models\Course;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+
 use Image; 
 use App\Models\Teacher;
 use App\Rules\DateFormat;

@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\ZoomService;
+use Illuminate\Support\Facades\Auth;
+
  
 class MeetingController extends Controller
 {

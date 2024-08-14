@@ -7,6 +7,8 @@ use Razorpay\Api\Api;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon; 
+use Illuminate\Support\Facades\Auth;
+
 
 class OnlinePaymentController extends Controller
 { 

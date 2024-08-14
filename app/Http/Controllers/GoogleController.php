@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\GoogleMeetService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+
 
 class GoogleController extends Controller
 {

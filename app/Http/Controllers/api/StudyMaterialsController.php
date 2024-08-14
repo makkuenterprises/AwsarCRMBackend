@@ -12,6 +12,8 @@ use App\Models\StudyMaterials;
 use App\Models\Student;
 use App\Models\Course;
 use App\Models\StaffModel;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Validator;
 use DB; 

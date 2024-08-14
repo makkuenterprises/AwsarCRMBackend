@@ -4,6 +4,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 
 use App\Models\Teacher;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\StaffModel;
 use App\Models\Student;
 use App\Models\Course;
