@@ -140,7 +140,12 @@ Route::prefix('attendance')->group(function () {
       Route::post('/list/{course_id}', [AttendanceController::class, 'getStudents']);
       Route::get('/list', [AttendanceController::class, 'alllist']);
      
-});        
+});  
+Route::prefix('student')->group(function () {
+      
+        Route::get('/list', [StudentAuthController::class, 'StudentList']);
+    
+});      
 
 // ------------------------------------------------------------------------------------------------
 // STUDENT CREATE ROUTES
@@ -355,11 +360,7 @@ Route::get('course/list/for/teacher/{id}', [CourseController::class, 'courseList
 Route::get('/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
 
 
-Route::prefix('student')->group(function () {
-      
-        Route::get('/list', [StudentAuthController::class, 'StudentList']);
-    
-});
+
 
 // ATTENDANCE TEACHER=============================================================================================
 
