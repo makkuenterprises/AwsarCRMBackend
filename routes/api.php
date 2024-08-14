@@ -78,10 +78,50 @@ Route::post('/profile/update/{id}', [AdminAuthController::class, 'profileUpdate'
 Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 
 }); 
+
+
+// subject ======================================================================================
+Route::post('/subjects', [subjectController::class, 'create']);
+Route::put('/subjects/{id}', [subjectController::class, 'update']);
+Route::delete('/subjects/{id}', [subjectController::class, 'delete']);
+Route::get('/subjects', [SubjectController::class, 'index']);
+Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+
+
+
+// Slides Images
+Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
+
+
+Route::post('create/community', [BlogController::class, 'store']);
+Route::delete('/community/{id}', [BlogController::class, 'destroy']);
+Route::post('/community/{id}', [BlogController::class, 'update']);
+Route::get('all/community', [BlogController::class, 'list']);
+Route::get('/community/{id}', [BlogController::class, 'show']);
+
+
+Route::get('/invoices', [InvoiceController::class, 'getAllInvoices']);
+Route::post('/invoices/student', [InvoiceController::class, 'getAllInvoicesByStudent']);
+Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
+
+
  
 }); 
 
-// Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
+Route::group(['middleware'=>'admin','middleware'=>'teacher','middleware'=>'staff','middleware'=>'student'],function(){
+Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
+
+
+//  payment Gateway============================================================
+
+Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
+Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
+ 
+Route::get('dashboard-data', [PaymentGatewayController::class, 'dashboardaData']);
+Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData']);
+Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
+
+}); 
 
 
 
@@ -177,6 +217,45 @@ Route::prefix('notice')->group(function () {
 
 
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
+
+// ------------------------------------------------------------------------------------------------
+// COURSE ENROLL ROUTES
+// ------------------------------------------------------------------------------------------------
+ 
+
+
+Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']); 
+Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
+Route::post('payment-details', [CourseEnrollementController::class, 'PaymentHistory']);
+Route::post('/rest-payment', [CourseEnrollementController::class, 'restPayment']);
+
+
+
+Route::post('/enrollment-order', [OnlinePaymentController::class, 'createOrder']);
+Route::post('/confirm-payment', [OnlinePaymentController::class, 'confirmPayment']);
+Route::post('rest/confirm-payment', [OnlinePaymentController::class, 'restPaymentRazorpay']);
+
+
+
+// routine
+Route::get('class-routines', [ClassRoutineController::class, 'index']);
+Route::post('store/class-routines', [ClassRoutineController::class, 'store']);
+Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
+Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
+Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
+
+Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
+
+
+
+Route::post('create/class-routines', [ClassRoutineController::class, 'createTimeSlot']);
+Route::post('update/class-routines', [ClassRoutineController::class, 'updateTimeSlot']);
+Route::get('delete/class-routines/{course_id}', [ClassRoutineController::class, 'deleteTimeSlotsByBatchId']);
+Route::get('class-routines/time/{course_id}', [ClassRoutineController::class, 'showClassTimeRoutine']);
+Route::post('assign/subject', [ClassRoutineController::class, 'assignSubject']);
+Route::post('assign/subject/update', [ClassRoutineController::class, 'assignSubjectUpdate']);
+Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
+
 
  
 }); 
@@ -321,22 +400,7 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 }); 
  
-// ------------------------------------------------------------------------------------------------
-// COURSE ENROLL ROUTES
-// ------------------------------------------------------------------------------------------------
- 
 
-
-Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']); 
-Route::post('payment-history', [CourseEnrollementController::class, 'getPaymentHistory']);
-Route::post('payment-details', [CourseEnrollementController::class, 'PaymentHistory']);
-Route::post('/rest-payment', [CourseEnrollementController::class, 'restPayment']);
-
-
-
-Route::post('/enrollment-order', [OnlinePaymentController::class, 'createOrder']);
-Route::post('/confirm-payment', [OnlinePaymentController::class, 'confirmPayment']);
-Route::post('rest/confirm-payment', [OnlinePaymentController::class, 'restPaymentRazorpay']);
 
 
 // ------------------------------------------------------------------------------------------------
@@ -435,33 +499,7 @@ Route::prefix('leave-request')->group(function () {
  
 }); 
 
-// routine
-Route::get('class-routines', [ClassRoutineController::class, 'index']);
-Route::post('store/class-routines', [ClassRoutineController::class, 'store']);
-Route::get('class-routines/{id}', [ClassRoutineController::class, 'show']);
-Route::put('class-routines/{id}', [ClassRoutineController::class, 'update']);
-Route::delete('class-routines/{id}', [ClassRoutineController::class, 'destroy']);
 
-Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
-
-
-
-Route::post('create/class-routines', [ClassRoutineController::class, 'createTimeSlot']);
-Route::post('update/class-routines', [ClassRoutineController::class, 'updateTimeSlot']);
-Route::get('delete/class-routines/{course_id}', [ClassRoutineController::class, 'deleteTimeSlotsByBatchId']);
-Route::get('class-routines/time/{course_id}', [ClassRoutineController::class, 'showClassTimeRoutine']);
-Route::post('assign/subject', [ClassRoutineController::class, 'assignSubject']);
-Route::post('assign/subject/update', [ClassRoutineController::class, 'assignSubjectUpdate']);
-Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
-
-//  payment Gateway============================================================
-
-Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
-Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
- 
-Route::get('dashboard-data', [PaymentGatewayController::class, 'dashboardaData']);
-Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData']);
-Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
 
 
 // Route::get('data-dashboard', [DashboardData::class, 'dashboardaData']);
@@ -513,30 +551,9 @@ Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
 
 
 
-// subject ======================================================================================
-Route::post('/subjects', [subjectController::class, 'create']);
-Route::put('/subjects/{id}', [subjectController::class, 'update']);
-Route::delete('/subjects/{id}', [subjectController::class, 'delete']);
-Route::get('/subjects', [SubjectController::class, 'index']);
-Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 
 
 
-// Slides Images
-Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
-Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
-
-
-Route::post('create/community', [BlogController::class, 'store']);
-Route::delete('/community/{id}', [BlogController::class, 'destroy']);
-Route::post('/community/{id}', [BlogController::class, 'update']);
-Route::get('all/community', [BlogController::class, 'list']);
-Route::get('/community/{id}', [BlogController::class, 'show']);
-
-
-Route::get('/invoices', [InvoiceController::class, 'getAllInvoices']);
-Route::post('/invoices/student', [InvoiceController::class, 'getAllInvoicesByStudent']);
-Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
 
 
 
