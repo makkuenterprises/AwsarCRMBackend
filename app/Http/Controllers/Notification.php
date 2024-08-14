@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 class Notification extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('api');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('api');
+    // }
 
     public function fetchNotifications($studentId)
 {

@@ -16,11 +16,11 @@ use Illuminate\Support\Facades\Auth;
 use DB;
 class ExamResponseController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('api');
-    }
-    
+    // public function __construct()
+    // {
+    //     $this->middleware('api');
+    // }
+
 public function storeExamResponse(Request $request)
 {
 

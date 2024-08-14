@@ -14,10 +14,10 @@ use Carbon\Carbon;
 
 class ExamController extends Controller 
 { 
-    public function __construct()
-    {
-        $this->middleware('api');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('api');
+    // }
     
 // public function createExam(Request $request)
 // {
