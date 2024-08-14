@@ -50,6 +50,9 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             'cors' =>\App\Http\Middleware\Cors::class,
+             \App\Http\Middleware\CheckMultipleGuards::class,
+        'throttle:api',
+            
 
             // 'admin'=> \App\Http\Middleware\AdminMiddleware::class,
             // 'student' =>  \App\Http\Middleware\StudentMiddleware::class,
