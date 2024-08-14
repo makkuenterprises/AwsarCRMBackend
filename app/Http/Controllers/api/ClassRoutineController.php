@@ -409,7 +409,12 @@ public function assignSubjectUpdate(Request $request)
 // }
 public function showClassRoutine($batch_id)
 {
-    try {
+    try { 
+         $staff = Auth::guard('staff')->user();
+         $student = Auth::guard('student')->user();
+         $teacher = Auth::guard('teacher')->user();
+        $admin = Auth::guard('admin')->user();
+         if ($student || $admin || $staff || $teacher) {
         // Fetch all class routines for the specified batch_id, ordered by start_time
         $classRoutines = ClassRoutine::where('batch_id', $batch_id)
                                      ->orderBy('start_time')
@@ -447,7 +452,13 @@ public function showClassRoutine($batch_id)
         return response()->json([
             'status' => 'success',
             'data' => $routineData,
-        ], 200);
+        ], 200);}else{
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 401);
+        }
+        
 
     } catch (\Exception $e) {
         // Return a JSON response with an error message if an exception occurs
