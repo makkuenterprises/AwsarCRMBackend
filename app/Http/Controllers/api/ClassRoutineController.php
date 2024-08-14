@@ -8,6 +8,8 @@ use App\Models\Teacher;
 use Carbon\Carbon;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ClassRoutineController extends Controller
 {
