@@ -64,9 +64,9 @@ Route::prefix('admin')->group(function () {
 
 Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin.login');
 
-}); 
+});  
 
-// Route::group(['middleware'=>'admin'],function(){ 
+Route::group(['middleware'=>'admin'],function(){ 
   
 Route::prefix('admin')->group(function () {
 // Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {
@@ -79,14 +79,14 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 
 }); 
  
-// }); 
+}); 
 
 // Route::group(['middleware'=>'admin','prefix'=>'admin','as'=>'admin.'],function(){
 
 
 
 
-// Route::group(['middleware' => ['admin', 'staff']], function() {
+Route::group(['middleware' => ['admin', 'staff']], function() {
 
 // ------------------------------------------------------------------------------------------------
 // STUDENT CREATE ROUTES
@@ -108,6 +108,7 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 // ------------------------------------------------------------------------------------------------    
 
     Route::prefix('teacher')->group(function () {
+
       Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
       Route::get('/list', [TeacherAuthController::class, 'teacherList']);
       Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
@@ -127,7 +128,7 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
       Route::post('update/{id}', [StaffAuthController::class, 'updateStaff']);
       Route::delete('delete/{id}', [StaffAuthController::class, 'deleteStaff']);
 
-}); 
+   });  
 
 // ------------------------------------------------------------------------------------------------
 // COURSE CREATE ROUTES
@@ -144,7 +145,7 @@ Route::prefix('course')->group(function () {
 
 
 }); 
-
+ 
 
 // ------------------------------------------------------------------------------------------------
 // DETAILS ADD
@@ -155,16 +156,8 @@ Route::post('details/add', [DetailsController::class, 'index']);
 Route::get('details/view/update/{id}', [DetailsController::class, 'show']);
 Route::post('details/update/{id}', [DetailsController::class, 'update']);
 
-// ------------------------------------------------------------------------------------------------
-// STUDY MATERIALS UPLOAD
-// ------------------------------------------------------------------------------------------------
+Route::get('teacher/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
 
-
-Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
-Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
-Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
-Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
 // ------------------------------------------------------------------------------------------------
@@ -185,6 +178,23 @@ Route::prefix('notice')->group(function () {
 
 Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse']);
 
+ 
+}); 
+
+// ------------------------------------------------------------------------------------------------
+// STUDY MATERIALS UPLOAD
+// ------------------------------------------------------------------------------------------------
+
+
+Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
+
+
+
+
 // }); 
 
 
@@ -204,7 +214,9 @@ Route::post('course/enroll', [CourseEnrollementController::class, 'enrollCourse'
 Route::prefix('staff')->group(function () {
       Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
 }); 
-// Route::middleware(['staff'])->group(function () {
+
+
+Route::middleware(['staff'])->group(function () {
 
 Route::prefix('staff')->group(function () {
 
@@ -214,7 +226,7 @@ Route::prefix('staff')->group(function () {
       Route::post('/password/update', [StaffAuthController::class, 'passwordUpdate']);
 
 }); 
-// }); 
+}); 
 
 
 
@@ -232,9 +244,8 @@ Route::prefix('teacher')->group(function () {
 
 });  
 
-Route::get('teacher/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
-
-// Route::middleware(['teacher','admin'])->group(function () {
+// adminmiddleware
+Route::middleware(['teacher'])->group(function () {
       
 Route::prefix('teacher')->group(function () {
 
@@ -255,7 +266,7 @@ Route::prefix('student')->group(function () {
     
 });
 
-// });
+}); 
 
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
