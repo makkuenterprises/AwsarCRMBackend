@@ -69,9 +69,7 @@ Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin
 Route::group(['middleware'=>'admin'],function(){ 
   
 Route::prefix('admin')->group(function () {
-// Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {
 
-// Route::post('/login',[AdminAuthController::class,'adminAuthLogin']);
 Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
 Route::get('/view/profile/update/{id}', [AdminAuthController::class, 'profileUpdateView']);
 Route::post('/profile/update/{id}', [AdminAuthController::class, 'profileUpdate']);
@@ -80,7 +78,8 @@ Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
 }); 
 
 
-// subject ======================================================================================
+// subject ==========================================================================
+
 Route::post('/subjects', [subjectController::class, 'create']);
 Route::put('/subjects/{id}', [subjectController::class, 'update']);
 Route::delete('/subjects/{id}', [subjectController::class, 'delete']);
@@ -106,11 +105,16 @@ Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesBySt
 
 
  
-}); 
+});    
+
+// Route::group(['middleware'=>'admin','middleware'=>'staff'],function(){
+// });  
+
+
+Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 
 Route::group(['middleware'=>'admin','middleware'=>'teacher','middleware'=>'staff','middleware'=>'student'],function(){
 Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
-
 
 //  payment Gateway============================================================
 
@@ -128,6 +132,15 @@ Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOv
 
 Route::group(['middleware' => ['admin', 'staff']], function() {
 
+// ATTENDANCE ADMIN=============================================================================================
+
+Route::prefix('attendance')->group(function () { 
+
+      Route::post('/list/{course_id}', [AttendanceController::class, 'getStudents']);
+      Route::get('/list', [AttendanceController::class, 'alllist']);
+     
+});        
+
 // ------------------------------------------------------------------------------------------------
 // STUDENT CREATE ROUTES
 // ------------------------------------------------------------------------------------------------
@@ -139,7 +152,6 @@ Route::group(['middleware' => ['admin', 'staff']], function() {
         Route::post('update/{id}', [StudentAuthController::class, 'updateStudent']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
         Route::get('course/list', [StudentAuthController::class, 'courseList']);
-        Route::post('teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
 
     });
 
@@ -305,13 +317,14 @@ Route::prefix('staff')->group(function () {
       Route::post('/password/update', [StaffAuthController::class, 'passwordUpdate']);
 
 }); 
+
 }); 
 
 
 
 
 
-// teacher==============================================================================================
+// teacher==========================================================================================
 
 // ------------------------------------------------------------------------------------------------
 // TEACHER PANEL ROUTES
@@ -336,6 +349,8 @@ Route::prefix('teacher')->group(function () {
 
 }); 
 
+Route::get('course/list/for/teacher/{id}', [CourseController::class, 'courseListForTeacher']);
+
 Route::get('/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
 
 
@@ -344,6 +359,19 @@ Route::prefix('student')->group(function () {
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
     
 });
+
+// ATTENDANCE TEACHER=============================================================================================
+
+Route::prefix('attendance')->group(function () { 
+
+      Route::get('course/list', [AttendanceController::class, 'alllist']);
+      Route::post('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
+      Route::post('/submit-attendance', [AttendanceController::class, 'create']);
+ 
+     
+     
+}); 
+
 
 }); 
 
@@ -360,7 +388,6 @@ Route::prefix('notice')->group(function () {
  
 Route::prefix('course')->group(function () {
       Route::get('/list', [CourseController::class, 'courseList']);
-      Route::get('/list/for/teacher/{id}', [CourseController::class, 'courseListForTeacher']);
 }); 
 
 // ------------------------------------------------------------------------------------------------
@@ -395,8 +422,22 @@ Route::prefix('student')->group(function () {
       Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
 
 }); 
+
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
+
+// ATTENDANCE STUDENT=============================================================================================
+
+Route::prefix('attendance')->group(function () { 
+
+      Route::get('student/course/list/{student_id}', [AttendanceController::class, 'getCoursesByStudent']);
+      Route::post('/student-attendace', [AttendanceController::class, 'getAttendanceByDateStudent']);
+      Route::post('between-date-wise', [AttendanceController::class, 'getAttendanceBetweenDates']);
+   
+     
+}); 
+
 
 }); 
  
@@ -430,40 +471,10 @@ Route::post('/mark/all/as/read/role', [Notification::class, 'markAllAsReadforRol
 Route::post('/student-batch-details', [AttendanceController::class, 'getStudentBatchDetails']);
 Route::get('/all-student-batch-details', [AttendanceController::class, 'getAllStudentBatchDetails']);
 
-// ATTENDANCE ADMIN=============================================================================================
-
-Route::prefix('attendance')->group(function () { 
-
-      Route::post('/list/{course_id}', [AttendanceController::class, 'getStudents']);
-      Route::get('/list', [AttendanceController::class, 'alllist']);
-     
-});  
-
-Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 
 
-// ATTENDANCE TEACHER=============================================================================================
 
-Route::prefix('attendance')->group(function () { 
 
-      Route::get('course/list', [AttendanceController::class, 'alllist']);
-      Route::post('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
-      Route::post('/submit-attendance', [AttendanceController::class, 'create']);
- 
-     
-     
-}); 
-
-// ATTENDANCE STUDENT=============================================================================================
-
-Route::prefix('attendance')->group(function () { 
-
-      Route::get('student/course/list/{student_id}', [AttendanceController::class, 'getCoursesByStudent']);
-      Route::post('/student-attendace', [AttendanceController::class, 'getAttendanceByDateStudent']);
-      Route::post('between-date-wise', [AttendanceController::class, 'getAttendanceBetweenDates']);
-   
-     
-}); 
 
 
 // ------------------------------------------------------------------------------------------------
