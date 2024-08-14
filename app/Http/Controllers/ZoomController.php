@@ -21,12 +21,105 @@ class ZoomController extends Controller
 
     public function __construct(ZoomService $zoomService)
     {
-
-     
-        // $this->middleware('api');
         $this->zoomService = $zoomService;
     }
 
+//     public function createMeeting(Request $request)
+//     {
+//         $request->validate([
+//             'topic' => 'required|string',
+//             'start_time' => 'required|date_format:Y-m-d\TH:i:s\Z',
+//             'agenda' => 'required|string',
+//               'batch_id' => 'required|exists:courses,id',
+//         ]);
+
+//         $accessToken = $this->zoomService->getAccessToken();
+//         $meetingConfig = [
+//             'topic' => $request->input('topic'),
+//             'start_time' => $request->input('start_time'),
+//             'agenda' => $request->input('agenda'),
+//             'batch_id' => $request->input('batch_id'),
+//         ];
+
+//         $zoomDetails = $this->create_a_zoom_meeting($meetingConfig, $accessToken);
+
+//         return response()->json($zoomDetails);
+//     }
+
+// private function create_a_zoom_meeting($meetingConfig, $accessToken)
+// {
+//     $requestBody = [
+//         'topic'      => $meetingConfig['topic'] ?? 'New Meeting',
+//         'type'       => 2, // Scheduled meeting
+//         'start_time' => $meetingConfig['start_time'],
+//         'duration'   => 30, // Default duration in minutes
+//         'password'   => mt_rand(), // Random password
+//         'timezone'   => 'Asia/Kolkata',
+//         'agenda'     => $meetingConfig['agenda'],
+//         'settings'   => [
+//             'host_video'        => false,
+//             'participant_video' => true,
+//             'join_before_host'  => true, 
+//             'mute_upon_entry'   => true,
+//             'waiting_room'      => false,
+//             'auto_recording'    => 'none',
+//         ],
+//     ];
+
+//     $curl = curl_init();
+//     curl_setopt_array($curl, [
+//         CURLOPT_URL            => "https://api.zoom.us/v2/users/me/meetings",
+//         CURLOPT_RETURNTRANSFER => true,
+//         CURLOPT_SSL_VERIFYPEER => false,
+//         CURLOPT_HTTPHEADER     => [
+//             "Authorization: Bearer " . $accessToken,
+//             "Content-Type: application/json",
+//         ],
+//         CURLOPT_POST           => true,
+//         CURLOPT_POSTFIELDS     => json_encode($requestBody),
+//     ]);
+
+//     $response = curl_exec($curl);
+//     $error = curl_error($curl);
+//     curl_close($curl);
+
+//     if ($error) {
+//         return [
+//             'success'  => false,
+//             'msg'      => 'cURL Error #:' . $error,
+//             'response' => null,
+//         ];
+//     } else {
+//         $zoomData = json_decode($response, true);
+//         dd($zoomData);
+
+//         // Save meeting details in the database
+//         \App\Models\ZoomMeeting::create([
+//             'uuid'         => $zoomData['uuid'] ?? null,
+//             'meeting_id'   => $zoomData['id'],
+//             'host_id'      => $zoomData['host_id'],
+//             'host_email'   => $zoomData['host_email'],
+//             'topic'        => $zoomData['topic'],
+//             'type'         => $zoomData['type'],
+//             'status'       => $zoomData['status'],
+//             'start_time'   => $zoomData['start_time'],
+//             'duration'     => $zoomData['duration'],
+//             'timezone'     => $zoomData['timezone'],
+//             'agenda'       => $zoomData['agenda'],
+//             'start_url'    => $zoomData['start_url'] ?? null,
+//             'join_url'     => $zoomData['join_url'] ?? null,
+//             'password'     => $zoomData['password'] ?? null,
+//             'batch_id'     => $meetingConfig['agenda'] ?? null,
+            
+//         ]);
+
+//         return [
+//             'success'  => true,
+//             'msg'      => 'Meeting created and saved successfully',
+//             'response' => $zoomData,
+//         ];
+//     }
+// }
 
 public function createMeeting(Request $request)
 {
@@ -131,14 +224,24 @@ private function create_a_zoom_meeting($meetingConfig, $accessToken)
   public function getAllMeetings()
     {
         try {
-          
+              $staff = Auth::guard('staff')->user();
+         $student = Auth::guard('student')->user();
+         $teacher = Auth::guard('teacher')->user();
+        $admin = Auth::guard('admin')->user();
+
+          if ($student || $admin || $staff || $teacher) {
             // Fetch all records from the zoom_meetings table
             $meetings = ZoomMeeting::orderBy('created_at', 'desc')->get();
             return response()->json([
                 'success' => true,
                 'data' => $meetings
             ], 200);
-            
+            }else{
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 401);
+        }
         } catch (\Exception $e) {
             return response()->json([ 
                 'success' => false,
