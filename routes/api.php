@@ -104,7 +104,14 @@ Route::get('/invoices', [InvoiceController::class, 'getAllInvoices']);
 Route::post('/invoices/student', [InvoiceController::class, 'getAllInvoicesByStudent']);
 Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
 
+//  payment Gateway============================================================
 
+Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
+Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
+ 
+Route::get('dashboard-data', [PaymentGatewayController::class, 'dashboardaData']);
+Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData']);
+Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
  
 });    
 
@@ -114,24 +121,17 @@ Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesBySt
 
 Route::post('get-attendance-by-date', [AttendanceController::class, 'getAttendanceByDate']);
 
-Route::group(['middleware'=>'admin','middleware'=>'teacher','middleware'=>'staff','middleware'=>'student'],function(){
+// Route::group(['middleware'=>'admin','middleware'=>'teacher','middleware'=>'staff','middleware'=>'student'],function(){
 Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
 
-//  payment Gateway============================================================
 
-Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
-Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
- 
-Route::get('dashboard-data', [PaymentGatewayController::class, 'dashboardaData']);
-Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData']);
-Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
 
-}); 
+// }); 
 
 
 
 
-Route::group(['middleware' => ['admin', 'staff']], function() {
+Route::group(['middleware' => ['admin']], function() {
 
 // ATTENDANCE ADMIN=============================================================================================
 
