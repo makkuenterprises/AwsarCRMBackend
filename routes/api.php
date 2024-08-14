@@ -63,6 +63,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('admin')->group(function () {
 
 Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin.login');
+Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
+
 
 });  
 
@@ -70,7 +72,6 @@ Route::group(['middleware'=>'admin'],function(){
   
 Route::prefix('admin')->group(function () {
 
-Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
 Route::get('/view/profile/update/{id}', [AdminAuthController::class, 'profileUpdateView']);
 Route::post('/profile/update/{id}', [AdminAuthController::class, 'profileUpdate']);
 Route::post('/password/update', [AdminAuthController::class, 'passwordUpdate']);
