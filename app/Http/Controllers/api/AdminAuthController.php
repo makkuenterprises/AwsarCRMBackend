@@ -245,7 +245,7 @@ class AdminAuthController extends Controller
         }
 
         return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
-    }
+    } 
     
     public function profileUpdateView($id){
         // if(Auth::guard('admin')->check()){

@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AdminAuthController; 
 use App\Http\Controllers\api\StudentAuthController; 
@@ -151,32 +151,31 @@ Route::prefix('student')->group(function () {
 // STUDENT CREATE ROUTES
 // ------------------------------------------------------------------------------------------------
 
- Route::prefix('student')->group(function () {
+Route::prefix('student')->group(function () {
         Route::post('/register', [StudentAuthController::class, 'StudentCreate']);
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
         Route::get('course/list', [StudentAuthController::class, 'courseList']);
-
-    });
+});
 
 // ------------------------------------------------------------------------------------------------
 // TEACHER CREATE ROUTES
 // ------------------------------------------------------------------------------------------------    
 
-    Route::prefix('teacher')->group(function () {
+Route::prefix('teacher')->group(function () {
 
       Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
       Route::get('/list', [TeacherAuthController::class, 'teacherList']);
       Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
       Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
       Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
-   });  
+});  
 
 // ------------------------------------------------------------------------------------------------
 // STAFF CREATE ROUTES
 // ------------------------------------------------------------------------------------------------
 
-   Route::prefix('staff')->group(function () {
+Route::prefix('staff')->group(function () {
 
       Route::post('/register', [StaffAuthController::class, 'staffCreate']);
       Route::get('/list', [StaffAuthController::class, 'staffList']);
@@ -184,7 +183,7 @@ Route::prefix('student')->group(function () {
       Route::post('update/{id}', [StaffAuthController::class, 'updateStaff']);
       Route::delete('delete/{id}', [StaffAuthController::class, 'deleteStaff']);
 
-   });  
+});  
 
 // ------------------------------------------------------------------------------------------------
 // COURSE CREATE ROUTES
@@ -197,8 +196,6 @@ Route::prefix('course')->group(function () {
       Route::get('view/update/{id}/', [CourseController::class, 'UpdateView']);
       Route::post('update/{id}', [CourseController::class, 'courseUpdate']);
       Route::delete('delete/{id}', [CourseController::class, 'deleteCourse']);
-
-
 
 }); 
  
