@@ -96,7 +96,7 @@ Route::post('/slider-images', [ImagesSlidesController::class, 'storeMultiple']);
 Route::post('create/community', [BlogController::class, 'store']);
 Route::delete('/community/{id}', [BlogController::class, 'destroy']);
 Route::post('/community/{id}', [BlogController::class, 'update']);
-Route::get('all/community', [BlogController::class, 'list']);
+
 Route::get('/community/{id}', [BlogController::class, 'show']);
 
 
@@ -154,7 +154,6 @@ Route::prefix('student')->group(function () {
  Route::prefix('student')->group(function () {
         Route::post('/register', [StudentAuthController::class, 'StudentCreate']);
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
-        Route::post('update/{id}', [StudentAuthController::class, 'updateStudent']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
         Route::get('course/list', [StudentAuthController::class, 'courseList']);
 
@@ -563,8 +562,11 @@ Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']); 
 Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
 
-Route::get('student/view/update/{id}/', [StudentAuthController::class, 'UpdateView']);
+// student Admin Staff
 
+Route::get('student/view/update/{id}/', [StudentAuthController::class, 'UpdateView']);
+Route::post('student/update/{id}', [StudentAuthController::class, 'updateStudent']);
+Route::get('all/community', [BlogController::class, 'list']);
 
 
 

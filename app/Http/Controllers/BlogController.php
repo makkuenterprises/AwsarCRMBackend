@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 class BlogController extends Controller
 {
     public function store(Request $request)
@@ -165,6 +166,12 @@ class BlogController extends Controller
  public function list()
 {
     try {
+         $staff = Auth::guard('staff')->user();
+         $student = Auth::guard('student')->user();
+         $teacher = Auth::guard('teacher')->user();
+        $admin = Auth::guard('admin')->user();
+
+          if ($student || $admin || $staff || $teacher) {
         // Retrieve all blogs
         $blogs = Blog::all();
 
@@ -183,7 +190,12 @@ class BlogController extends Controller
             'status' => 'success',
             'message' => 'Community list retrieved successfully',
             'data' => $blogs
-        ], 200);
+        ], 200);}else{
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 401);
+        }
     } catch (\Exception $e) {
         // Return an error response if something goes wrong
         return response()->json([
