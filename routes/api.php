@@ -154,7 +154,6 @@ Route::prefix('student')->group(function () {
  Route::prefix('student')->group(function () {
         Route::post('/register', [StudentAuthController::class, 'StudentCreate']);
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
-        Route::get('view/update/{id}/', [StudentAuthController::class, 'UpdateView']);
         Route::post('update/{id}', [StudentAuthController::class, 'updateStudent']);
         Route::delete('delete/{id}', [StudentAuthController::class, 'deleteStudent']);
         Route::get('course/list', [StudentAuthController::class, 'courseList']);
@@ -564,6 +563,7 @@ Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']); 
 Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
 
+Route::get('student/view/update/{id}/', [StudentAuthController::class, 'UpdateView']);
 
 
 
