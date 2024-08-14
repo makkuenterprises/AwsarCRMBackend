@@ -426,6 +426,12 @@ Route::get('student/study-materials/{course_id}', [StudyMaterialsController::cla
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
  
+
+
+
+}); 
+ 
+
 // ATTENDANCE STUDENT=============================================================================================
 
 Route::prefix('attendance')->group(function () { 
@@ -436,12 +442,6 @@ Route::prefix('attendance')->group(function () {
    
      
 }); 
-
-
-}); 
- 
-
-
 
 // ------------------------------------------------------------------------------------------------
 // NOTIFICATION ROUTES
