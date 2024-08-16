@@ -229,7 +229,7 @@ class StaffAuthController extends Controller
         $data = ['error' => $e->getMessage()];
     }
     return response()->json($data, $code);
-} 
+}  
 
 public function staffList()
 {
@@ -250,7 +250,6 @@ public function staffList()
 public function UpdateView($id){
    $staffs = StaffModel::find($id);
        $imagePath = $staffs->image ? url('/Staffs/' . $staffs->image) : null;
-
    if($staffs){
    return response()->json(['status'=>true,'code'=>200,'data'=>$staffs , 'image'=>$imagePath]);
 
@@ -259,8 +258,8 @@ public function UpdateView($id){
    }
 }
 
-public function staffAuthLogout(Request $request)
-{
+     public function staffAuthLogout(Request $request)
+    {
         // dd($request->all()); 
 
        $staff = Auth::guard('staff')->user();
