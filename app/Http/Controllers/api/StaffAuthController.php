@@ -262,9 +262,12 @@ public function UpdateView($id){
         
         if ($staff) {
             $staff->tokens()->where('name', 'AwsarClass')->delete();
+        return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
+
+        }else{
+             return response()->json(['message' => 'Unauthorized, please log in as staff'], 401);
         }
 
-        return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
     }
 
 
