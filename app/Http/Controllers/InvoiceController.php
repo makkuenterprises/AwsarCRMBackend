@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Course;
 use App\Models\Details;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -195,18 +196,24 @@ public function getAllInvoicesByStudent(Request $request)
 //             'error' => $e->getMessage(),
 //         ], 500);
 //     }
-// }
+// } 
 
 public function getAllInvoicesByStudentDownload(Request $request)
 {
     // Validate the request 
-    $request->validate([ 
-        'student_id' => 'required|integer|exists:students,id',
-        'course_id' => 'required|integer|exists:courses,id',
-        'transaction_id' => 'required|string|exists:invoices,transaction_id', // Validate the transaction ID
-    ]);
+    // $request->validate([ 
+    //     'student_id' => 'required|integer|exists:students,id',
+    //     'course_id' => 'required|integer|exists:courses,id',
+    //     'transaction_id' => 'required|string|exists:invoices,transaction_id', // Validate the transaction ID
+    // ]); 
 
     try {
+
+        $validatedData = $request->validate([ 
+            'student_id' => 'required|integer|exists:students,id',
+            'course_id' => 'required|integer|exists:courses,id',
+            'transaction_id' => 'required|string|exists:invoices,transaction_id',
+        ]);
         // Fetch invoices for the specified student, course, and transaction ID
         $invoices = DB::table('invoices')
             ->join('courses_enrollements', 'invoices.enrollment_id', '=', 'courses_enrollements.id')
