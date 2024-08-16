@@ -138,6 +138,9 @@ Route::prefix('attendance')->group(function () {
       Route::get('/list', [AttendanceController::class, 'alllist']);
      
 });  
+
+Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
+
 Route::prefix('student')->group(function () {
       
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
@@ -573,7 +576,6 @@ Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData
 Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
 
 
-Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
 
 
 
