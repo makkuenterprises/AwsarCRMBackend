@@ -200,13 +200,7 @@ public function getAllInvoicesByStudent(Request $request)
 
 public function getAllInvoicesByStudentDownload(Request $request)
 {
-    // Validate the request 
-    // $request->validate([ 
-    //     'student_id' => 'required|integer|exists:students,id',
-    //     'course_id' => 'required|integer|exists:courses,id',
-    //     'transaction_id' => 'required|string|exists:invoices,transaction_id', // Validate the transaction ID
-    // ]); 
-
+    dd($request->all());
     try {
 
         $validatedData = $request->validate([ 
@@ -323,7 +317,7 @@ public function getAllInvoicesByStudentDownload(Request $request)
         ]);
 
         // Stream the PDF to the browser
-        return $pdf->stream('invoice.pdf');
+        return $pdf->stream('invoice.pdf'); 
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
