@@ -299,6 +299,8 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 Route::prefix('staff')->group(function () {
       Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
+      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']);
+
 }); 
 
 
@@ -306,7 +308,6 @@ Route::middleware(['staff'])->group(function () {
 
 Route::prefix('staff')->group(function () {
 
-      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']);
       Route::get('/view/profile/update/{id}', [StaffAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [StaffAuthController::class, 'profileUpdate']);
       Route::post('/password/update', [StaffAuthController::class, 'passwordUpdate']);

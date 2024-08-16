@@ -254,7 +254,7 @@ public function UpdateView($id){
    }
 }
 
-     public function staffAuthLogout(Request $request)
+    public function staffAuthLogout(Request $request)
     {
         // dd($request->all()); 
 
