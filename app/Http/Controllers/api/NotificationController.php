@@ -33,7 +33,7 @@ class NotificationController extends Controller
     // }
  
 public function create(Request $request)
-{
+{ 
     $validator = Validator::make($request->all(), [
         'title' => 'required|string|min:1|max:255',
         'description' => ['nullable', 'string', 'min:1', 'max:250'],
