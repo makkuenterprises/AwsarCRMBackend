@@ -128,9 +128,9 @@ Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
 
 
 
-Route::group(['middleware' => ['admin']], function() {
+Route::group(['middleware' => ['admin']], function() { 
 
-// ATTENDANCE ADMIN=============================================================================================
+// ATTENDANCE ADMIN===============================================================================
 
 Route::prefix('attendance')->group(function () { 
 
@@ -139,7 +139,6 @@ Route::prefix('attendance')->group(function () {
      
 });  
 
-Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
 
 Route::prefix('student')->group(function () {
       
@@ -420,7 +419,6 @@ Route::prefix('student')->group(function () {
 
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
-Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
  
 
 
@@ -575,6 +573,9 @@ Route::get('dashboard-data', [PaymentGatewayController::class, 'dashboardaData']
 Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData']);
 Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
 
+
+Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
+Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
 
 
 
