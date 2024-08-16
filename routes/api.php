@@ -109,8 +109,7 @@ Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesBySt
 Route::get('/payment-gateways', [PaymentGatewayController::class, 'index']);
 Route::post('/payment-gateways', [PaymentGatewayController::class, 'store']);
  
-Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData']);
-Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
+
  
 });    
 
@@ -572,7 +571,8 @@ Route::get('all/community', [BlogController::class, 'list']);
 
 Route::get('dashboard-data', [PaymentGatewayController::class, 'dashboardaData']);
 
-
+Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData']);
+Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
 
 
 
