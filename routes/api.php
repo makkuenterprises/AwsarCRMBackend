@@ -102,7 +102,6 @@ Route::get('/community/{id}', [BlogController::class, 'show']);
 
 Route::get('/invoices', [InvoiceController::class, 'getAllInvoices']);
 Route::post('/invoices/student', [InvoiceController::class, 'getAllInvoicesByStudent']);
-Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
 
 //  payment Gateway============================================================
 
@@ -574,6 +573,7 @@ Route::get('student-overview', [PaymentGatewayController::class, 'fetchChartData
 Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOvervieww']);
 
 
+Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
 
 
 
