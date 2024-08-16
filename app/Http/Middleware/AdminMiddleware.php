@@ -26,7 +26,7 @@ class AdminMiddleware
         return $next($request);
 
         }
-            return response()->json(['message' => 'Unauthorized, please log in as admin'], 401);
+        return response()->json(['message' => 'Unauthorized, please log in as admin'], 401);
 
     } 
 }

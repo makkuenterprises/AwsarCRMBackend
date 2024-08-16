@@ -67,10 +67,16 @@ class PaymentGatewayController extends Controller
     }
 
 
-
+ 
     public function dashboardaData()
     {
         try {
+            $staff = Auth::guard('staff')->user();
+         $student = Auth::guard('student')->user();
+         $teacher = Auth::guard('teacher')->user();
+        $admin = Auth::guard('admin')->user();
+
+          if ($student || $admin || $staff || $teacher) {
             $teachersCount = Teacher::count();
             $studentsCount = Student::count();
             $staffCount = StaffModel::count();
@@ -118,6 +124,12 @@ $otherPaymentStatusStudentsCount = DB::table('students')
                     'unpaidPaymentStatusStudentsCount' => $otherPaymentStatusStudentsCount,
                 ], 
             ], 200);
+            }else{
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 401);
+        }
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -131,6 +143,12 @@ $otherPaymentStatusStudentsCount = DB::table('students')
 public function fetchChartData(Request $request)
 {
     try {
+           $staff = Auth::guard('staff')->user();
+         $student = Auth::guard('student')->user();
+         $teacher = Auth::guard('teacher')->user();
+        $admin = Auth::guard('admin')->user();
+
+          if ($student || $admin || $staff || $teacher) {
         $duration = $request->query('duration', 'month'); // default to monthly data
         $data = $this->getChartData($duration);
 
@@ -138,6 +156,12 @@ public function fetchChartData(Request $request)
             'success' => true,
             'data' => $data,
         ], 200);
+        }else{
+             return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 401);
+        }
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
