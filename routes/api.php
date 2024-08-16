@@ -127,7 +127,7 @@ Route::get('/slider-images', [ImagesSlidesController::class, 'showImages']);
 
 
 // }); 
-
+ 
 
 
 
