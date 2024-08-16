@@ -331,7 +331,6 @@ Route::prefix('teacher')->group(function () {
 
 });  
 
-// adminmiddleware
 Route::middleware(['teacher'])->group(function () {
 Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
 
