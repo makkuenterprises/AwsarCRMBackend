@@ -22,10 +22,10 @@ class AdminMiddleware
         return $next($request);
 
         }
-        // if (Auth::guard('staff')->check()) {
-        // return $next($request);
+        if (Auth::guard('staff')->check()) {
+        return $next($request);
 
-        // }
+        }
             return response()->json(['message' => 'Unauthorized, please log in as admin'], 401);
 
     } 

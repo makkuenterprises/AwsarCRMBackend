@@ -299,9 +299,8 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 Route::prefix('staff')->group(function () {
       Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
-      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']);
-
-}); 
+      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']); 
+});  
 
 
 Route::middleware(['staff'])->group(function () {
