@@ -261,7 +261,7 @@ public function UpdateView($id){
 
 public function staffAuthLogout(Request $request)
 {
-        dd($request->all());
+        // dd($request->all()); 
 
        $staff = Auth::guard('staff')->user();
         
