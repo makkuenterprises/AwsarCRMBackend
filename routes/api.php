@@ -302,7 +302,7 @@ Route::prefix('staff')->group(function () {
 }); 
 
 
-Route::middleware(['staff'])->group(function () {
+// Route::middleware(['staff'])->group(function () {
 
 Route::prefix('staff')->group(function () {
 
@@ -313,7 +313,7 @@ Route::prefix('staff')->group(function () {
 
 }); 
 
-}); 
+// }); 
 
 
 
