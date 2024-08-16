@@ -200,7 +200,7 @@ public function getAllInvoicesByStudent(Request $request)
 
 public function getAllInvoicesByStudentDownload(Request $request)
 {
-    dd($request->all());
+    // dd($request->all());
     try {
 
         $validatedData = $request->validate([ 
