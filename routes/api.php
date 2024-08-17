@@ -367,30 +367,7 @@ Route::prefix('attendance')->group(function () {
 
 }); 
 
-// ------------------------------------------------------------------------------------------------
-// NOTIFICATION ROUTES
-// ------------------------------------------------------------------------------------------------
 
-Route::prefix('notice')->group(function () {
-
-      Route::post('/create', [NotificationController::class, 'create']);
-      Route::get('/list', [NotificationController::class, 'List']);
-
-}); 
- 
-Route::prefix('course')->group(function () {
-      Route::get('/list', [CourseController::class, 'courseList']);
-}); 
-
-// ------------------------------------------------------------------------------------------------
-// STUDY MATERIALS UPLOAD
-// ------------------------------------------------------------------------------------------------
-
-Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
-Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
-Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
-Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 // }); 
   
@@ -576,7 +553,30 @@ Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesBySt
 
 
 
+// ------------------------------------------------------------------------------------------------
+// NOTIFICATION ROUTES
+// ------------------------------------------------------------------------------------------------
 
+Route::prefix('notice')->group(function () {
+
+      Route::post('/create', [NotificationController::class, 'create']);
+      Route::get('/list', [NotificationController::class, 'List']);
+
+}); 
+ 
+Route::prefix('course')->group(function () {
+      Route::get('/list', [CourseController::class, 'courseList']);
+}); 
+
+// ------------------------------------------------------------------------------------------------
+// STUDY MATERIALS UPLOAD
+// ------------------------------------------------------------------------------------------------
+
+Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
+Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
+Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+// Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
 }); 
