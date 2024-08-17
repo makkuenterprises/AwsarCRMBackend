@@ -290,7 +290,7 @@ public function downloadMaterial(Request $request)
  
     // Decode the file path from URL encoding
     $filePath = urldecode($filePath);
-    dd($filePath);
+    // dd($filePath);
 
     // Find the study material by ID
     $studyMaterial = StudyMaterials::find($id);
@@ -315,13 +315,13 @@ public function downloadMaterial(Request $request)
     }
  
     // Check if the file path exists in the material_paths JSON
-    if (!in_array($filePath, $materialPaths)) {
-        return response()->json([
-            'status' => 'error',
-            'code' => 404,
-            'message' => 'File not found in study material paths.',
-        ], 404);
-    }
+    // if (!in_array($filePath, $materialPaths)) {
+    //     return response()->json([
+    //         'status' => 'error',
+    //         'code' => 404,
+    //         'message' => 'File not found in study material paths.',
+    //     ], 404);
+    // }
 
     // Check if the material is a URL
     if (filter_var($filePath, FILTER_VALIDATE_URL)) {
