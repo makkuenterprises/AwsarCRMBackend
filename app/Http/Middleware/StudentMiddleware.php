@@ -18,22 +18,22 @@ class StudentMiddleware
     public function handle(Request $request, Closure $next): Response
     {
        
-        // if (Auth::guard('admin')->check()) {
-        // return $next($request);
+        if (Auth::guard('admin')->check()) {
+        return $next($request);
 
-        // }
-        // if (Auth::guard('staff')->check()) {
-        // return $next($request);
+        }
+        if (Auth::guard('staff')->check()) {
+        return $next($request);
 
-        // }
+        }
          if (Auth::guard('student')->check()) {
         return $next($request);
 
         }
-        //  if (Auth::guard('teacher')->check()) {
-        // return $next($request);
+         if (Auth::guard('teacher')->check()) {
+        return $next($request);
 
-        // }
+        }
 
         return response()->json(['message' => 'Unauthorized, please log in as student'], 401);
 
