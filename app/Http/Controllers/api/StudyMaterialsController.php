@@ -290,12 +290,12 @@ public function downloadMaterial(Request $request)
  
     // Decode the file path from URL encoding
     $filePath = urldecode($filePath);
+    dd($filePath);
 
     // Find the study material by ID
     $studyMaterial = StudyMaterials::find($id);
 
     if (!$studyMaterial) {
-        \Log::error("Study material not found for ID: $id");
         return response()->json([
             'status' => 'error',
             'code' => 404,
@@ -307,7 +307,6 @@ public function downloadMaterial(Request $request)
     $materialPaths = json_decode($studyMaterial->material_path, true);
 
     if (empty($materialPaths)) {
-        \Log::error("No files found for download in study material ID: $id");
         return response()->json([
             'status' => 'error',
             'code' => 404,
