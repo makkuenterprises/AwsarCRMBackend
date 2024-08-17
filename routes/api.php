@@ -400,7 +400,7 @@ Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'Teacher
 
 });   
  
-// Route::middleware(['admin'])->group(function () {
+Route::middleware(['admin'])->group(function () {
 
 // ATTENDANCE STUDENT=============================================================================================
 
@@ -576,7 +576,7 @@ Route::get('study-materials', [StudyMaterialsController::class, 'index']);
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 
 
-// }); 
+}); 
 
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
