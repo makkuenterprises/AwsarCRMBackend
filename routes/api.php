@@ -382,11 +382,11 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 
 Route::middleware(['student'])->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 
 
 
 Route::prefix('student')->group(function () {
+Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 
       Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
