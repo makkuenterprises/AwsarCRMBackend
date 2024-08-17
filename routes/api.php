@@ -574,11 +574,11 @@ Route::prefix('course')->group(function () {
 Route::post('study-material/upload', [StudyMaterialsController::class, 'store']);
 Route::get('study-materials', [StudyMaterialsController::class, 'index']); 
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
 }); 
 
-Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
 
