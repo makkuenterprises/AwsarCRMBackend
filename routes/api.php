@@ -374,7 +374,7 @@ Route::prefix('attendance')->group(function () {
 // ------------------------------------------------------------------------------------------------
 // STUDENT PANEL ROUTES 
 // ------------------------------------------------------------------------------------------------
-
+ 
 Route::prefix('student')->group(function () {
 Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 
@@ -382,24 +382,25 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 
 Route::middleware(['student'])->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
+Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
+
 
 
 Route::prefix('student')->group(function () {
 
-      Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
       Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
       Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
 
 });  
-
+ 
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
  
 Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
 
 });   
  
-Route::middleware(['admin'])->group(function () {
+// Route::middleware(['admin'])->group(function () {
 
 // ATTENDANCE STUDENT=============================================================================================
 
@@ -575,7 +576,7 @@ Route::get('study-materials', [StudyMaterialsController::class, 'index']);
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 
 
-}); 
+// }); 
 
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
