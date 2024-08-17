@@ -382,7 +382,6 @@ Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
 
 Route::middleware(['student'])->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
-Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
 Route::prefix('student')->group(function () {
@@ -578,6 +577,7 @@ Route::get('student/study-materials/{course_id}', [StudyMaterialsController::cla
 
 }); 
 
+Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
 
 
