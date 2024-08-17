@@ -420,6 +420,7 @@ Route::prefix('student')->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
  
+Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
 
 
 
@@ -575,7 +576,7 @@ Route::get('student-chart-data', [PaymentGatewayController::class, 'getStudentOv
 
 
 Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesByStudentDownload']);
-Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
+
 
 
 
