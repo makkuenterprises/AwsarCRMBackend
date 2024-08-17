@@ -50,7 +50,7 @@ Route::get('rollback', function() {
         // Get the output of the command
         $output = Artisan::output();
 
-        // Check if the command was successful
+        // Check if the command was successful 
         if ($exitCode === 0) {
             return response()->json(['message' => 'Application rollback completed', 'output' => $output], 200);
         } else {

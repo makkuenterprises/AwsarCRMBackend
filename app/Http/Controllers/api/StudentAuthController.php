@@ -195,10 +195,10 @@ class StudentAuthController extends Controller
 
     public function studentAuthLogout(Request $request)
     {
-       $admin = Auth::guard('student')->user();
+       $student = Auth::guard('student')->user();
         
-        if ($admin) {
-            $admin->tokens()->where('student', 'AwsarClass')->delete();
+        if ($student) {
+            $student->tokens()->delete();
         }
 
         return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
