@@ -261,7 +261,7 @@ public function UpdateView($id){
        $staff = Auth::guard('staff')->user();
         
         if ($staff) {
-            $staff->tokens()->where('name', 'AwsarClass')->delete();
+            $staff->tokens()->delete();
         }
 
         return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);

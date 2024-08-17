@@ -241,7 +241,7 @@ class AdminAuthController extends Controller
        $admin = Auth::guard('admin')->user();
         
         if ($admin) {
-            $admin->tokens()->where('name', 'AwsarClass')->delete();
+             $admin->tokens()->delete();
         }
 
         return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
