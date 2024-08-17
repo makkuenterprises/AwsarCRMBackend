@@ -402,7 +402,6 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 Route::prefix('student')->group(function () {
 Route::post('/login',[StudentAuthController::class,'studentAuthLogin']);
-Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 
 });
 
@@ -410,6 +409,8 @@ Route::middleware(['student'])->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 
 Route::prefix('student')->group(function () {
+Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
+
 
       Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
@@ -421,8 +422,6 @@ Route::get('student/study-materials/{course_id}', [StudyMaterialsController::cla
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
  
 Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
-
-
 
 }); 
  
