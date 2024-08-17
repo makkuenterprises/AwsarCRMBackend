@@ -392,12 +392,12 @@ Route::get('student/study-materials/{course_id}', [StudyMaterialsController::cla
 // Route::get('study-material/download/{id}/{filePath}', [StudyMaterialsController::class, 'downloadMaterial']);
 Route::post('study-material/download', [StudyMaterialsController::class, 'downloadMaterial']);
 
-// });
+// }); 
   
 
 
 // ------------------------------------------------------------------------------------------------
-// STUDENT PANEL ROUTES
+// STUDENT PANEL ROUTES 
 // ------------------------------------------------------------------------------------------------
 
 Route::prefix('student')->group(function () {
@@ -409,9 +409,8 @@ Route::middleware(['student'])->group(function () {
 Route::get('student/study-materials/{course_id}', [StudyMaterialsController::class, 'studentMaterials']);
 
 Route::prefix('student')->group(function () {
-Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
 
-
+      Route::post('/logout',[StudentAuthController::class,'studentAuthLogout']);
       Route::get('/view/profile/update/{id}', [StudentAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [StudentAuthController::class, 'profileUpdate']);
       Route::post('/password/update', [StudentAuthController::class, 'passwordUpdate']);
@@ -425,6 +424,7 @@ Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'Teacher
 
 }); 
  
+Route::middleware(['admin'])->group(function () {
 
 // ATTENDANCE STUDENT=============================================================================================
 
@@ -555,9 +555,7 @@ Route::get('/zoom/meeting/{id}', [ZoomController::class, 'viewMeeting']);
 
 Route::post('/user/meetings', [ZoomController::class, 'getUserMeetings']);
 
-Route::middleware(['api'])->group(function () {
 Route::get('/zoom-meetings', [ZoomController::class, 'getAllMeetings']); 
-}); 
 
 
 Route::get('show/class-routines/{course_id}', [ClassRoutineController::class, 'showClassRoutine']);
@@ -581,6 +579,7 @@ Route::post('/invoices/download', [InvoiceController::class, 'getAllInvoicesBySt
 
 
 
+}); 
 
 
 
