@@ -63,7 +63,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('admin')->group(function () {
 
 Route::post('/login',[AdminAuthController::class,'adminAuthLogin'])->name('admin.login');
-Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
 
 
 });  
@@ -71,6 +70,8 @@ Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
 Route::group(['middleware'=>'admin'],function(){ 
   
 Route::prefix('admin')->group(function () {
+Route::post('/logout',[AdminAuthController::class,'adminAuthLogout']);
+
 
 Route::get('/view/profile/update/{id}', [AdminAuthController::class, 'profileUpdateView']);
 Route::post('/profile/update/{id}', [AdminAuthController::class, 'profileUpdate']);
@@ -298,13 +299,13 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 Route::prefix('staff')->group(function () {
       Route::post('/login',[StaffAuthController::class,'staffAuthLogin']);
-      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']); 
 });  
 
 
 Route::middleware(['staff'])->group(function () {
 
 Route::prefix('staff')->group(function () {
+      Route::post('/logout',[StaffAuthController::class,'staffAuthLogout']); 
 
       Route::get('/view/profile/update/{id}', [StaffAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [StaffAuthController::class, 'profileUpdate']);
@@ -327,16 +328,15 @@ Route::prefix('staff')->group(function () {
 Route::prefix('teacher')->group(function () {
  
       Route::post('/login',[TeacherAuthController::class,'teacherAuthLogin']);
-      Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
 
 
 });  
 
 Route::middleware(['teacher'])->group(function () {
-Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
 
-      
+Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
 Route::prefix('teacher')->group(function () {
+      Route::post('/logout',[TeacherAuthController::class,'teacherAuthLogout']);
 
       Route::get('/view/profile/update/{id}', [TeacherAuthController::class, 'profileUpdateView']);
       Route::post('/profile/update/{id}', [TeacherAuthController::class, 'profileUpdate']);
@@ -422,7 +422,7 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
  
 Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'TeachersLists']);
 
-}); 
+});   
  
 Route::middleware(['admin'])->group(function () {
 
