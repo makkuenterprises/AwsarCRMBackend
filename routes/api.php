@@ -507,7 +507,7 @@ Route::post('/exam/preview', [ExamController::class, 'getExamDetails']);
 Route::post('all/exam', [ExamController::class, 'getExamsForStudent']);
 
 Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch']);
-// Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']); this is
+Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
  
 
 Route::post('/exam-responses', [ExamResponseController::class, 'storeExamResponse']);
@@ -581,6 +581,5 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 
 
-Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
 
 
