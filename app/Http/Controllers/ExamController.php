@@ -231,17 +231,30 @@ public function listQuestionsForExam($examId)
         // Get all sections associated with the exam
         $sections = Section::where('exam_id', $examId)
             ->with(['examQuestions.question']) // Load questions for each section
-            ->get();
+            ->get(); 
 
         // Prepare the result
-        $data = $sections->map(function ($section) {
+        $data = $sections->map(function ($section) { 
             return [
                 'section_id' => $section->id,
                 'section_name' => $section->name,
                 'questions' => $section->examQuestions->map(function ($examQuestion) {
+
+                    $question = $examQuestion->question;
+
+                // Check if the image path exists
+                if ($question->image) {
+                    // Generate a URL for the image stored in the 'public' disk
+                    $question_img = url(Storage::url($question->image));
+                } else {
+                    // Set image to null if not present
+                    $question_img = null;
+                }
+
                     return [
-                        'question_id' => $examQuestion->question_id,
+                        'question_id' => $examQuestion->question_id, 
                         'question_text' => $examQuestion->question->question_text,
+                        'question_img' => $question_img,
                         'question_type' => $examQuestion->question->question_type,
                         'options' => $examQuestion->question->options,
                         'correct_answers' => $examQuestion->question->correct_answers,
