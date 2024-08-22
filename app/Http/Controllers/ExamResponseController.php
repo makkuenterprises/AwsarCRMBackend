@@ -179,7 +179,7 @@ public function storeExamResponse(Request $request)
 
             return response()->json([
             'status' => true,
-            'message' => 'You have already had exam.',
+            'message' => 'You have already completed this exam..',
             
         ], 422); 
         } else {
