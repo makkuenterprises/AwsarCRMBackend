@@ -168,14 +168,20 @@ public function storeExamResponse(Request $request)
 
         if ($examResponse) {
             // Update the existing record
-            $examResponse->update([
-                'total_marks' => $totalMarks,
-                'gained_marks' => $gainedMarks,
-                'passing_marks' => $validated['passing_marks'] ?? 0,
-                'negative_marks' => $request->input('negative_marks', 0),
-                'total_correct_answers' => $totalCorrectAnswers,
-                'total_wrong_answers' => $totalWrongAnswers,
-            ]);
+            // $examResponse->update([
+            //     'total_marks' => $totalMarks,
+            //     'gained_marks' => $gainedMarks,
+            //     'passing_marks' => $validated['passing_marks'] ?? 0,
+            //     'negative_marks' => $request->input('negative_marks', 0),
+            //     'total_correct_answers' => $totalCorrectAnswers,
+            //     'total_wrong_answers' => $totalWrongAnswers,
+            // ]);
+
+            return response()->json([
+            'status' => true,
+            'message' => 'You have already had exam.',
+            
+        ], 422);
         } else {
             // Create a new record
             $examResponse = new ExamResponse();
