@@ -181,7 +181,7 @@ public function storeExamResponse(Request $request)
             'status' => true,
             'message' => 'You have already had exam.',
             
-        ], 422);
+        ], 422); 
         } else {
             // Create a new record
             $examResponse = new ExamResponse();
