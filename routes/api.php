@@ -510,7 +510,7 @@ Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch'
 Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
  
 
-// Route::post('/exam-responses', [ExamResponseController::class, 'storeExamResponse']);
+Route::post('/exam-responses', [ExamResponseController::class, 'storeExamResponse']);
 Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::class, 'calculateMarks']);
 
 
@@ -581,6 +581,5 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 
 
 
-Route::post('/exam-responses', [ExamResponseController::class, 'storeExamResponse']);
 
 
