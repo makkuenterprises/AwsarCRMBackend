@@ -85,13 +85,13 @@ $menuList = [
                 'to' => 'live-classes',
           
     ],
-    [
-        'title' => 'Attendance',
-        'classChange' => 'mm-collapse',
-        'iconStyle' => '<i className="material-icons">event_note</i>',
-         'to' => 'attendance-list-for-teacher',
+    // [
+    //     'title' => 'Attendance',
+    //     'classChange' => 'mm-collapse',
+    //     'iconStyle' => '<i className="material-icons">event_note</i>',
+    //      'to' => 'attendance-list-for-teacher',
          
-    ],
+    // ],
     [
         'title' => 'Study Material',
         'classChange' => 'mm-collapse',
