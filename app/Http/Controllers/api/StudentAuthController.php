@@ -306,16 +306,16 @@ public function TeachersLists($student_id) {
                 'courses.name as course_name'
             )
             ->distinct()
-            ->get();
+            ->get(); 
 
         // Group by teacher ID and aggregate course names
         $teachersGrouped = $teachers->groupBy('id')->map(function ($group) {
-            $teacher = $group->first(); // Take the first entry (all entries are the same for a teacher)
-            $teacher->courses = $group->pluck('course_name')->unique()->values(); // Collect unique course names
+            $teacher = $group->first();      
+            $teacher->courses = $group->pluck('course_name')->unique()->values(); 
             $teacher->image = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
-            $teacher->subject = $teacher->subject;
+             $teacher->subject = json_decode($teacher->subject, true); 
             return $teacher;
-        });
+        }); 
 
         return response()->json($teachersGrouped->values()); 
     } catch (\Exception $e) {
