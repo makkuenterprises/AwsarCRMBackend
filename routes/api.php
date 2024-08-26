@@ -141,6 +141,16 @@ Route::prefix('attendance')->group(function () {
 });  
 
 
+Route::prefix('teacher')->group(function () {
+
+      Route::post('/register', [TeacherAuthController::class, 'teacherCreate']); 
+      Route::get('/list', [TeacherAuthController::class, 'teacherList']);
+      Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
+      Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
+      Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
+      
+}); 
+
 Route::prefix('student')->group(function () {
       
         Route::get('/list', [StudentAuthController::class, 'StudentList']);
@@ -581,14 +591,6 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 }); 
 
 
-Route::prefix('teacher')->group(function () {
 
-      Route::post('/register', [TeacherAuthController::class, 'teacherCreate']); 
-      Route::get('/list', [TeacherAuthController::class, 'teacherList']);
-      Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
-      Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
-      Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
-      
-}); 
 
 

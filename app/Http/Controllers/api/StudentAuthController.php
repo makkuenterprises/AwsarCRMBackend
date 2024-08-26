@@ -9,8 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Image;
 use App\Models\Student;
-use App\Models\Course;
-
+use App\Models\Course;   
 use DB; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http; 
