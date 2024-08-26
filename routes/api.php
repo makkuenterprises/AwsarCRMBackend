@@ -162,14 +162,15 @@ Route::prefix('student')->group(function () {
 // TEACHER CREATE ROUTES
 // ------------------------------------------------------------------------------------------------    
 
-Route::prefix('teacher')->group(function () {
+// Route::prefix('teacher')->group(function () {
 
-      Route::post('/register', [TeacherAuthController::class, 'teacherCreate']);
-      Route::get('/list', [TeacherAuthController::class, 'teacherList']);
-      Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
-      Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
-      Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
-});  
+//       Route::post('/register', [TeacherAuthController::class, 'teacherCreate']); 
+//       Route::get('/list', [TeacherAuthController::class, 'teacherList']);
+//       Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
+//       Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
+//       Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
+
+// });  
 
 // ------------------------------------------------------------------------------------------------
 // STAFF CREATE ROUTES
@@ -580,6 +581,14 @@ Route::post('study-material/download', [StudyMaterialsController::class, 'downlo
 }); 
 
 
+Route::prefix('teacher')->group(function () {
 
+      Route::post('/register', [TeacherAuthController::class, 'teacherCreate']); 
+      Route::get('/list', [TeacherAuthController::class, 'teacherList']);
+      Route::get('view/update/{id}/', [TeacherAuthController::class, 'UpdateView']);
+      Route::post('update/{id}', [TeacherAuthController::class, 'updateTeacher']);
+      Route::delete('delete/{id}', [TeacherAuthController::class, 'deleteTeacher']);
+      
+}); 
 
 

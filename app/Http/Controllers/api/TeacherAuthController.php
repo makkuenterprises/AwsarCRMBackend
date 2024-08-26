@@ -13,7 +13,7 @@ use Image;
 use App\Models\Student; 
 use App\Models\Course;
 
-use DB;
+use DB; 
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
@@ -85,7 +85,7 @@ $menuList = [
                 'to' => 'live-classes',
           
     ],
-    // [
+    // [ 
     //     'title' => 'Attendance',
     //     'classChange' => 'mm-collapse',
     //     'iconStyle' => '<i className="material-icons">event_note</i>',
@@ -155,9 +155,7 @@ $menuList = [
         'iconStyle' => '<i className="material-icons">settings</i>',
         'to' => 'teacher/settings',
     ],
-];
-
-            
+];   
             $data = [
             'teacher' => [
             'id' => $user->id,
@@ -177,7 +175,7 @@ $menuList = [
 
             ],
                 'token' => $token,
-                'message' => 'Login Successfully',
+                'message' => 'Login Successfully',   
                 'role' => $menuList,
             ];
         }
@@ -247,7 +245,7 @@ public function teacherList()
 
 
 
- public function UpdateView($id){
+public function UpdateView($id){
    $teacher = Teacher::find($id);
   $imagePath = $teacher ? ($teacher->image ? url('/Teachers/' . $teacher->image) : null) : null;
 
@@ -271,7 +269,7 @@ public function teacherList()
         return response()->json(['status'=>true,'code'=>200,'message' => 'Successfully logged out']);
     }
 
-
+ 
     public function teacherCreate(Request $request)
 {
     // Validate request inputs
@@ -284,13 +282,13 @@ public function teacherList()
         'city' => 'nullable|string|min:1|max:250',
         'state' => 'nullable|string|min:1|max:250',
         'qualification' => 'nullable|string|min:1|max:250',
-        // 'classes' => 'required|array',
+        'subject' => 'required|array',     
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'password' => 'required|string|min:6|confirmed',
     ]);
 
     // If validation fails, return errors
-    if ($validator->fails()) {
+    if ($validator->fails()) { 
         return response()->json([
             'status' => false,
             'code' => 400,
@@ -313,9 +311,10 @@ public function teacherList()
                 $constraint->aspectRatio();
             })->save($destinationPath . '/' . $fileName);
         }
+
         // Create new Teacher
         $teacher = new Teacher();
-        $teacher->name = $request->input('name'); 
+        $teacher->name = $request->input('name');  
         $teacher->email = $request->input('email');
         $teacher->phone = $request->input('phone');
         $teacher->street = $request->input('street');
@@ -325,15 +324,15 @@ public function teacherList()
         $teacher->qualification = $request->input('qualification');
         $teacher->image = $fileName;
         $teacher->password = Hash::make($request->input('password'));
-        // $teacher->classes = $request->input('classes');
+        $teacher->classes = $request->input('classes');
         $teacher->save();
 
         // Commit transaction
-        DB::commit();
+        DB::commit();  
 
         $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
 
-        return response()->json([
+        return response()->json([      
             'status' => true,
             'code' => 200,
             'message' => 'Teacher registered successfully',

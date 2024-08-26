@@ -81,12 +81,9 @@ class StudentAuthController extends Controller
            ->leftJoin('courses_enrollements', 'students.id', '=', 'courses_enrollements.student_id')
            ->leftJoin('courses', 'courses_enrollements.course_id', '=', 'courses.id')
            ->select('students.*', 'courses.name as course_name')
-           ->first();
-
-  
-
-            $code = 200;
-    $menuList = [
+           ->first();   
+            $code = 200; 
+            $menuList = [
     [
         'title' => 'Dashboard',
         'iconStyle' => '<i className="material-icons">home</i>',
@@ -151,9 +148,6 @@ class StudentAuthController extends Controller
         'to' => 'student/settings',
     ],
 ];
-
-
- 
             $data = [
             'student' => [
             'id' => $user->id,
@@ -195,7 +189,7 @@ class StudentAuthController extends Controller
 
     public function studentAuthLogout(Request $request)
     {
-       $student = Auth::guard('student')->user();
+       $student = Auth::guard('student')->user();  
         
         if ($student) {
             $student->tokens()->delete();
@@ -289,6 +283,7 @@ class StudentAuthController extends Controller
     }
     } 
 
+     
 public function TeachersLists($student_id) {
     try {
         $teachers = DB::table('courses_enrollements')
