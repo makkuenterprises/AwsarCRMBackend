@@ -27,8 +27,8 @@ class Teacher extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',  
-        'subject'
+        'password'
+        
     ];
      public function courses()
     {
@@ -44,8 +44,8 @@ class Teacher extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token', 
-    ]; 
+        'remember_token',
+    ];
 
     /**
      * The attributes that should be cast.
@@ -55,6 +55,7 @@ class Teacher extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'subject' => 'array', 
+          'classes' => 'array',
+          'subject' => 'array',
     ];
 }

@@ -278,11 +278,11 @@ public function UpdateView($id){
         'email' => 'required|string|email|max:255|unique:teachers',
         'phone' => 'required|numeric|digits:10|unique:teachers',
         'street' => 'nullable|string|min:1|max:250', 
-        'postal_code' => 'nullable|numeric|digits:6',
-        'city' => 'nullable|string|min:1|max:250',
+        'postal_code' => 'nullable|numeric|digits:6',      
+        'city' => 'nullable|string|min:1|max:250',   
         'state' => 'nullable|string|min:1|max:250',
         'qualification' => 'nullable|string|min:1|max:250',
-        'subject' => 'required|array',     
+        'subject' => 'required|array',      
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'password' => 'required|string|min:6|confirmed',
     ]);
@@ -324,11 +324,11 @@ public function UpdateView($id){
         $teacher->qualification = $request->input('qualification');
         $teacher->image = $fileName;
         $teacher->password = Hash::make($request->input('password'));
-        $teacher->classes = $request->input('classes');
+        $teacher->subject = $request->input('subject', []);
         $teacher->save();
 
         // Commit transaction
-        DB::commit();  
+        DB::commit();   
 
         $imagePath = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
 
