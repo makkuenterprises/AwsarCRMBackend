@@ -296,7 +296,7 @@ public function TeachersLists($student_id) {
                 'teachers.name', 
                 'teachers.email', 
                 'teachers.phone', 
-                'teachers.street', 
+                'teachers.street',     
                 'teachers.postal_code', 
                 'teachers.city', 
                 'teachers.state', 
