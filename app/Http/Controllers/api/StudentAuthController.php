@@ -280,7 +280,7 @@ class StudentAuthController extends Controller
         return response()->json(['status'=> false,'code'=>500,'message' => 'An error occurred while registering students','data' => $data,], 500);
          
     }
-    } 
+    }  
 
      
 public function TeachersLists($student_id) {
@@ -313,10 +313,11 @@ public function TeachersLists($student_id) {
             $teacher = $group->first(); // Take the first entry (all entries are the same for a teacher)
             $teacher->courses = $group->pluck('course_name')->unique()->values(); // Collect unique course names
             $teacher->image = $teacher->image ? url('/Teachers/' . $teacher->image) : null;
+            $teacher->subject = $teacher->subject;
             return $teacher;
         });
 
-        return response()->json($teachersGrouped->values());
+        return response()->json($teachersGrouped->values()); 
     } catch (\Exception $e) {
         // Log the exception message
         Log::error('Error fetching teachers: ' . $e->getMessage());
