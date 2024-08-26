@@ -12,7 +12,7 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 
 class DashboardData extends Controller
-{
+{ 
     public function dashboardaData()
     {
         try {

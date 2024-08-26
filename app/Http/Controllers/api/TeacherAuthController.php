@@ -81,16 +81,14 @@ $menuList = [
         'title' => 'Live Classes',
         'classChange' => 'mm-collapse',
         'iconStyle' => '<i className="material-icons">live_tv</i>',
-       
-                'to' => 'live-classes',
+        'to' => 'live-classes',
           
     ],
-    // [ 
+    // [   
     //     'title' => 'Attendance',
     //     'classChange' => 'mm-collapse',
     //     'iconStyle' => '<i className="material-icons">event_note</i>',
     //      'to' => 'attendance-list-for-teacher',
-         
     // ],
     [
         'title' => 'Study Material',
@@ -188,7 +186,7 @@ $menuList = [
 // public function teacherList(){
 //     $teacher = Teacher::orderByDesc('id')->get();
 //     return response()->json(['status'=>true,'code'=>200,'data'=>$teacher]);
-// }
+// }    
 
 public function teacherList() 
 {
