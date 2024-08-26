@@ -222,7 +222,7 @@ public function teacherList()
             $teacherArray['courses'] = $courses->pluck('course_name'); // Get only the course names
 
             // Append teacher's information and courses to the allCourses array
-            $allCourses[] = $teacherArray;
+            $allCourses[] = $teacherArray; 
         }
 
         return response()->json([
@@ -366,9 +366,9 @@ public function UpdateView($id){
         'qualification' => 'nullable|string|min:1|max:250',
 
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
-            // 'classes' => 'nullable|array',
             'image' => 'nullable',
-            // 'password' => 'required|string|min:6|confirmed',
+        'subject' => 'required|array',      
+
         ]);
 
          if ($validator->fails()) {
@@ -393,6 +393,8 @@ public function UpdateView($id){
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
             $teacher->qualification = $request->input('qualification');
+            $teacher->subject = $request->input('subject', []);
+
             // $teacher->password =Hash::make($request->password);
             // $teacher->classes =$request->input('classes');
 
