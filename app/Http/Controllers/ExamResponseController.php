@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
 use App\Models\ExamQuestionResponse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
