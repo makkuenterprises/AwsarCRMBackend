@@ -22,6 +22,7 @@ class StudentAuthController extends Controller
      $login = $request->validate([
         'email' => 'required|email',
         'password' => 'required|string',
+        'source' => 'required|string',
         'one_signal_id' => 'nullable',
     ]);
     try {
