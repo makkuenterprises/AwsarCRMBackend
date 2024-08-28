@@ -224,7 +224,7 @@ public function listExamsForBatch($batchId)
 } 
  
 
-public function listExams($batchId)
+public function listExams()
 {
     try {
         // Fetch all exams associated with the specific batch
