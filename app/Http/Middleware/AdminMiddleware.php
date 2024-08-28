@@ -31,7 +31,7 @@ class AdminMiddleware
         return $next($request);
 
         }
-         if (Auth::guard('teacher')->check()) {
+        if (Auth::guard('teacher')->check()) {
         return $next($request);
 
         }
