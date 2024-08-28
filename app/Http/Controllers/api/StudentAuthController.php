@@ -46,9 +46,9 @@ class StudentAuthController extends Controller
         } else {
 
             $user->one_signal_id=$request->input('one_signal_id');
-             $user->save(); 
+            $user->save(); 
 
-           $imagePath = url('/Student/' . $user->image);
+           $imagePath = url('/Student/' . $user->image); 
 
            $webtoken = $user->createToken('AwsarClassWeb')->plainTextToken; 
            $apptoken = $user->createToken('AwsarClassApp')->plainTextToken; 
@@ -173,7 +173,7 @@ class StudentAuthController extends Controller
             'enrollCourseCount' =>$enrollCourseCount,
             'enrollTeacherCount' => $teacherCount
             ],
-            'webtoken' => $webtoken, 
+            'token' => $webtoken, 
             'apptoken' => $apptoken, 
              'message' => 'Login Successfully',
              'role' => $menuList,
