@@ -318,120 +318,6 @@ public function listQuestionsForExam($examId)
     }
 }
 
-public function getExamDetails(Request $request)
-{
-    try {
-        // Retrieve batchId and examId from the request
-        $batchId = $request->input('batchId');
-        $examId = $request->input('examId');
-
-        // Validate the inputs
-        if (!$batchId || !$examId) {
-            return response()->json([
-                'status' => false,
-                'code' => 400,
-                'message' => 'batchId and examId are required'
-            ], 400);
-        }
-
-        // Fetch the exam associated with the specific batch and exam ID
-        $exam = Exam::where('batch_id', $batchId)
-                    ->where('id', $examId)
-                    ->first(['id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at']);
-
-        // Check if the exam is found
-        if (!$exam) {
-            return response()->json([
-                'status' => false,
-                'code' => 404,
-                'message' => 'No exam found for the specified batch and exam ID'
-            ], 404);
-        }
-
-        // Calculate the duration
-        $startTime = Carbon::parse($exam->start_time);
-        $endTime = Carbon::parse($exam->end_time);
-        $durationInMinutes = $startTime->diffInMinutes($endTime);
-
-        // Retrieve sections for the exam and include questions
-        $sections = Section::where('exam_id', $exam->id)
-            ->with(['examQuestions.question']) // Load questions for each section
-            ->get(['id', 'name']);
-
-        $sectionDetails = $sections->map(function ($section) use ($exam) {
-            // Get all questions for the section
-            $questions = $section->examQuestions->map(function ($examQuestion) {
-                $question = $examQuestion->question;
-
-                // Check if the image path exists
-                $question_img = $question->image ? url(Storage::url($question->image)) : null;
-
-                return [
-                    'question_id' => $examQuestion->question_id,
-                    'question_text' => $question->question_text,
-                    'question_img' => $question_img,
-                    'question_type' => $question->question_type,
-                    'options' => $question->options,
-                    'correct_answers' => $question->correct_answers,
-                    'marks' => $examQuestion->marks,
-                    'negative_marks' => $examQuestion->negative_marks,
-                ];
-            });
-
-            // Calculate total marks and question count per section
-            $totalMarks = $questions->sum('marks');
-            $negativeMarks = $questions->sum('negative_marks');
-            $questionCount = $questions->count();
-
-            return [
-                'name' => $section->name,
-                'total_questions' => $questionCount,
-                'total_marks' => $totalMarks,
-                'negative_marks' => $negativeMarks,
-                'questions' => $questions // Include questions in the response
-            ];
-        });
-
-        // Calculate total marks, negative marks, and total questions for the entire exam
-        $totalMarksExam = $sectionDetails->sum('total_marks');
-        $negativeMarksExam = $sectionDetails->sum('negative_marks');
-        $totalQuestionsExam = $sectionDetails->sum('total_questions');
-
-        // Format the exam details
-        $examDetails = [
-            'id' => $exam->id,
-            'name' => $exam->name,
-            'start_time' => $exam->start_time,
-            'end_time' => $exam->end_time,
-            'passing_marks' => $exam->passing_marks,
-            'created_at' => $exam->created_at,
-            'duration' => $durationInMinutes . ' minutes',
-            'total_marks' => $totalMarksExam,
-            'negative_marks' => $negativeMarksExam,
-            'total_questions' => $totalQuestionsExam,
-            'sections' => $sectionDetails // Include sections with questions
-        ];
-
-        // Return success response with exam data
-        return response()->json([
-            'status' => true,
-            'code' => 200,
-            'message' => 'Exam retrieved successfully',
-            'data' => $examDetails
-        ], 200);
-
-    } catch (\Exception $e) {
-        // Handle any errors
-        return response()->json([
-            'status' => false,
-            'code' => 500,
-            'message' => 'An error occurred while retrieving the exam',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-}
-
-
 // public function getExamDetails(Request $request)
 // {
 //     try {
@@ -530,6 +416,117 @@ public function getExamDetails(Request $request)
 //         ], 500);
 //     }
 // }
+
+public function getExamDetails(Request $request)
+{
+    try {
+        // Retrieve batchId and examId from the request
+        $batchId = $request->input('batchId');
+        $examId = $request->input('examId');
+
+        // Validate the inputs
+        if (!$batchId || !$examId) {
+            return response()->json([
+                'status' => false,
+                'code' => 400,
+                'message' => 'batchId and examId are required'
+            ], 400);
+        }
+
+        // Fetch the exam associated with the specific batch and exam ID
+        $exam = Exam::where('batch_id', $batchId)
+                    ->where('id', $examId)
+                    ->first(['id', 'name', 'start_time', 'end_time', 'passing_marks', 'created_at']);
+
+        // Check if the exam is found
+        if (!$exam) {
+            return response()->json([
+                'status' => false,
+                'code' => 404,
+                'message' => 'No exam found for the specified batch and exam ID'
+            ], 404);
+        }
+
+        // Calculate the duration
+        $startTime = Carbon::parse($exam->start_time);
+        $endTime = Carbon::parse($exam->end_time);
+        $durationInMinutes = $startTime->diffInMinutes($endTime);
+
+        // Retrieve sections for the exam and calculate marks and question count per section
+        $sections = Section::where('exam_id', $exam->id)->get(['id', 'name']);
+
+        $sectionDetails = $sections->map(function ($section) use ($exam) {
+            // Retrieve questions for each section
+            $questions = ExamQuestion::where('exam_id', $exam->id)
+                                     ->where('section_id', $section->id)
+                                     ->get(['id', 'question_text', 'marks', 'negative_marks', 'question_type']);
+
+            // Calculate total marks and negative marks for each section
+            $totalMarks = $questions->sum('marks');
+            $negativeMarks = $questions->sum('negative_marks');
+
+            // Count questions in each section
+            $questionCount = $questions->count();
+
+            // Format the questions with necessary details
+            $formattedQuestions = $questions->map(function ($question) {
+                return [
+                    'id' => $question->id,
+                    'text' => $question->question_text,
+                    'marks' => $question->marks,
+                    'negative_marks' => $question->negative_marks,
+                    'type' => $question->question_type
+                ];
+            });
+
+            return [
+                'name' => $section->name,
+                'total_questions' => $questionCount,
+                'total_marks' => $totalMarks, 
+                'negative_marks' => $negativeMarks,
+                'questions' => $formattedQuestions // Add questions to each section
+            ];
+        });
+
+        // Calculate total marks, negative marks, and total questions for the entire exam
+        $totalMarksExam = ExamQuestion::where('exam_id', $exam->id)->sum('marks');
+        $negativeMarksExam = ExamQuestion::where('exam_id', $exam->id)->sum('negative_marks');
+        $totalQuestionsExam = ExamQuestion::where('exam_id', $exam->id)->count();
+
+        // Format the exam details
+        $examDetails = [
+            'id' => $exam->id,
+            'name' => $exam->name,
+            'start_time' => $exam->start_time,
+            'end_time' => $exam->end_time,
+            'passing_marks' => $exam->passing_marks,
+            'created_at' => $exam->created_at,
+            'duration' => $durationInMinutes . ' minutes',
+            'total_marks' => $totalMarksExam,
+            'negative_marks' => $negativeMarksExam,
+            'total_questions' => $totalQuestionsExam,
+            'sections' => $sectionDetails // Include sections with question counts, marks, and questions
+        ];
+
+        // Return success response with exam data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Exam retrieved successfully',
+            'data' => $examDetails
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving the exam',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 public function getExamsForStudent(Request $request)
 {
