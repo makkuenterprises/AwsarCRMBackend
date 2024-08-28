@@ -459,7 +459,7 @@ public function getExamDetails(Request $request)
             // Retrieve questions for each section
             $questions = ExamQuestion::where('exam_id', $exam->id)
                                      ->where('section_id', $section->id)
-                                     ->get(['id', 'question_text', 'marks', 'negative_marks', 'question_type']);
+                                     ->get();
 
             // Calculate total marks and negative marks for each section
             $totalMarks = $questions->sum('marks');
