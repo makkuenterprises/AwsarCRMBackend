@@ -50,7 +50,8 @@ class StudentAuthController extends Controller
 
            $imagePath = url('/Student/' . $user->image);
 
-           $token = $user->createToken('AwsarClass')->plainTextToken; 
+           $webtoken = $user->createToken('AwsarClassWeb')->plainTextToken; 
+           $apptoken = $user->createToken('AwsarClassApp')->plainTextToken; 
            
            $email = $login['email'];   
             $notifications = $user->unreadNotifications()->get(); 
@@ -172,7 +173,8 @@ class StudentAuthController extends Controller
             'enrollCourseCount' =>$enrollCourseCount,
             'enrollTeacherCount' => $teacherCount
             ],
-            'token' => $token, 
+            'webtoken' => $webtoken, 
+            'apptoken' => $apptoken, 
              'message' => 'Login Successfully',
              'role' => $menuList,
             ];
