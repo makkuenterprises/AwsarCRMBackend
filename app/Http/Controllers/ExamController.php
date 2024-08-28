@@ -223,6 +223,40 @@ public function listExamsForBatch($batchId)
     }
 } 
  
+
+public function listExams($batchId)
+{
+    try {
+        // Fetch all exams associated with the specific batch
+        $exams = Exam::orderBy('created_at', 'desc')->get();
+        // Check if exams are found
+        if ($exams->isEmpty()) {
+            return response()->json([
+                'status' => false, 
+                'code' => 404,
+                'message' => 'No exams found for the specified batch'
+            ], 404);
+        }
+
+        // Return success response with exams data
+        return response()->json([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Exams retrieved successfully',
+            'data' => $exams
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle any errors
+        return response()->json([
+            'status' => false,
+            'code' => 500,
+            'message' => 'An error occurred while retrieving exams',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+} 
+
 public function listQuestionsForExam($examId) 
 {
     try {

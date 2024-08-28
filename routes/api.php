@@ -518,6 +518,8 @@ Route::post('/exam/preview', [ExamController::class, 'getExamDetails']);
 Route::post('all/exam', [ExamController::class, 'getExamsForStudent']);
 
 Route::get('/exams/batch/{batchId}', [ExamController::class, 'listExamsForBatch']);
+Route::get('/exams', [ExamController::class, 'listExams']);
+
 Route::get('/exams/questions/{examId}', [ExamController::class, 'listQuestionsForExam']);
  
 
