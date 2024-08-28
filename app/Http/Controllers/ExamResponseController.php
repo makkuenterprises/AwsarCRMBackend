@@ -507,15 +507,17 @@ public function gradeShortAnswerResponses(Request $request)
 //     }
 // }
 
-public function getStudentAllResult(Request $request)
+public function getStudentExamResult(Request $request)
 {
     try {
         // Validate the request data
         $validated = $request->validate([
-            'student_id' => 'required|exists:students,id'
+            'student_id' => 'required|exists:students,id',
+            'exam_id' => 'required|exists:exams,id'
         ]);
 
         $studentId = $validated['student_id'];
+        $examId = $validated['exam_id'];
 
         // Fetch all courses for the student
         $courses = DB::table('courses_enrollements')
@@ -524,11 +526,20 @@ public function getStudentAllResult(Request $request)
             ->select('courses.id as course_id', 'courses.name as course_name', 'courses_enrollements.enrollment_date')
             ->get();
 
-        // Collect all exam IDs from these courses
-        $examIds = Exam::whereIn('batch_id', $courses->pluck('course_id'))->pluck('id');
+        // Check if the exam is related to any of the courses the student is enrolled in
+        $examExists = Exam::where('id', $examId)
+                          ->whereIn('batch_id', $courses->pluck('course_id'))
+                          ->exists();
 
-        // Fetch exam responses for the student in the specified courses
-        $examResponses = ExamResponse::select(
+        if (!$examExists) {
+            return response()->json([
+                'status' => false,
+                'message' => 'The specified exam is not related to the student\'s enrolled courses.'
+            ], 404);
+        }
+
+        // Fetch the exam response for the student for the specified exam ID
+        $examResponse = ExamResponse::select(
                 'exam_responses.id',
                 'exam_responses.exam_id',
                 'exam_responses.student_id',
@@ -547,53 +558,60 @@ public function getStudentAllResult(Request $request)
             )
             ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
             ->join('courses', 'exams.batch_id', '=', 'courses.id')
-            ->whereIn('exam_responses.exam_id', $examIds)
+            ->where('exam_responses.exam_id', $examId)
             ->where('exam_responses.student_id', $studentId)
+            ->first();
+
+        // If no response is found, return an error
+        if (!$examResponse) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No results found for the specified exam and student.'
+            ], 404);
+        }
+
+        // Include sections and questions data for the exam
+        $sections = Section::where('exam_id', $examResponse->exam_id)
+            ->with(['examQuestions.question'])
             ->get();
 
-        // Include sections and questions data for each exam
-        $resultData = $examResponses->map(function ($examResponse) {
-            $sections = Section::where('exam_id', $examResponse->exam_id)
-                ->with(['examQuestions.question'])
-                ->get();
-
-            // Prepare sections data with questions
-            $sectionsData = $sections->map(function ($section) {
-                return [
-                    'section_id' => $section->id,
-                    'section_name' => $section->name,
-                    'questions' => $section->examQuestions->map(function ($examQuestion) {
-                        $question = $examQuestion->question;
-
-                        // Check if the image path exists
-                        $question_img = $question->image ? url(Storage::url($question->image)) : null;
-
-                        return [
-                            'question_id' => $examQuestion->question_id, 
-                            'question_text' => $examQuestion->question->question_text,
-                            'question_img' => $question_img,
-                            'question_type' => $examQuestion->question->question_type,
-                            'options' => $examQuestion->question->options,
-                            'correct_answers' => $examQuestion->question->correct_answers,
-                            'marks' => $examQuestion->marks,
-                            'negative_marks' => $examQuestion->negative_marks,
-                        ];
-                    })
-                ];
-            });
-
-            // Merge exam response with sections and questions data
+        // Prepare sections data with questions
+        $sectionsData = $sections->map(function ($section) {
             return [
-                'data' => $examResponse,
-                'sections' => $sectionsData
+                'section_id' => $section->id,
+                'section_name' => $section->name,
+                'questions' => $section->examQuestions->map(function ($examQuestion) {
+                    $question = $examQuestion->question;
+
+                    // Check if the image path exists
+                    $question_img = $question->image ? url(Storage::url($question->image)) : null;
+
+                    return [
+                        'question_id' => $examQuestion->question_id, 
+                        'question_text' => $examQuestion->question->question_text,
+                        'question_img' => $question_img,
+                        'question_type' => $examQuestion->question->question_type,
+                        'options' => $examQuestion->question->options,
+                        'correct_answers' => $examQuestion->question->correct_answers,
+                        'marks' => $examQuestion->marks,
+                        'negative_marks' => $examQuestion->negative_marks,
+                    ];
+                })
             ];
         });
 
+        // Merge exam response with sections and questions data
+        $resultData = [
+            'data' => $examResponse,
+            'sections' => $sectionsData
+        ];
+
         return response()->json([
             'status' => true,
-            'message' => 'Student results fetched successfully',
+            'message' => 'Student result fetched successfully',
             'data' => $resultData
         ], 200);
+
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
             'status' => false,
@@ -608,6 +626,7 @@ public function getStudentAllResult(Request $request)
         ], 500);
     }
 }
+
 
 
 public function getAllStudentsResults(Request $request)
