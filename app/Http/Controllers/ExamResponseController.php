@@ -575,24 +575,32 @@ public function getStudentExamResult(Request $request)
             ->with(['examQuestions.question'])
             ->get();
 
-        // Prepare sections data with questions
-        $sectionsData = $sections->map(function ($section) {
+        // Prepare sections data with questions, correct answers, student's answers, and gained marks
+        $sectionsData = $sections->map(function ($section) use ($studentId, $examId) {
             return [
                 'section_id' => $section->id,
                 'section_name' => $section->name,
-                'questions' => $section->examQuestions->map(function ($examQuestion) {
+                'questions' => $section->examQuestions->map(function ($examQuestion) use ($studentId, $examId) {
                     $question = $examQuestion->question;
 
                     // Check if the image path exists
                     $question_img = $question->image ? url(Storage::url($question->image)) : null;
 
+                    // Fetch the student's response for this question
+                    $studentResponse = ExamQuestionResponse::where('exam_id', $examId)
+                        ->where('question_id', $examQuestion->question_id)
+                        ->where('student_id', $studentId)
+                        ->first();
+
                     return [
                         'question_id' => $examQuestion->question_id, 
-                        'question_text' => $examQuestion->question->question_text,
+                        'question_text' => $question->question_text,
                         'question_img' => $question_img,
-                        'question_type' => $examQuestion->question->question_type,
-                        'options' => $examQuestion->question->options,
-                        'correct_answers' => $examQuestion->question->correct_answers,
+                        'question_type' => $question->question_type,
+                        'options' => $question->options,
+                        'correct_answers' => $question->correct_answers,
+                        'student_answer' => $studentResponse ? $studentResponse->answer : null, // student's answer
+                        'gained_marks' => $studentResponse ? $studentResponse->gained_marks : 0, // marks gained by student
                         'marks' => $examQuestion->marks,
                         'negative_marks' => $examQuestion->negative_marks,
                     ];
@@ -626,6 +634,7 @@ public function getStudentExamResult(Request $request)
         ], 500);
     }
 }
+
 
 
 
