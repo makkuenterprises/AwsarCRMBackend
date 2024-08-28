@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Exam;
 use App\Models\Section;
 use App\Models\Question;
-use App\Models\ExamQuestion; 
+use App\Models\ExamQuestion;  
 use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
 use App\Models\ExamQuestionResponse;
@@ -152,9 +152,9 @@ public function storeExamResponse(Request $request)
                         break;
 
                     default:
-                        $isCorrect = false;
+                        $isCorrect = false; 
                 }
-            }
+            } 
         }
 
         // Compute total marks by summing the marks of all questions for the exam
