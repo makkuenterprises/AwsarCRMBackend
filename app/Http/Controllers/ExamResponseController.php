@@ -955,7 +955,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                             'negative_marks' => $studentResponse->negative_marks ?? null,
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
 
-                              'status' => $studentResponse->status ?? 'pending',
+                              'status' => $studentResponse->status ?? 'not_attempted',
                             
                         ];
                     }
