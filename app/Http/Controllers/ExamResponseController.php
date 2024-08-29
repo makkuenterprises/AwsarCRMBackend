@@ -941,7 +941,12 @@ public function getResponsesByBatchAndStudent(Request $request)
 
                         $questionResponses[] = [
                             'question_id' => $examQuestion->question_id,
-                            'question_text' => $examQuestion->question->question_text,
+                            'question_text' => $examQuestion->question->question_text, 
+                            'question_img' => $examQuestion->question->image ? url(Storage::url($examQuestion->question->image)) : null,
+                            'question_options' => $examQuestion->options->options, 
+
+                            
+
                             'max_marks' => $examQuestion->marks,
                             'correct_answer' => $examQuestion->question->correct_answers, // Assuming a correct_answers field
                             'student_response' => $studentResponse->response ?? null,
