@@ -15,7 +15,7 @@ return new class extends Migration
               $table->json('subject')->nullable();
         });
     }
-
+ 
     /**
      * Reverse the migrations.
      */
