@@ -938,12 +938,13 @@ public function getResponsesByBatchAndStudent(Request $request)
                                 $sectionWrongAnswers++;
                             }
                         }  
+                        $questionOptions = $examQuestion->options ? $examQuestion->options->options : [];
 
                         $questionResponses[] = [
                             'question_id' => $examQuestion->question_id,
                             'question_text' => $examQuestion->question->question_text, 
                             'question_img' => $examQuestion->question->image ? url(Storage::url($examQuestion->question->image)) : null,
-                            // 'question_options' => $examQuestion->options->options, 
+                            'question_options' => $questionOptions, 
 
                             
 
@@ -953,6 +954,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                             'gained_marks' => $obtainedMarks,
                             'negative_marks' => $studentResponse->negative_marks ?? null,
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
+
                             'status' =>  $studentResponse->status,
                             
                         ];
