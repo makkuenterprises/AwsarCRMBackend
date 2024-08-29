@@ -478,12 +478,14 @@ public function getResponsesByBatchAndStudent(Request $request)
                     // Retrieve all questions for each section
                     $questions = ExamQuestion::where('exam_id', $exam->id)
                         ->where('section_id', $section->id)
-                        ->with('question') // Assuming you have a relation set up in the model
+                        ->with('question') // Assuming you have a relationship set up in the model
                         ->get();
 
                     $questionResponses = [];
                     $sectionTotalMarks = 0;
                     $sectionObtainedMarks = 0;
+                    $sectionCorrectAnswers = 0; // Total number of correct answers for the section
+                    $sectionWrongAnswers = 0; // Total number of wrong answers for the section
 
                     foreach ($questions as $examQuestion) {
                         // Retrieve the student's response for each question
@@ -495,19 +497,31 @@ public function getResponsesByBatchAndStudent(Request $request)
                         $sectionTotalMarks += $examQuestion->marks;
 
                         // Calculate obtained marks for the section
+                        $obtainedMarks = 0;
+                        $isCorrect = false;
+
                         if ($studentResponse) {
-                            $obtainedMarks = $studentResponse->marks ?? 0;
+                            $obtainedMarks = $studentResponse->your_marks ?? 0; // Use the 'your_marks' field
                             $sectionObtainedMarks += $obtainedMarks; // Add obtained marks to the total
+
+                            // Check if the answer is correct or wrong using the 'status' field
+                            if ($studentResponse->status === 'correct') {
+                                $sectionCorrectAnswers++;
+                                $isCorrect = true;
+                            } else {
+                                $sectionWrongAnswers++;
+                            }
                         }
 
                         $questionResponses[] = [
                             'question_id' => $examQuestion->question_id,
                             'question_text' => $examQuestion->question->question_text,
                             'max_marks' => $examQuestion->marks,
-                            'correct_answer' => $examQuestion->question->correct_answer, // Assuming a correct_answer field
+                            'correct_answer' => $examQuestion->question->correct_answers, // Assuming a correct_answers field
                             'student_response' => $studentResponse->response ?? null,
                             'gained_marks' => $obtainedMarks,
-                            'negative_marks' => $studentResponse->negative_marks ?? null
+                            'negative_marks' => $studentResponse->negative_marks ?? null,
+                            'status' => $isCorrect ? 'correct' : 'wrong'
                         ];
                     }
 
@@ -516,6 +530,8 @@ public function getResponsesByBatchAndStudent(Request $request)
                         'section_name' => $section->name,
                         'total_marks' => $sectionTotalMarks,
                         'obtained_marks' => $sectionObtainedMarks,
+                        'total_correct_answers' => $sectionCorrectAnswers,
+                        'total_wrong_answers' => $sectionWrongAnswers,
                         'questions' => $questionResponses
                     ];
                 }
