@@ -749,6 +749,7 @@ public function gradeShortAnswerResponses(Request $request)
         $examResponse->total_correct_answers += $totalCorrectAnswers;
         $examResponse->total_wrong_answers += $totalWrongAnswers;
         $examResponse->negative_marks += $totalNegativeMarks;
+        $examResponse->result_status = 'DONE';
         $examResponse->save();
 
         // Return the updated exam response data
