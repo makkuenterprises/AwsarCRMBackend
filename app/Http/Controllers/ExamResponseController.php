@@ -938,16 +938,13 @@ public function getResponsesByBatchAndStudent(Request $request)
                                 $sectionWrongAnswers++;
                             }
                         }  
-                        $questionOptions = $examQuestion->options ? $examQuestion->options->options : [];
+                        $questionOptions = $examQuestion->question->options ? $examQuestion->question->options : [];
 
                         $questionResponses[] = [
                             'question_id' => $examQuestion->question_id,
                             'question_text' => $examQuestion->question->question_text, 
                             'question_img' => $examQuestion->question->image ? url(Storage::url($examQuestion->question->image)) : null,
                             'question_options' => $questionOptions, 
-
-                            
-
                             'max_marks' => $examQuestion->marks,
                             'correct_answer' => $examQuestion->question->correct_answers, // Assuming a correct_answers field
                             'student_response' => $studentResponse->response ?? null,
