@@ -482,6 +482,8 @@ public function getResponsesByBatchAndStudent(Request $request)
                         ->get();
 
                     $questionResponses = [];
+                    $sectionTotalMarks = 0;
+                    $sectionObtainedMarks = 0;
 
                     foreach ($questions as $examQuestion) {
                         // Retrieve the student's response for each question
@@ -489,19 +491,30 @@ public function getResponsesByBatchAndStudent(Request $request)
                             ->where('question_id', $examQuestion->question_id)
                             ->first();
 
+                        // Calculate total marks for the section
+                        $sectionTotalMarks += $examQuestion->marks;
+
+                        // Calculate obtained marks for the section
+                        if ($studentResponse && isset($studentResponse->marks)) {
+                            $sectionObtainedMarks += $studentResponse->marks;
+                        }
+
                         $questionResponses[] = [
                             'question_id' => $examQuestion->question_id,
                             'question_text' => $examQuestion->question->question_text,
                             'max_marks' => $examQuestion->marks,
+                            'correct_answer' => $examQuestion->question->correct_answer, // Assuming a correct_answer field
+                            'student_response' => $studentResponse->response ?? null,
                             'gained_marks' => $studentResponse->marks ?? null,
-                            'negative_marks' => $studentResponse->negative_marks ?? null,
-                            'student_response' => $studentResponse->response ?? null
+                            'negative_marks' => $studentResponse->negative_marks ?? null
                         ];
                     }
 
                     $sectionData[] = [
                         'section_id' => $section->id,
                         'section_name' => $section->name,
+                        'total_marks' => $sectionTotalMarks,
+                        'obtained_marks' => $sectionObtainedMarks,
                         'questions' => $questionResponses
                     ];
                 }
@@ -529,6 +542,7 @@ public function getResponsesByBatchAndStudent(Request $request)
         ], 500);
     }
 }
+
 
 
 public function getStudentExamResult(Request $request)
