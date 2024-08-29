@@ -58,6 +58,8 @@ class TeacherAuthController extends Controller
 
         $totalStudentCount = $students->count(); 
 
+        // for App And Web 
+
             if($request->input('source')=='LoginAsWeb'){
            $token = $user->createToken('AwsarClassWeb')->plainTextToken; 
            }
