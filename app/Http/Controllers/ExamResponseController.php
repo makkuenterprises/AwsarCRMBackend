@@ -938,7 +938,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                                 $sectionWrongAnswers++;
                             }
                         }  
-                        $questionOptions = $examQuestion->question->options ? $examQuestion->question->options : [];
+                        $questionOptions = $examQuestion->question->options ? $examQuestion->question->options : null;
 
                         $questionResponses[] = [
                             'question_id' => $examQuestion->question_id,
