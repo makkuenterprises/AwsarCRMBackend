@@ -8,7 +8,7 @@ use App\Models\Question;
 use App\Models\ExamQuestion; 
 use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
-use App\Models\ExamQuestionResponse;
+use App\Models\ExamQuestionResponse; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -920,6 +920,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                         $studentResponse = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
                             ->where('question_id', $examQuestion->question_id)
                             ->first();
+                            // $studentResponse->status='graded';
 
                         // Calculate total marks for the section
                         $sectionTotalMarks += $examQuestion->marks;
@@ -954,7 +955,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                             'negative_marks' => $studentResponse->negative_marks ?? null,
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
 
-                            'status' =>  $studentResponse->status,
+                              'status' => $studentResponse->status ?? 'pending',
                             
                         ];
                     }
