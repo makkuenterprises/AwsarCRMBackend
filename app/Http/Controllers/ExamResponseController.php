@@ -12,6 +12,8 @@ use App\Models\ExamQuestionResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
 
 use DB;
 class ExamResponseController extends Controller
