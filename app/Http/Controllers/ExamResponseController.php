@@ -521,7 +521,9 @@ public function getResponsesByBatchAndStudent(Request $request)
                             'student_response' => $studentResponse->response ?? null,
                             'gained_marks' => $obtainedMarks,
                             'negative_marks' => $studentResponse->negative_marks ?? null,
-                            'status' => $isCorrect ? 'correct' : 'wrong'
+                            'status' => $isCorrect ? 'correct' : 'wrong',
+                            'status' =>  $studentResponse->status,
+                            
                         ];
                     }
 
