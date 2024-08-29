@@ -742,8 +742,8 @@ public function getResponsesByBatchAndStudent(Request $request)
                         'section_name' => $section->name,
                         'total_marks' => $sectionTotalMarks,
                         'obtained_marks' => $sectionObtainedMarks,
-                        'total_correct_answers' => $sectionCorrectAnswers,
-                        'total_wrong_answers' => $sectionWrongAnswers,
+                        // 'total_correct_answers' => $sectionCorrectAnswers,
+                        // 'total_wrong_answers' => $sectionWrongAnswers,
                         'questions' => $questionResponses
                     ];
                 }
