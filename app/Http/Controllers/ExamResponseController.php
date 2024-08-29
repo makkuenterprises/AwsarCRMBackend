@@ -501,6 +501,11 @@ public function gradeShortAnswerResponses(Request $request)
             ->where('status', 'pending')
             ->get();
 
+            foreach ($pendingResponses as $response) {
+                $response->status = 'evaluated';
+                $response->save();
+            }
+
         // Update question responses based on manual grades
         foreach ($validated['manual_grades'] as $grade) {
             $questionId = $grade['question_id'];

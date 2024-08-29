@@ -530,7 +530,7 @@ Route::get('/calculate-marks/{examId}/{studentId}', [ExamResponseController::cla
 
 
 // API Route for retrieving exam responses
-Route::post('student/responses/mcq', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
+Route::post('student/responses', [ExamResponseController::class, 'getResponsesByBatchAndStudent']);
 Route::post('student/responses/short-answer', [ExamResponseController::class, 'gradeShortAnswerResponses']);
 
 Route::post('/student-result', [ExamResponseController::class, 'getStudentExamResult']);
