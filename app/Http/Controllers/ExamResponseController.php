@@ -382,9 +382,66 @@ public function gradeShortAnswerResponses(Request $request)
 }
  
 
-  public function getResponsesByBatchAndStudent(Request $request)
+//   public function getResponsesByBatchAndStudent(Request $request)
+// {
+//     // Validate the incoming request data 
+//     $validated = $request->validate([
+//         'batch_id' => 'required|exists:exams,batch_id',
+//         'student_id' => 'required|exists:students,id',
+//         'exam_id' => 'required|exists:exams,id' // Optional filter for a specific exam
+//     ]);
+
+//     try {
+//         // Retrieve all exams associated with the batch
+//         $query = Exam::where('batch_id', $validated['batch_id']);
+
+//         // If an exam_id is provided, filter by it
+//         if (isset($validated['exam_id'])) {
+//             $query->where('id', $validated['exam_id']);
+//         }
+
+//         $exams = $query->get();
+
+//         // Initialize an array to hold exam responses
+//         $responses = [];
+
+//         foreach ($exams as $exam) {
+//             // Fetch the response for the specific student and exam
+//             $examResponse = ExamResponse::where('exam_id', $exam->id)
+//                 ->where('student_id', $validated['student_id'])
+//                 ->first();
+
+//             if ($examResponse) {
+//                 // Retrieve detailed responses for the exam
+//                 $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+//                     ->get();
+
+//                 // Append exam response and question responses to the array
+//                 $responses[] = [
+//                     'exam_id' => $exam->id,
+//                     'exam' => $exam,
+//                     'exam_response' => $examResponse,
+//                     'question_responses' => $questionResponses
+//                 ];
+//             }
+//         }
+
+//         return response()->json([
+//             'status' => true,
+//             'message' => 'Responses retrieved successfully',
+//             'data' => $responses
+//         ], 200);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'An error occurred while retrieving responses',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+public function getResponsesByBatchAndStudent(Request $request)
 {
-    // Validate the incoming request data 
+    // Validate the incoming request data
     $validated = $request->validate([
         'batch_id' => 'required|exists:exams,batch_id',
         'student_id' => 'required|exists:students,id',
@@ -412,16 +469,38 @@ public function gradeShortAnswerResponses(Request $request)
                 ->first();
 
             if ($examResponse) {
-                // Retrieve detailed responses for the exam
-                $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
-                    ->get();
+                // Retrieve detailed responses for the exam, grouped by sections
+                $sections = Section::where('exam_id', $exam->id)->get();
 
-                // Append exam response and question responses to the array
+                $sectionResponses = [];
+                foreach ($sections as $section) {
+                    $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+                        ->whereHas('question', function ($query) use ($section) {
+                            $query->where('section_id', $section->id);
+                        })
+                        ->get();
+
+                    // Add each section with its questions and their marks
+                    $sectionResponses[] = [
+                        'section_id' => $section->id,
+                        'section_name' => $section->name,
+                        'questions' => $questionResponses->map(function ($response) {
+                            return [
+                                'question_id' => $response->question_id,
+                                'question_text' => $response->question->question_text,
+                                'response' => $response->response,
+                                'marks' => $response->marks
+                            ];
+                        })
+                    ];
+                }
+
+                // Append the exam, exam response, and section-wise question responses to the array
                 $responses[] = [
                     'exam_id' => $exam->id,
                     'exam' => $exam,
                     'exam_response' => $examResponse,
-                    'question_responses' => $questionResponses
+                    'sections' => $sectionResponses
                 ];
             }
         }

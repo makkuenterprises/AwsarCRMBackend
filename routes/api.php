@@ -26,7 +26,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\Notification;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ExamController;
-use App\Http\Controllers\ExamResponseController;
+use App\Http\Controllers\ExamResponseController; 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OnlinePaymentController;
