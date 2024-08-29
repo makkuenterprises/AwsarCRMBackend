@@ -22,8 +22,9 @@ class TeacherAuthController extends Controller
     public function teacherAuthLogin(Request $request){
      $login = $request->validate([
         'email' => 'required|email',
-        'password' => 'required|string',
+        'password' => 'required|string', 
         'one_signal_id' => 'nullable',
+        'source' => 'required|string',
     ]);
     try {
         $user = Teacher::whereEmail($login['email'])->first();
@@ -56,9 +57,15 @@ class TeacherAuthController extends Controller
             ->orderByDesc('students.id')
             ->get();
 
-        $totalStudentCount = $students->count();
+        $totalStudentCount = $students->count(); 
 
-           $token = $user->createToken('AwsarClass')->plainTextToken;
+            if($request->input('source')=='LoginAsWeb'){
+           $token = $user->createToken('AwsarClassWeb')->plainTextToken; 
+           }
+           if($request->input('source')=='LoginAsApp'){
+           $token = $user->createToken('AwsarClassApp')->plainTextToken; 
+           }
+
            $code = 200;
            $imagePath = url('/Teachers/' . $user->image);
 $menuList = [

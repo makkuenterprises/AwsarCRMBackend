@@ -589,7 +589,7 @@ public function storeExamResponse(Request $request)
                             $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
                             $questionMarksMap[$questionId]['status'] = 'incorrect'; // Set status to incorrect
                         }
-                        break;
+                        break; 
 
                     case 'Short Answer':
                     case 'Fill in the Blanks':
