@@ -738,7 +738,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                     }
 
                     $sectionData[] = [
-                        'section_id' => $section->id,
+                        // 'section_id' => $section->id,
                         'section_name' => $section->name,
                         'total_marks' => $sectionTotalMarks,
                         'obtained_marks' => $sectionObtainedMarks,
