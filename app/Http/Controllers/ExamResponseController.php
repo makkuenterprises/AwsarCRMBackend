@@ -441,11 +441,11 @@ public function gradeShortAnswerResponses(Request $request)
 // }
 public function getResponsesByBatchAndStudent(Request $request)
 {
-    // Validate the incoming request data
+    // Validate the incoming request data 
     $validated = $request->validate([
         'batch_id' => 'required|exists:exams,batch_id',
         'student_id' => 'required|exists:students,id',
-        'exam_id' => 'required|exists:exams,id' // Optional filter for a specific exam
+        'exam_id' => 'nullable|exists:exams,id' // Optional filter for a specific exam
     ]);
 
     try {
@@ -469,38 +469,49 @@ public function getResponsesByBatchAndStudent(Request $request)
                 ->first();
 
             if ($examResponse) {
-                // Retrieve detailed responses for the exam, grouped by sections
+                // Retrieve all sections associated with the exam
                 $sections = Section::where('exam_id', $exam->id)->get();
 
-                $sectionResponses = [];
+                $sectionData = [];
+
                 foreach ($sections as $section) {
-                    $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
-                        ->whereHas('question', function ($query) use ($section) {
-                            $query->where('section_id', $section->id);
-                        })
+                    // Retrieve all questions for each section
+                    $questions = ExamQuestion::where('exam_id', $exam->id)
+                        ->where('section_id', $section->id)
+                        ->with('question') // Assuming you have a relation set up in the model
                         ->get();
 
-                    // Add each section with its questions and their marks
-                    $sectionResponses[] = [
+                    $questionResponses = [];
+
+                    foreach ($questions as $examQuestion) {
+                        // Retrieve the student's response for each question
+                        $studentResponse = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+                            ->where('question_id', $examQuestion->question_id)
+                            ->first();
+
+                        $questionResponses[] = [
+                            'question_id' => $examQuestion->question_id,
+                            'question_text' => $examQuestion->question->question_text,
+                            'max_marks' => $examQuestion->marks,
+                            'gained_marks' => $studentResponse->marks ?? null,
+                            'negative_marks' => $studentResponse->negative_marks ?? null,
+                            'student_response' => $studentResponse->response ?? null
+                        ];
+                    }
+
+                    $sectionData[] = [
                         'section_id' => $section->id,
                         'section_name' => $section->name,
-                        'questions' => $questionResponses->map(function ($response) {
-                            return [
-                                'question_id' => $response->question_id,
-                                'question_text' => $response->question->question_text,
-                                'response' => $response->response,
-                                'marks' => $response->marks
-                            ];
-                        })
+                        'questions' => $questionResponses
                     ];
                 }
 
-                // Append the exam, exam response, and section-wise question responses to the array
+                // Append exam response and section-wise question responses to the array
                 $responses[] = [
                     'exam_id' => $exam->id,
                     'exam' => $exam,
                     'exam_response' => $examResponse,
-                    'sections' => $sectionResponses
+                    'sections' => $sectionData
                 ];
             }
         }
