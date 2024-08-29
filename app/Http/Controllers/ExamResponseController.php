@@ -799,7 +799,7 @@ public function getStudentExamResult(Request $request)
                           ->whereIn('batch_id', $courses->pluck('course_id'))
                           ->exists();
 
-        if (!$examExists) {
+        if (!$examExists) { 
             return response()->json([
                 'status' => false,
                 'message' => 'The specified exam is not related to the student\'s enrolled courses.'
@@ -928,7 +928,7 @@ public function getStudentAllResult(Request $request)
                 'exam_responses.id',
                 'exam_responses.exam_id',
                 'exam_responses.student_id',
-                'exam_responses.total_marks',
+                'exam_responses.total_marks',  
                 'exam_responses.gained_marks',
                 'exam_responses.passing_marks',
                 'exam_responses.negative_marks',
