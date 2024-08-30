@@ -1211,8 +1211,10 @@ public function getAllStudentsResults(Request $request)
 
         // Fetch exam responses for all students
         $examResponses = ExamResponse::select(
-             'exam_responses.id', 
+             'exam_responses.id',  
              'students.id as student_id',
+             DB::raw("IFNULL(CONCAT('" . url('/Student/') . "/', students.image), null) as student_image"),
+
                 'students.name as student_name', 
                 'students.email as student_email', 
                 'students.phone as student_phone',
