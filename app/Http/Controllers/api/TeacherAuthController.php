@@ -38,7 +38,7 @@ class TeacherAuthController extends Controller
 
         if (!$user || !Hash::check($login['password'], $user->password)) {
             $data = 'Invalid Login Credentials';
-            $code = 401;
+            $code = 401;     
         } else {
              $user->one_signal_id=$request->input('one_signal_id');
              $user->save(); 
@@ -56,9 +56,9 @@ class TeacherAuthController extends Controller
             ->orderByDesc('students.id')
             ->get();
 
-        $totalStudentCount = $students->count(); 
+         $totalStudentCount = $students->count(); 
 
-        // for App And Web 
+         // for App And Web 
 
             if($request->input('source')=='LoginAsWeb'){
            $token = $user->createToken('AwsarClassWeb')->plainTextToken; 
@@ -69,7 +69,7 @@ class TeacherAuthController extends Controller
 
            $code = 200;
            $imagePath = url('/Teachers/' . $user->image);
-$menuList = [
+      $menuList = [
     [
         'title' => 'Dashboard',
         'iconStyle' => '<i className="material-icons">dashboard</i>',

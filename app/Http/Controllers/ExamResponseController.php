@@ -950,7 +950,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                             'question_options' => $questionOptions, 
                             'max_marks' => $examQuestion->marks,
                             'correct_answer' => $examQuestion->question->correct_answers, // Assuming a correct_answers field
-                            'student_response' => $studentResponse->response ?? null,
+                            'student_response' => $studentResponse->response ? json_decode($studentResponse->response) : [],
                             'gained_marks' => $obtainedMarks,
                             'negative_marks' => $studentResponse->negative_marks ?? null,
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
