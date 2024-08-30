@@ -1197,7 +1197,7 @@ public function getStudentAllResult(Request $request)
 
 public function getAllStudentsResults(Request $request)
 {
-    try {
+    try { 
         // Validate the request data
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id', // Required course ID
@@ -1213,7 +1213,7 @@ public function getAllStudentsResults(Request $request)
         $examResponses = ExamResponse::select(
              'exam_responses.id',  
              'students.id as student_id',
-  DB::raw("IF(students.image IS NOT NULL AND students.image != '', CONCAT('" . url('/Student/') . "/', students.image), null) as student_image"),
+             DB::raw("IF(students.image IS NOT NULL AND students.image != '', CONCAT('" . url('/Student/') . "/', students.image), null) as student_image"),
 
                 'students.name as student_name', 
                 'students.email as student_email', 
@@ -1226,6 +1226,7 @@ public function getAllStudentsResults(Request $request)
                 'exam_responses.negative_marks', 
                 'exam_responses.total_correct_answers', 
                 'exam_responses.total_wrong_answers', 
+                'exam_responses.result_status', 
                 'exam_responses.created_at', 
                 'exam_responses.updated_at', 
                 'exams.name as exam_name',
