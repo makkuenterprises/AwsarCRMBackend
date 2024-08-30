@@ -946,13 +946,14 @@ public function getResponsesByBatchAndStudent(Request $request)
                         $questionResponses[] = [
                             'question_id' => $examQuestion->question_id,
                             'question_text' => $examQuestion->question->question_text, 
+                            'question_type' => $examQuestion->question->question_type, 
                             'question_img' => $examQuestion->question->image ? url(Storage::url($examQuestion->question->image)) : null,
                             'question_options' => $questionOptions, 
                             'max_marks' => $examQuestion->marks,
                             'correct_answer' => $examQuestion->question->correct_answers, // Assuming a correct_answers field
                           'student_response' => $studentResponse->response 
-    ? array_map('strval', json_decode($studentResponse->response)) 
-    : [],
+                                ? array_map('strval', json_decode($studentResponse->response)) 
+                                : [],
                             'gained_marks' => $obtainedMarks,
                             'negative_marks' => $studentResponse->negative_marks ?? null,
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
