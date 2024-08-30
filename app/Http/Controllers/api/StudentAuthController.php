@@ -121,6 +121,11 @@ class StudentAuthController extends Controller
         'to' => 'view-exam',
     ],
     [
+        'title' => 'View Result',
+        'iconStyle' => '<i className="material-icons">assignment</i>',
+        'to' => 'view-result',
+    ],
+    [
         'title' => 'Institute',
         'classsChange' => 'mm-collapse',
         'iconStyle' => '<i className="material-icons">account_balance</i>',

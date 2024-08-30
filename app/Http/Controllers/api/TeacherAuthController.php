@@ -128,6 +128,11 @@ class TeacherAuthController extends Controller
             ],
         ],
     ],
+     [
+        'title' => 'Review Exam',
+        'iconStyle' => '<i className="material-icons">request_page</i>',
+        'to' => 'review-exam',
+    ],
     [
         'title' => 'Class Routine',
         'classChange' => 'mm-collapse',
