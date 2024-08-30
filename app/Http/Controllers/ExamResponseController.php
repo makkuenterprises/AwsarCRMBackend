@@ -1213,7 +1213,7 @@ public function getAllStudentsResults(Request $request)
         $examResponses = ExamResponse::select(
              'exam_responses.id',  
              'students.id as student_id',
-             DB::raw("IFNULL(CONCAT('" . url('/Student/') . "/', students.image), null) as student_image"),
+              DB::raw("IF(students.image IS NOT NULL, CONCAT('" . url('/Student/') . "/', students.image), null) as student_image"),
 
                 'students.name as student_name', 
                 'students.email as student_email', 
