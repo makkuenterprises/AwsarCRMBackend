@@ -1332,21 +1332,26 @@ public function storeExamResponse(Request $request)
                 $questionType = $question->question->question_type;
 
                 if ($questionType === 'MCQ') {
-                    $isCorrect = is_array($correctAnswers) && is_array($responseText)
-                        ? !array_diff($correctAnswers, $responseText) && !array_diff($responseText, $correctAnswers)
-                        : $responseText == $correctAnswers;
+                    if (is_null($responseText) || $responseText === '') {
+        // If the student didn't answer, mark it as not attempted
+        $questionMarksMap[$questionId]['status'] = 'not_attempted';
+    } else {
+        $isCorrect = is_array($correctAnswers) && is_array($responseText)
+            ? !array_diff($correctAnswers, $responseText) && !array_diff($responseText, $correctAnswers)
+            : $responseText == $correctAnswers;
 
-                    if ($isCorrect) {
-                        $gainedMarks += $marks;
-                        $totalCorrectAnswers++;
-                        $questionMarksMap[$questionId]['your_marks'] = $marks;
-                        $questionMarksMap[$questionId]['status'] = 'correct';
-                    } else {
-                        $gainedMarks -= $negativeMarks;
-                        $totalWrongAnswers++;
-                        $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
-                        $questionMarksMap[$questionId]['status'] = 'incorrect';
-                    }
+        if ($isCorrect) {
+            $gainedMarks += $marks;
+            $totalCorrectAnswers++;
+            $questionMarksMap[$questionId]['your_marks'] = $marks;
+            $questionMarksMap[$questionId]['status'] = 'correct';
+        } else {
+            $gainedMarks -= $negativeMarks;
+            $totalWrongAnswers++;
+            $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
+            $questionMarksMap[$questionId]['status'] = 'incorrect';
+        }
+    }
                 } else {
                     $questionMarksMap[$questionId]['status'] = 'pending';
                 }
