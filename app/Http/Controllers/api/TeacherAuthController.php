@@ -374,11 +374,11 @@ public function UpdateView($id){
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
-        'qualification' => 'nullable|string|min:1|max:250',
+            'qualification' => 'nullable|string|min:1|max:250',
 
             'state' => ['nullable', 'string', 'min:1', 'max:250'],
             'image' => 'nullable',
-        'subject' => 'required|array',      
+            'subject' => 'nullable|array',       
 
         ]);
 
@@ -407,9 +407,9 @@ public function UpdateView($id){
             $teacher->subject = $request->input('subject', []);
 
             // $teacher->password =Hash::make($request->password);
-            // $teacher->classes =$request->input('classes');
+            // $teacher->classes =$request->input('classes'); 
 
-      if ($request->has('image') && $request->image !== null) {
+        if ($request->has('image') && $request->image !== null) {
         if (filter_var($request->image, FILTER_VALIDATE_URL)) {
             // Handle image URL
             $imageUrl = $request->image;
