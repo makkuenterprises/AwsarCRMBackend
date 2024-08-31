@@ -913,6 +913,7 @@ class ExamResponseController extends Controller
 //         ], 500);
 //     }
 // }
+
 public function storeExamResponse(Request $request)
 {
     try {
@@ -930,31 +931,18 @@ public function storeExamResponse(Request $request)
 
         $timezone = 'Asia/Kolkata';
 
-        // Find the exam
+        // Find the exam and parse times
         $exam = Exam::find($validated['exam_id']);
-
-        // Parse the start and end time into Carbon instances with the specified timezone
         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->start_time, $timezone);
         $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->end_time, $timezone);
-
-        // Get the current time and date in the specified timezone
         $currentTime = Carbon::now($timezone);
-        $currentDate = $currentTime->toDateString();
-        $examDate = $startTime->toDateString();
 
-        // Check if the current date matches the exam date
-        if ($currentDate !== $examDate) {
+        // Validate exam date and time
+        if ($currentTime->toDateString() !== $startTime->toDateString() ||
+            $currentTime->lt($startTime) || $currentTime->gt($endTime)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Exam submission is only allowed on the exam date',
-            ], 403);
-        }
-
-        // Check if the current time is within the allowed time frame
-        if ($currentTime->lt($startTime) || $currentTime->gt($endTime)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Exam submission is not allowed outside the designated time period',
+                'message' => 'Exam submission is only allowed on the exam date and within the designated time period',
             ], 403);
         }
 
@@ -963,184 +951,129 @@ public function storeExamResponse(Request $request)
         $gainedMarks = 0;
         $totalCorrectAnswers = 0;
         $totalWrongAnswers = 0;
-        $totalQuestions = 0;
-
-        // Fetch the questions for the exam
-        $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
-            ->with('question')
-            ->get();
-
-        // Create a map of correct answers for quick lookup
-        $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
-            return [$examQuestion->question_id => $examQuestion->question->correct_answers];
-        });
-
-        // Initialize an array to keep track of question responses and marks
         $questionMarksMap = [];
 
-        // Track unique question IDs
-        $answeredQuestionIds = [];
-        
-        // Track if all questions are MCQs
-        $allQuestionsAreMCQ = true;
+        // Fetch exam questions and correct answers
+        $examQuestions = ExamQuestion::with('question')->where('exam_id', $validated['exam_id'])->get();
+        $correctAnswersMap = $examQuestions->pluck('question.correct_answers', 'question_id');
 
+        // Process each response
         foreach ($validated['responses'] as $response) {
+            $questionId = $response['question_id'];
             $marks = $response['marks'] ?? 0;
             $negativeMarks = $response['negative_marks'] ?? 0;
-            $questionId = $response['question_id'];
             $responseText = $response['response'] ?? '';
 
-            // Aggregate marks for each question
             if (!isset($questionMarksMap[$questionId])) {
                 $questionMarksMap[$questionId] = [
                     'marks' => 0,
                     'negative_marks' => 0,
                     'response' => $responseText,
                     'your_marks' => 0,
-                    'status' => 'pending', // Initialize status as pending
+                    'status' => 'pending',
                 ];
             }
+
             $questionMarksMap[$questionId]['marks'] += $marks;
             $questionMarksMap[$questionId]['negative_marks'] += $negativeMarks;
 
-            // Track answered question IDs
-            $answeredQuestionIds[$questionId] = true;
-
-            // Determine if the response is correct based on question type
             $question = $examQuestions->firstWhere('question_id', $questionId);
-            $correctAnswers = $correctAnswersMap[$questionId] ?? []; 
-
-            if ($question) { 
+            if ($question) {
                 switch ($question->question->question_type) {
                     case 'MCQ':
-                        // Logic to check if the answer is correct
-                        $isCorrect = false;
-
-                        if (is_array($correctAnswers) && is_array($responseText)) {
-                            if (count($correctAnswers) === count($responseText)) {
-                                $isCorrect = empty(array_diff($correctAnswers, $responseText)) && empty(array_diff($responseText, $correctAnswers));
-                            }
-                        } else {
-                            $isCorrect = $responseText == $correctAnswers;
-                        }
-
+                        $isCorrect = $this->isAnswerCorrect($responseText, $correctAnswersMap[$questionId] ?? []);
                         if ($isCorrect) {
                             $gainedMarks += $marks;
                             $totalCorrectAnswers++;
                             $questionMarksMap[$questionId]['your_marks'] = $marks;
-                            $questionMarksMap[$questionId]['status'] = 'correct'; // Set status to correct
+                            $questionMarksMap[$questionId]['status'] = 'correct';
                         } else {
                             $gainedMarks -= $negativeMarks;
                             $totalWrongAnswers++;
                             $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
-                            $questionMarksMap[$questionId]['status'] = 'incorrect'; // Set status to incorrect
+                            $questionMarksMap[$questionId]['status'] = 'incorrect';
                         }
                         break;
-
-                    case 'Short Answer':
-                    case 'Fill in the Blanks':
-                        // For Short Answer and Fill in the Blanks, keep the response for manual grading
-                        $allQuestionsAreMCQ = false;
-                        break;
-
                     default:
-                        $allQuestionsAreMCQ = false;
+                        // Handle other types of questions if needed
+                        break;
                 }
             }
         }
 
-        // Compute total marks by summing the marks of all questions for the exam
+        // Compute total marks
         $totalMarks = $examQuestions->sum('marks');
+        $totalQuestions = count($questionMarksMap);
 
-        // Count the total number of unique questions answered
-        $totalQuestions = count($answeredQuestionIds);
+        // Save exam response
+        $examResponse = ExamResponse::updateOrCreate(
+            ['exam_id' => $validated['exam_id'], 'student_id' => $validated['student_id']],
+            [
+                'total_marks' => $totalMarks,
+                'gained_marks' => $gainedMarks,
+                'passing_marks' => $validated['passing_marks'] ?? 0,
+                'negative_marks' => $request->input('negative_marks', 0),
+                'total_correct_answers' => $totalCorrectAnswers,
+                'total_wrong_answers' => $totalWrongAnswers
+            ]
+        );
 
-        // Check if an exam response already exists
-        $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
-            ->where('student_id', $validated['student_id'])
-            ->first();
+        // Update the exam with gained marks
+        $exam->update(['got_marks' => $gainedMarks]);
 
-        // if ($examResponse) {
-        //     return response()->json([
-        //         'status' => true,
-        //         'message' => 'You have already completed this exam.',
-        //     ], 422);
-        // } else {
-            // Create a new record
-            $examResponse = new ExamResponse();
-            $examResponse->exam_id = $validated['exam_id'];
-            $examResponse->student_id = $validated['student_id'];
-            $examResponse->total_marks = $totalMarks;
-            $examResponse->gained_marks = $gainedMarks;
-            $examResponse->passing_marks = $validated['passing_marks'] ?? 0;
-            $examResponse->negative_marks = $request->input('negative_marks', 0);
-            $examResponse->total_correct_answers = $totalCorrectAnswers;
-            $examResponse->total_wrong_answers = $totalWrongAnswers;
-            $examResponse->save();
-        // }
-
-        // Debugging to confirm what was saved
-        \Log::info('ExamResponse after create or update:', $examResponse->toArray());
-
-        // Update the got_marks for the exam
-        $exam = Exam::find($validated['exam_id']); 
-        $exam->got_marks = $gainedMarks;
-        $exam->save();
-
-        // Store individual question responses
+        // Save question responses
         foreach ($questionMarksMap as $questionId => $marksData) {
-            $existingResponse = ExamQuestionResponse::where([
-                'exam_response_id' => $examResponse->id,
-                'question_id' => $questionId
-            ])->first();
-
-            if ($existingResponse) {
-                // Update the existing record
-                $existingResponse->response = json_encode($marksData['response']);
-                $existingResponse->marks = $marksData['marks'];
-                $existingResponse->negative_marks = $marksData['negative_marks'];
-                $existingResponse->your_marks = $marksData['your_marks']; 
-                $existingResponse->status = $marksData['status']; // Set the status
-                $existingResponse->save(); 
-            } else {
-                // Create a new record
-                $newResponse = new ExamQuestionResponse();
-                $newResponse->exam_response_id = $examResponse->id;
-                $newResponse->question_id = $questionId;
-                $newResponse->response = json_encode($marksData['response']);
-                $newResponse->marks = $marksData['marks'];
-                $newResponse->negative_marks = $marksData['negative_marks'];
-                $newResponse->your_marks = $marksData['your_marks'];
-                $newResponse->status = $marksData['status']; // Set the status
-                $newResponse->save();
-            }
+            ExamQuestionResponse::updateOrCreate(
+                ['exam_response_id' => $examResponse->id, 'question_id' => $questionId],
+                [
+                    'response' => json_encode($marksData['response']),
+                    'marks' => $marksData['marks'],
+                    'negative_marks' => $marksData['negative_marks'],
+                    'your_marks' => $marksData['your_marks'],
+                    'status' => $marksData['status']
+                ]
+            );
         }
 
-        // Return the stored exam response data
         return response()->json([
             'status' => true,
             'message' => 'Response stored successfully',
             'data' => [
                 'exam_response' => $examResponse,
-                'question_marks' => $questionMarksMap,  
+                'question_marks' => $questionMarksMap,
                 'total_questions' => $totalQuestions
             ]
         ], 201);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Validation failed',
-            'errors' => $e->errors()
-        ], 422);
+
     } catch (\Exception $e) {
         return response()->json([
             'status' => false,
             'message' => 'An error occurred while storing the exam response',
-            'error' => $e->getMessage(),
+            'error' => $e->getMessage()
         ], 500);
     }
 }
 
+/**
+ * Check if the answer is correct based on the correct answers.
+ *
+ * @param string $responseText
+ * @param array $correctAnswers
+ * @return bool
+ */
+protected function isAnswerCorrect($responseText, array $correctAnswers)
+{
+    $responseArray = is_array($responseText) ? $responseText : json_decode($responseText, true);
+    $correctAnswersArray = is_array($correctAnswers) ? $correctAnswers : json_decode($correctAnswers, true);
+
+    if (is_array($responseArray) && is_array($correctAnswersArray)) {
+        sort($responseArray);
+        sort($correctAnswersArray);
+        return $responseArray === $correctAnswersArray;
+    }
+
+    return $responseArray == $correctAnswersArray;
+}
 
 public function gradeShortAnswerResponses(Request $request)
 {
