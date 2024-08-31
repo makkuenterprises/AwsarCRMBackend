@@ -1382,7 +1382,7 @@ public function storeExamResponse(Request $request)
                     'marks' => $marksData['marks'],
                     'negative_marks' => $marksData['negative_marks'],
                     'your_marks' => $marksData['your_marks'],
-                    'status' => $marksData['status']
+                     'status' => $marksData['status'] ?? 'not_attempted'
                 ]
             );
         }
@@ -1670,9 +1670,9 @@ public function getResponsesByBatchAndStudent(Request $request)
                         //   'student_response' => $studentResponse->response 
                         //         ? array_map('strval', json_decode($studentResponse->response)) 
                         //         : [],
-                        'student_response' => $studentResponse->response
-    ? array_map('strval', (array) json_decode($studentResponse->response, true))
-    : [],
+                         'student_response' => $studentResponse->response
+                             ? array_map('strval', (array) json_decode($studentResponse->response, true))
+                           : [],
                             'gained_marks' => $obtainedMarks,
                             'negative_marks' => $studentResponse->negative_marks ?? null,
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
