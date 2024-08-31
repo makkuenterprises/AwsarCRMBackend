@@ -506,7 +506,7 @@ public function getExamsForStudent(Request $request)
 
             // Format the exam details
             return [
-                'id' => $exam->id,
+                'exam_id' => $exam->id,
                 'name' => $exam->name,
                 'start_time' => $exam->start_time,
                 'end_time' => $exam->end_time,
