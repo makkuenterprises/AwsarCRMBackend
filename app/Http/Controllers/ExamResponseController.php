@@ -939,8 +939,8 @@ public function storeExamResponse(Request $request)
 
         // Get the current time and date in the specified timezone
         $currentTime = Carbon::now($timezone);
-        $currentDate = $currentTime->toDateString(); // Get date in "Y-m-d" format
-        $examDate = $startTime->toDateString();      // Get exam date in "Y-m-d" format
+        $currentDate = $currentTime->toDateString();
+        $examDate = $startTime->toDateString();
 
         // Check if the current date matches the exam date
         if ($currentDate !== $examDate) {
@@ -996,7 +996,8 @@ public function storeExamResponse(Request $request)
                     'marks' => 0,
                     'negative_marks' => 0,
                     'response' => $responseText,
-                    'your_marks' => 0
+                    'your_marks' => 0,
+                    'status' => 'pending', // Initialize status as pending
                 ];
             }
             $questionMarksMap[$questionId]['marks'] += $marks;
@@ -1016,13 +1017,10 @@ public function storeExamResponse(Request $request)
                         $isCorrect = false;
 
                         if (is_array($correctAnswers) && is_array($responseText)) {
-                            // Ensure both arrays have the same number of elements
                             if (count($correctAnswers) === count($responseText)) {
-                                // Check if both arrays contain exactly the same elements (order doesn't matter)
                                 $isCorrect = empty(array_diff($correctAnswers, $responseText)) && empty(array_diff($responseText, $correctAnswers));
                             }
                         } else {
-                            // Direct comparison for single-option responses
                             $isCorrect = $responseText == $correctAnswers;
                         }
 
@@ -1030,10 +1028,12 @@ public function storeExamResponse(Request $request)
                             $gainedMarks += $marks;
                             $totalCorrectAnswers++;
                             $questionMarksMap[$questionId]['your_marks'] = $marks;
+                            $questionMarksMap[$questionId]['status'] = 'correct'; // Set status to correct
                         } else {
                             $gainedMarks -= $negativeMarks;
                             $totalWrongAnswers++;
                             $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
+                            $questionMarksMap[$questionId]['status'] = 'incorrect'; // Set status to incorrect
                         }
                         break;
 
@@ -1060,12 +1060,12 @@ public function storeExamResponse(Request $request)
             ->where('student_id', $validated['student_id'])
             ->first();
 
-        if ($examResponse) {
-            return response()->json([
-                'status' => true,
-                'message' => 'You have already completed this exam.',
-            ], 422);
-        } else {
+        // if ($examResponse) {
+        //     return response()->json([
+        //         'status' => true,
+        //         'message' => 'You have already completed this exam.',
+        //     ], 422);
+        // } else {
             // Create a new record
             $examResponse = new ExamResponse();
             $examResponse->exam_id = $validated['exam_id'];
@@ -1077,7 +1077,7 @@ public function storeExamResponse(Request $request)
             $examResponse->total_correct_answers = $totalCorrectAnswers;
             $examResponse->total_wrong_answers = $totalWrongAnswers;
             $examResponse->save();
-        }
+        // }
 
         // Debugging to confirm what was saved
         \Log::info('ExamResponse after create or update:', $examResponse->toArray());
@@ -1100,10 +1100,7 @@ public function storeExamResponse(Request $request)
                 $existingResponse->marks = $marksData['marks'];
                 $existingResponse->negative_marks = $marksData['negative_marks'];
                 $existingResponse->your_marks = $marksData['your_marks']; 
-                $existingResponse->status = in_array(
-                    $examQuestions->firstWhere('question_id', $questionId)->question->question_type,
-                    ['Short Answer', 'Fill in the Blanks']
-                ) ? 'pending' : 'correct';   
+                $existingResponse->status = $marksData['status']; // Set the status
                 $existingResponse->save(); 
             } else {
                 // Create a new record
@@ -1114,10 +1111,7 @@ public function storeExamResponse(Request $request)
                 $newResponse->marks = $marksData['marks'];
                 $newResponse->negative_marks = $marksData['negative_marks'];
                 $newResponse->your_marks = $marksData['your_marks'];
-                $newResponse->status = in_array(
-                    $examQuestions->firstWhere('question_id', $questionId)->question->question_type,
-                    ['Short Answer', 'Fill in the Blanks']
-                ) ? 'pending' : 'correct';
+                $newResponse->status = $marksData['status']; // Set the status
                 $newResponse->save();
             }
         }
@@ -1128,7 +1122,7 @@ public function storeExamResponse(Request $request)
             'message' => 'Response stored successfully',
             'data' => [
                 'exam_response' => $examResponse,
-                'question_marks' => $questionMarksMap,
+                'question_marks' => $questionMarksMap,  
                 'total_questions' => $totalQuestions
             ]
         ], 201);
