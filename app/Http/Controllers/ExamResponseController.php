@@ -615,12 +615,12 @@ public function storeExamResponse(Request $request)
             ->where('student_id', $validated['student_id'])
             ->first();
 
-        if ($examResponse) {
-            return response()->json([
-                'status' => true,
-                'message' => 'You have already completed this exam.',
-            ], 422);
-        } else {
+        // if ($examResponse) {
+        //     return response()->json([
+        //         'status' => true,
+        //         'message' => 'You have already completed this exam.',
+        //     ], 422);
+        // } else {
             // Create a new record
             $examResponse = new ExamResponse();
             $examResponse->exam_id = $validated['exam_id'];
@@ -633,7 +633,7 @@ public function storeExamResponse(Request $request)
             $examResponse->total_wrong_answers = $totalWrongAnswers;
             $examResponse->result_status = $allQuestionsAreMCQ ? 'DONE' : 'PENDING'; // Set result status
             $examResponse->save();
-        }
+        // }
 
         // Debugging to confirm what was saved
         \Log::info('ExamResponse after create or update:', $examResponse->toArray());
