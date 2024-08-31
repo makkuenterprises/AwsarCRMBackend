@@ -1423,6 +1423,17 @@ public function storeExamResponse(Request $request)
 
         $timezone = 'Asia/Kolkata';
         $currentTime = Carbon::now($timezone);
+         $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
+            ->where('student_id', $validated['student_id'])
+            ->first();
+
+        if ($examResponse) {
+            return response()->json([
+                'status' => true,
+                'message' => 'You have already completed this exam.',
+            ], 422);
+        } 
+
 
         // Find the exam and parse times
         $exam = Exam::findOrFail($validated['exam_id']);
