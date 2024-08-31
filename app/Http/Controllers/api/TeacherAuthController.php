@@ -404,7 +404,7 @@ public function UpdateView($id){
             $teacher->city = $request->input('city');
             $teacher->state = $request->input('state');
             $teacher->qualification = $request->input('qualification');
-            $teacher->subject = $request->input('subject', []);
+            // $teacher->subject = $request->input('subject', []);
 
             // $teacher->password =Hash::make($request->password);
             // $teacher->classes =$request->input('classes'); 
