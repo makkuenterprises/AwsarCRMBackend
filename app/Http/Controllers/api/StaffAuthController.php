@@ -147,6 +147,11 @@ class StaffAuthController extends Controller
             ],
         ],
     ],
+     [
+        'title' => 'Review Exam',
+        'iconStyle' => '<i className="material-icons">request_page</i>',
+        'to' => 'review-exam',
+    ],
                  [
                     'title' => 'Class Routine',
                      'classsChange' => 'mm-collapse',
