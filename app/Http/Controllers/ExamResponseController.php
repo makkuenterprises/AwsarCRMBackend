@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
 use App\Models\ExamQuestionResponse; 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -1109,6 +1109,17 @@ public function storeExamResponse(Request $request)
             ], 403);
         }
 
+        $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
+            ->where('student_id', $validated['student_id'])
+            ->first();
+
+        if ($examResponse) {
+            return response()->json([
+                'status' => true,
+                'message' => 'You have already completed this exam.',
+            ], 422);
+        } 
+
         // Fetch all questions for the exam with their correct answers
         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
             ->with('question')
@@ -1190,7 +1201,7 @@ public function storeExamResponse(Request $request)
                 'total_correct_answers' => $totalCorrectAnswers,
                 'total_wrong_answers' => $totalWrongAnswers,
                 'result_status' => count($answeredQuestionIds) === $examQuestions->count() ? 'DONE' : 'PENDING'
-            ]
+            ] 
         );
 
         // Store or update individual question responses
@@ -1222,7 +1233,7 @@ public function storeExamResponse(Request $request)
             'message' => 'An error occurred while storing exam responses.',
             'error' => $e->getMessage()
         ], 500);
-    }
+    } 
 }
 
 
