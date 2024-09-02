@@ -415,7 +415,7 @@ Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'Teacher
 Route::middleware(['admin'])->group(function () {
 
 Route::post('student-report-datewise', [DatewiseReport::class, 'ReportDatewise']);
-Route::get('student-report', [DatewiseReport::class, 'ReportDatewise']); 
+Route::get('student-report', [DatewiseReport::class, 'ReportDatewise']);  
   
 
 // ATTENDANCE STUDENT=============================================================================================
@@ -541,6 +541,7 @@ Route::post('student/responses/short-answer', [ExamResponseController::class, 'g
 Route::post('/student-result', [ExamResponseController::class, 'getStudentExamResult']);
 Route::post('all/student-result', [ExamResponseController::class, 'getStudentAllResult']);
 Route::post('exam/student-result', [ExamResponseController::class, 'getAllStudentsResults']);
+Route::post('single/student-result', [ExamResponseController::class, 'getStudentResults']);
 
  
 Route::post('zoom/create-meeting', [ZoomController::class, 'createMeeting']);

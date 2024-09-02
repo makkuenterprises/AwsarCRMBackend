@@ -2171,6 +2171,67 @@ public function getAllStudentsResults(Request $request)
     }
 }
 
+public function getStudentResults(Request $request)
+{
+    try { 
+        // Validate the request data
+        $validated = $request->validate([
+            'course_id' => 'required|exists:courses,id', // Required course ID
+            'exam_id' => 'required|exists:exams,id', // Required exam ID
+            'student_id' => 'required|exists:students,id' // Required student ID
+        ]);
+
+        // Base query to fetch all exams filtered by course_id and exam_id
+        $examIds = Exam::where('batch_id', $validated['course_id'])
+            ->where('id', $validated['exam_id'])
+            ->pluck('id');
+
+        // Fetch exam responses for the specific student
+        $examResponses = ExamResponse::select(
+             'exam_responses.id',  
+             'students.id as student_id',
+             DB::raw("IF(students.image IS NOT NULL AND students.image != '', CONCAT('" . url('/Student/') . "/', students.image), null) as student_image"),
+             'students.name as student_name', 
+             'students.email as student_email', 
+             'students.phone as student_phone',
+             'exam_responses.exam_id', 
+             'exam_responses.student_id', 
+             'exam_responses.total_marks', 
+             'exam_responses.gained_marks', 
+             'exam_responses.passing_marks', 
+             'exam_responses.negative_marks', 
+             'exam_responses.total_correct_answers', 
+             'exam_responses.total_wrong_answers', 
+             'exam_responses.result_status', 
+             'exam_responses.created_at', 
+             'exam_responses.updated_at', 
+             'exams.name as exam_name'
+            )
+            ->join('exams', 'exam_responses.exam_id', '=', 'exams.id')
+            ->join('students', 'exam_responses.student_id', '=', 'students.id')
+            ->whereIn('exam_responses.exam_id', $examIds)
+            ->where('exam_responses.student_id', $validated['student_id']) // Filter by student_id
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Student results fetched successfully',
+            'data' => $examResponses
+        ], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'An error occurred',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
 
 }
