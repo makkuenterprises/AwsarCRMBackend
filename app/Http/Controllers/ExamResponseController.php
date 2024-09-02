@@ -8,6 +8,7 @@ use App\Models\Question;
 use App\Models\ExamQuestion; 
 use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
+use App\Models\Student; 
 use App\Models\ExamQuestionResponse; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log; 
