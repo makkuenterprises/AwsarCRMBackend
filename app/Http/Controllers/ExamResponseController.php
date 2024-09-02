@@ -1794,8 +1794,8 @@ public function getResponsesByBatchAndStudent(Request $request)
 
         $exams = $query->get();
 
-          $student = Student::find($validated['student_id']); 
-         $student->image = $student->image ? url('/Student/' . $student->image) : null;
+        //   $student = Student::find($validated['student_id']); 
+        //  $student->image = $student->image ? url('/Student/' . $student->image) : null;
 
         // Initialize an array to hold exam responses
         $responses = [];
@@ -1890,7 +1890,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                 // Append exam response and section-wise question responses to the array
                 $responses[] = [
                     'exam_id' => $exam->id,
-                     'img' => $student->image,
+                    //  'img' => $student->image,
                     'exam' => $exam,
                     'exam_response' => $examResponse,
                     'sections' => $sectionData
