@@ -20,7 +20,7 @@ $students = DB::table('courses_enrollements')
     ->select(
         'courses_enrollements.student_id',
         'courses.id as course_id',
-        'courses.course_name',
+        'courses.name',
         'courses.description',
         'courses_enrollements.enrollment_date',
         'payment_histories.transaction_id',
