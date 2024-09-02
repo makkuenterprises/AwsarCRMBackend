@@ -1718,14 +1718,16 @@ public function calculateMarks($examId, $studentId)
 }
  
 
-//   public function getResponsesByBatchAndStudent(Request $request)
+
+
+// public function getResponsesByBatchAndStudent(Request $request) 
 // {
 //     // Validate the incoming request data 
 //     $validated = $request->validate([
 //         'batch_id' => 'required|exists:exams,batch_id',
 //         'student_id' => 'required|exists:students,id',
-//         'exam_id' => 'required|exists:exams,id' // Optional filter for a specific exam
-//     ]);
+//         'exam_id' => 'nullable|exists:exams,id' 
+//     ]); 
 
 //     try {
 //         // Retrieve all exams associated with the batch
@@ -1738,6 +1740,9 @@ public function calculateMarks($examId, $studentId)
 
 //         $exams = $query->get();
 
+//         //   $student = Student::find($validated['student_id']); 
+//         //  $student->image = $student->image ? url('/Student/' . $student->image) : null;
+
 //         // Initialize an array to hold exam responses
 //         $responses = [];
 
@@ -1748,16 +1753,93 @@ public function calculateMarks($examId, $studentId)
 //                 ->first();
 
 //             if ($examResponse) {
-//                 // Retrieve detailed responses for the exam
-//                 $questionResponses = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
-//                     ->get();
+//                 // Retrieve all sections associated with the exam
+//                 $sections = Section::where('exam_id', $exam->id)->get();
 
-//                 // Append exam response and question responses to the array
+//                 $sectionData = [];
+
+//                 foreach ($sections as $section) {
+//                     // Retrieve all questions for each section
+//                     $questions = ExamQuestion::where('exam_id', $exam->id)
+//                         ->where('section_id', $section->id)
+//                         ->with('question') // Assuming you have a relationship set up in the model
+//                         ->get(); 
+
+//                     $questionResponses = [];
+//                     $sectionTotalMarks = 0;
+//                     $sectionObtainedMarks = 0;
+//                     $sectionCorrectAnswers = 0; // Total number of correct answers for the section
+//                     $sectionWrongAnswers = 0; // Total number of wrong answers for the section
+
+//                     foreach ($questions as $examQuestion) {
+//                         // Retrieve the student's response for each question
+//                         $studentResponse = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+//                             ->where('question_id', $examQuestion->question_id)
+//                             ->first();
+//                             // $studentResponse->status='graded';
+
+//                         // Calculate total marks for the section
+//                         $sectionTotalMarks += $examQuestion->marks;
+
+//                         // Calculate obtained marks for the section
+//                         $obtainedMarks = 0;
+//                         $isCorrect = false;
+
+//                         if ($studentResponse) {
+//                             $obtainedMarks = $studentResponse->your_marks ?? 0; // Use the 'your_marks' field
+//                             $sectionObtainedMarks += $obtainedMarks; // Add obtained marks to the total
+
+//                             // Check if the answer is correct or wrong using the 'status' field
+//                             if ($studentResponse->status === 'correct') {
+//                                 $sectionCorrectAnswers++;
+//                                 $isCorrect = true; 
+//                             } else {
+//                                 $sectionWrongAnswers++;
+//                             }
+//                         }  
+//                         $questionOptions = $examQuestion->question->options ? $examQuestion->question->options : null;
+
+//                         $questionResponses[] = [
+//                             'question_id' => $examQuestion->question_id,
+//                             'question_text' => $examQuestion->question->question_text, 
+//                             'question_type' => $examQuestion->question->question_type, 
+//                             'question_img' => $examQuestion->question->image ? url(Storage::url($examQuestion->question->image)) : null,
+//                             'question_options' => $questionOptions, 
+//                             'max_marks' => $examQuestion->marks,
+//                             'correct_answer' => $examQuestion->question->correct_answers, // Assuming a correct_answers field
+//                         //   'student_response' => $studentResponse->response 
+//                         //         ? array_map('strval', json_decode($studentResponse->response)) 
+//                         //         : [],
+//                          'student_response' => $studentResponse->response
+//                              ? array_map('strval', (array) json_decode($studentResponse->response, true))
+//                            : [],
+//                             'gained_marks' => $obtainedMarks,
+//                             'negative_marks' => $studentResponse->negative_marks ?? null,
+//                             // 'status' => $isCorrect ? 'correct' : 'wrong',
+
+//                               'status' => $studentResponse->status ?? 'incorrect',
+                            
+//                         ];
+//                     }
+
+//                     $sectionData[] = [
+//                         // 'section_id' => $section->id,
+//                         'section_name' => $section->name,
+//                         'total_marks' => $sectionTotalMarks,
+//                         'obtained_marks' => $sectionObtainedMarks,
+//                         // 'total_correct_answers' => $sectionCorrectAnswers,
+//                         // 'total_wrong_answers' => $sectionWrongAnswers,
+//                         'questions' => $questionResponses
+//                     ];
+//                 }
+
+//                 // Append exam response and section-wise question responses to the array
 //                 $responses[] = [
 //                     'exam_id' => $exam->id,
+//                     //  'img' => $student->image,
 //                     'exam' => $exam,
 //                     'exam_response' => $examResponse,
-//                     'question_responses' => $questionResponses
+//                     'sections' => $sectionData
 //                 ];
 //             }
 //         }
@@ -1775,7 +1857,6 @@ public function calculateMarks($examId, $studentId)
 //         ], 500);
 //     }
 // }
-
 
 public function getResponsesByBatchAndStudent(Request $request) 
 {
@@ -1797,8 +1878,13 @@ public function getResponsesByBatchAndStudent(Request $request)
 
         $exams = $query->get();
 
-        //   $student = Student::find($validated['student_id']); 
-        //  $student->image = $student->image ? url('/Student/' . $student->image) : null;
+        if ($exams->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No exams found for the provided batch and exam ID',
+                'data' => []
+            ], 404);
+        }
 
         // Initialize an array to hold exam responses
         $responses = [];
@@ -1809,96 +1895,92 @@ public function getResponsesByBatchAndStudent(Request $request)
                 ->where('student_id', $validated['student_id'])
                 ->first();
 
-            if ($examResponse) {
-                // Retrieve all sections associated with the exam
-                $sections = Section::where('exam_id', $exam->id)->get();
+            if (!$examResponse) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No response found for the student in exam ID ' . $exam->id,
+                    'data' => []
+                ], 404);
+            }
 
-                $sectionData = [];
+            // Retrieve all sections associated with the exam
+            $sections = Section::where('exam_id', $exam->id)->get();
 
-                foreach ($sections as $section) {
-                    // Retrieve all questions for each section
-                    $questions = ExamQuestion::where('exam_id', $exam->id)
-                        ->where('section_id', $section->id)
-                        ->with('question') // Assuming you have a relationship set up in the model
-                        ->get(); 
+            if ($sections->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No sections found for exam ID ' . $exam->id,
+                    'data' => []
+                ], 404);
+            }
 
-                    $questionResponses = [];
-                    $sectionTotalMarks = 0;
-                    $sectionObtainedMarks = 0;
-                    $sectionCorrectAnswers = 0; // Total number of correct answers for the section
-                    $sectionWrongAnswers = 0; // Total number of wrong answers for the section
+            $sectionData = [];
 
-                    foreach ($questions as $examQuestion) {
-                        // Retrieve the student's response for each question
-                        $studentResponse = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
-                            ->where('question_id', $examQuestion->question_id)
-                            ->first();
-                            // $studentResponse->status='graded';
+            foreach ($sections as $section) {
+                // Retrieve all questions for each section
+                $questions = ExamQuestion::where('exam_id', $exam->id)
+                    ->where('section_id', $section->id)
+                    ->with('question')
+                    ->get();
 
-                        // Calculate total marks for the section
-                        $sectionTotalMarks += $examQuestion->marks;
+                if ($questions->isEmpty()) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'No questions found for section ID ' . $section->id,
+                        'data' => []
+                    ], 404);
+                }
 
-                        // Calculate obtained marks for the section
-                        $obtainedMarks = 0;
-                        $isCorrect = false;
+                $questionResponses = [];
+                $sectionTotalMarks = 0;
+                $sectionObtainedMarks = 0;
 
-                        if ($studentResponse) {
-                            $obtainedMarks = $studentResponse->your_marks ?? 0; // Use the 'your_marks' field
-                            $sectionObtainedMarks += $obtainedMarks; // Add obtained marks to the total
+                foreach ($questions as $examQuestion) {
+                    // Retrieve the student's response for each question
+                    $studentResponse = ExamQuestionResponse::where('exam_response_id', $examResponse->id)
+                        ->where('question_id', $examQuestion->question_id)
+                        ->first();
 
-                            // Check if the answer is correct or wrong using the 'status' field
-                            if ($studentResponse->status === 'correct') {
-                                $sectionCorrectAnswers++;
-                                $isCorrect = true; 
-                            } else {
-                                $sectionWrongAnswers++;
-                            }
-                        }  
-                        $questionOptions = $examQuestion->question->options ? $examQuestion->question->options : null;
+                    // Calculate total marks for the section
+                    $sectionTotalMarks += $examQuestion->marks;
 
-                        $questionResponses[] = [
-                            'question_id' => $examQuestion->question_id,
-                            'question_text' => $examQuestion->question->question_text, 
-                            'question_type' => $examQuestion->question->question_type, 
-                            'question_img' => $examQuestion->question->image ? url(Storage::url($examQuestion->question->image)) : null,
-                            'question_options' => $questionOptions, 
-                            'max_marks' => $examQuestion->marks,
-                            'correct_answer' => $examQuestion->question->correct_answers, // Assuming a correct_answers field
-                        //   'student_response' => $studentResponse->response 
-                        //         ? array_map('strval', json_decode($studentResponse->response)) 
-                        //         : [],
-                         'student_response' => $studentResponse->response
-                             ? array_map('strval', (array) json_decode($studentResponse->response, true))
-                           : [],
-                            'gained_marks' => $obtainedMarks,
-                            'negative_marks' => $studentResponse->negative_marks ?? null,
-                            // 'status' => $isCorrect ? 'correct' : 'wrong',
+                    // Calculate obtained marks for the section
+                    $obtainedMarks = $studentResponse ? ($studentResponse->your_marks ?? 0) : 0;
+                    $sectionObtainedMarks += $obtainedMarks;
 
-                              'status' => $studentResponse->status ?? 'incorrect',
-                            
-                        ];
-                    }
+                    $questionOptions = $examQuestion->question->options ? $examQuestion->question->options : null;
 
-                    $sectionData[] = [
-                        // 'section_id' => $section->id,
-                        'section_name' => $section->name,
-                        'total_marks' => $sectionTotalMarks,
-                        'obtained_marks' => $sectionObtainedMarks,
-                        // 'total_correct_answers' => $sectionCorrectAnswers,
-                        // 'total_wrong_answers' => $sectionWrongAnswers,
-                        'questions' => $questionResponses
+                    $questionResponses[] = [
+                        'question_id' => $examQuestion->question_id,
+                        'question_text' => $examQuestion->question->question_text, 
+                        'question_type' => $examQuestion->question->question_type, 
+                        'question_img' => $examQuestion->question->image ? url(Storage::url($examQuestion->question->image)) : null,
+                        'question_options' => $questionOptions, 
+                        'max_marks' => $examQuestion->marks,
+                        'correct_answer' => $examQuestion->question->correct_answers,
+                        'student_response' => $studentResponse->response
+                            ? array_map('strval', (array) json_decode($studentResponse->response, true))
+                            : [],
+                        'gained_marks' => $obtainedMarks,
+                        'negative_marks' => $studentResponse->negative_marks ?? null,
+                        'status' => $studentResponse->status ?? 'incorrect',
                     ];
                 }
 
-                // Append exam response and section-wise question responses to the array
-                $responses[] = [
-                    'exam_id' => $exam->id,
-                    //  'img' => $student->image,
-                    'exam' => $exam,
-                    'exam_response' => $examResponse,
-                    'sections' => $sectionData
+                $sectionData[] = [
+                    'section_name' => $section->name,
+                    'total_marks' => $sectionTotalMarks,
+                    'obtained_marks' => $sectionObtainedMarks,
+                    'questions' => $questionResponses
                 ];
             }
+
+            $responses[] = [
+                'exam_id' => $exam->id,
+                'exam' => $exam,
+                'exam_response' => $examResponse,
+                'sections' => $sectionData
+            ];
         }
 
         return response()->json([
@@ -1914,7 +1996,6 @@ public function getResponsesByBatchAndStudent(Request $request)
         ], 500);
     }
 }
-
 
 
 
