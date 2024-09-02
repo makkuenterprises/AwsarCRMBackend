@@ -11,25 +11,62 @@ class DatewiseReport extends Controller
 public function ReportDatewise(Request $request){
     
         $startDate = $request->start_date;
-        $endDate = $request->end_date;
+$endDate = $request->end_date;
 
-$coursesWithPaymentHistory = DB::table('courses_enrollements')
+$students = DB::table('courses_enrollements')
     ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
     ->join('payment_histories', 'courses_enrollements.id', '=', 'payment_histories.enrollment_id')
-    ->whereBetween('courses_enrollements.enrollment_date', [$startDate, $endDate]) // Filter by enrollment date range
+    ->whereBetween('courses_enrollements.enrollment_date', [$startDate, $endDate])
     ->select(
-        'courses.*', 
-        'courses_enrollements.student_id', // Include student ID
+        'courses_enrollements.student_id',
+        'courses.id as course_id',
+        'courses.course_name',
+        'courses.description',
         'courses_enrollements.enrollment_date',
-        'payment_histories.transaction_id', 
-        'payment_histories.payment_type', 
-        'payment_histories.payment_status', 
-        'payment_histories.paid_amount', 
+        'payment_histories.transaction_id',
+        'payment_histories.payment_type',
+        'payment_histories.payment_status',
+        'payment_histories.paid_amount',
         'payment_histories.payment_date'
     )
-    ->get();
+    ->get()
+    ->groupBy('student_id');
 
-return response()->json($coursesWithPaymentHistory);
+$response = [];
+
+foreach ($students as $studentId => $studentCourses) {
+    $studentData = [
+        'student_id' => $studentId,
+        'courses' => []
+    ];
+
+    $coursesGrouped = $studentCourses->groupBy('course_id');
+    
+    foreach ($coursesGrouped as $courseId => $coursePayments) {
+        $courseData = [
+            'course_id' => $courseId,
+            'course_name' => $coursePayments->first()->course_name,
+            'description' => $coursePayments->first()->description,
+            'enrollment_date' => $coursePayments->first()->enrollment_date,
+            'payments' => $coursePayments->map(function ($payment) {
+                return [
+                    'transaction_id' => $payment->transaction_id,
+                    'payment_type' => $payment->payment_type,
+                    'payment_status' => $payment->payment_status,
+                    'paid_amount' => $payment->paid_amount,
+                    'payment_date' => $payment->payment_date,
+                ];
+            })->toArray()
+        ];
+        
+        $studentData['courses'][] = $courseData;
+    }
+
+    $response[] = $studentData;
+}
+
+return response()->json($response);
+
 }
 
 }
