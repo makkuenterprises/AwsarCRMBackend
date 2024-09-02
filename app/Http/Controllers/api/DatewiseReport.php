@@ -46,7 +46,7 @@ foreach ($students as $studentId => $studentCourses) {
         $courseData = [
             'course_id' => $courseId,
             'course_name' => $coursePayments->first()->name,
-            'description' => $coursePayments->first()->description,
+           
             'enrollment_date' => $coursePayments->first()->enrollment_date,
             'payments' => $coursePayments->map(function ($payment) {
                 return [
