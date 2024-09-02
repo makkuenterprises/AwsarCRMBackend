@@ -1857,7 +1857,7 @@ public function calculateMarks($examId, $studentId)
 //         ], 500);
 //     }
 // }
-
+  
 public function getResponsesByBatchAndStudent(Request $request) 
 {
     // Validate the incoming request data 
@@ -1872,7 +1872,7 @@ public function getResponsesByBatchAndStudent(Request $request)
         $query = Exam::where('batch_id', $validated['batch_id']);
 
         // If an exam_id is provided, filter by it
-        if (isset($validated['exam_id'])) {
+        if ($validated['exam_id']) {
             $query->where('id', $validated['exam_id']);
         }
 
@@ -1896,11 +1896,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                 ->first();
 
             if (!$examResponse) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'No response found for the student in exam ID ' . $exam->id,
-                    'data' => []
-                ], 404);
+                continue; // Skip to the next exam if no response is found
             }
 
             // Retrieve all sections associated with the exam
@@ -1924,11 +1920,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                     ->get();
 
                 if ($questions->isEmpty()) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'No questions found for section ID ' . $section->id,
-                        'data' => []
-                    ], 404);
+                    continue; // Skip to the next section if no questions are found
                 }
 
                 $questionResponses = [];
@@ -1958,12 +1950,12 @@ public function getResponsesByBatchAndStudent(Request $request)
                         'question_options' => $questionOptions, 
                         'max_marks' => $examQuestion->marks,
                         'correct_answer' => $examQuestion->question->correct_answers,
-                        'student_response' => $studentResponse->response
+                        'student_response' => $studentResponse && $studentResponse->response
                             ? array_map('strval', (array) json_decode($studentResponse->response, true))
                             : [],
                         'gained_marks' => $obtainedMarks,
-                        'negative_marks' => $studentResponse->negative_marks ?? null,
-                        'status' => $studentResponse->status ?? 'incorrect',
+                        'negative_marks' => $studentResponse ? $studentResponse->negative_marks : null,
+                        'status' => $studentResponse ? $studentResponse->status : 'not attempted',
                     ];
                 }
 
