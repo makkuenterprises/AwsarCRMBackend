@@ -1872,7 +1872,6 @@ public function getResponsesByBatchAndStudent(Request $request)
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
 
                               'status' => $studentResponse->status ?? 'incorrect',
-                               'img' => $student->image
                             
                         ];
                     }
@@ -1891,6 +1890,8 @@ public function getResponsesByBatchAndStudent(Request $request)
                 // Append exam response and section-wise question responses to the array
                 $responses[] = [
                     'exam_id' => $exam->id,
+                     'img' => $student->image,
+                    
                     'exam' => $exam,
                     'exam_response' => $examResponse,
                     'sections' => $sectionData
