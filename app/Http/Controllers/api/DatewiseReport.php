@@ -21,7 +21,7 @@ $students = DB::table('courses_enrollements')
         'courses_enrollements.student_id',
         'courses.id as course_id',
         'courses.name',
-        'courses.description',
+        // 'courses.description',
         'courses_enrollements.enrollment_date',
         'payment_histories.transaction_id',
         'payment_histories.payment_type',
