@@ -1779,7 +1779,7 @@ public function getResponsesByBatchAndStudent(Request $request)
         'batch_id' => 'required|exists:exams,batch_id',
         'student_id' => 'required|exists:students,id',
         'exam_id' => 'nullable|exists:exams,id' 
-    ]);
+    ]); 
 
     try {
         // Retrieve all exams associated with the batch
@@ -1791,6 +1791,9 @@ public function getResponsesByBatchAndStudent(Request $request)
         }
 
         $exams = $query->get();
+
+          $student = Student::find($id); 
+         $student->image = $student->image ? url('/Student/' . $student->image) : null;
 
         // Initialize an array to hold exam responses
         $responses = [];
@@ -1812,7 +1815,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                     $questions = ExamQuestion::where('exam_id', $exam->id)
                         ->where('section_id', $section->id)
                         ->with('question') // Assuming you have a relationship set up in the model
-                        ->get();
+                        ->get(); 
 
                     $questionResponses = [];
                     $sectionTotalMarks = 0;
@@ -1867,6 +1870,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
 
                               'status' => $studentResponse->status ?? 'incorrect',
+                               'img' => $student->image,
                             
                         ];
                     }

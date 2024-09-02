@@ -225,7 +225,7 @@ public function listExamsForBatch($batchId)
  
 
 public function listExams()
-{
+{ 
     try {
         // Fetch all exams associated with the specific batch
         $exams = Exam::orderBy('created_at', 'desc')->get();
@@ -249,7 +249,7 @@ public function listExams()
     } catch (\Exception $e) {
         // Handle any errors
         return response()->json([
-            'status' => false,
+            'status' => false, 
             'code' => 500,
             'message' => 'An error occurred while retrieving exams',
             'error' => $e->getMessage()
