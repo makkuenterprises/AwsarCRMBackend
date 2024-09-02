@@ -1081,163 +1081,164 @@ class ExamResponseController extends Controller
 //     }
 // }
 
-// public function storeExamResponse(Request $request)
-// {
-//     try {
-//         // Validate the request data
-//         $validated = $request->validate([
-//             'exam_id' => 'required|exists:exams,id',
-//             'student_id' => 'required|exists:students,id',
-//             'responses' => 'required|array',
-//             'responses.*.question_id' => 'required|exists:questions,id',
-//             'responses.*.response' => 'nullable',
-//             'responses.*.marks' => 'nullable|numeric',
-//             'responses.*.negative_marks' => 'nullable|numeric',
-//             'passing_marks' => 'nullable|numeric'
-//         ]);
+public function storeExamResponse(Request $request)
+{
+    try {
+        // Validate the request data
+        $validated = $request->validate([
+            'exam_id' => 'required|exists:exams,id',
+            'student_id' => 'required|exists:students,id',
+            'responses' => 'required|array',
+            'responses.*.question_id' => 'required|exists:questions,id',
+            'responses.*.response' => 'nullable',
+            'responses.*.marks' => 'nullable|numeric',
+            'responses.*.negative_marks' => 'nullable|numeric',
+            'passing_marks' => 'nullable|numeric'
+        ]);
 
-//         $timezone = 'Asia/Kolkata';
-//         $currentTime = Carbon::now($timezone);
+        $timezone = 'Asia/Kolkata';
+        $currentTime = Carbon::now($timezone);
 
-//         // Find the exam and parse times
-//         $exam = Exam::findOrFail($validated['exam_id']);
-//         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->start_time, $timezone);
-//         $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->end_time, $timezone);
+        // Find the exam and parse times
+        $exam = Exam::findOrFail($validated['exam_id']);
+        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->start_time, $timezone);
+        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->end_time, $timezone);
 
-//         // Validate exam date and time
-//         if ($currentTime->lt($startTime) || $currentTime->gt($endTime) || $currentTime->toDateString() !== $startTime->toDateString()) {
-//             return response()->json([
-//                 'status' => false,
-//                 'message' => 'Exam submission is only allowed on the exam date and within the designated time period.',
-//             ], 403);
-//         }
+        // Validate exam date and time
+        if ($currentTime->lt($startTime) || $currentTime->gt($endTime) || $currentTime->toDateString() !== $startTime->toDateString()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Exam submission is only allowed on the exam date and within the designated time period.',
+            ], 403);
+        }
 
-//         $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
-//             ->where('student_id', $validated['student_id'])
-//             ->first();
+        $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
+            ->where('student_id', $validated['student_id'])
+            ->first();
 
-//         if ($examResponse) {
-//             return response()->json([
-//                 'status' => true,
-//                 'message' => 'You have already completed this exam.',
-//             ], 422);
-//         } 
+        // if ($examResponse) {
+        //     return response()->json([
+        //         'status' => true,
+        //         'message' => 'You have already completed this exam.',
+        //     ], 422);
+        // } 
 
-//         // Fetch all questions for the exam with their correct answers
-//         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
-//             ->with('question')
-//             ->get()
-//             ->keyBy('question_id');
+        // Fetch all questions for the exam with their correct answers
+        $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
+            ->with('question')
+            ->get()
+            ->keyBy('question_id');
 
-//         $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
-//             return [$examQuestion->question_id => $examQuestion->question->correct_answers];
-//         });
+        $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
+            return [$examQuestion->question_id => $examQuestion->question->correct_answers];
+        });
 
-//         $responses = $validated['responses'];
+        $responses = $validated['responses'];
 
-//         // Initialize variables
-//         $totalMarks = $examQuestions->sum('marks');
-//         $gainedMarks = 0;
-//         $totalCorrectAnswers = 0;
-//         $totalWrongAnswers = 0;
-//         $answeredQuestionIds = [];
-//         $questionMarksMap = [];
+        // Initialize variables
+        $totalMarks = $examQuestions->sum('marks');
+        $gainedMarks = 0;
+        $totalCorrectAnswers = 0;
+        $totalWrongAnswers = 0;
+        $answeredQuestionIds = [];
+        $questionMarksMap = [];
 
-//         foreach ($responses as $response) {
-//             $questionId = $response['question_id'];
-//             $responseText = $response['response'] ?? '';
-//             $marks = $response['marks'] ?? 0;
-//             $negativeMarks = $response['negative_marks'] ?? 0;
+        foreach ($responses as $response) {
+            $questionId = $response['question_id'];
+            $responseText = $response['response'] ?? '';
+            $marks = $response['marks'] ?? 0;
+            $negativeMarks = $response['negative_marks'] ?? 0;
 
-//             // Prepare question data
-//             if (!isset($questionMarksMap[$questionId])) {
-//                 $questionMarksMap[$questionId] = [
-//                     'marks' => $marks,
-//                     'negative_marks' => $negativeMarks,
-//                     'response' => $responseText,
-//                     'your_marks' => 0,
-//                     'status' => 'not_attempted'
-//                 ];
-//             }
+            // Prepare question data
+            if (!isset($questionMarksMap[$questionId])) {
+                $questionMarksMap[$questionId] = [
+                    'marks' => $marks,
+                    'negative_marks' => $negativeMarks,
+                    'response' => $responseText,
+                    'your_marks' => 0,
+                    'status' => 'not_attempted'
+                ];
+            }
 
-//             $answeredQuestionIds[$questionId] = true;
+            $answeredQuestionIds[$questionId] = true;
 
-//             // Check correctness
-//             $question = $examQuestions->get($questionId);
-//             if ($question) {
-//                 $correctAnswers = $correctAnswersMap->get($questionId, []);
-//                 $questionType = $question->question->question_type;
+            // Check correctness
+            $question = $examQuestions->get($questionId);
+            if ($question) {
+                $correctAnswers = $correctAnswersMap->get($questionId, []);
+                $questionType = $question->question->question_type;
 
-//                 if ($questionType === 'MCQ') {
-//                     $isCorrect = is_array($correctAnswers) && is_array($responseText)
-//                         ? !array_diff($correctAnswers, $responseText) && !array_diff($responseText, $correctAnswers)
-//                         : $responseText == $correctAnswers;
+                if ($questionType === 'MCQ') {
+                    $isCorrect = is_array($correctAnswers) && is_array($responseText)
+                        ? !array_diff($correctAnswers, $responseText) && !array_diff($responseText, $correctAnswers)
+                        : $responseText == $correctAnswers;
 
-//                     if ($isCorrect) {
-//                         $gainedMarks += $marks;
-//                         $totalCorrectAnswers++;
-//                         $questionMarksMap[$questionId]['your_marks'] = $marks;
-//                         $questionMarksMap[$questionId]['status'] = 'correct';
-//                     } else {
-//                         $gainedMarks -= $negativeMarks;
-//                         $totalWrongAnswers++;
-//                         $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
-//                         $questionMarksMap[$questionId]['status'] = 'incorrect';
-//                     }
-//                 } else {
-//                     $questionMarksMap[$questionId]['status'] = 'pending';
-//                 }
-//             }
-//         }
+                    if ($isCorrect) {
+                        $gainedMarks += $marks;
+                        $totalCorrectAnswers++;
+                        $questionMarksMap[$questionId]['your_marks'] = $marks;
+                        $questionMarksMap[$questionId]['status'] = 'correct';
+                    } else {
+                        $gainedMarks -= $negativeMarks;
+                        $totalWrongAnswers++;
+                        $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
+                        $questionMarksMap[$questionId]['status'] = 'incorrect';
+                    }
+                } else {
+                    $questionMarksMap[$questionId]['status'] = 'pending';
+                }
+            }
+        }
 
-//         // Check if an exam response already exists and update/create as necessary
-//         $examResponse = ExamResponse::updateOrCreate(
-//             [
-//                 'exam_id' => $validated['exam_id'],
-//                 'student_id' => $validated['student_id']
-//             ],
-//             [
-//                 'total_marks' => $totalMarks,
-//                 'gained_marks' => $gainedMarks,
-//                 'passing_marks' => $validated['passing_marks'] ?? 0,
-//                 'negative_marks' => $request->input('negative_marks', 0),
-//                 'total_correct_answers' => $totalCorrectAnswers,
-//                 'total_wrong_answers' => $totalWrongAnswers,
-//                 'result_status' => count($answeredQuestionIds) === $examQuestions->count() ? 'DONE' : 'PENDING'
-//             ] 
-//         );
+        // Check if an exam response already exists and update/create as necessary
+        $examResponse = ExamResponse::updateOrCreate(
+            [
+                'exam_id' => $validated['exam_id'],
+                'student_id' => $validated['student_id']
+            ],
+            [
+                'total_marks' => $totalMarks,
+                'gained_marks' => $gainedMarks,
+                'passing_marks' => $validated['passing_marks'] ?? 0,
+                'negative_marks' => $request->input('negative_marks', 0),
+                'total_correct_answers' => $totalCorrectAnswers,
+                'total_wrong_answers' => $totalWrongAnswers,
+                'result_status' => count($answeredQuestionIds) === $examQuestions->count() ? 'DONE' : 'PENDING'
+            ] 
+        );
 
-//         // Store or update individual question responses
-//         foreach ($questionMarksMap as $questionId => $marksData) {
-//             ExamQuestionResponse::updateOrCreate(
-//                 [
-//                     'exam_response_id' => $examResponse->id,
-//                     'question_id' => $questionId
-//                 ],
-//                 [
-//                     'response' => json_encode($marksData['response']),
-//                     'marks' => $marksData['marks'],
-//                     'negative_marks' => $marksData['negative_marks'],
-//                     'your_marks' => $marksData['your_marks'],
-//                     'status' => $marksData['status']
-//                 ]
-//             );
-//         }
+        // Store or update individual question responses
+        foreach ($questionMarksMap as $questionId => $marksData) {
+            ExamQuestionResponse::updateOrCreate(
+                [
+                    'exam_response_id' => $examResponse->id,
+                    'question_id' => $questionId
+                ],
+                [
+                    'response' => json_encode($marksData['response']),
+                    'marks' => $marksData['marks'],
+                    'negative_marks' => $marksData['negative_marks'],
+                    'your_marks' => $marksData['your_marks'],
+                    'status' => $marksData['status']
+                ]
+            );
+        }
 
-//         return response()->json([
-//             'status' => true,
-//             'message' => 'Exam responses stored successfully.',
-//             'exam_response_id' => $examResponse->id,
-//             'result_status' => $examResponse->result_status
-//         ]);
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'status' => false,
-//             'message' => 'An error occurred while storing exam responses.',
-//             'error' => $e->getMessage()
-//         ], 500);
-//     } 
-// }
+        return response()->json([
+            'status' => true,
+            'message' => 'Exam responses stored successfully.',
+            'exam_response_id' => $examResponse->id,
+            'result_status' => $examResponse->result_status
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'An error occurred while storing exam responses.',
+            'error' => $e->getMessage()
+        ], 500);
+    } 
+}
+
 // public function storeExamResponse(Request $request)
 // {
 //     try {
@@ -1408,189 +1409,189 @@ class ExamResponseController extends Controller
 //         ], 500);
 //     } 
 // }
-public function storeExamResponse(Request $request)
-{
-    try {
-        // Validate the request data
-        $validated = $request->validate([
-            'exam_id' => 'required|exists:exams,id',
-            'student_id' => 'required|exists:students,id',
-            'responses' => 'required|array',
-            'responses.*.question_id' => 'required|exists:questions,id',
-            'responses.*.response' => 'nullable|array', // Response should be an array for MCQs
-            'responses.*.marks' => 'nullable|numeric',
-            'responses.*.negative_marks' => 'nullable|numeric',
-            'passing_marks' => 'nullable|numeric'
-        ]);
+// public function storeExamResponse(Request $request)
+// {
+//     try {
+//         // Validate the request data
+//         $validated = $request->validate([
+//             'exam_id' => 'required|exists:exams,id',
+//             'student_id' => 'required|exists:students,id',
+//             'responses' => 'required|array',
+//             'responses.*.question_id' => 'required|exists:questions,id',
+//             'responses.*.response' => 'nullable|array', // Response should be an array for MCQs
+//             'responses.*.marks' => 'nullable|numeric',
+//             'responses.*.negative_marks' => 'nullable|numeric',
+//             'passing_marks' => 'nullable|numeric'
+//         ]);
 
-        $timezone = 'Asia/Kolkata';
-        $currentTime = Carbon::now($timezone);
-         $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
-            ->where('student_id', $validated['student_id'])
-            ->first();
+//         $timezone = 'Asia/Kolkata';
+//         $currentTime = Carbon::now($timezone);
+//          $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
+//             ->where('student_id', $validated['student_id'])
+//             ->first();
 
-        if ($examResponse) {
-            return response()->json([
-                'status' => true,
-                'message' => 'You have already completed this exam.',
-            ], 422);
-        } 
+//         if ($examResponse) {
+//             return response()->json([
+//                 'status' => true,
+//                 'message' => 'You have already completed this exam.',
+//             ], 422);
+//         } 
 
 
-        // Find the exam and parse times
-        $exam = Exam::findOrFail($validated['exam_id']);
-        $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->start_time, $timezone);
-        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->end_time, $timezone);
+//         // Find the exam and parse times
+//         $exam = Exam::findOrFail($validated['exam_id']);
+//         $startTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->start_time, $timezone);
+//         $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $exam->end_time, $timezone);
 
-        // Validate exam date and time
-        if ($currentTime->lt($startTime) || $currentTime->gt($endTime) || $currentTime->toDateString() !== $startTime->toDateString()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Exam submission is only allowed on the exam date and within the designated time period.',
-            ], 403);
-        }
+//         // Validate exam date and time
+//         if ($currentTime->lt($startTime) || $currentTime->gt($endTime) || $currentTime->toDateString() !== $startTime->toDateString()) {
+//             return response()->json([
+//                 'status' => false,
+//                 'message' => 'Exam submission is only allowed on the exam date and within the designated time period.',
+//             ], 403);
+//         }
 
-        $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
-            ->where('student_id', $validated['student_id'])
-            ->first();
+//         $examResponse = ExamResponse::where('exam_id', $validated['exam_id'])
+//             ->where('student_id', $validated['student_id'])
+//             ->first();
 
-        // Fetch all questions for the exam with their correct answers
-        $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
-            ->with('question')
-            ->get()
-            ->keyBy('question_id');
+//         // Fetch all questions for the exam with their correct answers
+//         $examQuestions = ExamQuestion::where('exam_id', $validated['exam_id'])
+//             ->with('question')
+//             ->get()
+//             ->keyBy('question_id');
 
-        $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
-            return [$examQuestion->question_id => $examQuestion->question->correct_answers];
-        });
+//         $correctAnswersMap = $examQuestions->mapWithKeys(function ($examQuestion) {
+//             return [$examQuestion->question_id => $examQuestion->question->correct_answers];
+//         });
 
-        $responses = $validated['responses'];
+//         $responses = $validated['responses'];
 
-        // Initialize variables
-        $totalMarks = $examQuestions->sum('marks');
-        $gainedMarks = 0;
-        $totalCorrectAnswers = 0;
-        $totalWrongAnswers = 0;
-        $answeredQuestionIds = [];
-        $questionMarksMap = [];
+//         // Initialize variables
+//         $totalMarks = $examQuestions->sum('marks');
+//         $gainedMarks = 0;
+//         $totalCorrectAnswers = 0;
+//         $totalWrongAnswers = 0;
+//         $answeredQuestionIds = [];
+//         $questionMarksMap = [];
 
-        // Initialize question marks map with default values
-        foreach ($examQuestions as $questionId => $examQuestion) {
-            $questionMarksMap[$questionId] = [
-                'marks' => 0,
-                'negative_marks' => 0,
-                'response' => null,
-                'your_marks' => 0,
-                'status' => 'not_attempted'
-            ];
-        } 
+//         // Initialize question marks map with default values
+//         foreach ($examQuestions as $questionId => $examQuestion) {
+//             $questionMarksMap[$questionId] = [
+//                 'marks' => 0,
+//                 'negative_marks' => 0,
+//                 'response' => null,
+//                 'your_marks' => 0,
+//                 'status' => 'not_attempted'
+//             ];
+//         } 
 
-        foreach ($responses as $response) {
-            $questionId = $response['question_id'];
-            $responseText = $response['response'] ?? [];
-            $marks = $response['marks'] ?? 0;
-            $negativeMarks = $response['negative_marks'] ?? 0;
+//         foreach ($responses as $response) {
+//             $questionId = $response['question_id'];
+//             $responseText = $response['response'] ?? [];
+//             $marks = $response['marks'] ?? 0;
+//             $negativeMarks = $response['negative_marks'] ?? 0;
 
-            // Sort the response array for comparison
-            if (is_array($responseText)) {
-                sort($responseText);
-            }
+//             // Sort the response array for comparison
+//             if (is_array($responseText)) {
+//                 sort($responseText);
+//             }
 
-            // Prepare question data
-            if (isset($questionMarksMap[$questionId])) {
-                $questionMarksMap[$questionId]['response'] = $responseText;
-                $questionMarksMap[$questionId]['marks'] = $marks;
-                $questionMarksMap[$questionId]['negative_marks'] = $negativeMarks;
-                $questionMarksMap[$questionId]['status'] = 'pending'; // Default to pending
-            }
+//             // Prepare question data
+//             if (isset($questionMarksMap[$questionId])) {
+//                 $questionMarksMap[$questionId]['response'] = $responseText;
+//                 $questionMarksMap[$questionId]['marks'] = $marks;
+//                 $questionMarksMap[$questionId]['negative_marks'] = $negativeMarks;
+//                 $questionMarksMap[$questionId]['status'] = 'pending'; // Default to pending
+//             }
 
-            $answeredQuestionIds[$questionId] = true;
+//             $answeredQuestionIds[$questionId] = true;
 
-            // Check correctness
-            $question = $examQuestions->get($questionId);
-            if ($question) {
-                $correctAnswers = $correctAnswersMap->get($questionId, []);
-                $questionType = $question->question->question_type;
+//             // Check correctness
+//             $question = $examQuestions->get($questionId);
+//             if ($question) {
+//                 $correctAnswers = $correctAnswersMap->get($questionId, []);
+//                 $questionType = $question->question->question_type;
 
-                if ($questionType === 'MCQ') {
-                    if (empty($responseText)) {
-                        // If the student didn't answer, mark it as not attempted
-                        $questionMarksMap[$questionId]['status'] = 'not_attempted';
-                    } else {
-                        // Sort correct answers for comparison
-                        if (is_array($correctAnswers)) {
-                            sort($correctAnswers);
-                        }
+//                 if ($questionType === 'MCQ') {
+//                     if (empty($responseText)) {
+//                         // If the student didn't answer, mark it as not attempted
+//                         $questionMarksMap[$questionId]['status'] = 'not_attempted';
+//                     } else {
+//                         // Sort correct answers for comparison
+//                         if (is_array($correctAnswers)) {
+//                             sort($correctAnswers);
+//                         }
 
-                        // Compare sorted response and correct answers
-                        $isCorrect = !array_diff($correctAnswers, $responseText) && !array_diff($responseText, $correctAnswers);
+//                         // Compare sorted response and correct answers
+//                         $isCorrect = !array_diff($correctAnswers, $responseText) && !array_diff($responseText, $correctAnswers);
 
-                        if ($isCorrect) {
-                            $gainedMarks += $marks;
-                            $totalCorrectAnswers++;
-                            $questionMarksMap[$questionId]['your_marks'] = $marks;
-                            $questionMarksMap[$questionId]['status'] = 'correct';
-                        } else {
-                            $gainedMarks -= $negativeMarks;
-                            $totalWrongAnswers++;
-                            $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
-                            $questionMarksMap[$questionId]['status'] = 'incorrect';
-                        }
-                    }
-                } else {
-                    $questionMarksMap[$questionId]['status'] = 'pending';
-                }
-            }
-        }
+//                         if ($isCorrect) {
+//                             $gainedMarks += $marks;
+//                             $totalCorrectAnswers++;
+//                             $questionMarksMap[$questionId]['your_marks'] = $marks;
+//                             $questionMarksMap[$questionId]['status'] = 'correct';
+//                         } else {
+//                             $gainedMarks -= $negativeMarks;
+//                             $totalWrongAnswers++;
+//                             $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
+//                             $questionMarksMap[$questionId]['status'] = 'incorrect';
+//                         }
+//                     }
+//                 } else {
+//                     $questionMarksMap[$questionId]['status'] = 'pending';
+//                 }
+//             }
+//         }
 
-        // Check if an exam response already exists and update/create as necessary
-        $examResponse = ExamResponse::updateOrCreate(
-            [
-                'exam_id' => $validated['exam_id'],
-                'student_id' => $validated['student_id']
-            ],
-            [
-                'total_marks' => $totalMarks,
-                'gained_marks' => $gainedMarks,
-                'passing_marks' => $validated['passing_marks'] ?? 0,
-                'negative_marks' => $request->input('negative_marks', 0),
-                'total_correct_answers' => $totalCorrectAnswers,
-                'total_wrong_answers' => $totalWrongAnswers,
-                'result_status' => count($answeredQuestionIds) === $examQuestions->count() ? 'DONE' : 'PENDING'
-            ]
-        );
+//         // Check if an exam response already exists and update/create as necessary
+//         $examResponse = ExamResponse::updateOrCreate(
+//             [
+//                 'exam_id' => $validated['exam_id'],
+//                 'student_id' => $validated['student_id']
+//             ],
+//             [
+//                 'total_marks' => $totalMarks,
+//                 'gained_marks' => $gainedMarks,
+//                 'passing_marks' => $validated['passing_marks'] ?? 0,
+//                 'negative_marks' => $request->input('negative_marks', 0),
+//                 'total_correct_answers' => $totalCorrectAnswers,
+//                 'total_wrong_answers' => $totalWrongAnswers,
+//                 'result_status' => count($answeredQuestionIds) === $examQuestions->count() ? 'DONE' : 'PENDING'
+//             ]
+//         );
 
-        // Store or update individual question responses
-        foreach ($questionMarksMap as $questionId => $marksData) {
-            ExamQuestionResponse::updateOrCreate(
-                [
-                    'exam_response_id' => $examResponse->id,
-                    'question_id' => $questionId
-                ],
-                [
-                    'response' => json_encode($marksData['response']),
-                    'marks' => $marksData['marks'],
-                    'negative_marks' => $marksData['negative_marks'],
-                    'your_marks' => $marksData['your_marks'],
-                    'status' => $marksData['status'] ?? 'not_attempted'
-                ]
-            );
-        }
+//         // Store or update individual question responses
+//         foreach ($questionMarksMap as $questionId => $marksData) {
+//             ExamQuestionResponse::updateOrCreate(
+//                 [
+//                     'exam_response_id' => $examResponse->id,
+//                     'question_id' => $questionId
+//                 ],
+//                 [
+//                     'response' => json_encode($marksData['response']),
+//                     'marks' => $marksData['marks'],
+//                     'negative_marks' => $marksData['negative_marks'],
+//                     'your_marks' => $marksData['your_marks'],
+//                     'status' => $marksData['status'] ?? 'not_attempted'
+//                 ]
+//             );
+//         }
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Exam responses stored successfully.',
-            'exam_response_id' => $examResponse->id,
-            'result_status' => $examResponse->result_status
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'An error occurred while storing exam responses.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-}
+//         return response()->json([
+//             'status' => true,
+//             'message' => 'Exam responses stored successfully.',
+//             'exam_response_id' => $examResponse->id,
+//             'result_status' => $examResponse->result_status
+//         ]);
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'An error occurred while storing exam responses.',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
 
 
 
