@@ -128,6 +128,21 @@ class StaffAuthController extends Controller
             ],
         ],
     ],
+     [
+        'title' => 'Study Material',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">library_books</i>',
+        'content' => [
+            [
+                'title' => 'Study Materials',
+                'to' => 'study-materials',
+            ],
+            [
+                'title' => 'Upload Study Material',
+                'to' => 'add-study-material',
+            ],
+        ],
+    ],
                  [
         'title' => 'Exams',
         'classChange' => 'mm-collapse',
