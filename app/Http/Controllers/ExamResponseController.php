@@ -1483,7 +1483,7 @@ public function storeExamResponse(Request $request)
                 'your_marks' => 0,
                 'status' => 'not_attempted'
             ];
-        }
+        } 
 
         foreach ($responses as $response) {
             $questionId = $response['question_id'];
@@ -1891,7 +1891,6 @@ public function getResponsesByBatchAndStudent(Request $request)
                 $responses[] = [
                     'exam_id' => $exam->id,
                      'img' => $student->image,
-                    
                     'exam' => $exam,
                     'exam_response' => $examResponse,
                     'sections' => $sectionData

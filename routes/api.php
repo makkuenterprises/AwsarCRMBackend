@@ -19,6 +19,7 @@ use App\Http\Controllers\api\PaymentGatewayController;
 use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\api\subjectController;
 use App\Http\Controllers\api\ImagesSlidesController;
+use App\Http\Controllers\api\DatewiseReport;
 
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
@@ -412,6 +413,9 @@ Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'Teacher
 });   
  
 Route::middleware(['admin'])->group(function () {
+
+Route::post('student-report-datewise', [DatewiseReport::class, 'ReportDatewise']);
+  
 
 // ATTENDANCE STUDENT=============================================================================================
 
