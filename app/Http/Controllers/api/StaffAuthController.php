@@ -47,6 +47,11 @@ class StaffAuthController extends Controller
                     'iconStyle' => ' <i className="material-symbols-outlined">home</i>',
                     'to' => 'dashboard',
                 ],
+                 [
+        'title' => 'Enrollement Report',
+        'iconStyle' => '<i className="material-icons">request_page</i>',
+        'to' => 'enrollement-report',
+    ],
                 [
                     'title' => 'Student',
                     'classsChange'=> 'mm-collapse',
