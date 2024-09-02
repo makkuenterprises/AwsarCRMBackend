@@ -135,7 +135,7 @@ class StaffAuthController extends Controller
         'content' => [
             [
                 'title' => 'Study Materials',
-                'to' => 'study-materials',
+                'to' => 'study-materials', 
             ],
             [
                 'title' => 'Upload Study Material',

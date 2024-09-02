@@ -2303,9 +2303,6 @@ public function storeExamResponse(Request $request)
 
         // Track unique question IDs
         $answeredQuestionIds = [];
-        
-        // Track if all questions are MCQs
-        $allQuestionsAreMCQ = true;
 
         foreach ($validated['responses'] as $response) {
             $marks = $response['marks'] ?? 0;
@@ -2319,7 +2316,8 @@ public function storeExamResponse(Request $request)
                     'marks' => 0,
                     'negative_marks' => 0,
                     'response' => $responseText,
-                    'your_marks' => 0
+                    'your_marks' => 0,
+                    'status' => 'not attempted' // Default status
                 ];
             }
             $questionMarksMap[$questionId]['marks'] += $marks;
@@ -2330,9 +2328,9 @@ public function storeExamResponse(Request $request)
 
             // Determine if the response is correct based on question type
             $question = $examQuestions->firstWhere('question_id', $questionId);
-            $correctAnswers = $correctAnswersMap[$questionId] ?? []; 
+            $correctAnswers = $correctAnswersMap[$questionId] ?? [];
 
-            if ($question) { 
+            if ($question) {
                 switch ($question->question->question_type) {
                     case 'MCQ':
                         // For MCQ, compare if the selected options match correct answers
@@ -2346,21 +2344,23 @@ public function storeExamResponse(Request $request)
                             $gainedMarks += $marks;
                             $totalCorrectAnswers++;
                             $questionMarksMap[$questionId]['your_marks'] = $marks;
+                            $questionMarksMap[$questionId]['status'] = 'correct';
                         } else {
                             $gainedMarks -= $negativeMarks;
                             $totalWrongAnswers++;
                             $questionMarksMap[$questionId]['your_marks'] = -$negativeMarks;
+                            $questionMarksMap[$questionId]['status'] = 'incorrect';
                         }
                         break;
 
                     case 'Short Answer':
                     case 'Fill in the Blanks':
                         // For Short Answer and Fill in the Blanks, keep the response for manual grading
-                        $allQuestionsAreMCQ = false;
+                        $questionMarksMap[$questionId]['status'] = 'pending';
                         break;
 
                     default:
-                        $allQuestionsAreMCQ = false;
+                        $questionMarksMap[$questionId]['status'] = 'not attempted';
                 }
             }
         }
@@ -2399,7 +2399,7 @@ public function storeExamResponse(Request $request)
         \Log::info('ExamResponse after create or update:', $examResponse->toArray());
 
         // Update the got_marks for the exam
-        $exam = Exam::find($validated['exam_id']); 
+        $exam = Exam::find($validated['exam_id']);
         $exam->got_marks = $gainedMarks;
         $exam->save();
 
@@ -2415,12 +2415,9 @@ public function storeExamResponse(Request $request)
                 $existingResponse->response = json_encode($marksData['response']);
                 $existingResponse->marks = $marksData['marks'];
                 $existingResponse->negative_marks = $marksData['negative_marks'];
-                $existingResponse->your_marks = $marksData['your_marks']; 
-                $existingResponse->status = in_array(
-                    $examQuestions->firstWhere('question_id', $questionId)->question->question_type,
-                    ['Short Answer', 'Fill in the Blanks']
-                ) ? 'pending' : 'correct';   
-                $existingResponse->save(); 
+                $existingResponse->your_marks = $marksData['your_marks'];
+                $existingResponse->status = $marksData['status'];
+                $existingResponse->save();
             } else {
                 // Create a new record
                 $newResponse = new ExamQuestionResponse();
@@ -2430,10 +2427,7 @@ public function storeExamResponse(Request $request)
                 $newResponse->marks = $marksData['marks'];
                 $newResponse->negative_marks = $marksData['negative_marks'];
                 $newResponse->your_marks = $marksData['your_marks'];
-                $newResponse->status = in_array(
-                    $examQuestions->firstWhere('question_id', $questionId)->question->question_type,
-                    ['Short Answer', 'Fill in the Blanks']
-                ) ? 'pending' : 'correct';
+                $newResponse->status = $marksData['status'];
                 $newResponse->save();
             }
         }
@@ -2441,6 +2435,7 @@ public function storeExamResponse(Request $request)
         // Return the stored exam response data
         return response()->json([
             'status' => true,
+            'code' => 200,
             'message' => 'Response stored successfully',
             'data' => [
                 'exam_response' => $examResponse,
@@ -2451,12 +2446,14 @@ public function storeExamResponse(Request $request)
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json([
             'status' => false,
+            'code' => 422,
             'message' => 'Validation failed',
             'errors' => $e->errors()
         ], 422);
     } catch (\Exception $e) {
         return response()->json([
             'status' => false,
+            'code' => 500,
             'message' => 'An error occurred',
             'error' => $e->getMessage()
         ], 500);
