@@ -8,7 +8,6 @@ use App\Models\Question;
 use App\Models\ExamQuestion; 
 use Illuminate\Http\Request;
 use App\Models\ExamResponse; 
-use App\Models\Student; 
 use App\Models\ExamQuestionResponse; 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log; 
@@ -1793,7 +1792,7 @@ public function getResponsesByBatchAndStudent(Request $request)
 
         $exams = $query->get();
 
-          $student = Student::find($id); 
+          $student = Student::find($validated['student_id']); 
          $student->image = $student->image ? url('/Student/' . $student->image) : null;
 
         // Initialize an array to hold exam responses
@@ -1871,7 +1870,7 @@ public function getResponsesByBatchAndStudent(Request $request)
                             // 'status' => $isCorrect ? 'correct' : 'wrong',
 
                               'status' => $studentResponse->status ?? 'incorrect',
-                               'img' => $student->image,
+                               'img' => $student->image
                             
                         ];
                     }
