@@ -415,6 +415,7 @@ Route::post('student/teacher/list/{id}', [StudentAuthController::class, 'Teacher
 Route::middleware(['admin'])->group(function () {
 
 Route::post('student-report-datewise', [DatewiseReport::class, 'ReportDatewise']);
+Route::get('student-report', [DatewiseReport::class, 'ReportDatewise']); 
   
 
 // ATTENDANCE STUDENT=============================================================================================
