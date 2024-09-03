@@ -13,8 +13,8 @@ public function generateAttendanceReport(Request $request)
 {
     // Validate the input data
     $validatedData = $request->validate([
-        'start_date' => 'nullable|date_format:d/m/Y',
-        'end_date' => 'nullable|date_format:d/m/Y',
+        'start_date' => 'required|date_format:d/m/Y',
+        'end_date' => 'required|date_format:d/m/Y',
         'course_id' => 'required|exists:courses,id',
     ]);
 
@@ -87,8 +87,8 @@ public function attendanceReport(Request $request)
 {
     // Validate the input data
     $validatedData = $request->validate([
-        'start_date' => 'nullable|date_format:d/m/Y',
-        'end_date' => 'nullable|date_format:d/m/Y',
+        'start_date' => 'required|date_format:d/m/Y',
+        'end_date' => 'required|date_format:d/m/Y',
         'course_id' => 'required|exists:courses,id',
     ]);
 
