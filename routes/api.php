@@ -421,7 +421,7 @@ Route::get('download-today-student-report', [DatewiseReport::class, 'DownloadRep
 Route::post('download-datewise-student-report', [DatewiseReport::class, 'DownloadReportDatewise']); 
 
 Route::post('download-student-attendance-datewise', [AttendanceRepot::class, 'generateAttendanceReport']);
-Route::get('student-attendance-datewise', [AttendanceRepot::class, 'attendanceReport']);
+Route::post('student-attendance-datewise', [AttendanceRepot::class, 'attendanceReport']);
 
   
 
