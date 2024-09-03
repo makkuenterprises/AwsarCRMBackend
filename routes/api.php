@@ -420,7 +420,8 @@ Route::get('student-report', [DatewiseReport::class, 'ReportToday']);
 Route::get('download-today-student-report', [DatewiseReport::class, 'DownloadReportToday']);  
 Route::post('download-datewise-student-report', [DatewiseReport::class, 'DownloadReportDatewise']); 
 
-Route::post('student-attendance-datewise', [AttendanceRepot::class, 'generateAttendanceReport']);
+Route::post('download-student-attendance-datewise', [AttendanceRepot::class, 'generateAttendanceReport']);
+Route::get('student-attendance-datewise', [AttendanceRepot::class, 'attendanceReport']);
 
   
 
