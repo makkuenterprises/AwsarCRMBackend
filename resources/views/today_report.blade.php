@@ -23,7 +23,8 @@
     @endphp
 
     @foreach($students as $student)
-        <h2>{{ $serialNumber }}. Student ID: {{ $student['student_id'] }} - Name: {{ $student['student_name'] }}</h2>
+        <h2>{{ $index + 1 }}. {{ $student['student_name'] }} (Student ID: {{ $student['student_id'] }})</h2>
+      
         
         @foreach($student['courses'] as $course)
             <h3>Course: {{ $course['course_name'] }} (ID: {{ $course['course_id'] }})</h3>
@@ -52,9 +53,7 @@
             </table>
         @endforeach
 
-        @php
-            $serialNumber++;
-        @endphp
+     
     @endforeach
 </body>
 </html>
