@@ -9,13 +9,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceRepot extends Controller
 {
-    public function generateAttendanceReport(Request $request)
+  public function generateAttendanceReport(Request $request)
 {
     // Validate the input data
     $validatedData = $request->validate([
         'start_date' => 'nullable|date_format:d/m/Y',
         'end_date' => 'nullable|date_format:d/m/Y',
-        'specific_date' => 'nullable|date_format:d/m/Y',
         'course_id' => 'required|exists:courses,id',
     ]);
 
@@ -24,7 +23,6 @@ class AttendanceRepot extends Controller
     // Convert dates to Y-m-d format
     $startDate = isset($validatedData['start_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') : null;
     $endDate = isset($validatedData['end_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') : null;
-    $specificDate = isset($validatedData['specific_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['specific_date'])->format('Y-m-d') : null;
 
     // Build the query
     $query = DB::table('attendances')
@@ -32,9 +30,7 @@ class AttendanceRepot extends Controller
         ->join('students', 'attendances.student_id', '=', 'students.id')
         ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone');
 
-    if ($specificDate) {
-        $query->whereDate('attendances.date', $specificDate);
-    } elseif ($startDate && $endDate) {
+    if ($startDate && $endDate) {
         $query->whereBetween('attendances.date', [$startDate, $endDate]);
     }
 
@@ -47,33 +43,25 @@ class AttendanceRepot extends Controller
 
     // Process attendance data
     $data = [];
+    $students = $attendances->groupBy('student_id');
 
-    foreach ($attendances as $attendance) {
-        // Fetch all attendance records for the student
-        $studentAttendances = DB::table('attendances')
-            ->where('student_id', $attendance->student_id)
-            ->where('course_id', $courseId)
-            ->get();
-
-        $totalAbsentDays = $studentAttendances->where('status', 'absent')->count();
-        $absentDaysCurrentMonth = $studentAttendances->filter(function ($att) {
-            return \DateTime::createFromFormat('Y-m-d', $att->date)->format('m') == date('m') && $att->status === 'absent';
-        })->count();
-
-        $todayAttendance = $studentAttendances->firstWhere('date', date('Y-m-d'));
-        $todayStatus = $todayAttendance ? $todayAttendance->status : 'no record';
+    foreach ($students as $studentId => $studentAttendances) {
+        $student = $studentAttendances->first(); // Get student data
+        $totalDays = $studentAttendances->count();
+        $presentDays = $studentAttendances->where('status', 'present')->count();
+        $absentDays = $totalDays - $presentDays;
 
         $data[] = [
-            'id' => $attendance->student_id,
-            'name' => $attendance->name,
-            'course_id' => $attendance->course_id,
-            'email' => $attendance->email,
-            'phone' => $attendance->phone,
-            'fname' => $attendance->fname,
-            'fphone' => $attendance->fphone,
-            'total_absent_days' => $totalAbsentDays,
-            'absent_days_current_month' => $absentDaysCurrentMonth,
-            'today_status' => $todayStatus,
+            'id' => $student->student_id,
+            'name' => $student->name,
+            'course_id' => $student->course_id,
+            'email' => $student->email,
+            'phone' => $student->phone,
+            'fname' => $student->fname,
+            'fphone' => $student->fphone,
+            'total_days' => $totalDays,
+            'present_days' => $presentDays,
+            'absent_days' => $absentDays,
         ];
     }
 
