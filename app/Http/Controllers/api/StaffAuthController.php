@@ -174,7 +174,7 @@ class StaffAuthController extends Controller
                  [
                     'title' => 'Class Routine',
                      'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                    'iconStyle' => '<i className="material-icons">schedule</i>',
                         'content'=> [
                         [
                             'title'=> 'View Routine',
@@ -191,7 +191,7 @@ class StaffAuthController extends Controller
                  [
                     'title' => 'Notice',
                      'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                    'iconStyle' => '<i className="material-icons">notifications</i>',
                         'content'=> [
                         [
                             'title'=> 'View Notice',
@@ -208,7 +208,7 @@ class StaffAuthController extends Controller
                    [
                     'title' => 'Leave Request',
                      'classsChange' => 'mm-collapse',
-                     'iconStyle' => '<i className="merial-icons">settings</i>',
+                      'iconStyle' => '<i className="material-icons">request_page</i>',
                         'content'=> [
                         [
                             'title'=> 'lists Of Leave Request',
