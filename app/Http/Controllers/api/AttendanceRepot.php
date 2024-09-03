@@ -66,7 +66,7 @@ public function generateAttendanceReport(Request $request)
     // Generate the PDF
     $pdf = Pdf::loadView('attendance_report', [
         'students' => $data,
-        'course_name' => $data[0]['course_name'], // Pass course name to the view
+        'course_name' => $student->course_name,  // Pass course name to the view
         'startDate' => $startDate,
         'endDate' => $endDate
     ]);
