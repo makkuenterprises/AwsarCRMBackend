@@ -58,6 +58,8 @@ public function generateAttendanceReport(Request $request)
         $data[] = [
             'id' => $student->student_id,
             'name' => $student->name,
+            'fname' => $student->fname,
+
             'course_id' => $student->course_id,
             'phone' => $student->phone,
             'total_days' => $totalDays,

@@ -30,12 +30,13 @@
     <table>
         <thead>
             <tr>
-                <th>Student ID</th>
+                <th> ID</th>
                 <th>Name</th>
+                <th>Father's Name</th>
                 <th>Phone</th>
-                <th>Total Days</th>
-                <th>Present Days</th>
-                <th>Absent Days</th>
+                <th>Total </th>
+                <th>Present </th>
+                <th>Absent </th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +44,7 @@
                 <tr>
                     <td>{{ $student['id'] }}</td>
                     <td>{{ $student['name'] }}</td>
+                    <td>{{ $student['fname'] }}</td>
                     <td>{{ $student['phone'] }}</td>
                     <td>{{ $student['total_days'] }}</td>
                     <td>{{ $student['present_days'] }}</td>
