@@ -17,11 +17,14 @@
         th {
             background-color: #f2f2f2;
         }
+         .text-center {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <h1>Attendance Report for {{ $course_name }}</h1>
-    <p>From: {{ $startDate ?? 'N/A' }} To: {{ $endDate ?? 'N/A' }}</p>
+    <h1 class="text-center">Attendance Report for {{ $course_name }}</h1>
+    <p class="text-center">From: {{ $startDate ?? 'N/A' }} To: {{ $endDate ?? 'N/A' }}</p>
 
     <table>
         <thead>
