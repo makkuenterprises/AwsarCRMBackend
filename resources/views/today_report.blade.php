@@ -13,8 +13,9 @@
     </style>
 </head>
 <body>
+    
     <h1>Student Enrollement Report</h1>
-    <h1>Enrollment Date: {{ $course['enrollment_date'] }}</h1>
+    <h1>Date: {{ date('Y-m-d') }}</h1>
 
 
     @php
@@ -26,6 +27,7 @@
         
         @foreach($student['courses'] as $course)
             <h3>Course: {{ $course['course_name'] }} (ID: {{ $course['course_id'] }})</h3>
+           <p>Enrollment Date: {{ \Carbon\Carbon::parse($course['enrollment_date'])->format('Y-m-d') }}</p>
             <table>
                 <thead>
                     <tr>
