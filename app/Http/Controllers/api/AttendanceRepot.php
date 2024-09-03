@@ -9,7 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceRepot extends Controller
 {
-  public function generateAttendanceReport(Request $request)
+public function generateAttendanceReport(Request $request)
 {
     // Validate the input data
     $validatedData = $request->validate([
@@ -28,7 +28,8 @@ class AttendanceRepot extends Controller
     $query = DB::table('attendances')
         ->where('attendances.course_id', $courseId)
         ->join('students', 'attendances.student_id', '=', 'students.id')
-        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone');
+        ->join('courses', 'attendances.course_id', '=', 'courses.id') // Join with the courses table
+        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone', 'courses.name as course_name'); // Select course name
 
     if ($startDate && $endDate) {
         $query->whereBetween('attendances.date', [$startDate, $endDate]);
@@ -55,6 +56,7 @@ class AttendanceRepot extends Controller
             'id' => $student->student_id,
             'name' => $student->name,
             'course_id' => $student->course_id,
+            'course_name' => $student->course_name, // Include course name
             'email' => $student->email,
             'phone' => $student->phone,
             'fname' => $student->fname,
@@ -66,13 +68,17 @@ class AttendanceRepot extends Controller
     }
 
     // Generate the PDF
-    $pdf = Pdf::loadView('attendance_report', ['students' => $data,
-    'startDate' => $startDate,
-    'endDate' => $endDate]);
+    $pdf = Pdf::loadView('attendance_report', [
+        'students' => $data,
+        'course_name' => $data[0]['course_name'], // Pass course name to the view
+        'startDate' => $startDate,
+        'endDate' => $endDate
+    ]);
 
     // Return the PDF as a download
     return $pdf->download('attendance_report.pdf');
 }
+
 public function attendanceReport(Request $request)
 {
     // Validate the input data
@@ -111,7 +117,7 @@ public function attendanceReport(Request $request)
     $students = $attendances->groupBy('student_id');
 
     foreach ($students as $studentId => $studentAttendances) {
-        $student = $studentAttendances->first(); // Get student data
+        $student = $studentAttendances->first(); 
         $totalDays = $studentAttendances->count();
         $presentDays = $studentAttendances->where('status', 'present')->count();
         $absentDays = $totalDays - $presentDays;
@@ -120,7 +126,6 @@ public function attendanceReport(Request $request)
             'id' => $student->student_id,
             'name' => $student->name,
             'course_id' => $student->course_id,
-            'course_name' => $student->course_name, // Use the correct course_name
             'email' => $student->email,
             'phone' => $student->phone,
             'fname' => $student->fname,
@@ -134,6 +139,8 @@ public function attendanceReport(Request $request)
     // Return JSON response
     return response()->json([
         'status' => true,
+       'course_name' => $student->course_name, 
+
         'startDate' => $startDate,
         'endDate' => $endDate,
         'data' => $data
