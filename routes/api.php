@@ -20,6 +20,7 @@ use App\Http\Controllers\api\DashboardData;
 use App\Http\Controllers\api\subjectController;
 use App\Http\Controllers\api\ImagesSlidesController;
 use App\Http\Controllers\api\DatewiseReport;
+use App\Http\Controllers\api\AttendanceRepot;
 
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ZoomController;
@@ -417,7 +418,10 @@ Route::middleware(['admin'])->group(function () {
 Route::post('student-report-datewise', [DatewiseReport::class, 'ReportDatewise']);
 Route::get('student-report', [DatewiseReport::class, 'ReportToday']);  
 Route::get('download-today-student-report', [DatewiseReport::class, 'DownloadReportToday']);  
-Route::post('download-datewise-student-report', [DatewiseReport::class, 'DownloadReportDatewise']);  
+Route::post('download-datewise-student-report', [DatewiseReport::class, 'DownloadReportDatewise']); 
+
+Route::post('student-attendance-datewise', [AttendanceRepot::class, 'generateAttendanceReport']);
+
   
 
 // ATTENDANCE STUDENT=============================================================================================

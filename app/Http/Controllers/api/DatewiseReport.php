@@ -268,4 +268,6 @@ public function DownloadReportDatewise(Request $request)
     // Return the PDF as a download
     return $pdf->download('report_' . $startDate . '_to_' . $endDate . '.pdf');
 }
+
+
 }
