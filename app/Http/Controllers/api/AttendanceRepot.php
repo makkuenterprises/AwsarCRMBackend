@@ -56,11 +56,7 @@ public function generateAttendanceReport(Request $request)
             'id' => $student->student_id,
             'name' => $student->name,
             'course_id' => $student->course_id,
-            'course_name' => $student->course_name, // Include course name
-            'email' => $student->email,
             'phone' => $student->phone,
-            'fname' => $student->fname,
-            'fphone' => $student->fphone,
             'total_days' => $totalDays,
             'present_days' => $presentDays,
             'absent_days' => $absentDays,
@@ -122,14 +118,11 @@ public function attendanceReport(Request $request)
         $presentDays = $studentAttendances->where('status', 'present')->count();
         $absentDays = $totalDays - $presentDays;
 
-        $data[] = [
+          $data[] = [
             'id' => $student->student_id,
             'name' => $student->name,
             'course_id' => $student->course_id,
-            'email' => $student->email,
             'phone' => $student->phone,
-            'fname' => $student->fname,
-            'fphone' => $student->fphone,
             'total_days' => $totalDays,
             'present_days' => $presentDays,
             'absent_days' => $absentDays,
