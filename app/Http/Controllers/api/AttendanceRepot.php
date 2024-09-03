@@ -66,7 +66,9 @@ class AttendanceRepot extends Controller
     }
 
     // Generate the PDF
-    $pdf = Pdf::loadView('attendance_report', ['students' => $data]);
+    $pdf = Pdf::loadView('attendance_report', ['students' => $data,
+    'startDate' => $startDate,
+    'endDate' => $endDate]);
 
     // Return the PDF as a download
     return $pdf->download('attendance_report.pdf');
