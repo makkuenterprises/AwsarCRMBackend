@@ -16,6 +16,7 @@
                 <th>Student ID</th>
                 <th>Name</th>
                 <th>Phone</th>
+                
                 <th>Total Days</th>
                 <th>Present Days</th>
                 <th>Absent Days</th>
