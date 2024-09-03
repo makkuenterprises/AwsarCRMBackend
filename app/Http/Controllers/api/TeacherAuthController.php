@@ -481,8 +481,8 @@ public function UpdateView($id){
 
        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:teachers,email,' . $id,
-            'phone' => 'required|numeric|digits:10|unique:teachers,phone,' . $id,
+             'email' => 'required|string|email|max:255|unique:teachers,email,' . $id,
+             'phone' => 'required|numeric|digits:10|unique:teachers,phone,' . $id,
             'street' => ['nullable', 'string', 'min:1', 'max:250'], 
             'postal_code' => ['nullable', 'numeric', 'digits:6'],
             'city' => ['nullable', 'string', 'min:1', 'max:250'],
