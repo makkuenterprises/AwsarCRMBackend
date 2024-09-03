@@ -91,16 +91,20 @@ public function attendanceReport(Request $request)
     $courseId = $validatedData['course_id'];
 
     // Convert dates to Y-m-d format
-    $startDate = isset($validatedData['start_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') : null;
-    $endDate = isset($validatedData['end_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') : null;
+    $startDate = \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d');
+    $endDate = \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d');
+
+    // Calculate the total number of days between start_date and end_date
+    $totalDays = (new \DateTime($startDate))->diff(new \DateTime($endDate))->days + 1;
 
     // Build the query
     $query = DB::table('attendances')
         ->where('attendances.course_id', $courseId)
         ->join('students', 'attendances.student_id', '=', 'students.id')
-        ->join('courses', 'attendances.course_id', '=', 'courses.id') // Join with the courses table
-        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone', 'courses.name as course_name'); // Correct course_name selection
+        ->join('courses', 'attendances.course_id', '=', 'courses.id') 
+        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone', 'courses.name as course_name');
 
+    // Apply date range filter
     if ($startDate && $endDate) {
         $query->whereBetween('attendances.date', [$startDate, $endDate]);
     }
@@ -118,11 +122,10 @@ public function attendanceReport(Request $request)
 
     foreach ($students as $studentId => $studentAttendances) {
         $student = $studentAttendances->first(); 
-        $totalDays = $studentAttendances->count();
         $presentDays = $studentAttendances->where('status', 'present')->count();
         $absentDays = $totalDays - $presentDays;
 
-          $data[] = [
+        $data[] = [
             'id' => $student->student_id,
             'name' => $student->name,
             'course_id' => $student->course_id,
@@ -136,8 +139,7 @@ public function attendanceReport(Request $request)
     // Return JSON response
     return response()->json([
         'status' => true,
-       'course_name' => $student->course_name, 
-
+        'course_name' => $student->course_name,
         'startDate' => $startDate,
         'endDate' => $endDate,
         'data' => $data
