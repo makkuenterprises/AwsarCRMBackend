@@ -144,6 +144,7 @@ public function DownloadReportToday(Request $request)
         ->whereDate('courses_enrollements.enrollment_date', '=', $today)
         ->select(
             'courses_enrollements.student_id',
+              'students.name as student_name',
             'courses.id as course_id',
             'courses.name as course_name',
             'courses_enrollements.enrollment_date',

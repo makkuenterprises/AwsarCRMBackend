@@ -15,8 +15,13 @@
 <body>
     <h1>Report for {{ date('Y-m-d') }}</h1>
 
+    @php
+        $serialNumber = 1;
+    @endphp
+
     @foreach($students as $student)
-        <h2>Student ID: {{ $student['student_id'] }}</h2>
+        <h2>{{ $serialNumber }}. Student ID: {{ $student['student_id'] }} - Name: {{ $student['student_name'] }}</h2>
+        
         @foreach($student['courses'] as $course)
             <h3>Course: {{ $course['course_name'] }} (ID: {{ $course['course_id'] }})</h3>
             <p>Enrollment Date: {{ $course['enrollment_date'] }}</p>
@@ -43,6 +48,10 @@
                 </tbody>
             </table>
         @endforeach
+
+        @php
+            $serialNumber++;
+        @endphp
     @endforeach
 </body>
 </html>
