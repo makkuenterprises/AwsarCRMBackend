@@ -21,16 +21,20 @@ public function generateAttendanceReport(Request $request)
     $courseId = $validatedData['course_id'];
 
     // Convert dates to Y-m-d format
-    $startDate = isset($validatedData['start_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') : null;
-    $endDate = isset($validatedData['end_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') : null;
+    $startDate = \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d');
+    $endDate = \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d');
+
+    // Calculate the total number of days between start_date and end_date
+    $totalDays = (new \DateTime($startDate))->diff(new \DateTime($endDate))->days + 1;
 
     // Build the query
     $query = DB::table('attendances')
         ->where('attendances.course_id', $courseId)
         ->join('students', 'attendances.student_id', '=', 'students.id')
-        ->join('courses', 'attendances.course_id', '=', 'courses.id') // Join with the courses table
-        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone', 'courses.name as course_name'); // Select course name
+        ->join('courses', 'attendances.course_id', '=', 'courses.id')
+        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone', 'courses.name as course_name');
 
+    // Apply date range filter
     if ($startDate && $endDate) {
         $query->whereBetween('attendances.date', [$startDate, $endDate]);
     }
@@ -48,7 +52,6 @@ public function generateAttendanceReport(Request $request)
 
     foreach ($students as $studentId => $studentAttendances) {
         $student = $studentAttendances->first(); // Get student data
-        $totalDays = $studentAttendances->count();
         $presentDays = $studentAttendances->where('status', 'present')->count();
         $absentDays = $totalDays - $presentDays;
 
@@ -62,19 +65,11 @@ public function generateAttendanceReport(Request $request)
             'absent_days' => $absentDays,
         ];
     }
-    $startDate = isset($validatedData['start_date']) && \DateTime::createFromFormat('d/m/Y', $validatedData['start_date']) 
-    ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') 
-    : null;
-
-$endDate = isset($validatedData['end_date']) && \DateTime::createFromFormat('d/m/Y', $validatedData['end_date']) 
-    ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') 
-    : null;
-
 
     // Generate the PDF
     $pdf = Pdf::loadView('attendance_report', [
         'students' => $data,
-        'course_name' => $student->course_name,  // Pass course name to the view
+        'course_name' => $student->course_name,
         'startDate' => $startDate,
         'endDate' => $endDate
     ]);
@@ -82,6 +77,7 @@ $endDate = isset($validatedData['end_date']) && \DateTime::createFromFormat('d/m
     // Return the PDF as a download
     return $pdf->download('attendance_report.pdf');
 }
+
 
 public function attendanceReport(Request $request)
 {
