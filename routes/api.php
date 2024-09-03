@@ -417,7 +417,7 @@ Route::middleware(['admin'])->group(function () {
 Route::post('student-report-datewise', [DatewiseReport::class, 'ReportDatewise']);
 Route::get('student-report', [DatewiseReport::class, 'ReportToday']);  
 Route::get('download-today-student-report', [DatewiseReport::class, 'DownloadReportToday']);  
-Route::get('download-datewise-student-report', [DatewiseReport::class, 'DownloadReportDatewise']);  
+Route::post('download-datewise-student-report', [DatewiseReport::class, 'DownloadReportDatewise']);  
   
 
 // ATTENDANCE STUDENT=============================================================================================
