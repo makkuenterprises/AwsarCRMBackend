@@ -25,7 +25,7 @@
                 <th>Father's Phone</th>
                 <th>Total Absent Days</th>
                 <th>Absent Days This Month</th>
-                <th>Today's Status</th>
+                {{-- <th>Today's Status</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -36,9 +36,9 @@
                     <td>{{ $student['phone'] }}</td>
                     <td>{{ $student['fname'] }}</td>
                     <td>{{ $student['fphone'] }}</td>
-                    <td>{{ $student['total_absent_days'] }}</td>
+                    {{-- <td>{{ $student['total_absent_days'] }}</td> --}}
                     <td>{{ $student['absent_days_current_month'] }}</td>
-                    <td>{{ $student['today_status'] }}</td>
+                    {{-- <td>{{ $student['today_status'] }}</td> --}}
                 </tr>
             @endforeach
         </tbody>
