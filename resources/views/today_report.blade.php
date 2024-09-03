@@ -22,7 +22,7 @@
         $serialNumber = 1;
     @endphp
 
-    @foreach($students as $student)
+    @foreach($students as $index => $student)
         <h2>{{ $index + 1 }}. {{ $student['student_name'] }} (Student ID: {{ $student['student_id'] }})</h2>
       
         
