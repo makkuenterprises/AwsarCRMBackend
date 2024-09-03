@@ -190,7 +190,6 @@ public function DownloadReportToday(Request $request)
 
     // Generate the PDF from the Blade view
     $pdf = Pdf::loadView('today_report', ['students' => $response]);
-
     // Return the PDF as a download
     return $pdf->download('today_report_' . $today . '.pdf');
 }
