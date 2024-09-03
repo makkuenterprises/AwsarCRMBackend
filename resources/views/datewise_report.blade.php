@@ -13,7 +13,8 @@
     </style>
 </head>
 <body>
-    <h1>Report from {{ $startDate }} to {{ $endDate }}</h1>
+      <h1 class="text-align:center">Student Enrollement Report</h1>
+    <h3 class="text-align:center">Report from {{ $startDate }} to {{ $endDate }}</h3>
 
     @foreach($students as $index => $student)
         <h2>{{ $index + 1 }}. {{ $student['student_name'] }} (Student ID: {{ $student['student_id'] }})</h2>

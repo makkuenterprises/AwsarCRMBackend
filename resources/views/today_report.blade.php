@@ -14,8 +14,8 @@
 </head>
 <body>
     
-    <h1>Student Enrollement Report</h1>
-    <h1>Date: {{ date('Y-m-d') }}</h1>
+    <h1 class="text-align:center">Student Enrollement Report</h1>
+    <h1 class="text-align:center">Date: {{ date('Y-m-d') }}</h1>
 
 
     @php
