@@ -135,17 +135,17 @@ public function ReportToday(Request $request)
 
 public function DownloadReportToday(Request $request)
 {
-    // Get today's date
-    $today =date('Y-m-d', strtotime('-1 day'));
+    // Get yesterday's date (for testing purposes)
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
 
-  $students = DB::table('courses_enrollements')
+    $students = DB::table('courses_enrollements')
         ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
         ->join('payment_histories', 'courses_enrollements.id', '=', 'payment_histories.enrollment_id')
         ->join('students', 'courses_enrollements.student_id', '=', 'students.id') // Join with the students table
-        ->whereDate('courses_enrollements.enrollment_date', '=', $today)
+        ->whereDate('courses_enrollements.enrollment_date', '=', $yesterday)
         ->select(
             'courses_enrollements.student_id',
-              'students.name as student_name',
+            'students.name as student_name',
             'courses.id as course_id',
             'courses.name as course_name',
             'courses_enrollements.enrollment_date',
@@ -163,13 +163,14 @@ public function DownloadReportToday(Request $request)
     foreach ($students as $studentId => $studentCourses) {
         $studentData = [
             'student_id' => $studentId,
+            'student_name' => $studentCourses->first()->student_name, // Fetch the student name
             'courses' => []
         ];
 
         $coursesGrouped = $studentCourses->groupBy('course_id');
-        
+
         foreach ($coursesGrouped as $courseId => $coursePayments) {
-            $courseData = [ 
+            $courseData = [
                 'course_id' => $courseId,
                 'course_name' => $coursePayments->first()->course_name,
                 'enrollment_date' => $coursePayments->first()->enrollment_date,
@@ -183,18 +184,18 @@ public function DownloadReportToday(Request $request)
                     ];
                 })->toArray()
             ];
-            
+
             $studentData['courses'][] = $courseData;
         }
 
         $response[] = $studentData;
     }
-    // dd( $response);
 
     // Generate the PDF from the Blade view
     $pdf = Pdf::loadView('today_report', ['students' => $response]);
+
     // Return the PDF as a download
-    return $pdf->download('today_report_' . $today . '.pdf');
+    return $pdf->download('yesterday_report_' . $yesterday . '.pdf');
 }
 
 
