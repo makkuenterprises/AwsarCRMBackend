@@ -10,11 +10,14 @@
         table, th, td { border: 1px solid black; }
         th, td { padding: 10px; text-align: left; }
         th { background-color: #f2f2f2; }
+         .text-center {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-      <h1 class="text-align:center">Student Enrollement Report</h1>
-    <h3 class="text-align:center">Report from {{ $startDate }} to {{ $endDate }}</h3>
+      <h1 class="text-center">Student Enrollement Report</h1>
+    <h3 class="text-center">Report from {{ $startDate }} to {{ $endDate }}</h3>
 
     @foreach($students as $index => $student)
         <h2>{{ $index + 1 }}. {{ $student['student_name'] }} (Student ID: {{ $student['student_id'] }})</h2>

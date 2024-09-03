@@ -10,13 +10,15 @@
         table, th, td { border: 1px solid black; }
         th, td { padding: 10px; text-align: left; }
         th { background-color: #f2f2f2; }
+        .text-center {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     
-    <h1 class="text-align:center">Student Enrollement Report</h1>
-    <h1 class="text-align:center">Date: {{ date('Y-m-d') }}</h1>
-
+   <h1 class="text-center">Student Enrollment Report</h1>
+    <h1 class="text-center">Date: {{ date('Y-m-d') }}</h1>
 
     @php
         $serialNumber = 1;

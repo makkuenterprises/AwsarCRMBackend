@@ -604,7 +604,10 @@ public function StudentList()
             $student->postal_code = $request->input('postal_code');
             $student->city = $request->input('city');
             $student->state = $request->input('state');
-            $student->dob = $request->input('dob');
+              if ($request->input('dob')) {
+                 $dob = Carbon::createFromFormat('d/m/Y', $request->input('dob'))->format('Y-m-d');
+              $student->dob =  $dob;
+            }
             $student->fname = $request->input('fname');
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
