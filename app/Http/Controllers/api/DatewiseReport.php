@@ -195,7 +195,7 @@ public function DownloadReportToday(Request $request)
     $pdf = Pdf::loadView('today_report', ['students' => $response]);
 
     // Return the PDF as a download
-    return $pdf->download('today_report_' . $yesterday . '.pdf');
+    return $pdf->download('today_student_report_' . $yesterday . '.pdf');
 }
 
 public function DownloadReportDatewise(Request $request)
@@ -266,7 +266,7 @@ public function DownloadReportDatewise(Request $request)
     $pdf = Pdf::loadView('datewise_report', ['students' => $response, 'startDate' => $startDate, 'endDate' => $endDate]);
 
     // Return the PDF as a download
-    return $pdf->download('report_' . $startDate . '_to_' . $endDate . '.pdf');
+    return $pdf->download('student_report_' . $startDate . '_to_' . $endDate . '.pdf');
 }
 
 

@@ -611,17 +611,37 @@ public function StudentList()
             $student->fname = $request->input('fname');
             $student->femail = $request->input('femail');
             $student->fphone = $request->input('fphone');
-             if($request->image!=''){
-        $uploadedImg=$request->image;
-        $fileName=time().'.'.$request->image->extension();          
-        $destinationpath=public_path('/Student');
-        $img=Image::make($uploadedImg->path());     
-        $img->resize(200,null, function($constraint){
-        $constraint->aspectRatio();
-        })->save($destinationpath.'/'.$fileName);
-            $student->image = $fileName;
+                     if ($request->has('image')) {
+        if (filter_var($request->image, FILTER_VALIDATE_URL)) {
+            // Handle image URL
+            $imageUrl = $request->image;
+            $imageContent = Http::get($imageUrl)->body();
+            $fileName = time() . '.' . pathinfo($imageUrl, PATHINFO_EXTENSION);
+            $destinationPath = public_path('/Student');
+            $imagePath = $destinationPath . '/' . $fileName;
 
+            // Save the image content to the specified path
+            file_put_contents($imagePath, $imageContent);
+
+            // Resize the image
+            $img = Image::make($imagePath);
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($imagePath); 
+        } else {
+            // Handle uploaded image file
+            $uploadedImg = $request->file('image');
+            $fileName = time() . '.' . $uploadedImg->extension();
+            $destinationPath = public_path('/Student');
+            $img = Image::make($uploadedImg->path());
+            $img->resize(200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($destinationPath . '/' . $fileName);
         }
+
+        // Update student's image
+        $student->image = $fileName;
+    }
             $student->save();
               $imagePath = $student->image ? url('/Student/' . $student->image) : null;
             return response()->json(['status'=>true,'code'=>200,'message' => 'Profile Updated Successfully', 'student' => $student,'profileImage'=>$imagePath], 200);
