@@ -19,6 +19,7 @@
     
    <h1 class="text-center">Student Enrollment Report</h1>
     <h1 class="text-center">Date: {{ date('Y-m-d') }}</h1>
+    <hr>
 
     @php
         $serialNumber = 1;
