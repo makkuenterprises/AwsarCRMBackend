@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class DatewiseReport extends Controller
 {
 
@@ -129,6 +131,68 @@ public function ReportToday(Request $request)
     }
 
     return response()->json($response);
+}
+
+public function DownloadReportToday(Request $request)
+{
+    // Get today's date
+    $today = date('Y-m-d');
+
+    $students = DB::table('courses_enrollements')
+        ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
+        ->join('payment_histories', 'courses_enrollements.id', '=', 'payment_histories.enrollment_id')
+        ->whereDate('courses_enrollements.enrollment_date', '=', $today)
+        ->select(
+            'courses_enrollements.student_id',
+            'courses.id as course_id',
+            'courses.name as course_name',
+            'courses_enrollements.enrollment_date',
+            'payment_histories.transaction_id',
+            'payment_histories.payment_type',
+            'payment_histories.payment_status',
+            'payment_histories.paid_amount',
+            'payment_histories.payment_date'
+        )
+        ->get()
+        ->groupBy('student_id');
+
+    $response = [];
+
+    foreach ($students as $studentId => $studentCourses) {
+        $studentData = [
+            'student_id' => $studentId,
+            'courses' => []
+        ];
+
+        $coursesGrouped = $studentCourses->groupBy('course_id');
+        
+        foreach ($coursesGrouped as $courseId => $coursePayments) {
+            $courseData = [ 
+                'course_id' => $courseId,
+                'course_name' => $coursePayments->first()->course_name,
+                'enrollment_date' => $coursePayments->first()->enrollment_date,
+                'payments' => $coursePayments->map(function ($payment) {
+                    return [
+                        'transaction_id' => $payment->transaction_id,
+                        'payment_type' => $payment->payment_type,
+                        'payment_status' => $payment->payment_status,
+                        'paid_amount' => $payment->paid_amount,
+                        'payment_date' => $payment->payment_date,
+                    ];
+                })->toArray()
+            ];
+            
+            $studentData['courses'][] = $courseData;
+        }
+
+        $response[] = $studentData;
+    }
+
+    // Generate the PDF from the Blade view
+    $pdf = Pdf::loadView('reports.today_report', ['students' => $response]);
+
+    // Return the PDF as a download
+    return $pdf->download('today_report_' . $today . '.pdf');
 }
 
 

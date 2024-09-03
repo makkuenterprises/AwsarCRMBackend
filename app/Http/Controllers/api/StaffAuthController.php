@@ -14,8 +14,7 @@ use App\Models\StaffModel;
 
 class StaffAuthController extends Controller
 {
-    //
-     public function staffAuthLogin(Request $request){
+    public function staffAuthLogin(Request $request){
         // dd($request->all());
      $login = $request->validate([
         'email' => 'required|email',
