@@ -136,7 +136,7 @@ public function ReportToday(Request $request)
 public function DownloadReportToday(Request $request)
 {
     // Get today's date
-    $today = date('Y-m-d');
+    $today =date('Y-m-d', strtotime('-1 day'));
 
     $students = DB::table('courses_enrollements')
         ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
@@ -187,7 +187,7 @@ public function DownloadReportToday(Request $request)
 
         $response[] = $studentData;
     }
-    dd( $response);
+    // dd( $response);
 
     // Generate the PDF from the Blade view
     $pdf = Pdf::loadView('today_report', ['students' => $response]);
