@@ -13,7 +13,9 @@
     </style>
 </head>
 <body>
-    <h1>Report for {{ date('Y-m-d') }}</h1>
+    <h1>Student Enrollement Report</h1>
+    <h1>Enrollment Date: {{ $course['enrollment_date'] }}</h1>
+
 
     @php
         $serialNumber = 1;
@@ -24,7 +26,6 @@
         
         @foreach($student['courses'] as $course)
             <h3>Course: {{ $course['course_name'] }} (ID: {{ $course['course_id'] }})</h3>
-            <p>Enrollment Date: {{ $course['enrollment_date'] }}</p>
             <table>
                 <thead>
                     <tr>
