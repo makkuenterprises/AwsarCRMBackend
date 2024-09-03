@@ -50,11 +50,7 @@ class AdminAuthController extends Controller
         'iconStyle' => '<i className="material-symbols-outlined">home</i>',
         'to' => 'dashboard',
     ],
-     [
-        'title' => 'Enrollement Report',
-        'iconStyle' => '<i className="material-icons">request_page</i>',
-        'to' => 'enrollement-report',
-    ],
+     
     [
         'title' => 'Student',
         'classsChange' => 'mm-collapse',
@@ -218,6 +214,22 @@ class AdminAuthController extends Controller
         'iconStyle' => '<i className="material-icons">request_page</i>',
         'to' => 'leave-request',
     ],
+    [
+        'title' => 'Report',
+        'classsChange' => 'mm-collapse',
+        'iconStyle' => '<i className="material-icons">menu_book</i>',
+        'content' => [
+            [
+                'title' => 'Enrollement Report',
+                'to' => 'enrollement-report',
+            ],
+            [
+                'title' => 'Attendance Report',
+                'to' => 'attendance-report',
+            ],
+        ],
+    ],
+   
     [
         'title' => 'Settings',
         'iconStyle' => '<i className="material-icons">settings</i>',
