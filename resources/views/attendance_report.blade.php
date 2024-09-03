@@ -3,7 +3,20 @@
 <head>
     <title>Attendance Report</title>
     <style>
-        /* Add your custom styles here */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -16,7 +29,6 @@
                 <th>Student ID</th>
                 <th>Name</th>
                 <th>Phone</th>
-                
                 <th>Total Days</th>
                 <th>Present Days</th>
                 <th>Absent Days</th>
