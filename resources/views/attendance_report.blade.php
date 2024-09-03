@@ -25,7 +25,8 @@
 <body>
     <h1 class="text-center">Attendance Report for {{ $course_name }}</h1>
     <p class="text-center">From: {{ $startDate ?? 'N/A' }} To: {{ $endDate ?? 'N/A' }}</p>
-
+<hr>
+<br>
     <table>
         <thead>
             <tr>
