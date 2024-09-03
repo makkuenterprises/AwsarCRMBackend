@@ -138,9 +138,10 @@ public function DownloadReportToday(Request $request)
     // Get today's date
     $today =date('Y-m-d', strtotime('-1 day'));
 
-    $students = DB::table('courses_enrollements')
+  $students = DB::table('courses_enrollements')
         ->join('courses', 'courses_enrollements.course_id', '=', 'courses.id')
         ->join('payment_histories', 'courses_enrollements.id', '=', 'payment_histories.enrollment_id')
+        ->join('students', 'courses_enrollements.student_id', '=', 'students.id') // Join with the students table
         ->whereDate('courses_enrollements.enrollment_date', '=', $today)
         ->select(
             'courses_enrollements.student_id',
