@@ -3,31 +3,18 @@
 <head>
     <title>Attendance Report</title>
     <style>
-        .text-center {
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
+        /* Add your custom styles here */
     </style>
 </head>
 <body>
-    <h1 class="text-center">Student Attendance Report</h1>
-    <h2 class="text-center">Date Range: {{ $startDate ?? 'N/A' }} to {{ $endDate ?? 'N/A' }}</h2>
+    <h1>Attendance Report for {{ $course_name }}</h1>
+    <p>From: {{ $startDate ?? 'N/A' }} To: {{ $endDate ?? 'N/A' }}</p>
+
     <table>
         <thead>
             <tr>
                 <th>Student ID</th>
                 <th>Name</th>
-                <th>Email</th>
                 <th>Phone</th>
                 <th>Total Days</th>
                 <th>Present Days</th>
@@ -39,7 +26,6 @@
                 <tr>
                     <td>{{ $student['id'] }}</td>
                     <td>{{ $student['name'] }}</td>
-                    <td>{{ $student['email'] }}</td>
                     <td>{{ $student['phone'] }}</td>
                     <td>{{ $student['total_days'] }}</td>
                     <td>{{ $student['present_days'] }}</td>

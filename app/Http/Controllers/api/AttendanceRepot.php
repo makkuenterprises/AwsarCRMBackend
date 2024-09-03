@@ -93,7 +93,7 @@ public function attendanceReport(Request $request)
         ->where('attendances.course_id', $courseId)
         ->join('students', 'attendances.student_id', '=', 'students.id')
         ->join('courses', 'attendances.course_id', '=', 'courses.id') // Join with the courses table
-        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone', 'courses.name'); // Select course_name
+        ->select('attendances.*', 'students.name', 'students.email', 'students.phone', 'students.fname', 'students.fphone', 'courses.name as course_name'); // Correct course_name selection
 
     if ($startDate && $endDate) {
         $query->whereBetween('attendances.date', [$startDate, $endDate]);
@@ -119,8 +119,8 @@ public function attendanceReport(Request $request)
         $data[] = [
             'id' => $student->student_id,
             'name' => $student->name,
-            'course_id' => $courses->id,
-            'course_name' => $courses->name, // Include course_name
+            'course_id' => $student->course_id,
+            'course_name' => $student->course_name, // Use the correct course_name
             'email' => $student->email,
             'phone' => $student->phone,
             'fname' => $student->fname,
