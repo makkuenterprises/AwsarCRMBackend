@@ -119,8 +119,8 @@ public function attendanceReport(Request $request)
         $data[] = [
             'id' => $student->student_id,
             'name' => $student->name,
-            'course_id' => $student->course_id,
-            'course_name' => $student->name, // Include course_name
+            'course_id' => $courses->id,
+            'course_name' => $courses->name, // Include course_name
             'email' => $student->email,
             'phone' => $student->phone,
             'fname' => $student->fname,
