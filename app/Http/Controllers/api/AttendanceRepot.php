@@ -21,15 +21,9 @@ public function generateAttendanceReport(Request $request)
     $courseId = $validatedData['course_id'];
 
     // Convert dates to Y-m-d format
-    // $startDate = isset($validatedData['start_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') : null;
-    // $endDate = isset($validatedData['end_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') : null;
-$startDate = isset($validatedData['start_date']) && \DateTime::createFromFormat('d/m/Y', $validatedData['start_date']) 
-    ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') 
-    : null;
+    $startDate = isset($validatedData['start_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') : null;
+    $endDate = isset($validatedData['end_date']) ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') : null;
 
-$endDate = isset($validatedData['end_date']) && \DateTime::createFromFormat('d/m/Y', $validatedData['end_date']) 
-    ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') 
-    : null;
     // Build the query
     $query = DB::table('attendances')
         ->where('attendances.course_id', $courseId)
@@ -68,6 +62,14 @@ $endDate = isset($validatedData['end_date']) && \DateTime::createFromFormat('d/m
             'absent_days' => $absentDays,
         ];
     }
+    $startDate = isset($validatedData['start_date']) && \DateTime::createFromFormat('d/m/Y', $validatedData['start_date']) 
+    ? \DateTime::createFromFormat('d/m/Y', $validatedData['start_date'])->format('Y-m-d') 
+    : null;
+
+$endDate = isset($validatedData['end_date']) && \DateTime::createFromFormat('d/m/Y', $validatedData['end_date']) 
+    ? \DateTime::createFromFormat('d/m/Y', $validatedData['end_date'])->format('Y-m-d') 
+    : null;
+
 
     // Generate the PDF
     $pdf = Pdf::loadView('attendance_report', [
