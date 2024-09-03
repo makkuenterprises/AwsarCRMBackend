@@ -20,7 +20,6 @@
             <tr>
                 <th>Student ID</th>
                 <th>Name</th>
-                <th>Email</th>
                 <th>Phone</th>
                 <th>Father's Name</th>
                 <th>Father's Phone</th>
@@ -34,7 +33,6 @@
                 <tr>
                     <td>{{ $student['id'] }}</td>
                     <td>{{ $student['name'] }}</td>
-                    <td>{{ $student['email'] }}</td>
                     <td>{{ $student['phone'] }}</td>
                     <td>{{ $student['fname'] }}</td>
                     <td>{{ $student['fphone'] }}</td>
