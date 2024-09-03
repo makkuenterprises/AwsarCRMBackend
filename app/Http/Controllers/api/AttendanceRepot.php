@@ -120,7 +120,7 @@ public function attendanceReport(Request $request)
             'id' => $student->student_id,
             'name' => $student->name,
             'course_id' => $student->course_id,
-            'course_name' => $student->course_name, // Include course_name
+            'course_name' => $student->name, // Include course_name
             'email' => $student->email,
             'phone' => $student->phone,
             'fname' => $student->fname,
