@@ -187,6 +187,7 @@ public function DownloadReportToday(Request $request)
 
         $response[] = $studentData;
     }
+    dd( $response);
 
     // Generate the PDF from the Blade view
     $pdf = Pdf::loadView('today_report', ['students' => $response]);
