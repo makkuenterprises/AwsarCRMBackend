@@ -5,6 +5,7 @@ use App\Models\Exam;
 use App\Models\Section;
 use App\Models\Question;
 use App\Models\ExamQuestion;
+use App\Models\ExamResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
