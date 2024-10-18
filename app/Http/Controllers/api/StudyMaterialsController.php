@@ -135,6 +135,7 @@ class StudyMaterialsController extends Controller
                     );
                 }
             }
+            $oneSignalResponses = [];
 
             foreach ($teachersList as $teacher) {
                 // Assuming you have a notification class for notifying teachers about study materials
@@ -144,16 +145,27 @@ class StudyMaterialsController extends Controller
 
                 }
                 if ($teacherModel->one_signal_id) {
-// dd('fire2');
+                    // dd('one_signal_id');
 
-                    $this->sendOneSignalNotificationGuru(
+                    $oneSignalResponse = $this->sendOneSignalNotificationGuru(
                         $teacherModel->one_signal_id,
                         'New Material Added',
                         'New material "' . $studyMaterial->title . '" has been added to batch: ' . $course->name,
                         $data
                     );
+                    // Store the response
+                    $oneSignalResponses[] = [
+                        'teacher_id' => $teacherModel->id,
+                        'response' => $oneSignalResponse,
+                    ];
+
                 }
             }
+            return response()->json([
+                'status' => true,
+                'message' => 'Notifications sent successfully',
+                'oneSignalResponses' => $oneSignalResponses, // Include all OneSignal API responses here
+            ], 200);
 
             foreach ($admins as $admin) {
                 $admin->notify(new StudyMaterial($studyMaterial));
