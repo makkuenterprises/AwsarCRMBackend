@@ -154,7 +154,7 @@ class NotificationController extends Controller
         ];
 
         $fields = [
-            'app_id' => '46828aab-35e5-4531-89fd-3a6102091edc',
+            'app_id' => '3b902819-bb6c-4b89-a5c1-fe44ed11cb8a',
             // 'app_id' => config('services.onesignal.app_id'),
             'include_player_ids' => [$oneSignalId],
             'headings' => ["en" => $title],
@@ -195,7 +195,7 @@ class NotificationController extends Controller
         ];
 
         $fields = [
-            'app_id' => '149b959a-2a36-49dd-bb40-973325a62dc7',
+            'app_id' => '46828aab-35e5-4531-89fd-3a6102091edc',
             // 'app_id' => config('services.onesignal.app_id'),
             'include_player_ids' => [$oneSignalId],
             'headings' => ["en" => $title],
