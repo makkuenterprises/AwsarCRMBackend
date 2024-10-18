@@ -161,7 +161,8 @@ class StudyMaterialsController extends Controller
 
                 }
             }
-            dd($oneSignalResponses);
+
+            // dd($oneSignalResponses);
 
             foreach ($admins as $admin) {
                 $admin->notify(new StudyMaterial($studyMaterial));
