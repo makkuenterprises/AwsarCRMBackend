@@ -169,7 +169,7 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json; charset=utf-8',
-            'Authorization: Basic ' . 'YzdjM2FiOTctMGVjZC00ODMyLWJlNDQtY2E2NmNiOTFmNzQy',
+            'Authorization: Basic ' . 'ZWZkNDk5OTYtZGZjNC00MTRmLTkwZWMtZDQ4NzIxZGUyYjg4',
             // 'Authorization: Basic ' . config('services.onesignal.rest_api_key')
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -209,7 +209,7 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json; charset=utf-8',
-            'Authorization: Basic ' . 'YzFmNDA2MDItNjZlZi00NTUzLWI0ZWMtZTViN2RhMmRhNmJi',
+            'Authorization: Basic ' . 'ZWZkNDk5OTYtZGZjNC00MTRmLTkwZWMtZDQ4NzIxZGUyYjg4',
             // 'Authorization: Basic ' . config('services.onesignal.rest_api_key')
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
