@@ -161,11 +161,7 @@ class StudyMaterialsController extends Controller
 
                 }
             }
-            return response()->json([
-                'status' => true,
-                'message' => 'Notifications sent successfully',
-                'oneSignalResponses' => $oneSignalResponses, // Include all OneSignal API responses here
-            ], 200);
+            dd($oneSignalResponses);
 
             foreach ($admins as $admin) {
                 $admin->notify(new StudyMaterial($studyMaterial));
