@@ -325,33 +325,34 @@ Route::prefix('teacher')->group(function () {
     Route::post('/login', [TeacherAuthController::class, 'teacherAuthLogin']);
 });
 
-Route::middleware(['teacher'])->group(function () {
+//Route::middleware(['teacher'])->group(function () {
 
-    Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
-    Route::prefix('teacher')->group(function () {
-        Route::post('/logout', [TeacherAuthController::class, 'teacherAuthLogout']);
+Route::get('teacher/today-classes/{teacherId}', [ClassRoutineController::class, 'getTodayClasses']);
+Route::prefix('teacher')->group(function () {
+    Route::post('/logout', [TeacherAuthController::class, 'teacherAuthLogout']);
 
-        Route::get('/view/profile/update/{id}', [TeacherAuthController::class, 'profileUpdateView']);
-        Route::post('/profile/update/{id}', [TeacherAuthController::class, 'profileUpdate']);
-        Route::post('/password/update', [TeacherAuthController::class, 'passwordUpdate']);
-    });
-
-    Route::get('course/list/for/teacher/{id}', [CourseController::class, 'courseListForTeacher']);
-
-    Route::get('/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
-
-
-
-
-    // ATTENDANCE TEACHER=============================================================================================
-
-    Route::prefix('attendance')->group(function () {
-
-        Route::get('course/list', [AttendanceController::class, 'alllist']);
-        Route::post('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
-        Route::post('/submit-attendance', [AttendanceController::class, 'create']);
-    });
+    Route::get('/view/profile/update/{id}', [TeacherAuthController::class, 'profileUpdateView']);
+    Route::post('/profile/update/{id}', [TeacherAuthController::class, 'profileUpdate']);
+    Route::post('/password/update', [TeacherAuthController::class, 'passwordUpdate']);
 });
+
+Route::get('course/list/for/teacher/{id}', [CourseController::class, 'courseListForTeacher']);
+
+Route::get('/student-list-of-teacher/{id}', [TeacherAuthController::class, 'studentListForTeacher']);
+
+
+
+
+// ATTENDANCE TEACHER=============================================================================================
+
+Route::prefix('attendance')->group(function () {
+
+    Route::get('course/list', [AttendanceController::class, 'alllist']);
+    Route::post('student/list/{course_id}', [AttendanceController::class, 'getStudentsEnrolledInCourse']);
+    Route::post('/submit-attendance', [AttendanceController::class, 'create']);
+});
+
+//});
 
 
 
